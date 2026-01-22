@@ -65,9 +65,9 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const { showComingSoon } = useComingSoon()
-  const hasClerkProvider = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY &&
-    import.meta.env.VITE_CLERK_PUBLISHABLE_KEY !== 'YOUR_PUBLISHABLE_KEY'
-
+  const hasClerkProvider = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY && 
+                           import.meta.env.VITE_CLERK_PUBLISHABLE_KEY !== 'YOUR_PUBLISHABLE_KEY'
+  
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10)
@@ -79,13 +79,13 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50">
+    <header className="fixed top-0 left-0 right-0 z-50">
         <div className={`glass backdrop-blur-md transition-all duration-300 border-b ${isScrolled
           ? 'bg-white/95 dark:bg-slate-900/95 border-gray-200 dark:border-gray-700'
           : 'bg-white/10 border-white/20'
           }`}>
-          <div className="w-full px-8 py-3">
-            <div className="flex items-center justify-between gap-8">
+        <div className="w-full px-8 py-3">
+          <div className="flex items-center justify-between gap-8">
               {/* Left Side: Menu Button + Logo */}
               <div className="flex items-center gap-4 flex-shrink-0">
                 {/* Greater Than Menu Button */}
@@ -110,115 +110,115 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                   }}
                   className="flex items-center hover:opacity-80 transition-opacity"
                 >
-                  <img
+              <img 
                     src="/grow.svg"
-                    alt="Grow24.ai Logo"
+                alt="Grow24.ai Logo" 
                     className="h-16 w-auto object-cover"
-                    style={{ display: 'block' }}
-                  />
-                </Link>
-              </div>
-
+                style={{ display: 'block' }}
+              />
+                    </Link>
+                </div>
+            
               {/* Right Side: Search + Auth */}
               <div className="flex items-center gap-3 flex-shrink-0">
-                {/* Get a Demo - Primary */}
-                <motion.button
+              {/* Get a Demo - Primary */}
+              <motion.button
                   onClick={showComingSoon}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="px-5 py-2.5 bg-emerald-600/90 hover:bg-emerald-600 text-white text-sm font-semibold rounded-lg transition-all duration-200 shadow-lg shadow-emerald-900/20"
-                >
-                  Get a Demo
-                </motion.button>
-
-                {/* Search */}
-                <div className="relative">
-                  <motion.button
-                    onClick={() => setSearchOpen(!searchOpen)}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="px-5 py-2.5 bg-emerald-600/90 hover:bg-emerald-600 text-white text-sm font-semibold rounded-lg transition-all duration-200 shadow-lg shadow-emerald-900/20"
+              >
+                Get a Demo
+              </motion.button>
+              
+              {/* Search */}
+              <div className="relative">
+                <motion.button
+                  onClick={() => setSearchOpen(!searchOpen)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                     className={`p-2.5 rounded-lg transition-colors ${isScrolled
                       ? 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
                       : 'text-white hover:bg-white/10'
                       }`}
-                    aria-label="Search"
-                  >
-                    <SearchIcon />
-                  </motion.button>
+                  aria-label="Search"
+                >
+                  <SearchIcon />
+                </motion.button>
+                
+                <AnimatePresence>
+                  {searchOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, width: 0 }}
+                      animate={{ opacity: 1, width: 300 }}
+                      exit={{ opacity: 0, width: 0 }}
+                      className="absolute right-0 top-full mt-2 glass backdrop-blur-xl bg-white/10 rounded-lg border border-white/20 overflow-hidden"
+                    >
+                      <input
+                        type="text"
+                        placeholder="Search..."
+                        autoFocus
+                        className="w-full px-4 py-3 bg-transparent text-white placeholder-white/50 outline-none"
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
-                  <AnimatePresence>
-                    {searchOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, width: 0 }}
-                        animate={{ opacity: 1, width: 300 }}
-                        exit={{ opacity: 0, width: 0 }}
-                        className="absolute right-0 top-full mt-2 glass backdrop-blur-xl bg-white/10 rounded-lg border border-white/20 overflow-hidden"
-                      >
-                        <input
-                          type="text"
-                          placeholder="Search..."
-                          autoFocus
-                          className="w-full px-4 py-3 bg-transparent text-white placeholder-white/50 outline-none"
-                        />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-
-                {hasClerkProvider ? (
-                  <>
-                    <SignedOut>
-                      <SignInButton mode="modal">
+              {hasClerkProvider ? (
+                <>
+                  <SignedOut>
+                    <SignInButton mode="modal">
                         <button className={`flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors ${isScrolled
                           ? 'text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-300'
                           : 'text-white/90 hover:text-white'
                           }`}>
-                          <UserIcon />
-                          <span>Login</span>
-                        </button>
-                      </SignInButton>
-                      <SignUpButton mode="modal">
-                        <button className="px-4 py-2 bg-emerald-600/90 hover:bg-emerald-600 text-white text-sm font-semibold rounded-lg transition-all duration-200">
-                          Sign Up
-                        </button>
-                      </SignUpButton>
-                    </SignedOut>
-                    <SignedIn>
-                      <UserButton
-                        appearance={{
-                          elements: {
-                            avatarBox: 'w-9 h-9',
-                            userButtonPopoverCard: 'bg-white dark:bg-slate-800 shadow-xl',
-                            userButtonPopoverActionButton: 'hover:bg-slate-100 dark:hover:bg-slate-700',
-                            userButtonPopoverActionButtonText: 'text-slate-900 dark:text-white',
-                            userButtonPopoverActionButtonIcon: 'text-slate-600 dark:text-slate-400',
-                            userPreviewMainIdentifier: 'text-slate-900 dark:text-white font-semibold',
-                            userPreviewSecondaryIdentifier: 'text-slate-600 dark:text-slate-400',
-                          }
-                        }}
-                      />
-                    </SignedIn>
-                  </>
-                ) : (
-                  <a
-                    href="#login"
+                        <UserIcon />
+                        <span>Login</span>
+                      </button>
+                    </SignInButton>
+                    <SignUpButton mode="modal">
+                      <button className="px-4 py-2 bg-emerald-600/90 hover:bg-emerald-600 text-white text-sm font-semibold rounded-lg transition-all duration-200">
+                        Sign Up
+                      </button>
+                    </SignUpButton>
+                  </SignedOut>
+                  <SignedIn>
+                    <UserButton 
+                      appearance={{
+                        elements: {
+                          avatarBox: 'w-9 h-9',
+                          userButtonPopoverCard: 'bg-white dark:bg-slate-800 shadow-xl',
+                          userButtonPopoverActionButton: 'hover:bg-slate-100 dark:hover:bg-slate-700',
+                          userButtonPopoverActionButtonText: 'text-slate-900 dark:text-white',
+                          userButtonPopoverActionButtonIcon: 'text-slate-600 dark:text-slate-400',
+                          userPreviewMainIdentifier: 'text-slate-900 dark:text-white font-semibold',
+                          userPreviewSecondaryIdentifier: 'text-slate-600 dark:text-slate-400',
+                        }
+                      }}
+                    />
+                  </SignedIn>
+                </>
+              ) : (
+                <a
+                  href="#login"
                     className={`flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors ${isScrolled
                       ? 'text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-300'
                       : 'text-white/90 hover:text-white'
                       }`}
-                  >
-                    <UserIcon />
-                    <span>Login</span>
-                  </a>
-                )}
-              </div>
+                >
+                  <UserIcon />
+                  <span>Login</span>
+                </a>
+              )}
             </div>
           </div>
         </div>
+        </div>
       </header>
-
+        
       {/* Side Menu (slides from left) */}
-      <AnimatePresence>
+        <AnimatePresence>
         {sideMenuOpen && (
           <>
             {/* Backdrop */}
@@ -245,7 +245,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                   onClick={() => setSideMenuOpen(false)}
                   className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-600 dark:text-gray-400"
                   aria-label="Close menu"
-                >
+            >
                   <CloseIcon />
                 </button>
               </div>
@@ -285,7 +285,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                   </div>
                 ))}
               </nav>
-
+              
               {/* Mobile CTA */}
               <div className="p-4 border-t border-gray-200 dark:border-gray-700 mt-auto">
                 <motion.button
@@ -302,8 +302,8 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
               </div>
             </motion.div>
           </>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>
     </>
   )
 }

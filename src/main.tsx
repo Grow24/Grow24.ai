@@ -26,7 +26,7 @@ if (!rootElement.innerHTML) {
     root.render(
       <StrictMode>
         <ComingSoonProvider>
-          <RouterProvider router={router} />
+        <RouterProvider router={router} />
         </ComingSoonProvider>
       </StrictMode>
     )
@@ -35,7 +35,7 @@ if (!rootElement.innerHTML) {
       <StrictMode>
         <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
           <ComingSoonProvider>
-            <RouterProvider router={router} />
+          <RouterProvider router={router} />
           </ComingSoonProvider>
         </ClerkProvider>
       </StrictMode>

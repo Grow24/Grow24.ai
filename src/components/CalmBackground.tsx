@@ -116,9 +116,14 @@ function CameraController() {
   const { camera } = useThree()
 
   useEffect(() => {
-    camera.position.z = 5
-    camera.fov = 75
-    camera.updateProjectionMatrix()
+    if (camera) {
+      camera.position.z = 5
+      // Only set fov if camera is a PerspectiveCamera
+      if ('fov' in camera && typeof (camera as any).fov === 'number') {
+        (camera as any).fov = 75
+      }
+      camera.updateProjectionMatrix()
+    }
   }, [camera])
 
   return null
