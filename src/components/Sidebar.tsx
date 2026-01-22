@@ -73,7 +73,7 @@ interface MenuItem {
 
 const menuItems: MenuItem[] = [
   { label: 'Home', href: '/', icon: HomeIcon },
-  { label: 'What we Offer', href: '#offer', icon: OfferIcon, badge: 'PBMP' },
+  { label: 'What we Offer', href: '/what-we-offer', icon: OfferIcon, badge: 'PBMP' },
   { label: 'Solutions', href: '/solutions', icon: SolutionsIcon },
   { label: 'Resources', href: '/resources', icon: ResourcesIcon },
   { label: 'Pricing', href: '#pricing', icon: PricingIcon },

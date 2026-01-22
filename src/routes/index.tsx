@@ -51,7 +51,7 @@ function IndexPage() {
             className="flex gap-4 justify-center flex-wrap"
           >
             <motion.button
-              onClick={showComingSoon}
+              onClick={() => showComingSoon('start-free-trial', 'Start Your Free Trial', 'Get started with Grow24.ai today! Enter your email to begin your free trial and start transforming your growth journey.')}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold hover:shadow-xl transition-shadow duration-300"
@@ -163,7 +163,7 @@ function IndexPage() {
             Join thousands of professionals and entrepreneurs using Grow24.ai to achieve their goals.
           </p>
           <motion.button
-            onClick={showComingSoon}
+            onClick={() => showComingSoon('cta-section', 'Get Started', 'Enter your email to stay updated on our latest features and product updates.')}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="px-8 py-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300"

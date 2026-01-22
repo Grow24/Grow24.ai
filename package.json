@@ -12,6 +12,7 @@
     "format": "prettier --write \"src/**/*.{ts,tsx}\""
   },
   "dependencies": {
+    "@astrajs/collections": "^0.3.4",
     "@clerk/clerk-react": "^5.59.4",
     "@clerk/tanstack-start": "^0.2.0",
     "@hookform/resolvers": "^3.3.4",
@@ -28,6 +29,7 @@
     "@tanstack/start": "^1.15.0",
     "framer-motion": "^10.18.0",
     "isbot": "^4.4.0",
+    "nodemailer": "^7.0.12",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-floating-whatsapp": "^5.0.8",

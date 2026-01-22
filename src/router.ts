@@ -3,6 +3,7 @@ import { RootLayout } from './components/RootLayout'
 import { IndexPage } from './routes'
 import { SolutionsPage } from './routes/solutions'
 import { ResourcesPage } from './routes/resources'
+import WhatWeOfferPage from './routes/what-we-offer'
 
 // Root route
 const rootRoute = new RootRoute({
@@ -30,8 +31,15 @@ const resourcesRoute = new Route({
   component: ResourcesPage,
 })
 
+// What we Offer page
+const whatWeOfferRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: '/what-we-offer',
+  component: WhatWeOfferPage,
+})
+
 // Create route tree
-const routeTree = rootRoute.addChildren([indexRoute, solutionsRoute, resourcesRoute])
+const routeTree = rootRoute.addChildren([indexRoute, solutionsRoute, resourcesRoute, whatWeOfferRoute])
 
 // Create router
 export const router = createRouter({ routeTree })

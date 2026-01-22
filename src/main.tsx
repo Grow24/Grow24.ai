@@ -4,6 +4,7 @@ import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { ClerkProvider } from '@clerk/clerk-react'
 import { routeTree } from './routeTree.gen'
 import { ComingSoonProvider } from './contexts/ComingSoonContext'
+import { ThemeProvider } from './contexts/ThemeContext'
 import './index.css'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
@@ -25,19 +26,23 @@ if (!rootElement.innerHTML) {
     console.warn('⚠️ Running without authentication. Add VITE_CLERK_PUBLISHABLE_KEY to .env.local')
     root.render(
       <StrictMode>
-        <ComingSoonProvider>
-        <RouterProvider router={router} />
-        </ComingSoonProvider>
+        <ThemeProvider>
+          <ComingSoonProvider>
+            <RouterProvider router={router} />
+          </ComingSoonProvider>
+        </ThemeProvider>
       </StrictMode>
     )
   } else {
     root.render(
       <StrictMode>
-        <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
-          <ComingSoonProvider>
-          <RouterProvider router={router} />
-          </ComingSoonProvider>
-        </ClerkProvider>
+        <ThemeProvider>
+          <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+            <ComingSoonProvider>
+              <RouterProvider router={router} />
+            </ComingSoonProvider>
+          </ClerkProvider>
+        </ThemeProvider>
       </StrictMode>
     )
   }

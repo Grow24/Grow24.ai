@@ -261,7 +261,7 @@ export default function SolutionsMatrix() {
 
                   {/* CTA Button */}
                   <motion.button
-                    onClick={showComingSoon}
+                    onClick={() => showComingSoon('solutions-matrix', 'Get Started', 'Enter your email to learn more about this solution.')}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className="mt-6 w-full px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow-lg transition-colors duration-200"

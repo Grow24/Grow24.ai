@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from '@tanstack/react-router'
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton, useAuth } from '@clerk/clerk-react'
 import { useComingSoon } from '../contexts/ComingSoonContext'
+import { useTheme } from '../contexts/ThemeContext'
 
 // SVG Icons - Greater than symbol for menu
 const GreaterThanIcon = () => (
@@ -39,6 +40,45 @@ const ChevronDownIcon = () => (
   </svg>
 )
 
+// Theme Toggle Icons
+const SunIcon = () => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="5" />
+    <line x1="12" y1="1" x2="12" y2="3" />
+    <line x1="12" y1="21" x2="12" y2="23" />
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+    <line x1="1" y1="12" x2="3" y2="12" />
+    <line x1="21" y1="12" x2="23" y2="12" />
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+  </svg>
+)
+
+const MoonIcon = () => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+  </svg>
+)
+
 interface NavItem {
   label: string
   href?: string
@@ -46,7 +86,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: 'What we Offer', hasDropdown: true },
+  { label: 'What we Offer', href: '/what-we-offer' },
   { label: 'Solutions', href: '/solutions' },
   { label: 'Customers', href: '#customers' },
   { label: 'Learn & Engage', href: '/resources' },
@@ -65,6 +105,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const { showComingSoon } = useComingSoon()
+  const { theme, toggleTheme } = useTheme()
   const hasClerkProvider = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY && 
                            import.meta.env.VITE_CLERK_PUBLISHABLE_KEY !== 'YOUR_PUBLISHABLE_KEY'
   
@@ -93,10 +134,13 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                   onClick={() => setSideMenuOpen(true)}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  className={`p-2 rounded-lg transition-colors ${isScrolled
-                    ? 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
-                    : 'text-white hover:bg-white/10'
-                    }`}
+                  className={`p-2 rounded-lg transition-colors ${
+                    isScrolled
+                      ? 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+                      : theme === 'dark'
+                        ? 'text-white hover:bg-white/10'
+                        : 'text-gray-900 hover:bg-gray-100'
+                  }`}
                   aria-label="Open menu"
                 >
                   <GreaterThanIcon />
@@ -123,7 +167,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
               <div className="flex items-center gap-3 flex-shrink-0">
               {/* Get a Demo - Primary */}
               <motion.button
-                  onClick={showComingSoon}
+                  onClick={() => showComingSoon('get-demo', 'Get a Demo', 'Enter your details to schedule a personalized demo and learn how Grow24.ai can transform your growth journey.')}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="px-5 py-2.5 bg-emerald-600/90 hover:bg-emerald-600 text-white text-sm font-semibold rounded-lg transition-all duration-200 shadow-lg shadow-emerald-900/20"
@@ -131,16 +175,62 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                 Get a Demo
               </motion.button>
               
+              {/* Theme Toggle */}
+              <motion.button
+                onClick={() => {
+                  console.log('🌓 Theme toggle clicked, current theme:', theme)
+                  toggleTheme()
+                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className={`p-2.5 rounded-lg transition-colors ${
+                  isScrolled
+                    ? 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+                    : theme === 'dark'
+                      ? 'text-white hover:bg-white/10'
+                      : 'text-gray-900 hover:bg-gray-100'
+                }`}
+                aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              >
+                <AnimatePresence mode="wait">
+                  {theme === 'dark' ? (
+                    <motion.div
+                      key="sun"
+                      initial={{ opacity: 0, rotate: -90 }}
+                      animate={{ opacity: 1, rotate: 0 }}
+                      exit={{ opacity: 0, rotate: 90 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <SunIcon />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="moon"
+                      initial={{ opacity: 0, rotate: 90 }}
+                      animate={{ opacity: 1, rotate: 0 }}
+                      exit={{ opacity: 0, rotate: -90 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <MoonIcon />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.button>
+
               {/* Search */}
               <div className="relative">
                 <motion.button
                   onClick={() => setSearchOpen(!searchOpen)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                    className={`p-2.5 rounded-lg transition-colors ${isScrolled
+                  className={`p-2.5 rounded-lg transition-colors ${
+                    isScrolled
                       ? 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
-                      : 'text-white hover:bg-white/10'
-                      }`}
+                      : theme === 'dark'
+                        ? 'text-white hover:bg-white/10'
+                        : 'text-gray-900 hover:bg-gray-100'
+                  }`}
                   aria-label="Search"
                 >
                   <SearchIcon />
@@ -291,7 +381,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                 <motion.button
                   onClick={() => {
                     setSideMenuOpen(false)
-                    showComingSoon()
+                    showComingSoon('get-demo', 'Get a Demo', 'Enter your details to schedule a personalized demo and learn how Grow24.ai can transform your growth journey.')
                   }}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}

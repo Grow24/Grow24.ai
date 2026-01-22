@@ -333,7 +333,7 @@ export default function SolutionsMatrix3Panel() {
                 }
             } else {
                 // Show coming soon modal for solutions without detail pages
-                showComingSoon()
+                showComingSoon('explore-solution', 'Get Started', 'Enter your email to learn more about this solution and stay updated.')
             }
         }
     }

@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WhatWeOfferRouteImport } from './routes/what-we-offer'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SolutionsSolutionIdRouteImport } from './routes/solutions.$solutionId'
 
+const WhatWeOfferRoute = WhatWeOfferRouteImport.update({
+  id: '/what-we-offer',
+  path: '/what-we-offer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SolutionsRoute = SolutionsRouteImport.update({
   id: '/solutions',
   path: '/solutions',
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRouteWithChildren
+  '/what-we-offer': typeof WhatWeOfferRoute
   '/solutions/$solutionId': typeof SolutionsSolutionIdRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRouteWithChildren
+  '/what-we-offer': typeof WhatWeOfferRoute
   '/solutions/$solutionId': typeof SolutionsSolutionIdRoute
 }
 export interface FileRoutesById {
@@ -61,6 +69,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRouteWithChildren
+  '/what-we-offer': typeof WhatWeOfferRoute
   '/solutions/$solutionId': typeof SolutionsSolutionIdRoute
 }
 export interface FileRouteTypes {
@@ -70,6 +79,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/resources'
     | '/solutions'
+    | '/what-we-offer'
     | '/solutions/$solutionId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -77,6 +87,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/resources'
     | '/solutions'
+    | '/what-we-offer'
     | '/solutions/$solutionId'
   id:
     | '__root__'
@@ -84,6 +95,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/resources'
     | '/solutions'
+    | '/what-we-offer'
     | '/solutions/$solutionId'
   fileRoutesById: FileRoutesById
 }
@@ -92,10 +104,18 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   ResourcesRoute: typeof ResourcesRoute
   SolutionsRoute: typeof SolutionsRouteWithChildren
+  WhatWeOfferRoute: typeof WhatWeOfferRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/what-we-offer': {
+      id: '/what-we-offer'
+      path: '/what-we-offer'
+      fullPath: '/what-we-offer'
+      preLoaderRoute: typeof WhatWeOfferRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/solutions': {
       id: '/solutions'
       path: '/solutions'
@@ -151,6 +171,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   ResourcesRoute: ResourcesRoute,
   SolutionsRoute: SolutionsRouteWithChildren,
+  WhatWeOfferRoute: WhatWeOfferRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

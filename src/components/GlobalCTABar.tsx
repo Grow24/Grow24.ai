@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useComingSoon } from '../contexts/ComingSoonContext'
+import { submitLead } from '../services/leadService'
 
 const CloseIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -17,7 +17,42 @@ const LightningIcon = () => (
 
 export default function GlobalCTABar() {
   const [isVisible, setIsVisible] = useState(true)
-  const { showComingSoon } = useComingSoon()
+  const [email, setEmail] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [message, setMessage] = useState('')
+  const [isSuccess, setIsSuccess] = useState(false)
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!email.trim() || !email.includes('@')) {
+      setMessage('Please enter a valid email address')
+      setIsSuccess(false)
+      return
+    }
+
+    setIsSubmitting(true)
+    setMessage('')
+
+    const result = await submitLead({
+      email: email.trim(),
+      source: 'cta-bar',
+    })
+
+    setMessage(result.message)
+    setIsSuccess(result.success)
+    setIsSubmitting(false)
+
+    if (result.success) {
+      setEmail('')
+      // Optionally close the bar after success
+      setTimeout(() => {
+        setIsVisible(false)
+        setMessage('')
+        setIsSuccess(false)
+      }, 3000)
+    }
+  }
 
   if (!isVisible) return null
 
@@ -29,7 +64,7 @@ export default function GlobalCTABar() {
         exit={{ y: 100, opacity: 0 }}
         className="fixed bottom-0 left-0 right-0 z-30 bg-gradient-to-r from-emerald-600 via-emerald-700 to-emerald-800 shadow-2xl"
       >
-        <div className="max-w-7xl mx-auto px-8 py-4 flex items-center justify-between gap-6">
+        <div className="max-w-7xl mx-auto px-8 py-4 flex items-center justify-between gap-6 relative">
           {/* Icon + Message */}
           <div className="flex items-center gap-4">
             <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white">
@@ -44,25 +79,41 @@ export default function GlobalCTABar() {
           </div>
 
           {/* Email Input + CTA */}
-          <div className="flex items-center gap-3">
+          <form onSubmit={handleSubscribe} className="flex items-center gap-3">
             <input
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              className="px-4 py-2.5 rounded-lg bg-white/10 backdrop-blur-sm border border-white/30 text-white placeholder-white/60 outline-none focus:ring-2 focus:ring-white/50 transition-all w-64"
+              required
+              disabled={isSubmitting}
+              className="px-4 py-2.5 rounded-lg bg-white/10 backdrop-blur-sm border border-white/30 text-white placeholder-white/60 outline-none focus:ring-2 focus:ring-white/50 transition-all w-64 disabled:opacity-50"
             />
-            <button 
-              onClick={showComingSoon}
-              className="px-6 py-2.5 bg-white text-emerald-600 font-semibold rounded-lg hover:bg-emerald-50 transition-colors whitespace-nowrap"
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="px-6 py-2.5 bg-white text-emerald-600 font-semibold rounded-lg hover:bg-emerald-50 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Subscribe Free
+              {isSubmitting ? 'Submitting...' : isSuccess ? '✓ Subscribed!' : 'Subscribe Free'}
             </button>
-          </div>
+          </form>
+
+          {/* Message Display */}
+          {message && (
+            <div className={`absolute bottom-full mb-2 right-0 px-3 py-1.5 rounded text-xs whitespace-nowrap ${isSuccess
+              ? 'bg-emerald-500/90 text-white'
+              : 'bg-red-500/90 text-white'
+              }`}>
+              {message}
+            </div>
+          )}
 
           {/* Close Button */}
           <button
             onClick={() => setIsVisible(false)}
             className="flex-shrink-0 p-2 hover:bg-white/10 rounded-lg transition-colors text-white"
             aria-label="Close"
+            disabled={isSubmitting}
           >
             <CloseIcon />
           </button>
