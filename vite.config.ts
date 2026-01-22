@@ -24,25 +24,23 @@ export default defineConfig({
     target: 'ES2022',
     minify: 'terser',
     sourcemap: false,
+    commonjsOptions: {
+      include: [/node_modules/],
+      transformMixedEsModules: true,
+    },
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // Keep React and ReactDOM together to avoid multiple instances
+          // Don't manually chunk React - let Vite handle it to avoid loading issues
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'react-vendor'
-            }
+            // Only chunk large libraries, not React
             if (id.includes('three') || id.includes('@react-three')) {
               return 'three'
             }
             if (id.includes('@tanstack')) {
               return 'tanstack'
             }
-            if (id.includes('framer-motion') || id.includes('@radix-ui')) {
-              return 'ui'
-            }
-            // Other vendor chunks
-            return 'vendor'
+            // Let everything else be auto-chunked by Vite
           }
         },
       },
