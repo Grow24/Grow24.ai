@@ -2,43 +2,61 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================
+   Global / Reset & Fixes
+   ============================ */
+
+/* Consistent box-sizing so padding/margins behave predictably */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Keep transitions but keep them lightweight */
 * {
   @apply transition-colors duration-300;
 }
 
-html {
-  scroll-behavior: smooth;
+/* Prevent accidental horizontal scrolling from overflowing elements */
+html, body, #root {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
 }
 
+/* Smooth scroll + responsive base type scale */
+html {
+  scroll-behavior: smooth;
+  @apply text-sm sm:text-base md:text-lg lg:text-xl;
+}
+
+/* Body colors */
 body {
   @apply bg-white dark:bg-slate-950 text-slate-900 dark:text-white;
 }
 
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
-
 ::-webkit-scrollbar-track {
   @apply bg-slate-100 dark:bg-slate-900;
 }
-
 ::-webkit-scrollbar-thumb {
   @apply bg-emerald-500 rounded-full hover:bg-emerald-600;
 }
 
+/* Selection */
 ::selection {
   @apply bg-emerald-500 text-white;
 }
 
-/* Smooth animations */
+/* ============================
+   Animations
+   ============================ */
 @keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slide-in {
@@ -52,22 +70,189 @@ body {
   }
 }
 
-/* Glass morphism effects */
+/* ============================
+   Visual Utility Classes
+   ============================ */
+
+/* Glass morphism */
 .glass-effect {
   @apply backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl;
 }
 
-/* Gradient text */
-.gradient-text {
+/* Gradient text helpers (keeps compatibility with both names) */
+.gradient-text,
+.text-gradient {
   @apply bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-emerald-600;
 }
 
 /* 3D Card Flip Effects */
-.perspective-1000 {
-  perspective: 1000px;
-}
+.perspective-1000 { perspective: 1000px; }
 
 .backface-hidden {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
+
+/* ============================
+   Containers & Spacing
+   ============================ */
+
+.container {
+  @apply w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.responsive-padding { @apply p-4 sm:p-6 md:p-8 lg:p-10; }
+.responsive-margin  { @apply m-4 sm:m-6 md:m-8 lg:m-10; }
+
+.section-gap {
+  @apply py-8 sm:py-12 md:py-16;
+}
+
+/* Hero wrapper to keep headings constrained & centered */
+.hero-centered {
+  @apply w-full mx-auto px-4 max-w-screen-sm md:max-w-screen-md lg:max-w-screen-lg;
+  text-align: center;
+}
+
+/* ============================
+   Flex / Grid Helpers
+   ============================ */
+
+.flex-col-responsive { @apply flex flex-col md:flex-row; }
+
+/* Generic responsive grid: 1 column mobile, 2 on small, 3 on md, 4 on lg */
+.grid-responsive {
+  @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4;
+}
+
+/* "Safe" grid for the PBMP steps — stacks / wraps gracefully */
+.safe-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6;
+}
+
+/* Allow components to scroll horizontally when necessary (wrap around wide tables/matrices) */
+.overflow-x-auto {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent overflowing text/images from stretching layout */
+.prevent-overflow {
+  overflow-x: hidden;
+  word-break: break-word;
+}
+
+/* ============================
+   Cards / Steps (target problematic divs)
+   ============================ */
+
+/* Wrapper that allows wrapping on small screens */
+.steps {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: wrap; /* wraps to new line on small screens */
+  padding: 0.5rem;
+  margin: 0 auto;
+}
+
+/* Individual step card sizing & behavior */
+.step-card {
+  @apply bg-white dark:bg-slate-800 rounded-xl shadow-sm;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 1rem;
+  gap: 0.5rem;
+
+  /* Flexible sizing so cards shrink but do not overflow */
+  flex: 1 1 120px; /* grow | shrink | base */
+  min-width: 110px;
+  max-width: 240px;
+  box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+}
+
+/* Badge positioning safe inside card */
+.step-card .badge {
+  position: relative;
+  top: 0;
+  right: 0;
+}
+
+/* Force stacked appearance on very small screens if desired */
+@media (max-width: 640px) {
+  .steps {
+    gap: 0.75rem;
+  }
+  .step-card {
+    width: 92%;
+    max-width: 420px;
+  }
+
+  .hero-centered h1 {
+    @apply text-2xl md:text-4xl;
+    line-height: 1.1;
+  }
+}
+
+/* ============================
+   Media elements safe sizing
+   ============================ */
+img, picture, video, iframe, svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+/* Provide fallback if any component uses fixed widths */
+.w-fixed-fallback {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* ============================
+   Floating CTA / FAB handling
+   ============================ */
+
+.fab {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 60;
+}
+
+@media (max-width: 420px) {
+  .fab {
+    right: 0.6rem;
+    bottom: 0.6rem;
+    transform: scale(0.95);
+  }
+  .hide-on-xxs {
+    display: none !important;
+  }
+}
+
+/* ============================
+   Debug helpers (use temporarily)
+   ============================ */
+
+.debug-outline {
+  outline: 2px dashed rgba(16,185,129,0.5);
+}
+
+/* ============================
+   Accessibility + Focus rings
+   ============================ */
+
+/* Keep visible focus outlines for keyboard navigation */
+:focus {
+  outline: 3px solid rgba(16,185,129,0.18);
+  outline-offset: 2px;
+}
+
+/* ============================
+   End of file
+   ============================ */
