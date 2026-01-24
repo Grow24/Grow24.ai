@@ -313,7 +313,7 @@ export const SocialLinks: React.FC = () => {
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ delay: 0.9, type: 'spring', stiffness: 200 }}
-      className="fixed bottom-28 left-20 z-40"
+      className="fixed bottom-24 left-6 z-40"
       drag
       dragElastic={0.2}
       dragMomentum={true}

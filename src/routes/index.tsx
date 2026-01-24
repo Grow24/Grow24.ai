@@ -59,7 +59,7 @@ function IndexPage() {
               Start Free Trial
             </motion.button>
             <motion.button
-              onClick={showComingSoon}
+              onClick={() => showComingSoon('watch-demo', 'Watch Demo', 'Enter your email to get notified when the demo is available and receive exclusive updates.')}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="px-8 py-4 rounded-xl border-2 border-emerald-500 text-emerald-600 font-bold hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-colors duration-300"
