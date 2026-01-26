@@ -70,7 +70,7 @@ function IndexPage() {
         </div>
       </motion.section>
 
-      {/* What we Offer Section */}
+      {/* Our offerings Section */}
       <motion.section
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}

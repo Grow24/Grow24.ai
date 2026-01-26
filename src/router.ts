@@ -31,7 +31,7 @@ const resourcesRoute = new Route({
   component: ResourcesPage,
 })
 
-// What we Offer page
+// Our offerings page
 const whatWeOfferRoute = new Route({
   getParentRoute: () => rootRoute,
   path: '/what-we-offer',

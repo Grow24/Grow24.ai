@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Link } from '@tanstack/react-router'
+import { Link, useLocation } from '@tanstack/react-router'
 
 // SVG Icons
 const MenuIcon = () => (
@@ -73,7 +73,7 @@ interface MenuItem {
 
 const menuItems: MenuItem[] = [
   { label: 'Home', href: '/', icon: HomeIcon },
-  { label: 'What we Offer', href: '/what-we-offer', icon: OfferIcon, badge: 'PBMP' },
+  { label: 'Our offerings', href: '/what-we-offer', icon: OfferIcon, badge: 'PBMP' },
   { label: 'Solutions', href: '/solutions', icon: SolutionsIcon },
   { label: 'Resources', href: '/resources', icon: ResourcesIcon },
   { label: 'Pricing', href: '#pricing', icon: PricingIcon },
@@ -82,6 +82,7 @@ const menuItems: MenuItem[] = [
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false)
+  const location = useLocation()
 
   return (
     <>
@@ -118,7 +119,7 @@ export default function Sidebar() {
         </AnimatePresence>
       </motion.button>
 
-      {/* Backdrop */}
+      {/* Backdrop - No blur */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -126,7 +127,7 @@ export default function Sidebar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[55]"
+            className="fixed inset-0 bg-black/20 z-[55]"
           />
         )}
       </AnimatePresence>
@@ -161,50 +162,76 @@ export default function Sidebar() {
               {/* Navigation */}
               <nav className="flex-1 overflow-y-auto py-6 px-4">
                 <div className="space-y-1">
-                  {menuItems.map((item, idx) => (
-                    <motion.div
-                      key={item.href}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: idx * 0.05 }}
-                    >
-                      {item.href.startsWith('#') ? (
-                        <a
-                          href={item.href}
-                          onClick={() => setIsOpen(false)}
-                          className="group flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all duration-200 relative overflow-hidden"
-                        >
-                          <div className="relative z-10 flex items-center justify-center w-10 h-10 rounded-lg bg-white/5 group-hover:bg-emerald-500/20 group-hover:scale-110 transition-all duration-200">
-                            <item.icon />
-                          </div>
-                          <span className="relative z-10 font-medium">{item.label}</span>
-                          {item.badge && (
-                            <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
-                              {item.badge}
-                            </span>
-                          )}
-                          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        </a>
-                      ) : (
-                        <Link
-                          to={item.href}
-                          onClick={() => setIsOpen(false)}
-                          className="group flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all duration-200 relative overflow-hidden"
-                        >
-                          <div className="relative z-10 flex items-center justify-center w-10 h-10 rounded-lg bg-white/5 group-hover:bg-emerald-500/20 group-hover:scale-110 transition-all duration-200">
-                            <item.icon />
-                          </div>
-                          <span className="relative z-10 font-medium">{item.label}</span>
-                          {item.badge && (
-                            <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
-                              {item.badge}
-                            </span>
-                          )}
-                          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        </Link>
-                      )}
-                    </motion.div>
-                  ))}
+                  {menuItems.map((item, idx) => {
+                    const isActive = location.pathname === item.href || 
+                                    (item.href === '/' && location.pathname === '/') ||
+                                    (item.href !== '/' && location.pathname.startsWith(item.href))
+                    
+                    return (
+                      <motion.div
+                        key={item.href}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.05 }}
+                      >
+                        {item.href.startsWith('#') ? (
+                          <a
+                            href={item.href}
+                            onClick={() => setIsOpen(false)}
+                            className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden ${
+                              isActive
+                                ? 'text-white bg-emerald-500/20 border border-emerald-500/30'
+                                : 'text-slate-300 hover:text-white hover:bg-white/10'
+                            }`}
+                          >
+                            <div className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 ${
+                              isActive
+                                ? 'bg-emerald-500/30 scale-110'
+                                : 'bg-white/5 group-hover:bg-emerald-500/20 group-hover:scale-110'
+                            }`}>
+                              <item.icon />
+                            </div>
+                            <span className="relative z-10 font-medium">{item.label}</span>
+                            {item.badge && (
+                              <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
+                                {item.badge}
+                              </span>
+                            )}
+                            {!isActive && (
+                              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                            )}
+                          </a>
+                        ) : (
+                          <Link
+                            to={item.href}
+                            onClick={() => setIsOpen(false)}
+                            className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden ${
+                              isActive
+                                ? 'text-white bg-emerald-500/20 border border-emerald-500/30'
+                                : 'text-slate-300 hover:text-white hover:bg-white/10'
+                            }`}
+                          >
+                            <div className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 ${
+                              isActive
+                                ? 'bg-emerald-500/30 scale-110'
+                                : 'bg-white/5 group-hover:bg-emerald-500/20 group-hover:scale-110'
+                            }`}>
+                              <item.icon />
+                            </div>
+                            <span className="relative z-10 font-medium">{item.label}</span>
+                            {item.badge && (
+                              <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
+                                {item.badge}
+                              </span>
+                            )}
+                            {!isActive && (
+                              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                            )}
+                          </Link>
+                        )}
+                      </motion.div>
+                    )
+                  })}
                 </div>
               </nav>
 

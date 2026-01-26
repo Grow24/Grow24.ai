@@ -57,7 +57,6 @@ const functions: FunctionRow[] = [
     {
         id: 'corporate',
         name: 'Corporate',
-        subItems: ['Goals (Qubit)', 'Strategy', 'Plan'],
         solutions: {
             Goals: [
                 {
@@ -135,7 +134,6 @@ const functions: FunctionRow[] = [
     {
         id: 'sales',
         name: 'Sales',
-        subItems: ['Goals'],
         solutions: {
             Goals: [
                 {
@@ -284,36 +282,69 @@ const functions: FunctionRow[] = [
                 }
             ]
         }
+    },
+    {
+        id: 'programs',
+        name: 'Programs',
+        solutions: {
+            Goals: [],
+            Strategy: [],
+            Plan: [],
+            Project: [],
+            Operations: []
+        }
+    },
+    {
+        id: 'ssp',
+        name: 'SSP',
+        subItems: ['Structures', 'Systems', 'Processes'],
+        solutions: {
+            Goals: [],
+            Strategy: [],
+            Plan: [],
+            Project: [],
+            Operations: []
+        }
     }
 ]
 
 const categories = ['Goals', 'Strategy', 'Plan', 'Project', 'Operations'] as const
-const categoryColors = {
-    Goals: 'bg-blue-500',
-    Strategy: 'bg-blue-500',
-    Plan: 'bg-orange-500',
-    Project: 'bg-orange-500',
-    Operations: 'bg-purple-500'
-}
 
 export default function SolutionsMatrix3Panel() {
     const navigate = useNavigate()
     const { showComingSoon } = useComingSoon()
-    const [expandedFunctions, setExpandedFunctions] = useState<Set<string>>(new Set(['corporate', 'sales', 'marketing']))
+    const [selectedFunction, setSelectedFunction] = useState<string>('corporate')
+    const [expandedFunctions, setExpandedFunctions] = useState<Set<string>>(new Set())
     const [selectedSolution, setSelectedSolution] = useState<Solution | null>(
         functions[0].solutions.Strategy?.[0] || null
     )
 
-    const toggleFunction = (functionId: string) => {
-        setExpandedFunctions(prev => {
-            const next = new Set(prev)
-            if (next.has(functionId)) {
-                next.delete(functionId)
-            } else {
-                next.add(functionId)
+    const handleFunctionClick = (functionId: string) => {
+        const func = functions.find(f => f.id === functionId)
+        // If function has sub-items (like SSP), toggle expansion instead of selecting
+        if (func?.subItems && func.subItems.length > 0) {
+            setExpandedFunctions(prev => {
+                const next = new Set(prev)
+                if (next.has(functionId)) {
+                    next.delete(functionId)
+                } else {
+                    next.add(functionId)
+                }
+                return next
+            })
+        } else {
+            // For functions without sub-items, select them
+            setSelectedFunction(functionId)
+            // Set the first available solution from the selected function as default
+            if (func) {
+                const firstSolution = func.solutions.Goals?.[0] || 
+                                     func.solutions.Strategy?.[0] || 
+                                     func.solutions.Plan?.[0] || 
+                                     func.solutions.Project?.[0] || 
+                                     func.solutions.Operations?.[0] || null
+                setSelectedSolution(firstSolution)
             }
-            return next
-        })
+        }
     }
 
     const handleLearnMore = () => {
@@ -339,8 +370,12 @@ export default function SolutionsMatrix3Panel() {
     }
 
     return (
-        <div className="w-full min-h-screen pt-24 pb-16 px-4">
+        <div className="w-full min-h-screen pt-24 pb-16 px-4 bg-gray-50 dark:bg-slate-900">
             <div className="max-w-[95vw] mx-auto">
+                <div className="mb-6">
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Solution Dashboard</h1>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Explore solutions by function and category</p>
+                </div>
                 <div className="grid grid-cols-[180px_1fr_320px] gap-4 max-lg:grid-cols-1">
                     {/* Left Panel: Function Column */}
                     <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -349,17 +384,30 @@ export default function SolutionsMatrix3Panel() {
                         </div>
                         <div className="divide-y divide-gray-200 dark:divide-gray-700">
                             {functions.map((func) => {
+                                const isSelected = selectedFunction === func.id
                                 const isExpanded = expandedFunctions.has(func.id)
+                                const hasSubItems = func.subItems && func.subItems.length > 0
+                                
                                 return (
                                     <div key={func.id}>
                                         <button
-                                            onClick={() => toggleFunction(func.id)}
-                                            className="w-full px-3 py-2 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left"
+                                            onClick={() => handleFunctionClick(func.id)}
+                                            className={`w-full px-3 py-2 flex items-center justify-between text-left transition-colors ${
+                                                isSelected
+                                                    ? 'bg-gray-100 dark:bg-gray-700 font-semibold'
+                                                    : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                                            }`}
                                         >
-                                            <span className="font-semibold text-xs text-gray-900 dark:text-white">{func.name}</span>
-                                            <ChevronIcon isOpen={isExpanded} />
+                                            <span className={`text-xs text-gray-900 dark:text-white ${
+                                                isSelected ? 'font-bold' : 'font-semibold'
+                                            }`}>
+                                                {func.name}
+                                            </span>
+                                            {hasSubItems && (
+                                                <ChevronIcon isOpen={isExpanded} />
+                                            )}
                                         </button>
-                                        {isExpanded && func.subItems && (
+                                        {hasSubItems && isExpanded && func.subItems && (
                                             <div className="bg-gray-50 dark:bg-gray-800 px-3 py-1.5 space-y-1">
                                                 {func.subItems.map((item, idx) => (
                                                     <div key={idx} className="text-xs text-gray-600 dark:text-gray-400 pl-3">
@@ -380,58 +428,69 @@ export default function SolutionsMatrix3Panel() {
                             {categories.map((category) => (
                                 <div
                                     key={category}
-                                    className={`px-4 py-3 text-center ${categoryColors[category]} text-white`}
+                                    className="px-4 py-3 text-center bg-gray-100 dark:bg-gray-700 border-r border-gray-200 dark:border-gray-600 last:border-r-0"
                                 >
-                                    <h3 className="font-bold text-sm uppercase">{category}</h3>
+                                    <h3 className="font-bold text-sm uppercase text-gray-900 dark:text-white">{category}</h3>
                                 </div>
                             ))}
                         </div>
-                        <div className="grid grid-cols-5 divide-x divide-gray-200 dark:divide-gray-700 min-h-[600px] max-lg:grid-cols-1 max-lg:divide-x-0 max-lg:divide-y">
-                            {categories.map((category) => (
-                                <div key={category} className="p-3 space-y-3">
-                                    {functions.map((func) => {
-                                        const solutions = func.solutions[category] || []
-                                        if (solutions.length === 0) return null
-                                        return (
-                                            <div key={`${func.id}-${category}`} className="space-y-2">
-                                                {solutions.map((solution) => (
-                                                    <motion.button
-                                                        key={solution.id}
-                                                        onClick={() => setSelectedSolution(solution)}
-                                                        whileHover={{ scale: 1.02 }}
-                                                        whileTap={{ scale: 0.98 }}
-                                                        className={`w-full p-3 rounded-lg border-2 transition-all text-left overflow-hidden ${selectedSolution?.id === solution.id
-                                                            ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20'
-                                                            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-slate-800'
-                                                            }`}
-                                                    >
-                                                        <div className="flex items-start gap-2 mb-2">
-                                                            <div className="text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5">
-                                                                {solution.icon}
-                                                            </div>
-                                                            <div className="flex-1 min-w-0 overflow-hidden">
-                                                                <h4 className="text-xs font-semibold text-gray-900 dark:text-white leading-tight mb-1 line-clamp-2 break-words">
-                                                                    {solution.title}
-                                                                </h4>
-                                                                <p className="text-xs text-gray-600 dark:text-gray-400 leading-tight line-clamp-2 break-words">
-                                                                    {solution.description}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </motion.button>
-                                                ))}
+                        <div className="grid grid-cols-5 divide-x divide-gray-200 dark:divide-gray-700 max-lg:grid-cols-1 max-lg:divide-x-0 max-lg:divide-y">
+                            {categories.map((category) => {
+                                const currentFunction = functions.find(f => f.id === selectedFunction)
+                                const solutions = currentFunction?.solutions[category] || []
+                                return (
+                                    <div key={category} className="p-3 space-y-3 min-h-[200px]">
+                                        {solutions.length === 0 ? (
+                                            <div className="flex flex-col items-center justify-center h-full min-h-[150px] text-center py-8 px-2">
+                                                <svg className="w-8 h-8 text-gray-300 dark:text-gray-700 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                                <p className="text-xs text-gray-400 dark:text-gray-600 font-medium">
+                                                    No {category.toLowerCase()} solutions
+                                                </p>
+                                                <p className="text-xs text-gray-300 dark:text-gray-700 mt-1">
+                                                    Coming soon
+                                                </p>
                                             </div>
-                                        )
-                                    })}
-                                </div>
-                            ))}
+                                        ) : (
+                                            solutions.map((solution) => (
+                                                <motion.button
+                                                    key={solution.id}
+                                                    onClick={() => setSelectedSolution(solution)}
+                                                    whileHover={{ scale: 1.02 }}
+                                                    whileTap={{ scale: 0.98 }}
+                                                    className={`w-full p-3 rounded-lg border-2 transition-all text-left overflow-hidden ${
+                                                        selectedSolution?.id === solution.id
+                                                            ? 'border-gray-800 dark:border-gray-300 bg-gray-100 dark:bg-gray-700 shadow-md'
+                                                            : 'border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 bg-white dark:bg-slate-800 hover:shadow-sm'
+                                                    }`}
+                                                >
+                                                    <div className="flex items-start gap-2 mb-2">
+                                                        <div className="text-gray-700 dark:text-gray-300 flex-shrink-0 mt-0.5">
+                                                            {solution.icon}
+                                                        </div>
+                                                        <div className="flex-1 min-w-0 overflow-hidden">
+                                                            <h4 className="text-xs font-semibold text-gray-900 dark:text-white leading-tight mb-1 line-clamp-2 break-words">
+                                                                {solution.title}
+                                                            </h4>
+                                                            <p className="text-xs text-gray-600 dark:text-gray-400 leading-tight line-clamp-2 break-words">
+                                                                {solution.description}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </motion.button>
+                                            ))
+                                        )}
+                                    </div>
+                                )
+                            })}
                         </div>
                     </div>
 
                     {/* Right Panel: Solution Summary */}
-                    <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-                        <div className="bg-purple-500 px-3 py-2 border-b border-gray-200 dark:border-gray-700">
-                            <h3 className="font-bold text-xs text-white uppercase">Solution Summary</h3>
+                    <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
+                        <div className="bg-gray-100 dark:bg-gray-700 px-3 py-2 border-b border-gray-200 dark:border-gray-600">
+                            <h3 className="font-bold text-xs text-gray-900 dark:text-white uppercase">Solution Summary</h3>
                         </div>
                         <AnimatePresence mode="wait">
                             {selectedSolution ? (
@@ -440,10 +499,10 @@ export default function SolutionsMatrix3Panel() {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -20 }}
-                                    className="p-4"
+                                    className="p-4 flex-1 flex flex-col"
                                 >
                                     <div className="flex items-start gap-2 mb-3">
-                                        <div className="text-emerald-600 dark:text-emerald-400 flex-shrink-0">
+                                        <div className="text-gray-700 dark:text-gray-300 flex-shrink-0">
                                             {selectedSolution.icon}
                                         </div>
                                         <h3 className="text-base font-bold text-gray-900 dark:text-white break-words">
@@ -453,16 +512,17 @@ export default function SolutionsMatrix3Panel() {
                                     <p className="text-xs text-gray-600 dark:text-gray-400 mb-4 leading-relaxed break-words">
                                         {selectedSolution.description}
                                     </p>
-                                    <div className="space-y-2 mb-4">
+                                    <div className="space-y-2 mb-4 flex-1">
+                                        <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">Features:</p>
                                         {selectedSolution.features.map((feature, idx) => (
                                             <motion.div
                                                 key={idx}
                                                 initial={{ opacity: 0, x: -10 }}
                                                 animate={{ opacity: 1, x: 0 }}
                                                 transition={{ delay: idx * 0.05 }}
-                                                className="flex items-start gap-2"
+                                                className="flex items-start gap-2 bg-gray-50 dark:bg-gray-700/50 rounded px-2 py-1.5"
                                             >
-                                                <svg className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg className="w-4 h-4 text-gray-600 dark:text-gray-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                                 </svg>
                                                 <span className="text-xs text-gray-700 dark:text-gray-300 break-words">{feature}</span>
@@ -477,7 +537,7 @@ export default function SolutionsMatrix3Panel() {
                                         }}
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
-                                        className="w-full px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold rounded-lg shadow-lg transition-colors duration-200 cursor-pointer break-words"
+                                        className="w-full px-3 py-2.5 bg-gray-800 dark:bg-gray-200 hover:bg-gray-900 dark:hover:bg-gray-100 text-white dark:text-gray-900 text-xs font-semibold rounded-lg shadow-md transition-colors duration-200 cursor-pointer break-words mt-auto"
                                     >
                                         <span className="line-clamp-2">Explore {selectedSolution.title} &gt;</span>
                                     </motion.button>
@@ -488,11 +548,16 @@ export default function SolutionsMatrix3Panel() {
                                     animate={{ opacity: 1 }}
                                     className="flex flex-col items-center justify-center h-full min-h-[400px] text-center p-4"
                                 >
-                                    <svg className="w-12 h-12 text-gray-400 dark:text-gray-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                    </svg>
-                                    <p className="text-xs text-gray-600 dark:text-gray-400">
-                                        Select a solution to view details
+                                    <div className="bg-gray-100 dark:bg-gray-700 rounded-full p-4 mb-4">
+                                        <svg className="w-12 h-12 text-gray-400 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                    </div>
+                                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                                        No Solution Selected
+                                    </p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-500">
+                                        Click on a solution card to view details
                                     </p>
                                 </motion.div>
                             )}

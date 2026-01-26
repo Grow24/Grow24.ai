@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from '@tanstack/react-router'
-import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton, useAuth } from '@clerk/clerk-react'
 import { useComingSoon } from '../contexts/ComingSoonContext'
 import { useTheme } from '../contexts/ThemeContext'
 
@@ -27,12 +26,6 @@ const SearchIcon = () => (
   </svg>
 )
 
-const UserIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-    <circle cx="12" cy="7" r="4" />
-  </svg>
-)
 
 const ChevronDownIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -86,7 +79,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: 'What we Offer', href: '/what-we-offer' },
+  { label: 'Our offerings', href: '/what-we-offer' },
   { label: 'Solutions', href: '/solutions' },
   { label: 'Customers', href: '#customers' },
   { label: 'Learn & Engage', href: '/resources' },
@@ -106,8 +99,6 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
   const [isScrolled, setIsScrolled] = useState(false)
   const { showComingSoon } = useComingSoon()
   const { theme, toggleTheme } = useTheme()
-  const hasClerkProvider = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY && 
-                           import.meta.env.VITE_CLERK_PUBLISHABLE_KEY !== 'YOUR_PUBLISHABLE_KEY'
   
   useEffect(() => {
     const handleScroll = () => {
@@ -255,52 +246,6 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                 </AnimatePresence>
               </div>
 
-              {hasClerkProvider ? (
-                <>
-                  <SignedOut>
-                    <SignInButton mode="modal">
-                        <button className={`flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors ${isScrolled
-                          ? 'text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-300'
-                          : 'text-white/90 hover:text-white'
-                          }`}>
-                        <UserIcon />
-                        <span>Login</span>
-                      </button>
-                    </SignInButton>
-                    <SignUpButton mode="modal">
-                      <button className="px-4 py-2 bg-emerald-600/90 hover:bg-emerald-600 text-white text-sm font-semibold rounded-lg transition-all duration-200">
-                        Sign Up
-                      </button>
-                    </SignUpButton>
-                  </SignedOut>
-                  <SignedIn>
-                    <UserButton 
-                      appearance={{
-                        elements: {
-                          avatarBox: 'w-9 h-9',
-                          userButtonPopoverCard: 'bg-white dark:bg-slate-800 shadow-xl',
-                          userButtonPopoverActionButton: 'hover:bg-slate-100 dark:hover:bg-slate-700',
-                          userButtonPopoverActionButtonText: 'text-slate-900 dark:text-white',
-                          userButtonPopoverActionButtonIcon: 'text-slate-600 dark:text-slate-400',
-                          userPreviewMainIdentifier: 'text-slate-900 dark:text-white font-semibold',
-                          userPreviewSecondaryIdentifier: 'text-slate-600 dark:text-slate-400',
-                        }
-                      }}
-                    />
-                  </SignedIn>
-                </>
-              ) : (
-                <a
-                  href="#login"
-                    className={`flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors ${isScrolled
-                      ? 'text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-300'
-                      : 'text-white/90 hover:text-white'
-                      }`}
-                >
-                  <UserIcon />
-                  <span>Login</span>
-                </a>
-              )}
             </div>
           </div>
         </div>

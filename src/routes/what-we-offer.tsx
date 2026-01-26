@@ -188,36 +188,98 @@ function WhatWeOfferPage() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4 }}
             >
-              {/* The PBMP Approach Section */}
+              {/* Decision Science Framework Section */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="glass backdrop-blur-xl bg-white/10 dark:bg-slate-800/50 rounded-2xl shadow-xl p-8 max-w-4xl mx-auto border border-white/20 dark:border-slate-700/50"
+                className="glass backdrop-blur-xl bg-white/10 dark:bg-slate-800/50 rounded-2xl shadow-xl p-8 max-w-5xl mx-auto border border-white/20 dark:border-slate-700/50"
               >
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
-                  The PBMP Approach
+                <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 text-center">
+                  Decision Science Framework
                 </h3>
-                <div className="space-y-4">
-                  <div className="flex items-start gap-4">
-                    <div className="w-2 h-2 bg-emerald-500 rounded-full mt-2 flex-shrink-0"></div>
-                    <p className="text-lg text-gray-700 dark:text-gray-300">
-                      <span className="font-semibold">Managing Personal Life through PBMP</span>
-                      <br />
-                      <span className="text-gray-600 dark:text-gray-400">
-                        A comprehensive framework to identify goals, assess capabilities, and build strategies for personal growth and fulfillment.
+                <p className="text-center text-gray-600 dark:text-gray-400 mb-8">
+                  Direction of value: From raw data to applied wisdom
+                </p>
+                
+                <div className="relative flex gap-6">
+                  {/* Arrow on the left */}
+                  <div className="flex-shrink-0 flex flex-col items-center relative" style={{ width: '120px' }}>
+                    {/* Direction of Value Label above arrow */}
+                    <div className="mb-2">
+                      <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        Direction of value
                       </span>
-                    </p>
+                    </div>
+                    
+                    {/* Thick Black Arrow Line */}
+                    <div className="relative flex-1 flex items-center justify-center" style={{ minHeight: '400px' }}>
+                      <div className="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-2 bg-black dark:bg-white"></div>
+                      
+                      {/* Simple Black Arrow Head at Top */}
+                      <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2 z-10">
+                        <svg className="w-6 h-6 text-black dark:text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2L2 12h6v8h8v-8h6L12 2z" />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-start gap-4">
-                    <div className="w-2 h-2 bg-emerald-500 rounded-full mt-2 flex-shrink-0"></div>
-                    <p className="text-lg text-gray-700 dark:text-gray-300">
-                      <span className="font-semibold">Managing Professional Life through PBMP</span>
-                      <br />
-                      <span className="text-gray-600 dark:text-gray-400">
-                        A structured approach to align business goals, assess organizational capabilities, and execute strategic plans across different time horizons.
-                      </span>
-                    </p>
+
+                  {/* Table Container */}
+                  <div className="flex-1 border-2 border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden bg-white dark:bg-slate-800">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="bg-gray-50 dark:bg-slate-700/50">
+                          <th className="border-b-2 border-gray-300 dark:border-gray-600 px-4 py-3 text-left font-bold text-amber-700 dark:text-amber-400" style={{ width: '25%' }}>
+                            WiKID Layer
+                          </th>
+                          <th className="border-b-2 border-gray-300 dark:border-gray-600 px-4 py-3 text-left font-bold text-amber-700 dark:text-amber-400">
+                            Description
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {/* Wisdom Row */}
+                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                          <td className="px-4 py-4 align-top">
+                            <span className="font-bold text-gray-900 dark:text-white">Wisdom</span>
+                          </td>
+                          <td className="px-4 py-4 align-top text-gray-700 dark:text-gray-300">
+                            We start with <strong>Wisdom</strong> because it is <strong>Knowledge applied over time</strong>—the accumulated learnings from past decisions, outcomes, and calibrations. It tells us <strong>what's working, what's not, why</strong>, and guides <strong>better choices going forward</strong> (e.g., which goals are realistic, which strategies succeed, which execution patterns fail).
+                          </td>
+                        </tr>
+                        
+                        {/* Knowledge Row */}
+                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                          <td className="px-4 py-4 align-top">
+                            <span className="font-bold text-gray-900 dark:text-white">Knowledge</span>
+                          </td>
+                          <td className="px-4 py-4 align-top text-gray-700 dark:text-gray-300">
+                            <strong>Knowledge</strong> is the foundation for creating Wisdom. It includes <strong>best practices, tools, techniques, frameworks, templates, skills, and competencies</strong>, coming from: (i) standard <strong>Bodies of Knowledge</strong> (e.g., PMBOK, BABOK, etc.), and (ii) <strong>organization-embedded knowledge</strong>—patterns learned through experience, case histories, playbooks, and domain expertise built while operating in that area.
+                          </td>
+                        </tr>
+                        
+                        {/* Information Row */}
+                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                          <td className="px-4 py-4 align-top">
+                            <span className="font-bold text-gray-900 dark:text-white">Information</span>
+                          </td>
+                          <td className="px-4 py-4 align-top text-gray-700 dark:text-gray-300">
+                            <strong>Information</strong> is sanitized, structured, and consumable data (cleaned, standardized, contextualized) that can be reliably used to form <strong>insights, comparisons, and learning</strong>—so it becomes input for building Knowledge (e.g., curated KPI definitions, validated reports, standardized dashboards).
+                          </td>
+                        </tr>
+                        
+                        {/* Data Row */}
+                        <tr>
+                          <td className="px-4 py-4 align-top">
+                            <span className="font-bold text-gray-900 dark:text-white">Data</span>
+                          </td>
+                          <td className="px-4 py-4 align-top text-gray-700 dark:text-gray-300">
+                            <strong>Data</strong> is the raw signals collected from systems, markets, and people (transactions, logs, events, surveys, metrics, observations). It is unprocessed and noisy on its own, but it should ultimately be transformed into <strong>Information → Knowledge → Wisdom</strong>.
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </motion.div>
