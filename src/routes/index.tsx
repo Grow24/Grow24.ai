@@ -18,9 +18,9 @@ function IndexPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="min-h-screen flex items-center justify-center pt-20 sm:pt-24 pb-12 sm:pb-20 px-4 sm:px-6 md:px-8"
+        className="min-h-screen flex items-start sm:items-center justify-center pt-16 sm:pt-20 md:pt-24 pb-24 sm:pb-20 px-4 sm:px-6 md:px-8"
       >
-        <div className="w-full max-w-7xl mx-auto text-center">
+        <div className="w-full max-w-7xl mx-auto text-center mt-4 sm:mt-0">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -38,7 +38,7 @@ function IndexPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-6 sm:mb-8 px-4"
+            className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-16 sm:mb-16 md:mb-18 px-4"
           >
             A comprehensive Personal & Business Management Platform that guides you through the
             PBMP cycle for extraordinary growth and transformation.
@@ -48,7 +48,7 @@ function IndexPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center flex-wrap px-4"
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center flex-wrap px-4 mt-20 sm:mt-10 md:mt-0"
           >
             <motion.button
               onClick={() => showComingSoon('start-free-trial', 'Start Your Free Trial', 'Get started with Grow24.ai today! Enter your email to begin your free trial and start transforming your growth journey.')}
@@ -76,7 +76,7 @@ function IndexPage() {
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true, amount: 0.3 }}
-        className="py-20 px-8 bg-gradient-to-b from-transparent via-emerald-50/20 to-transparent"
+        className="pt-8 pb-12 sm:pt-12 sm:pb-16 md:py-20 px-4 sm:px-8 bg-gradient-to-b from-transparent via-emerald-50/20 to-transparent"
       >
         <div className="w-full max-w-7xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-slate-900 dark:text-white">

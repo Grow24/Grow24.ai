@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { submitLead } from '../services/leadService'
+import { useGlobalCTABar } from '../contexts/GlobalCTABarContext'
 
 const CloseIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -16,7 +17,7 @@ const LightningIcon = () => (
 )
 
 export default function GlobalCTABar() {
-  const [isVisible, setIsVisible] = useState(true)
+  const { isVisible, setIsVisible } = useGlobalCTABar()
   const [email, setEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [message, setMessage] = useState('')
@@ -62,7 +63,7 @@ export default function GlobalCTABar() {
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 100, opacity: 0 }}
-        className="fixed bottom-0 left-0 right-0 z-30 bg-gradient-to-r from-emerald-600 via-emerald-700 to-emerald-800 shadow-2xl"
+        className="fixed bottom-0 left-0 right-0 z-30 bg-gradient-to-r from-emerald-600 via-emerald-700 to-emerald-800 shadow-2xl pb-safe"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-3 sm:py-4 relative">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
@@ -99,10 +100,10 @@ export default function GlobalCTABar() {
               </button>
             </form>
 
-            {/* Close Button */}
+            {/* Close Button - Always visible above widgets */}
             <button
               onClick={() => setIsVisible(false)}
-              className="absolute top-2 right-2 sm:relative sm:top-auto sm:right-auto flex-shrink-0 p-2 hover:bg-white/10 rounded-lg transition-colors text-white"
+              className="absolute top-2 right-2 sm:relative sm:top-auto sm:right-auto flex-shrink-0 p-2 hover:bg-white/10 rounded-lg transition-colors text-white z-[60]"
               aria-label="Close"
               disabled={isSubmitting}
             >

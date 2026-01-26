@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useGlobalCTABar } from '../contexts/GlobalCTABarContext'
 import Bubble from './pbmp/Bubble'
 import PromptSuggestionsRow from './pbmp/PromptSuggestionsRow'
 import LoadingBubbles from './pbmp/LoadingBubbles'
@@ -28,8 +29,15 @@ export default function PBMPChatbot({ position = 'right' }: PBMPChatbotProps) {
   const [error, setError] = useState<string | null>(null)
   const [isInBookingFlow, setIsInBookingFlow] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const { isVisible: isCTABarVisible } = useGlobalCTABar()
 
   const noMessages = messages.length === 0
+
+  // Position above GlobalCTABar when visible, otherwise normal position
+  // Increased offset to ensure widgets are fully above the GlobalCTABar
+  const bottomPosition = isCTABarVisible 
+    ? 'bottom-[220px] sm:bottom-[200px] md:bottom-6' 
+    : 'bottom-6'
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -188,7 +196,8 @@ export default function PBMPChatbot({ position = 'right' }: PBMPChatbotProps) {
     ))
   }
 
-  const positionClass = position === 'left' ? 'left-6' : 'right-6'
+  const positionClass = position === 'left' ? 'left-4 sm:left-6' : 'right-4 sm:right-6'
+  const bottomClass = `${bottomPosition} transition-all duration-300`
 
   return (
     <>
@@ -202,7 +211,7 @@ export default function PBMPChatbot({ position = 'right' }: PBMPChatbotProps) {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => setIsOpen(true)}
-            className={`fixed bottom-6 ${positionClass} z-40 w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 text-white shadow-lg hover:shadow-xl transition-shadow duration-300 flex items-center justify-center`}
+            className={`fixed ${bottomClass} ${positionClass} z-50 w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 text-white shadow-lg hover:shadow-xl transition-shadow duration-300 flex items-center justify-center`}
           >
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
@@ -224,7 +233,7 @@ export default function PBMPChatbot({ position = 'right' }: PBMPChatbotProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className={`fixed bottom-6 ${positionClass} z-40 w-96 max-w-[calc(100vw-3rem)] h-[600px] max-h-[90vh] bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden`}
+            className={`fixed ${bottomClass} ${positionClass} z-50 w-96 max-w-[calc(100vw-2rem)] sm:max-w-[calc(100vw-3rem)] h-[600px] max-h-[85vh] sm:max-h-[90vh] bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden`}
           >
             {/* Header */}
             <div className="p-4 bg-gradient-to-r from-purple-600 to-purple-700 text-white flex items-center justify-between">

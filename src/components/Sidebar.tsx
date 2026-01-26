@@ -86,10 +86,10 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Toggle Button - Fixed on left side */}
+      {/* Toggle Button - Fixed on left side - Hidden on mobile since header has menu button */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-6 left-6 z-[60] w-12 h-12 rounded-xl glass backdrop-blur-xl bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-colors shadow-lg"
+        className="hidden md:flex fixed top-6 left-6 z-[60] w-12 h-12 rounded-xl glass backdrop-blur-xl bg-white/10 border border-white/20 items-center justify-center text-white hover:bg-white/20 transition-colors shadow-lg"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         aria-label="Toggle menu"

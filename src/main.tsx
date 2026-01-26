@@ -4,6 +4,7 @@ import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'
 import { ComingSoonProvider } from './contexts/ComingSoonContext'
 import { ThemeProvider } from './contexts/ThemeContext'
+import { GlobalCTABarProvider } from './contexts/GlobalCTABarContext'
 import './index.css'
 
 const router = createRouter({ routeTree })
@@ -20,9 +21,11 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <ThemeProvider>
-        <ComingSoonProvider>
-          <RouterProvider router={router} />
-        </ComingSoonProvider>
+        <GlobalCTABarProvider>
+          <ComingSoonProvider>
+            <RouterProvider router={router} />
+          </ComingSoonProvider>
+        </GlobalCTABarProvider>
       </ThemeProvider>
     </StrictMode>
   )

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion'
+import { motion, AnimatePresence, useMotionValue } from 'framer-motion'
+import { useGlobalCTABar } from '../contexts/GlobalCTABarContext'
 
 // WhatsApp SVG Icon
 const WhatsAppIcon = () => (
@@ -50,14 +51,22 @@ interface FloatingWidgetProps {
 
 export const FloatingWhatsApp: React.FC<FloatingWidgetProps> = () => {
   const [isOpen, setIsOpen] = useState(false)
+  const { isVisible: isCTABarVisible } = useGlobalCTABar()
   const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '+919370239600'
+
+  // Position above GlobalCTABar when visible, otherwise normal position
+  // WhatsApp is positioned below Social Links
+  // Increased offset to ensure widgets are fully above the GlobalCTABar
+  const bottomPosition = isCTABarVisible 
+    ? 'bottom-[220px] sm:bottom-[200px] md:bottom-6' 
+    : 'bottom-6'
 
   return (
     <motion.div
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ delay: 0.5, type: 'spring', stiffness: 200 }}
-      className="fixed bottom-6 left-6 z-40"
+      className={`fixed ${bottomPosition} left-4 sm:left-6 z-50 transition-all duration-300`}
     >
       <AnimatePresence>
         {isOpen && (
@@ -65,7 +74,7 @@ export const FloatingWhatsApp: React.FC<FloatingWidgetProps> = () => {
             initial={{ opacity: 0, y: 10, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.9 }}
-            className="absolute bottom-20 left-0 glass bg-white/10 rounded-2xl p-4 w-80 shadow-2xl mb-4"
+            className="absolute bottom-16 sm:bottom-20 left-0 glass bg-white/10 rounded-2xl p-4 w-[calc(100vw-2rem)] sm:w-80 shadow-2xl mb-4"
           >
             <h3 className="font-bold text-slate-900 dark:text-white mb-3">Chat with us!</h3>
             <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
@@ -87,7 +96,7 @@ export const FloatingWhatsApp: React.FC<FloatingWidgetProps> = () => {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-green-400 to-green-600 text-white shadow-lg hover:shadow-xl transition-shadow duration-300"
+        className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-green-400 to-green-600 text-white shadow-lg hover:shadow-xl transition-shadow duration-300"
       >
         <WhatsAppIcon />
       </motion.button>
@@ -298,8 +307,16 @@ const RedditIcon = () => (
 // Social Links Component
 export const SocialLinks: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false)
+  const { isVisible: isCTABarVisible } = useGlobalCTABar()
   const x = useMotionValue(0)
   const y = useMotionValue(0)
+
+  // Position above GlobalCTABar when visible, otherwise normal position
+  // Social Links positioned ABOVE WhatsApp to avoid overlap
+  // Increased offset to ensure widgets are fully above the GlobalCTABar
+  const bottomPosition = isCTABarVisible 
+    ? 'bottom-[260px] sm:bottom-[240px] md:bottom-32' 
+    : 'bottom-32'
 
   const socialLinks = [
     { id: 'linkedin', icon: LinkedInIcon, url: 'https://www.linkedin.com/company/personalandbusinessmgmtplatform/', label: 'LinkedIn', color: 'hover:bg-blue-600' },
@@ -313,7 +330,7 @@ export const SocialLinks: React.FC = () => {
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ delay: 0.9, type: 'spring', stiffness: 200 }}
-      className="fixed bottom-24 left-6 z-40"
+      className={`fixed ${bottomPosition} left-6 z-50 transition-all duration-300`}
       drag
       dragElastic={0.2}
       dragMomentum={true}

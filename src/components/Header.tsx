@@ -116,10 +116,10 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
           ? 'bg-white/95 dark:bg-slate-900/95 border-gray-200 dark:border-gray-700'
           : 'bg-white/10 border-white/20'
           }`}>
-        <div className="w-full px-4 sm:px-6 md:px-8 py-2 sm:py-3">
-          <div className="flex items-center justify-between gap-2 sm:gap-4 md:gap-8">
+        <div className="w-full px-3 sm:px-4 md:px-8 py-2 sm:py-3">
+          <div className="flex items-center justify-between gap-1.5 sm:gap-2 md:gap-8">
               {/* Left Side: Menu Button + Logo */}
-              <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0 min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4 flex-shrink-0 min-w-0">
                 {/* Greater Than Menu Button */}
                 <motion.button
                   onClick={() => setSideMenuOpen(true)}
