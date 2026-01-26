@@ -4,10 +4,12 @@ import { Link } from '@tanstack/react-router'
 import { useComingSoon } from '../contexts/ComingSoonContext'
 import { useTheme } from '../contexts/ThemeContext'
 
-// SVG Icons - Greater than symbol for menu
-const GreaterThanIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M9 18l6-6-6-6" />
+// SVG Icons - Hamburger menu icon (3 horizontal lines)
+const HamburgerIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="3" y1="12" x2="21" y2="12" />
+    <line x1="3" y1="6" x2="21" y2="6" />
+    <line x1="3" y1="18" x2="21" y2="18" />
   </svg>
 )
 
@@ -120,21 +122,21 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
           <div className="flex items-center justify-between gap-1.5 sm:gap-2 md:gap-8">
               {/* Left Side: Menu Button + Logo */}
               <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4 flex-shrink-0 min-w-0">
-                {/* Greater Than Menu Button */}
+                {/* Hamburger Menu Button - Translucent like BCG */}
                 <motion.button
                   onClick={() => setSideMenuOpen(true)}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className={`p-1.5 sm:p-2 rounded-lg transition-colors flex-shrink-0 ${
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`p-2 sm:p-2.5 rounded-lg transition-all flex-shrink-0 backdrop-blur-sm ${
                     isScrolled
-                      ? 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+                      ? 'bg-white/80 dark:bg-slate-900/80 text-gray-900 dark:text-white hover:bg-white dark:hover:bg-slate-800 border border-gray-200/50 dark:border-gray-700/50'
                       : theme === 'dark'
-                        ? 'text-white hover:bg-white/10'
-                        : 'text-gray-900 hover:bg-gray-100'
+                        ? 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                        : 'bg-white/80 text-gray-900 hover:bg-white/90 border border-gray-200/50'
                   }`}
                   aria-label="Open menu"
                 >
-                  <GreaterThanIcon />
+                  <HamburgerIcon />
                 </motion.button>
 
                 {/* Logo */}

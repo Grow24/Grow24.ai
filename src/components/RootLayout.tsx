@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Outlet } from '@tanstack/react-router'
 import { AnimatePresence } from 'framer-motion'
-import { CalmBackground } from './CalmBackground'
 import { Header } from './Header'
 import { FloatingWhatsApp, SocialLinks } from './FloatingWidgets'
 import PBMPChatbot from './PBMPChatbot'
@@ -13,9 +12,9 @@ export const RootLayout: React.FC = () => {
   const [megaMenuOpen, setMegaMenuOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white">
-      {/* 3D Background */}
-      <CalmBackground />
+    <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white relative">
+      {/* Simple Gradient Background */}
+      <div className="fixed inset-0 -z-10 bg-gradient-to-br from-emerald-50/30 via-transparent to-cyan-50/20 dark:from-emerald-950/10 dark:via-transparent dark:to-cyan-950/10 pointer-events-none" />
 
       {/* Sidebar */}
       <Sidebar />

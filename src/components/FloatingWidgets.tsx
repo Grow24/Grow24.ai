@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence, useMotionValue } from 'framer-motion'
 import { useGlobalCTABar } from '../contexts/GlobalCTABarContext'
 
@@ -55,7 +55,7 @@ export const FloatingWhatsApp: React.FC<FloatingWidgetProps> = () => {
   const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '+919370239600'
 
   // Position above GlobalCTABar when visible, otherwise normal position
-  // WhatsApp is positioned below Social Links
+  // WhatsApp is positioned BELOW Social Links (social is at bottom-32, WhatsApp at bottom-6)
   // Increased offset to ensure widgets are fully above the GlobalCTABar
   const bottomPosition = isCTABarVisible 
     ? 'bottom-[220px] sm:bottom-[200px] md:bottom-6' 
@@ -311,9 +311,16 @@ export const SocialLinks: React.FC = () => {
   const x = useMotionValue(0)
   const y = useMotionValue(0)
 
+  // Reset position when CTA bar visibility changes to ensure alignment
+  useEffect(() => {
+    x.set(0)
+    y.set(0)
+  }, [isCTABarVisible, x, y])
+
   // Position above GlobalCTABar when visible, otherwise normal position
   // Social Links positioned ABOVE WhatsApp to avoid overlap
   // Increased offset to ensure widgets are fully above the GlobalCTABar
+  // Social media should be above WhatsApp: WhatsApp is at bottom-6, so social should be higher
   const bottomPosition = isCTABarVisible 
     ? 'bottom-[260px] sm:bottom-[240px] md:bottom-32' 
     : 'bottom-32'
@@ -330,7 +337,7 @@ export const SocialLinks: React.FC = () => {
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ delay: 0.9, type: 'spring', stiffness: 200 }}
-      className={`fixed ${bottomPosition} left-6 z-50 transition-all duration-300`}
+      className={`fixed ${bottomPosition} left-4 sm:left-6 z-50 transition-all duration-300`}
       drag
       dragElastic={0.2}
       dragMomentum={true}
@@ -371,9 +378,11 @@ export const SocialLinks: React.FC = () => {
       </AnimatePresence>
 
       <motion.button
+        onClick={() => setIsExpanded(!isExpanded)}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-slate-600 to-slate-800 text-white shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-grab active:cursor-grabbing"
+        className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-slate-600 to-slate-800 text-white shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+        aria-label="Toggle social media links"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M18 8a6 6 0 0 1 .5 9.5" strokeLinecap="round" strokeLinejoin="round" />

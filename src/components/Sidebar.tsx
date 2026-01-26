@@ -179,13 +179,13 @@ export default function Sidebar() {
                             href={item.href}
                             onClick={() => setIsOpen(false)}
                             className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden ${isActive
-                                ? 'text-white bg-emerald-500/20 border border-emerald-500/30'
-                                : 'text-slate-300 hover:text-white hover:bg-white/10'
+                              ? 'text-white bg-emerald-500/20 border border-emerald-500/30'
+                              : 'text-slate-300 hover:text-white hover:bg-white/10'
                               }`}
                           >
                             <div className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 ${isActive
-                                ? 'bg-emerald-500/30 scale-110'
-                                : 'bg-white/5 group-hover:bg-emerald-500/20 group-hover:scale-110'
+                              ? 'bg-emerald-500/30 scale-110'
+                              : 'bg-white/5 group-hover:bg-emerald-500/20 group-hover:scale-110'
                               }`}>
                               <item.icon />
                             </div>
@@ -204,13 +204,13 @@ export default function Sidebar() {
                             to={item.href}
                             onClick={() => setIsOpen(false)}
                             className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden ${isActive
-                                ? 'text-white bg-emerald-500/20 border border-emerald-500/30'
-                                : 'text-slate-300 hover:text-white hover:bg-white/10'
+                              ? 'text-white bg-emerald-500/20 border border-emerald-500/30'
+                              : 'text-slate-300 hover:text-white hover:bg-white/10'
                               }`}
                           >
                             <div className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 ${isActive
-                                ? 'bg-emerald-500/30 scale-110'
-                                : 'bg-white/5 group-hover:bg-emerald-500/20 group-hover:scale-110'
+                              ? 'bg-emerald-500/30 scale-110'
+                              : 'bg-white/5 group-hover:bg-emerald-500/20 group-hover:scale-110'
                               }`}>
                               <item.icon />
                             </div>
