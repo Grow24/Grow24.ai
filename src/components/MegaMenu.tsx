@@ -69,21 +69,19 @@ export default function MegaMenu({ isOpen, onClose }: MegaMenuProps) {
           <div className="flex items-center justify-center gap-2 p-6 border-b border-gray-200 dark:border-gray-700">
             <button
               onClick={() => setActiveTab('what')}
-              className={`px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 ${
-                activeTab === 'what'
+              className={`px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 ${activeTab === 'what'
                   ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/30'
                   : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
-              }`}
+                }`}
             >
               Our offerings
             </button>
             <button
               onClick={() => setActiveTab('how')}
-              className={`px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 ${
-                activeTab === 'how'
+              className={`px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 ${activeTab === 'how'
                   ? 'bg-orange-600 text-white shadow-lg shadow-orange-900/30'
                   : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
-              }`}
+                }`}
             >
               How it Works
             </button>

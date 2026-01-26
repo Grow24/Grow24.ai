@@ -193,18 +193,18 @@ function WhatWeOfferPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="glass backdrop-blur-xl bg-white/10 dark:bg-slate-800/50 rounded-2xl shadow-xl p-8 max-w-5xl mx-auto border border-white/20 dark:border-slate-700/50"
+                className="glass backdrop-blur-xl bg-white/10 dark:bg-slate-800/50 rounded-2xl shadow-xl p-4 sm:p-6 md:p-8 max-w-5xl mx-auto border border-white/20 dark:border-slate-700/50"
               >
-                <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 text-center">
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2 text-center">
                   Decision Science Framework
                 </h3>
-                <p className="text-center text-gray-600 dark:text-gray-400 mb-8">
+                <p className="text-center text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4 sm:mb-6 md:mb-8 px-2">
                   Direction of value: From raw data to applied wisdom
                 </p>
                 
-                <div className="relative flex gap-6">
-                  {/* Arrow on the left */}
-                  <div className="flex-shrink-0 flex flex-col items-center relative" style={{ width: '120px' }}>
+                <div className="relative flex flex-col md:flex-row gap-4 md:gap-6">
+                  {/* Arrow on the left - Hide on mobile, show on desktop */}
+                  <div className="hidden md:flex flex-shrink-0 flex-col items-center relative" style={{ width: '120px' }}>
                     {/* Direction of Value Label above arrow */}
                     <div className="mb-2">
                       <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -225,61 +225,63 @@ function WhatWeOfferPage() {
                     </div>
                   </div>
 
-                  {/* Table Container */}
+                  {/* Table Container - Make scrollable on mobile */}
                   <div className="flex-1 border-2 border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden bg-white dark:bg-slate-800">
-                    <table className="w-full border-collapse">
-                      <thead>
-                        <tr className="bg-gray-50 dark:bg-slate-700/50">
-                          <th className="border-b-2 border-gray-300 dark:border-gray-600 px-4 py-3 text-left font-bold text-amber-700 dark:text-amber-400" style={{ width: '25%' }}>
-                            WiKID Layer
-                          </th>
-                          <th className="border-b-2 border-gray-300 dark:border-gray-600 px-4 py-3 text-left font-bold text-amber-700 dark:text-amber-400">
-                            Description
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {/* Wisdom Row */}
-                        <tr className="border-b border-gray-200 dark:border-gray-700">
-                          <td className="px-4 py-4 align-top">
-                            <span className="font-bold text-gray-900 dark:text-white">Wisdom</span>
-                          </td>
-                          <td className="px-4 py-4 align-top text-gray-700 dark:text-gray-300">
-                            We start with <strong>Wisdom</strong> because it is <strong>Knowledge applied over time</strong>—the accumulated learnings from past decisions, outcomes, and calibrations. It tells us <strong>what's working, what's not, why</strong>, and guides <strong>better choices going forward</strong> (e.g., which goals are realistic, which strategies succeed, which execution patterns fail).
-                          </td>
-                        </tr>
-                        
-                        {/* Knowledge Row */}
-                        <tr className="border-b border-gray-200 dark:border-gray-700">
-                          <td className="px-4 py-4 align-top">
-                            <span className="font-bold text-gray-900 dark:text-white">Knowledge</span>
-                          </td>
-                          <td className="px-4 py-4 align-top text-gray-700 dark:text-gray-300">
-                            <strong>Knowledge</strong> is the foundation for creating Wisdom. It includes <strong>best practices, tools, techniques, frameworks, templates, skills, and competencies</strong>, coming from: (i) standard <strong>Bodies of Knowledge</strong> (e.g., PMBOK, BABOK, etc.), and (ii) <strong>organization-embedded knowledge</strong>—patterns learned through experience, case histories, playbooks, and domain expertise built while operating in that area.
-                          </td>
-                        </tr>
-                        
-                        {/* Information Row */}
-                        <tr className="border-b border-gray-200 dark:border-gray-700">
-                          <td className="px-4 py-4 align-top">
-                            <span className="font-bold text-gray-900 dark:text-white">Information</span>
-                          </td>
-                          <td className="px-4 py-4 align-top text-gray-700 dark:text-gray-300">
-                            <strong>Information</strong> is sanitized, structured, and consumable data (cleaned, standardized, contextualized) that can be reliably used to form <strong>insights, comparisons, and learning</strong>—so it becomes input for building Knowledge (e.g., curated KPI definitions, validated reports, standardized dashboards).
-                          </td>
-                        </tr>
-                        
-                        {/* Data Row */}
-                        <tr>
-                          <td className="px-4 py-4 align-top">
-                            <span className="font-bold text-gray-900 dark:text-white">Data</span>
-                          </td>
-                          <td className="px-4 py-4 align-top text-gray-700 dark:text-gray-300">
-                            <strong>Data</strong> is the raw signals collected from systems, markets, and people (transactions, logs, events, surveys, metrics, observations). It is unprocessed and noisy on its own, but it should ultimately be transformed into <strong>Information → Knowledge → Wisdom</strong>.
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                    <div className="overflow-x-auto">
+                      <table className="w-full border-collapse min-w-[600px]">
+                        <thead>
+                          <tr className="bg-gray-50 dark:bg-slate-700/50">
+                            <th className="border-b-2 border-gray-300 dark:border-gray-600 px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-amber-700 dark:text-amber-400 text-xs sm:text-sm" style={{ width: '25%' }}>
+                              WiKID Layer
+                            </th>
+                            <th className="border-b-2 border-gray-300 dark:border-gray-600 px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-amber-700 dark:text-amber-400 text-xs sm:text-sm">
+                              Description
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {/* Wisdom Row */}
+                          <tr className="border-b border-gray-200 dark:border-gray-700">
+                            <td className="px-3 sm:px-4 py-3 sm:py-4 align-top">
+                              <span className="font-bold text-gray-900 dark:text-white text-sm">Wisdom</span>
+                            </td>
+                            <td className="px-3 sm:px-4 py-3 sm:py-4 align-top text-gray-700 dark:text-gray-300 text-xs sm:text-sm">
+                              We start with <strong>Wisdom</strong> because it is <strong>Knowledge applied over time</strong>—the accumulated learnings from past decisions, outcomes, and calibrations. It tells us <strong>what's working, what's not, why</strong>, and guides <strong>better choices going forward</strong> (e.g., which goals are realistic, which strategies succeed, which execution patterns fail).
+                            </td>
+                          </tr>
+                          
+                          {/* Knowledge Row */}
+                          <tr className="border-b border-gray-200 dark:border-gray-700">
+                            <td className="px-3 sm:px-4 py-3 sm:py-4 align-top">
+                              <span className="font-bold text-gray-900 dark:text-white text-sm">Knowledge</span>
+                            </td>
+                            <td className="px-3 sm:px-4 py-3 sm:py-4 align-top text-gray-700 dark:text-gray-300 text-xs sm:text-sm">
+                              <strong>Knowledge</strong> is the foundation for creating Wisdom. It includes <strong>best practices, tools, techniques, frameworks, templates, skills, and competencies</strong>, coming from: (i) standard <strong>Bodies of Knowledge</strong> (e.g., PMBOK, BABOK, etc.), and (ii) <strong>organization-embedded knowledge</strong>—patterns learned through experience, case histories, playbooks, and domain expertise built while operating in that area.
+                            </td>
+                          </tr>
+                          
+                          {/* Information Row */}
+                          <tr className="border-b border-gray-200 dark:border-gray-700">
+                            <td className="px-3 sm:px-4 py-3 sm:py-4 align-top">
+                              <span className="font-bold text-gray-900 dark:text-white text-sm">Information</span>
+                            </td>
+                            <td className="px-3 sm:px-4 py-3 sm:py-4 align-top text-gray-700 dark:text-gray-300 text-xs sm:text-sm">
+                              <strong>Information</strong> is sanitized, structured, and consumable data (cleaned, standardized, contextualized) that can be reliably used to form <strong>insights, comparisons, and learning</strong>—so it becomes input for building Knowledge (e.g., curated KPI definitions, validated reports, standardized dashboards).
+                            </td>
+                          </tr>
+                          
+                          {/* Data Row */}
+                          <tr>
+                            <td className="px-3 sm:px-4 py-3 sm:py-4 align-top">
+                              <span className="font-bold text-gray-900 dark:text-white text-sm">Data</span>
+                            </td>
+                            <td className="px-3 sm:px-4 py-3 sm:py-4 align-top text-gray-700 dark:text-gray-300 text-xs sm:text-sm">
+                              <strong>Data</strong> is the raw signals collected from systems, markets, and people (transactions, logs, events, surveys, metrics, observations). It is unprocessed and noisy on its own, but it should ultimately be transformed into <strong>Information → Knowledge → Wisdom</strong>.
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </motion.div>

@@ -116,16 +116,16 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
           ? 'bg-white/95 dark:bg-slate-900/95 border-gray-200 dark:border-gray-700'
           : 'bg-white/10 border-white/20'
           }`}>
-        <div className="w-full px-8 py-3">
-          <div className="flex items-center justify-between gap-8">
+        <div className="w-full px-4 sm:px-6 md:px-8 py-2 sm:py-3">
+          <div className="flex items-center justify-between gap-2 sm:gap-4 md:gap-8">
               {/* Left Side: Menu Button + Logo */}
-              <div className="flex items-center gap-4 flex-shrink-0">
+              <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0 min-w-0">
                 {/* Greater Than Menu Button */}
                 <motion.button
                   onClick={() => setSideMenuOpen(true)}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  className={`p-2 rounded-lg transition-colors ${
+                  className={`p-1.5 sm:p-2 rounded-lg transition-colors flex-shrink-0 ${
                     isScrolled
                       ? 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
                       : theme === 'dark'
@@ -143,27 +143,28 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                   onClick={() => {
                     window.scrollTo({ top: 0, behavior: 'smooth' })
                   }}
-                  className="flex items-center hover:opacity-80 transition-opacity"
+                  className="flex items-center hover:opacity-80 transition-opacity min-w-0"
                 >
               <img 
                     src="/grow.svg"
                 alt="Grow24.ai Logo" 
-                    className="h-16 w-auto object-cover"
+                    className="h-8 sm:h-12 md:h-16 w-auto object-cover"
                 style={{ display: 'block' }}
               />
                     </Link>
                 </div>
             
               {/* Right Side: Search + Auth */}
-              <div className="flex items-center gap-3 flex-shrink-0">
-              {/* Get a Demo - Primary */}
+              <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 flex-shrink-0">
+              {/* Get a Demo - Primary - Hide text on mobile, show icon only */}
               <motion.button
                   onClick={() => showComingSoon('get-demo', 'Get a Demo', 'Enter your details to schedule a personalized demo and learn how Grow24.ai can transform your growth journey.')}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="px-5 py-2.5 bg-emerald-600/90 hover:bg-emerald-600 text-white text-sm font-semibold rounded-lg transition-all duration-200 shadow-lg shadow-emerald-900/20"
+                className="px-2 sm:px-3 md:px-5 py-1.5 sm:py-2 md:py-2.5 bg-emerald-600/90 hover:bg-emerald-600 text-white text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 shadow-lg shadow-emerald-900/20 whitespace-nowrap"
               >
-                Get a Demo
+                <span className="hidden sm:inline">Get a Demo</span>
+                <span className="sm:hidden">Demo</span>
               </motion.button>
               
               {/* Theme Toggle */}
@@ -174,7 +175,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className={`p-2.5 rounded-lg transition-colors ${
+                className={`p-1.5 sm:p-2 md:p-2.5 rounded-lg transition-colors flex-shrink-0 ${
                   isScrolled
                     ? 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
                     : theme === 'dark'
@@ -192,6 +193,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                       animate={{ opacity: 1, rotate: 0 }}
                       exit={{ opacity: 0, rotate: 90 }}
                       transition={{ duration: 0.2 }}
+                      className="w-4 h-4 sm:w-5 sm:h-5"
                     >
                       <SunIcon />
                     </motion.div>
@@ -202,6 +204,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                       animate={{ opacity: 1, rotate: 0 }}
                       exit={{ opacity: 0, rotate: -90 }}
                       transition={{ duration: 0.2 }}
+                      className="w-4 h-4 sm:w-5 sm:h-5"
                     >
                       <MoonIcon />
                     </motion.div>
@@ -209,8 +212,8 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                 </AnimatePresence>
               </motion.button>
 
-              {/* Search */}
-              <div className="relative">
+              {/* Search - Hide on mobile */}
+              <div className="relative hidden md:block">
                 <motion.button
                   onClick={() => setSearchOpen(!searchOpen)}
                   whileHover={{ scale: 1.05 }}

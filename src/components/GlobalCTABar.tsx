@@ -64,39 +64,51 @@ export default function GlobalCTABar() {
         exit={{ y: 100, opacity: 0 }}
         className="fixed bottom-0 left-0 right-0 z-30 bg-gradient-to-r from-emerald-600 via-emerald-700 to-emerald-800 shadow-2xl"
       >
-        <div className="max-w-7xl mx-auto px-8 py-4 flex items-center justify-between gap-6 relative">
-          {/* Icon + Message */}
-          <div className="flex items-center gap-4">
-            <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white">
-              <LightningIcon />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-3 sm:py-4 relative">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
+            {/* Icon + Message */}
+            <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
+              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white">
+                <LightningIcon />
+              </div>
+              <div className="flex-1 sm:flex-none min-w-0">
+                <h3 className="text-white font-bold text-base sm:text-lg">Harness the Power of AI</h3>
+                <p className="text-emerald-100 text-xs sm:text-sm">
+                  Join 10,000+ professionals transforming their growth journey
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-white font-bold text-lg">Harness the Power of AI</h3>
-              <p className="text-emerald-100 text-sm">
-                Join 10,000+ professionals transforming their growth journey
-              </p>
-            </div>
-          </div>
 
-          {/* Email Input + CTA */}
-          <form onSubmit={handleSubscribe} className="flex items-center gap-3">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              required
-              disabled={isSubmitting}
-              className="px-4 py-2.5 rounded-lg bg-white/10 backdrop-blur-sm border border-white/30 text-white placeholder-white/60 outline-none focus:ring-2 focus:ring-white/50 transition-all w-64 disabled:opacity-50"
-            />
+            {/* Email Input + CTA */}
+            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                required
+                disabled={isSubmitting}
+                className="flex-1 sm:flex-none px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg bg-white/10 backdrop-blur-sm border border-white/30 text-white placeholder-white/60 outline-none focus:ring-2 focus:ring-white/50 transition-all sm:w-64 disabled:opacity-50 text-sm sm:text-base"
+              />
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-4 sm:px-6 py-2 sm:py-2.5 bg-white text-emerald-600 font-semibold rounded-lg hover:bg-emerald-50 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+              >
+                {isSubmitting ? 'Submitting...' : isSuccess ? '✓ Subscribed!' : 'Subscribe Free'}
+              </button>
+            </form>
+
+            {/* Close Button */}
             <button
-              type="submit"
+              onClick={() => setIsVisible(false)}
+              className="absolute top-2 right-2 sm:relative sm:top-auto sm:right-auto flex-shrink-0 p-2 hover:bg-white/10 rounded-lg transition-colors text-white"
+              aria-label="Close"
               disabled={isSubmitting}
-              className="px-6 py-2.5 bg-white text-emerald-600 font-semibold rounded-lg hover:bg-emerald-50 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Submitting...' : isSuccess ? '✓ Subscribed!' : 'Subscribe Free'}
+              <CloseIcon />
             </button>
-          </form>
+          </div>
 
           {/* Message Display */}
           {message && (
@@ -107,16 +119,6 @@ export default function GlobalCTABar() {
               {message}
             </div>
           )}
-
-          {/* Close Button */}
-          <button
-            onClick={() => setIsVisible(false)}
-            className="flex-shrink-0 p-2 hover:bg-white/10 rounded-lg transition-colors text-white"
-            aria-label="Close"
-            disabled={isSubmitting}
-          >
-            <CloseIcon />
-          </button>
         </div>
       </motion.div>
     </AnimatePresence>

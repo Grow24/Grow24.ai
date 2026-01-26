@@ -151,15 +151,15 @@ export default function SolutionsMatrix() {
 
   return (
     <div className="w-full max-w-7xl mx-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
         {/* Left: 5-Column Solution Grid */}
         <div className="lg:col-span-2">
-          <div className="grid grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3 md:gap-4 overflow-x-auto">
             {categories.map((category) => (
               <div key={category} className="space-y-4">
                 {/* Category Header */}
-                <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 text-white p-4 rounded-xl text-center shadow-lg">
-                  <h3 className="text-sm font-bold uppercase tracking-wide">{category}</h3>
+                <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 text-white p-2 sm:p-3 md:p-4 rounded-lg sm:rounded-xl text-center shadow-lg">
+                  <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wide">{category}</h3>
                 </div>
 
                 {/* Solutions for this category */}
@@ -174,7 +174,7 @@ export default function SolutionsMatrix() {
                       whileHover={{ scale: 1.05, y: -4 }}
                       whileTap={{ scale: 0.98 }}
                       className={`
-                        p-4 rounded-xl cursor-pointer transition-all duration-300
+                        p-2 sm:p-3 md:p-4 rounded-lg sm:rounded-xl cursor-pointer transition-all duration-300
                         bg-white dark:bg-slate-800 
                         border-2 shadow-md hover:shadow-xl
                         ${
@@ -186,11 +186,11 @@ export default function SolutionsMatrix() {
                         }
                       `}
                     >
-                      <div className="flex flex-col items-center text-center space-y-2">
-                        <div className="text-emerald-600 dark:text-emerald-400">
+                      <div className="flex flex-col items-center text-center space-y-1 sm:space-y-2">
+                        <div className="text-emerald-600 dark:text-emerald-400 w-5 h-5 sm:w-6 sm:h-6">
                           {solution.icon}
                         </div>
-                        <h4 className="text-xs font-semibold text-gray-900 dark:text-white leading-tight">
+                        <h4 className="text-[10px] sm:text-xs font-semibold text-gray-900 dark:text-white leading-tight line-clamp-2">
                           {solution.title}
                         </h4>
                       </div>
