@@ -304,9 +304,24 @@ const RedditIcon = () => (
   </svg>
 )
 
+// Close Icon
+const CloseIconWidget = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+)
+
 // Social Links Component
 export const SocialLinks: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false)
+  const [isClosed, setIsClosed] = useState(() => {
+    // Check localStorage to see if widget was closed
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('socialWidgetClosed') === 'true'
+    }
+    return false
+  })
   const { isVisible: isCTABarVisible } = useGlobalCTABar()
   const x = useMotionValue(0)
   const y = useMotionValue(0)
@@ -317,10 +332,15 @@ export const SocialLinks: React.FC = () => {
     y.set(0)
   }, [isCTABarVisible, x, y])
 
+  // Handle closing the widget completely
+  const handleCloseWidget = () => {
+    setIsClosed(true)
+    setIsExpanded(false)
+    localStorage.setItem('socialWidgetClosed', 'true')
+  }
+
   // Position above GlobalCTABar when visible, otherwise normal position
   // Social Links positioned ABOVE WhatsApp to avoid overlap
-  // Increased offset to ensure widgets are fully above the GlobalCTABar
-  // Social media should be above WhatsApp: WhatsApp is at bottom-6, so social should be higher
   const bottomPosition = isCTABarVisible 
     ? 'bottom-[260px] sm:bottom-[240px] md:bottom-32' 
     : 'bottom-32'
@@ -332,6 +352,11 @@ export const SocialLinks: React.FC = () => {
     { id: 'reddit', icon: RedditIcon, url: 'https://www.reddit.com/user/SandeepSethDS/', label: 'Reddit', color: 'hover:bg-orange-600' },
   ]
 
+  // Don't render if widget is closed
+  if (isClosed) {
+    return null
+  }
+
   return (
     <motion.div
       initial={{ scale: 0, opacity: 0 }}
@@ -342,37 +367,53 @@ export const SocialLinks: React.FC = () => {
       dragElastic={0.2}
       dragMomentum={true}
       dragTransition={{ power: 0.3, restDelta: 10 }}
-      onHoverStart={() => setIsExpanded(true)}
-      onHoverEnd={() => setIsExpanded(false)}
       whileDrag={{ cursor: 'grabbing' }}
       style={{ x, y }}
     >
       <AnimatePresence>
         {isExpanded && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            className="absolute bottom-16 right-0 flex flex-col gap-2 mb-2"
+            initial={{ opacity: 0, x: -10, scale: 0.95 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: -10, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="absolute bottom-16 left-12 sm:left-14 flex flex-col gap-2 mb-2 p-4 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700"
           >
-            {socialLinks.map((social, idx) => (
-              <motion.a
-                key={social.id}
-                href={social.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ delay: idx * 0.05 }}
-                whileHover={{ scale: 1.05, x: -5 }}
+            {/* Header with Close Button */}
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Follow us</h3>
+              <motion.button
+                onClick={handleCloseWidget}
+                whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                className={`flex items-center gap-3 px-4 py-2 rounded-full bg-white dark:bg-slate-800 shadow-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 ${social.color} dark:hover:bg-opacity-90 transition-all duration-200 group`}
+                className="flex items-center justify-center p-1 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-all duration-200"
+                aria-label="Close social links widget"
               >
-                <social.icon />
-                <span className="text-sm font-medium whitespace-nowrap">{social.label}</span>
-              </motion.a>
-            ))}
+                <CloseIconWidget />
+              </motion.button>
+            </div>
+
+            {/* Social Links */}
+            <div className="flex flex-col gap-2">
+              {socialLinks.map((social, idx) => (
+                <motion.a
+                  key={social.id}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ delay: idx * 0.05 }}
+                  whileHover={{ scale: 1.05, x: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`flex items-center gap-3 px-4 py-2 rounded-xl bg-gray-100 dark:bg-slate-700 shadow-md border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 ${social.color} dark:hover:bg-opacity-70 transition-all duration-200 group`}
+                >
+                  <social.icon />
+                  <span className="text-sm font-medium whitespace-nowrap">{social.label}</span>
+                </motion.a>
+              ))}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

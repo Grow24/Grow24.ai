@@ -555,9 +555,9 @@ export default function SolutionDetailPage() {
     const colors = getCategoryColors(solution.category)
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-gray-100 relative z-50">
+        <div className="min-h-screen bg-white dark:bg-slate-950 relative z-50">
             {/* Navigation Bar */}
-            <div className={`${colors.primary} text-white shadow-sm`}>
+            <div className="bg-slate-800 dark:bg-slate-900 text-white shadow-sm border-b border-slate-700">
                 <div className="max-w-7xl mx-auto px-8 py-3">
                     <nav className="flex items-center gap-8 overflow-x-auto">
                         <a href="#overview" className="font-medium text-white hover:text-white/80 text-sm transition-colors whitespace-nowrap">Overview</a>
@@ -571,18 +571,18 @@ export default function SolutionDetailPage() {
             </div>
 
             {/* Hero Section */}
-            <section id="overview" className={`${colors.headerBg} py-12 px-8`}>
+            <section id="overview" className="bg-gray-50 dark:bg-slate-900 py-12 px-8">
                 <div className="max-w-7xl mx-auto">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2">
                             <motion.h1
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className={`text-4xl lg:text-5xl font-bold ${colors.primaryText} mb-4`}
+                                className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4"
                             >
                                 {solution.title}
                             </motion.h1>
-                            <p className="text-lg lg:text-xl text-gray-700 mb-6 leading-relaxed">
+                            <p className="text-lg lg:text-xl text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">
                                 {solution.heroDescription}
                             </p>
                             <div className="flex flex-wrap gap-3">
@@ -590,7 +590,7 @@ export default function SolutionDetailPage() {
                                     onClick={() => showComingSoon('request-demo', 'Request Demo', 'Enter your details to request a personalized demo for this solution.')}
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
-                                    className={`${colors.primary} text-white px-6 py-2.5 rounded-lg font-semibold text-sm ${colors.primaryHover} transition-colors shadow-md`}
+                                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-lg font-semibold text-sm transition-colors shadow-md"
                                 >
                                     Request Demo
                                 </motion.button>
@@ -598,16 +598,16 @@ export default function SolutionDetailPage() {
                                     onClick={() => showComingSoon('download-guide', 'Download Guide', 'Enter your email to download this guide and access exclusive resources.')}
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
-                                    className="bg-white border-2 border-gray-300 text-gray-700 px-6 py-2.5 rounded-lg font-semibold text-sm hover:bg-gray-50 transition-colors shadow-sm"
+                                    className="bg-white dark:bg-slate-800 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 px-6 py-2.5 rounded-lg font-semibold text-sm hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors shadow-sm"
                                 >
                                     Download Guide
                                 </motion.button>
                             </div>
                         </div>
                         <div className="space-y-4">
-                            <div className="bg-white rounded-lg shadow-lg p-5 border border-gray-200">
-                                <h3 className="font-bold text-gray-900 mb-3 text-sm">Solution Details</h3>
-                                <ul className="space-y-2 text-xs text-gray-600">
+                            <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-5 border border-gray-200 dark:border-gray-700">
+                                <h3 className="font-bold text-gray-900 dark:text-white mb-3 text-sm">Solution Details</h3>
+                                <ul className="space-y-2 text-xs text-gray-600 dark:text-gray-300">
                                     {solution.overviewCards.slice(0, 3).map((card, idx) => (
                                         <li key={idx} className="flex items-start gap-2">
                                             <span className="text-emerald-500 mt-0.5 flex-shrink-0">✓</span>
@@ -616,9 +616,9 @@ export default function SolutionDetailPage() {
                                     ))}
                                 </ul>
                             </div>
-                            <div className="bg-white rounded-lg shadow-lg p-5 border border-gray-200">
-                                <h3 className="font-bold text-gray-900 mb-3 text-sm">Core Features</h3>
-                                <ul className="space-y-2 text-xs text-gray-600">
+                            <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-5 border border-gray-200 dark:border-gray-700">
+                                <h3 className="font-bold text-gray-900 dark:text-white mb-3 text-sm">Core Features</h3>
+                                <ul className="space-y-2 text-xs text-gray-600 dark:text-gray-300">
                                     {solution.capabilities.slice(0, 3).map((cap, idx) => (
                                         <li key={idx} className="flex items-start gap-2">
                                             <span className="text-emerald-500 mt-0.5 flex-shrink-0">✓</span>
@@ -636,7 +636,7 @@ export default function SolutionDetailPage() {
             {/* Overview Section */}
             <section id="overview" className="py-16 px-8">
                 <div className="max-w-7xl mx-auto">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-8">Overview</h2>
+                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Overview</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {solution.overviewCards.map((card, idx) => (
                             <motion.div
@@ -644,13 +644,13 @@ export default function SolutionDetailPage() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: idx * 0.1 }}
-                                className="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow"
+                                className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow"
                             >
-                                <div className={`${colors.primaryText} mb-4`}>
+                                <div className="text-gray-700 dark:text-gray-300 mb-4">
                                     {card.icon}
                                 </div>
-                                <h3 className="text-xl font-bold text-gray-900 mb-2">{card.title}</h3>
-                                <p className="text-gray-600">{card.description}</p>
+                                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{card.title}</h3>
+                                <p className="text-gray-600 dark:text-gray-300">{card.description}</p>
                             </motion.div>
                         ))}
                     </div>
@@ -658,9 +658,9 @@ export default function SolutionDetailPage() {
             </section>
 
             {/* Capabilities Section */}
-            <section id="capabilities" className="py-16 px-8 bg-white">
+            <section id="capabilities" className="py-16 px-8 bg-white dark:bg-slate-900">
                 <div className="max-w-7xl mx-auto">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-8">Capabilities</h2>
+                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Capabilities</h2>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                         {solution.capabilities.map((cap, idx) => (
                             <motion.div
@@ -668,7 +668,7 @@ export default function SolutionDetailPage() {
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: idx * 0.05 }}
-                                className={`p-4 rounded-lg ${idx === 0 ? `${colors.primary} text-white` : 'bg-gray-100 text-gray-900'
+                                className={`p-4 rounded-lg ${idx === 0 ? 'bg-emerald-600 text-white' : 'bg-gray-100 dark:bg-slate-700 text-gray-900 dark:text-white'
                                     }`}
                             >
                                 <div className="font-bold text-sm mb-2">{cap.id}</div>
@@ -682,31 +682,31 @@ export default function SolutionDetailPage() {
             {/* Templates & Outputs Section */}
             <section id="templates" className="py-16 px-8 bg-gray-50">
                 <div className="max-w-7xl mx-auto">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-8">Templates & Outputs</h2>
+                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Templates & Outputs</h2>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2 space-y-4">
                             {solution.templates.map((template) => (
-                                <div key={template.id} className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                                <div key={template.id} className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
                                     <div className="flex items-start gap-4">
                                         <div className={`${colors.primary} text-white px-3 py-1 rounded font-bold text-sm`}>
                                             {template.id}
                                         </div>
                                         <div className="flex-1">
-                                            <h3 className="font-bold text-gray-900 mb-2">{template.title}</h3>
-                                            <p className="text-sm text-gray-600">{template.description}</p>
+                                            <h3 className="font-bold text-gray-900 dark:text-white mb-2">{template.title}</h3>
+                                            <p className="text-sm text-gray-600 dark:text-gray-300">{template.description}</p>
                                         </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                        <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
+                        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
                             <div className="text-center mb-4">
                                 <div className={`${colors.primary} text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold`}>
                                     0%
                                 </div>
-                                <h3 className="font-bold text-gray-900 mb-2">Solution Summary</h3>
+                                <h3 className="font-bold text-gray-900 dark:text-white mb-2">Solution Summary</h3>
                             </div>
-                            <p className="text-sm text-gray-600 mb-4 text-center">
+                            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 text-center">
                                 {solution.description}
                             </p>
                             <button
@@ -721,16 +721,16 @@ export default function SolutionDetailPage() {
             </section>
 
             {/* CTA Section */}
-            <section className={`${colors.headerBg} py-16 px-8`}>
+            <section className="bg-gray-50 dark:bg-slate-900 py-16 px-8">
                 <div className="max-w-4xl mx-auto text-center">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-4">{solution.ctaMessage}</h2>
-                    <p className="text-gray-600 mb-8">{solution.ctaSubtext}</p>
+                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">{solution.ctaMessage}</h2>
+                    <p className="text-gray-600 dark:text-gray-300 mb-8">{solution.ctaSubtext}</p>
                     <div className="flex gap-4 justify-center">
                         <motion.button
                             onClick={() => showComingSoon('cta-request-demo', 'Request Demo', 'Enter your details to request a personalized demo.')}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className={`${colors.primary} ${colors.primaryHover} text-white px-8 py-3 rounded-lg font-semibold transition-colors`}
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
                         >
                             Request Demo
                         </motion.button>
@@ -738,7 +738,7 @@ export default function SolutionDetailPage() {
                             onClick={() => showComingSoon('download-playbook', 'Download Playbook', 'Enter your email to download the playbook for this solution.')}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="bg-white border-2 border-gray-300 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+                            className="bg-white dark:bg-slate-800 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                         >
                             Download Playbook
                         </motion.button>

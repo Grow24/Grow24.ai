@@ -248,12 +248,12 @@ export const ResourceHub: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-20">
+    <div className="min-h-screen py-20 pt-32">
       <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">Resource Hub</h1>
-          <p className="text-xl text-slate-300 mb-8">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2">Resource Hub</h1>
+          <p className="text-xl text-gray-600 dark:text-slate-300 mb-8">
             Explore our comprehensive library of resources tailored to your needs
           </p>
         </motion.div>

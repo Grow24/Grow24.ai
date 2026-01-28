@@ -1,6 +1,8 @@
 interface LeadData {
   email: string
   name?: string
+  designation?: string
+  phone?: string
   source?: string // e.g., 'cta-bar', 'get-demo', 'start-free-trial'
   date?: string // Date in YYYY-MM-DD format
   time?: string // Time in HH:MM am/pm format

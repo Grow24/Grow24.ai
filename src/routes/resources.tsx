@@ -7,13 +7,8 @@ export const Route = createFileRoute('/resources')({
 
 function ResourcesPage() {
   return (
-    <div className="min-h-screen pt-24 pb-16">
-      <div className="w-full px-8">
-        <h1 className="text-4xl md:text-5xl font-bold text-center mb-12 text-gradient">
-          Resource Hub
-        </h1>
-        <ResourceHub />
-      </div>
+    <div className="min-h-screen">
+      <ResourceHub />
     </div>
   )
 }

@@ -370,11 +370,11 @@ export default function SolutionsMatrix3Panel() {
     }
 
     return (
-        <div className="w-full min-h-screen pt-20 sm:pt-24 pb-12 sm:pb-16 px-2 sm:px-4 bg-gray-50 dark:bg-slate-900">
+        <div className="w-full min-h-screen pt-20 sm:pt-24 pb-12 sm:pb-16 px-2 sm:px-4">
             <div className="max-w-[95vw] mx-auto">
                 <div className="mb-4 sm:mb-6 px-2">
-                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-2">Solution Dashboard</h1>
-                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Explore solutions by function and category</p>
+                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2">Solution Dashboard</h1>
+                    <p className="text-xl text-gray-600 dark:text-gray-400">Explore solutions by function and category</p>
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-[180px_1fr_320px] gap-2 sm:gap-4">
                     {/* Left Panel: Function Column */}

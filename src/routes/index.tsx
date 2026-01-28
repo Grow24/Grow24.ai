@@ -51,26 +51,26 @@ function IndexPage() {
             className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center flex-wrap px-4 mt-20 sm:mt-10 md:mt-0"
           >
             <motion.button
-              onClick={() => showComingSoon('start-free-trial', 'Start Your Free Trial', 'Get started with Grow24.ai today! Enter your email to begin your free trial and start transforming your growth journey.')}
+              onClick={() => showComingSoon('start-free-trial', 'Sign up for our Free Trial', 'Please fill in all required fields to start your free trial.')}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-sm sm:text-base font-bold hover:shadow-xl transition-shadow duration-300"
             >
-              Start Free Trial
+              Sign up for our Free Trial
             </motion.button>
             <motion.button
-              onClick={() => showComingSoon('watch-demo', 'Watch Demo', 'Enter your email to get notified when the demo is available and receive exclusive updates.')}
+              onClick={() => showComingSoon('watch-concept', 'Watch Concept', 'Watch our concept video to understand how Grow24.ai can transform your growth journey.')}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-xl border-2 border-emerald-500 text-emerald-600 text-sm sm:text-base font-bold hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-colors duration-300"
             >
-              Watch Demo
+              Watch Concept
             </motion.button>
           </motion.div>
         </div>
       </motion.section>
 
-      {/* Our offerings Section */}
+      {/* The Concept Section */}
       <motion.section
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}

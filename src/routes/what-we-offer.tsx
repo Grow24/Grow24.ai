@@ -46,9 +46,10 @@ export const Route = createFileRoute('/what-we-offer')({
 })
 
 function WhatWeOfferPage() {
-  const [activeTab, setActiveTab] = useState<'what' | 'how'>('what')
+  const [activeTab, setActiveTab] = useState<'what' | 'why' | 'how'>('what')
   const [personalBgWhite, setPersonalBgWhite] = useState(false)
   const [professionalBgWhite, setProfessionalBgWhite] = useState(false)
+  const [showVideoModal, setShowVideoModal] = useState(false)
 
   return (
     <div className="min-h-screen py-20 px-4">
@@ -63,6 +64,20 @@ function WhatWeOfferPage() {
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             Solutions to Plan & Manage both your Personal and Professional Life
           </h1>
+          
+          {/* See Detailed Concept Button */}
+          <motion.button
+            onClick={() => setShowVideoModal(true)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="inline-flex items-center gap-2 px-6 py-3 mb-6 bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-gray-900 dark:text-white font-medium rounded-full transition-all duration-300 border border-gray-300 dark:border-slate-600"
+          >
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+            See Detailed Concept
+          </motion.button>
+
           <div className="flex items-center justify-center gap-4 mt-8">
             <button
               onClick={() => setActiveTab('what')}
@@ -73,6 +88,16 @@ function WhatWeOfferPage() {
               }`}
             >
               What
+            </button>
+            <button
+              onClick={() => setActiveTab('why')}
+              className={`px-8 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
+                activeTab === 'why'
+                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-900/30'
+                  : 'bg-white/10 dark:bg-slate-800/50 text-gray-600 dark:text-gray-400 hover:bg-white/20 dark:hover:bg-slate-700/50 border border-gray-300/50 dark:border-gray-600/50'
+              }`}
+            >
+              Why
             </button>
             <button
               onClick={() => setActiveTab('how')}
@@ -179,6 +204,73 @@ function WhatWeOfferPage() {
                   </div>
                 </motion.div>
               </div>
+            </motion.div>
+          ) : activeTab === 'why' ? (
+            <motion.div
+              key="why"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4 }}
+            >
+              {/* Why Section Content */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="glass backdrop-blur-xl bg-white/10 dark:bg-slate-800/50 rounded-2xl shadow-xl p-8 max-w-5xl mx-auto border border-white/20 dark:border-slate-700/50"
+              >
+                <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-6 text-center">
+                  Why This Approach?
+                </h3>
+                
+                <div className="space-y-6 text-gray-700 dark:text-gray-300">
+                  <div className="bg-white/50 dark:bg-slate-700/50 rounded-xl p-6">
+                    <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                      🎯 Holistic Integration
+                    </h4>
+                    <p className="text-sm leading-relaxed">
+                      Most tools focus on either personal OR professional management, creating silos. Our PBMP (Plan-Build-Measure-Progress) cycle integrates both dimensions, recognizing that your personal goals and professional objectives are interconnected and influence each other.
+                    </p>
+                  </div>
+
+                  <div className="bg-white/50 dark:bg-slate-700/50 rounded-xl p-6">
+                    <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                      🔄 Continuous Improvement Loop
+                    </h4>
+                    <p className="text-sm leading-relaxed">
+                      The PBMP cycle isn't linear—it's iterative. Each cycle informs the next, building wisdom from data through measurable progress. This approach ensures you're not just setting goals, but systematically achieving them and learning from every outcome.
+                    </p>
+                  </div>
+
+                  <div className="bg-white/50 dark:bg-slate-700/50 rounded-xl p-6">
+                    <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                      📊 Data-Driven Decision Making
+                    </h4>
+                    <p className="text-sm leading-relaxed">
+                      By transforming raw data into information, knowledge, and ultimately wisdom (WiKID framework), you make informed decisions based on evidence rather than intuition alone. This scientific approach increases success rates and reduces wasted effort.
+                    </p>
+                  </div>
+
+                  <div className="bg-white/50 dark:bg-slate-700/50 rounded-xl p-6">
+                    <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                      🚀 Scalable & Adaptable
+                    </h4>
+                    <p className="text-sm leading-relaxed">
+                      Whether you're an individual managing personal goals or an organization coordinating teams, the same fundamental principles apply. The framework scales from personal productivity to enterprise strategy, maintaining consistency while adapting to complexity.
+                    </p>
+                  </div>
+
+                  <div className="bg-white/50 dark:bg-slate-700/50 rounded-xl p-6">
+                    <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                      ⚡ Actionable Frameworks
+                    </h4>
+                    <p className="text-sm leading-relaxed">
+                      We don't just provide theory—we offer proven frameworks, templates, and best practices from established bodies of knowledge (PMBOK, BABOK, etc.) combined with real-world organizational learning. This gives you ready-to-use tools that have been validated through practice.
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
           ) : (
             <motion.div
@@ -290,22 +382,63 @@ function WhatWeOfferPage() {
         </AnimatePresence>
 
         {/* CTA Section */}
-        {activeTab === 'what' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="text-center mt-12"
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="text-center mt-12"
+        >
+          <Link
+            to="/solutions"
+            className="inline-block px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition-colors duration-200 shadow-lg hover:shadow-xl"
           >
-            <Link
-              to="/solutions"
-              className="inline-block px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition-colors duration-200 shadow-lg hover:shadow-xl"
+            Explore Our Solutions
+          </Link>
+        </motion.div>
+      </div>
+
+      {/* Video Modal */}
+      <AnimatePresence>
+        {showVideoModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+            onClick={() => setShowVideoModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative w-full max-w-5xl bg-slate-900 rounded-2xl overflow-hidden shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
             >
-              Explore Our Solutions
-            </Link>
+              {/* Close Button */}
+              <button
+                onClick={() => setShowVideoModal(false)}
+                className="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+
+              {/* Video Player */}
+              <div className="relative aspect-video">
+                <video
+                  className="w-full h-full"
+                  controls
+                  autoPlay
+                  src="/concept-video.mp4"
+                >
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            </motion.div>
           </motion.div>
         )}
-      </div>
+      </AnimatePresence>
     </div>
   )
 }

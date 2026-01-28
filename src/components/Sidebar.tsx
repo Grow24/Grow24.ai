@@ -73,11 +73,9 @@ interface MenuItem {
 
 const menuItems: MenuItem[] = [
   { label: 'Home', href: '/', icon: HomeIcon },
-  { label: 'Our offerings', href: '/what-we-offer', icon: OfferIcon, badge: 'PBMP' },
+  { label: 'The Concept', href: '/what-we-offer', icon: OfferIcon, badge: 'PBMP' },
   { label: 'Solutions', href: '/solutions', icon: SolutionsIcon },
   { label: 'Resources', href: '/resources', icon: ResourcesIcon },
-  { label: 'Pricing', href: '#pricing', icon: PricingIcon },
-  { label: 'About', href: '#about', icon: AboutIcon },
 ]
 
 export default function Sidebar() {
@@ -140,11 +138,11 @@ export default function Sidebar() {
             animate={{ x: 0 }}
             exit={{ x: -320 }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed top-0 left-0 h-screen w-80 z-[56] glass backdrop-blur-2xl bg-slate-900/95 border-r border-white/10 shadow-2xl"
+            className="fixed top-0 left-0 h-screen w-80 z-[56] glass backdrop-blur-2xl bg-white/95 dark:bg-slate-900/95 border-r border-gray-200 dark:border-white/10 shadow-2xl"
           >
             <div className="flex flex-col h-full">
               {/* Header */}
-              <div className="px-6 py-8 border-b border-white/10">
+              <div className="px-6 py-8 border-b border-gray-200 dark:border-white/10">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-lg">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white">
@@ -153,8 +151,8 @@ export default function Sidebar() {
                     </svg>
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-white">Grow24.ai</h2>
-                    <p className="text-xs text-emerald-400">Transform & Thrive</p>
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">Grow24.ai</h2>
+                    <p className="text-xs text-emerald-600 dark:text-emerald-400">Transform & Thrive</p>
                   </div>
                 </div>
               </div>
@@ -179,13 +177,13 @@ export default function Sidebar() {
                             href={item.href}
                             onClick={() => setIsOpen(false)}
                             className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden ${isActive
-                              ? 'text-white bg-emerald-500/20 border border-emerald-500/30'
-                              : 'text-slate-300 hover:text-white hover:bg-white/10'
+                              ? 'text-white dark:text-white bg-emerald-500/20 border border-emerald-500/30'
+                              : 'text-gray-700 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10'
                               }`}
                           >
                             <div className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 ${isActive
                               ? 'bg-emerald-500/30 scale-110'
-                              : 'bg-white/5 group-hover:bg-emerald-500/20 group-hover:scale-110'
+                              : 'bg-gray-100 dark:bg-white/5 group-hover:bg-emerald-500/20 group-hover:scale-110'
                               }`}>
                               <item.icon />
                             </div>
@@ -204,13 +202,13 @@ export default function Sidebar() {
                             to={item.href}
                             onClick={() => setIsOpen(false)}
                             className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden ${isActive
-                              ? 'text-white bg-emerald-500/20 border border-emerald-500/30'
-                              : 'text-slate-300 hover:text-white hover:bg-white/10'
+                              ? 'text-white dark:text-white bg-emerald-500/20 border border-emerald-500/30'
+                              : 'text-gray-700 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10'
                               }`}
                           >
                             <div className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 ${isActive
                               ? 'bg-emerald-500/30 scale-110'
-                              : 'bg-white/5 group-hover:bg-emerald-500/20 group-hover:scale-110'
+                              : 'bg-gray-100 dark:bg-white/5 group-hover:bg-emerald-500/20 group-hover:scale-110'
                               }`}>
                               <item.icon />
                             </div>
@@ -230,26 +228,6 @@ export default function Sidebar() {
                   })}
                 </div>
               </nav>
-
-              {/* Footer */}
-              <div className="px-6 py-6 border-t border-white/10">
-                <div className="glass backdrop-blur-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 rounded-xl p-4 border border-emerald-500/30">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-emerald-500/30 flex items-center justify-center flex-shrink-0">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-emerald-300">
-                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-semibold text-white mb-1">Start Your Journey</h3>
-                      <p className="text-xs text-slate-300 mb-3">Begin transforming your life today with personalized guidance.</p>
-                      <button className="w-full px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors duration-200">
-                        Get Started
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </motion.aside>
         )}
