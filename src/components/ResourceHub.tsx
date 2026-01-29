@@ -314,7 +314,7 @@ export const ResourceHub: React.FC = () => {
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: 'auto', opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          className="border-t border-slate-700 bg-slate-700/50 p-4 space-y-2"
+                          className="border-t border-slate-700 bg-slate-700/50 px-4 pb-4 pt-2 space-y-2"
                         >
                           {config.options.map((option) => (
                             <motion.label

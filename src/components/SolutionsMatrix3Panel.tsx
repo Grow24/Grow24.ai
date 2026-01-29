@@ -392,7 +392,7 @@ export default function SolutionsMatrix3Panel() {
                                     <div key={func.id}>
                                         <button
                                             onClick={() => handleFunctionClick(func.id)}
-                                            className={`w-full px-2 sm:px-3 py-1.5 sm:py-2 flex items-center justify-between text-left transition-colors ${
+                                            className={`w-full px-2 sm:px-3 py-1 sm:py-1.5 flex items-center justify-between text-left transition-colors ${
                                                 isSelected
                                                     ? 'bg-gray-100 dark:bg-gray-700 font-semibold'
                                                     : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
