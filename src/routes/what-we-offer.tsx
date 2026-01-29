@@ -52,7 +52,7 @@ function WhatWeOfferPage() {
   const [showVideoModal, setShowVideoModal] = useState(false)
 
   return (
-    <div className="min-h-screen py-20 px-4">
+    <div className="min-h-screen py-8 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
@@ -62,7 +62,7 @@ function WhatWeOfferPage() {
           className="text-center mb-16"
         >
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            Solutions to Plan & Manage both your Personal and Professional Life
+            Solutions to Plan & Manage both your Personal and Professional Life11.
           </h1>
           
           {/* See Detailed Concept Button */}
