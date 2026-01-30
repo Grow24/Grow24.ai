@@ -62,7 +62,7 @@ function WhatWeOfferPage() {
           className="text-center mb-16"
         >
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            Solutions to Plan & Manage both your Personal and Professional Life
+            Solutions to Plan & Manage both your Personal and Professional Life11.
           </h1>
           
           {/* See Detailed Concept Button */}
