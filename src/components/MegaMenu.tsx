@@ -70,7 +70,7 @@ export default function MegaMenu({ isOpen, onClose }: MegaMenuProps) {
             <button
               onClick={() => setActiveTab('what')}
               className={`px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 ${activeTab === 'what'
-                  ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/30'
+                  ? 'bg-info-gold-500 text-white shadow-lg shadow-info-gold-900/30'
                   : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
                 }`}
             >
@@ -265,10 +265,10 @@ export default function MegaMenu({ isOpen, onClose }: MegaMenuProps) {
               Ready to transform your personal and professional life?
             </p>
             <div className="flex gap-3">
-              <button className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition-colors">
+              <button className="px-6 py-2.5 bg-cta-green-500 hover:bg-cta-green-600 text-white font-semibold rounded-lg transition-colors">
                 Get Started Free
               </button>
-              <button className="px-6 py-2.5 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+              <button className="px-6 py-2.5 border-2 border-info-gold-500 dark:border-info-gold-600 bg-info-gold-50 dark:bg-info-gold-900/20 text-info-gold-700 dark:text-info-gold-300 font-semibold rounded-lg hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 transition-colors">
                 Learn More
               </button>
             </div>

@@ -84,7 +84,7 @@ export const FloatingWhatsApp: React.FC<FloatingWidgetProps> = () => {
               href={`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="block w-full px-4 py-2 rounded-lg bg-emerald-500 text-white text-center font-medium hover:bg-emerald-600 transition-colors duration-300"
+              className="block w-full px-4 py-2 rounded-lg bg-cta-green-500 text-white text-center font-medium hover:bg-cta-green-600 transition-colors duration-300"
             >
               Open WhatsApp
             </a>
@@ -247,7 +247,7 @@ export const Chatbot: React.FC<FloatingWidgetProps> = () => {
                   placeholder="Your message..."
                   className="flex-1 px-3 py-2 rounded-lg glass bg-white/5 border border-white/20 text-slate-900 dark:text-white placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
-                <button className="flex items-center justify-center w-10 h-10 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 transition-colors duration-200">
+                <button className="flex items-center justify-center w-10 h-10 rounded-lg bg-cta-green-500 text-white hover:bg-cta-green-600 transition-colors duration-200">
                   <SendIcon />
                 </button>
               </div>

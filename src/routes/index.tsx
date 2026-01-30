@@ -54,7 +54,7 @@ function IndexPage() {
               onClick={() => showComingSoon('start-free-trial', 'Sign up for our Free Trial', 'Please fill in all required fields to start your free trial.')}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-sm sm:text-base font-bold hover:shadow-xl transition-shadow duration-300"
+              className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-xl bg-gradient-to-r from-cta-green-500 to-cta-green-600 text-white text-sm sm:text-base font-bold hover:shadow-xl transition-shadow duration-300"
             >
               Sign up for our Free Trial
             </motion.button>
@@ -62,7 +62,7 @@ function IndexPage() {
               onClick={() => showComingSoon('watch-concept', 'Watch Concept', 'Watch our concept video to understand how Grow24.ai can transform your growth journey.')}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-xl border-2 border-emerald-500 text-emerald-600 text-sm sm:text-base font-bold hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-colors duration-300"
+              className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-xl border-2 border-info-gold-500 text-info-gold-600 bg-info-gold-50 dark:bg-info-gold-900/20 text-sm sm:text-base font-bold hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 transition-colors duration-300"
             >
               Watch Concept
             </motion.button>
@@ -166,7 +166,7 @@ function IndexPage() {
             onClick={() => showComingSoon('cta-section', 'Get Started', 'Enter your email to stay updated on our latest features and product updates.')}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="px-8 py-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300"
+            className="px-8 py-4 rounded-lg bg-cta-green-500 hover:bg-cta-green-600 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300"
           >
             Get Started Now
           </motion.button>

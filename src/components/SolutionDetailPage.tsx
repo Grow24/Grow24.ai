@@ -590,7 +590,7 @@ export default function SolutionDetailPage() {
                                     onClick={() => showComingSoon('request-demo', 'Request Demo', 'Enter your details to request a personalized demo for this solution.')}
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
-                                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-lg font-semibold text-sm transition-colors shadow-md"
+                                    className="bg-cta-green-500 hover:bg-cta-green-600 text-white px-6 py-2.5 rounded-lg font-semibold text-sm transition-colors shadow-md"
                                 >
                                     Request Demo
                                 </motion.button>
@@ -598,7 +598,7 @@ export default function SolutionDetailPage() {
                                     onClick={() => showComingSoon('download-guide', 'Download Guide', 'Enter your email to download this guide and access exclusive resources.')}
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
-                                    className="bg-white dark:bg-slate-800 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 px-6 py-2.5 rounded-lg font-semibold text-sm hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors shadow-sm"
+                                    className="bg-info-gold-50 dark:bg-info-gold-900/20 border-2 border-info-gold-500 dark:border-info-gold-600 text-info-gold-700 dark:text-info-gold-300 px-6 py-2.5 rounded-lg font-semibold text-sm hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 transition-colors shadow-sm"
                                 >
                                     Download Guide
                                 </motion.button>
@@ -711,7 +711,7 @@ export default function SolutionDetailPage() {
                             </p>
                             <button
                                 onClick={() => showComingSoon('source-sheet', 'Access Source Sheet', 'Enter your email to access the source sheet for this solution.')}
-                                className={`w-full ${colors.primary} ${colors.primaryHover} text-white py-2 rounded-lg transition-colors`}
+                                className="w-full bg-cta-green-500 hover:bg-cta-green-600 text-white py-2 rounded-lg transition-colors"
                             >
                                 Source Sheet
                             </button>
@@ -730,7 +730,7 @@ export default function SolutionDetailPage() {
                             onClick={() => showComingSoon('cta-request-demo', 'Request Demo', 'Enter your details to request a personalized demo.')}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
+                            className="bg-cta-green-500 hover:bg-cta-green-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
                         >
                             Request Demo
                         </motion.button>
@@ -738,7 +738,7 @@ export default function SolutionDetailPage() {
                             onClick={() => showComingSoon('download-playbook', 'Download Playbook', 'Enter your email to download the playbook for this solution.')}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="bg-white dark:bg-slate-800 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                            className="bg-info-gold-50 dark:bg-info-gold-900/20 border-2 border-info-gold-500 dark:border-info-gold-600 text-info-gold-700 dark:text-info-gold-300 px-8 py-3 rounded-lg font-semibold hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 transition-colors"
                         >
                             Download Playbook
                         </motion.button>

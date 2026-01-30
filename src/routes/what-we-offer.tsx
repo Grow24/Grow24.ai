@@ -70,7 +70,7 @@ function WhatWeOfferPage() {
             onClick={() => setShowVideoModal(true)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center gap-2 px-6 py-3 mb-6 bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-gray-900 dark:text-white font-medium rounded-full transition-all duration-300 border border-gray-300 dark:border-slate-600"
+            className="inline-flex items-center gap-2 px-6 py-3 mb-6 bg-info-gold-50 dark:bg-info-gold-900/20 hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 text-info-gold-700 dark:text-info-gold-300 font-medium rounded-full transition-all duration-300 border-2 border-info-gold-500 dark:border-info-gold-600"
           >
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z"/>
@@ -83,8 +83,8 @@ function WhatWeOfferPage() {
               onClick={() => setActiveTab('what')}
               className={`px-8 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
                 activeTab === 'what'
-                  ? 'bg-orange-500 text-white shadow-lg shadow-orange-900/30'
-                  : 'bg-white/10 dark:bg-slate-800/50 text-gray-600 dark:text-gray-400 hover:bg-white/20 dark:hover:bg-slate-700/50 border border-gray-300/50 dark:border-gray-600/50'
+                  ? 'bg-info-gold-500 text-white shadow-lg shadow-info-gold-900/30'
+                  : 'bg-info-gold-50 dark:bg-info-gold-900/20 text-info-gold-700 dark:text-info-gold-300 hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 border-2 border-info-gold-500 dark:border-info-gold-600'
               }`}
             >
               What
@@ -93,8 +93,8 @@ function WhatWeOfferPage() {
               onClick={() => setActiveTab('why')}
               className={`px-8 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
                 activeTab === 'why'
-                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-900/30'
-                  : 'bg-white/10 dark:bg-slate-800/50 text-gray-600 dark:text-gray-400 hover:bg-white/20 dark:hover:bg-slate-700/50 border border-gray-300/50 dark:border-gray-600/50'
+                  ? 'bg-info-gold-500 text-white shadow-lg shadow-info-gold-900/30'
+                  : 'bg-info-gold-50 dark:bg-info-gold-900/20 text-info-gold-700 dark:text-info-gold-300 hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 border-2 border-info-gold-500 dark:border-info-gold-600'
               }`}
             >
               Why
@@ -103,8 +103,8 @@ function WhatWeOfferPage() {
               onClick={() => setActiveTab('how')}
               className={`px-8 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
                 activeTab === 'how'
-                  ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/30'
-                  : 'bg-white/10 dark:bg-slate-800/50 text-gray-600 dark:text-gray-400 hover:bg-white/20 dark:hover:bg-slate-700/50 border border-gray-300/50 dark:border-gray-600/50'
+                  ? 'bg-info-gold-500 text-white shadow-lg shadow-info-gold-900/30'
+                  : 'bg-info-gold-50 dark:bg-info-gold-900/20 text-info-gold-700 dark:text-info-gold-300 hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 border-2 border-info-gold-500 dark:border-info-gold-600'
               }`}
             >
               How
@@ -390,7 +390,7 @@ function WhatWeOfferPage() {
         >
           <Link
             to="/solutions"
-            className="inline-block px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition-colors duration-200 shadow-lg hover:shadow-xl"
+            className="inline-block px-8 py-4 bg-cta-green-500 hover:bg-cta-green-600 text-white font-semibold rounded-xl transition-colors duration-200 shadow-lg hover:shadow-xl"
           >
             Explore Our Solutions
           </Link>

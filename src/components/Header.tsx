@@ -148,7 +148,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                   onClick={() => showComingSoon('get-demo', 'Get a Demo', 'Enter your details to schedule a personalized demo and learn how Grow24.ai can transform your growth journey.')}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="px-2 sm:px-3 md:px-5 py-1.5 sm:py-2 md:py-2.5 bg-emerald-600/90 hover:bg-emerald-600 text-white text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 shadow-lg shadow-emerald-900/20 whitespace-nowrap"
+                  className="px-2 sm:px-3 md:px-5 py-1.5 sm:py-2 md:py-2.5 bg-cta-green-500/90 hover:bg-cta-green-600 text-white text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 shadow-lg shadow-cta-green-900/20 whitespace-nowrap"
                 >
                   <span className="hidden sm:inline">Get a Demo</span>
                   <span className="sm:hidden">Demo</span>
@@ -335,7 +335,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                   }}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-lg transition-all duration-200 shadow-lg"
+                  className="w-full px-4 py-3 bg-cta-green-500 hover:bg-cta-green-600 text-white text-sm font-semibold rounded-lg transition-all duration-200 shadow-lg"
                 >
                   Get a Demo
                 </motion.button>

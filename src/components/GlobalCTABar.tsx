@@ -63,7 +63,7 @@ export default function GlobalCTABar() {
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 100, opacity: 0 }}
-        className="fixed bottom-0 left-0 right-0 z-30 bg-gradient-to-r from-emerald-600 via-emerald-700 to-emerald-800 shadow-2xl pb-safe"
+        className="fixed bottom-0 left-0 right-0 z-30 bg-gradient-to-r from-cta-green-500 via-cta-green-600 to-cta-green-700 shadow-2xl pb-safe"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-3 sm:py-4 relative">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
@@ -74,7 +74,7 @@ export default function GlobalCTABar() {
               </div>
               <div className="flex-1 sm:flex-none min-w-0">
                 <h3 className="text-white font-bold text-base sm:text-lg">Harness the Power of AI</h3>
-                <p className="text-emerald-100 text-xs sm:text-sm">
+                <p className="text-cta-green-100 text-xs sm:text-sm">
                   Join 10,000+ professionals transforming their growth journey
                 </p>
               </div>
@@ -94,7 +94,7 @@ export default function GlobalCTABar() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-4 sm:px-6 py-2 sm:py-2.5 bg-white text-emerald-600 font-semibold rounded-lg hover:bg-emerald-50 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+                className="px-4 sm:px-6 py-2 sm:py-2.5 bg-white text-cta-green-600 font-semibold rounded-lg hover:bg-cta-green-50 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
               >
                 {isSubmitting ? 'Submitting...' : isSuccess ? '✓ Subscribed!' : 'Subscribe Free'}
               </button>
@@ -114,7 +114,7 @@ export default function GlobalCTABar() {
           {/* Message Display */}
           {message && (
             <div className={`absolute bottom-full mb-2 right-0 px-3 py-1.5 rounded text-xs whitespace-nowrap ${isSuccess
-              ? 'bg-emerald-500/90 text-white'
+              ? 'bg-cta-green-500/90 text-white'
               : 'bg-red-500/90 text-white'
               }`}>
               {message}
