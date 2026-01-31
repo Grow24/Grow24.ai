@@ -74,7 +74,7 @@ export default function GlobalCTABar() {
               </div>
               <div className="flex-1 sm:flex-none min-w-0">
                 <h3 className="text-white font-bold text-base sm:text-lg">Harness the Power of AI</h3>
-                <p className="text-cta-green-100 text-xs sm:text-sm">
+                <p className="text-white/90 text-xs sm:text-sm">
                   Join 10,000+ professionals transforming their growth journey
                 </p>
               </div>

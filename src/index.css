@@ -57,6 +57,28 @@ body {
   @apply backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl;
 }
 
+/* No blur header - BCG.com style - Force remove all blur effects */
+header.no-blur-header,
+header.no-blur-header > div,
+header.no-blur-header > div > div,
+header.no-blur-header > div > div > div {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  -moz-backdrop-filter: none !important;
+  filter: none !important;
+  -webkit-filter: none !important;
+  will-change: auto !important;
+}
+
+/* Ensure no child elements have blur */
+header.no-blur-header *,
+header.no-blur-header *::before,
+header.no-blur-header *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  -moz-backdrop-filter: none !important;
+}
+
 /* Gradient text */
 .gradient-text {
   @apply bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-emerald-600;

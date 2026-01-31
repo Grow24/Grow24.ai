@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Link, useLocation } from '@tanstack/react-router'
+import { Link, useLocation, useNavigate } from '@tanstack/react-router'
 import { useComingSoon } from '../contexts/ComingSoonContext'
 import { useTheme } from '../contexts/ThemeContext'
 
@@ -124,18 +124,100 @@ interface HeaderProps {
   onMegaMenuToggle?: () => void
 }
 
+// Search index data
+const searchIndex = [
+  // Pages
+  { type: 'page', title: 'Home', description: 'Welcome to Grow24.ai', href: '/', keywords: ['home', 'main', 'landing'] },
+  { type: 'page', title: 'The Concept', description: 'Learn about PBMP methodology', href: '/what-we-offer', keywords: ['concept', 'pbmp', 'methodology', 'plan', 'build', 'measure', 'progress'] },
+  { type: 'page', title: 'Solutions', description: 'Explore our solutions', href: '/solutions', keywords: ['solutions', 'dashboard', 'corporate', 'sales', 'marketing'] },
+  { type: 'page', title: 'Resources', description: 'Learn and engage with resources', href: '/resources', keywords: ['resources', 'learn', 'engage', 'articles', 'webinars', 'videos'] },
+  
+  // Solutions
+  { type: 'solution', title: 'Strategy Goalsetting', description: 'Define measurable objectives for sustained growth', href: '/solutions/corp-goal-1', keywords: ['goals', 'strategy', 'objectives', 'growth', 'corporate'] },
+  { type: 'solution', title: 'Strategy Generation', description: 'Formulate where-to-play and how-to-win strategies', href: '/solutions/corp-strat-1', keywords: ['strategy', 'generation', 'swot', 'bcg', 'matrix', 'corporate'] },
+  { type: 'solution', title: 'Multi-Horizon Planning', description: 'Build stepwise plans, week + quarter - year', href: '/solutions/corp-plan-1', keywords: ['planning', 'multi-horizon', 'weekly', 'quarterly', 'annual', 'corporate'] },
+  { type: 'solution', title: 'Project Portfolio', description: 'Drive strategic initiatives, programs, and projects', href: '/solutions/corp-proj-1', keywords: ['project', 'portfolio', 'initiatives', 'programs', 'corporate'] },
+  { type: 'solution', title: 'KPI Monitoring', description: 'Monitor results against KPIs, targets, and activities', href: '/solutions/corp-ops-1', keywords: ['kpi', 'monitoring', 'metrics', 'performance', 'corporate'] },
+  { type: 'solution', title: 'Sales Goalsetting', description: 'Align qualities, targets, and tenures for sales productivity', href: '/solutions/sales-goal-1', keywords: ['sales', 'goals', 'targets', 'quota', 'productivity'] },
+  { type: 'solution', title: 'GTM Strategy', description: 'Define your go-to-market strategy with actionable tactics', href: '/solutions/sales-strat-1', keywords: ['gtm', 'go-to-market', 'sales', 'strategy', 'tactics'] },
+  { type: 'solution', title: 'Marketing Goalsetting', description: 'Translate growth targets and inspirational objectives', href: '/solutions/mkt-goal-1', keywords: ['marketing', 'goals', 'growth', 'targets', 'objectives'] },
+  { type: 'solution', title: 'Marketing GTM Strategy', description: 'Craft growth-oriented strategy to ignite growth', href: '/solutions/mkt-strat-1', keywords: ['marketing', 'gtm', 'strategy', 'growth'] },
+  
+  // Resources
+  { type: 'resource', title: 'Getting Started with Goal Setting', description: 'Learn the fundamentals of goal setting', href: '/resources', keywords: ['goals', 'planning', 'personal', 'getting started', 'beginner'] },
+  { type: 'resource', title: 'Advanced Project Management Masterclass', description: 'Master project management techniques', href: '/resources', keywords: ['project', 'management', 'masterclass', 'advanced', 'leadership'] },
+  { type: 'resource', title: 'Financial Planning Framework', description: 'Framework for financial planning', href: '/resources', keywords: ['finance', 'planning', 'strategy', 'framework'] },
+  { type: 'resource', title: 'Communication Skills for Leaders', description: 'Enhance your communication skills', href: '/resources', keywords: ['communication', 'leadership', 'skills', 'management'] },
+  { type: 'resource', title: 'Strategic Planning Workshop', description: 'Workshop on strategic planning', href: '/resources', keywords: ['strategy', 'planning', 'workshop', 'business'] },
+]
+
 export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
   const [searchOpen, setSearchOpen] = useState(false)
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [scrolled, setScrolled] = useState(false)
   const { showComingSoon } = useComingSoon()
   const { theme, toggleTheme } = useTheme()
   const location = useLocation()
+  const navigate = useNavigate()
+  const searchRef = useRef<HTMLDivElement>(null)
+
+  // Handle scroll to adjust translucency
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll() // Initial check
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Note: Search now opens/closes on hover, so we don't need click outside handler
+
+  // Search functionality
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim()) return []
+
+    const query = searchQuery.toLowerCase().trim()
+    return searchIndex
+      .filter((item) => {
+        const titleMatch = item.title.toLowerCase().includes(query)
+        const descMatch = item.description.toLowerCase().includes(query)
+        const keywordMatch = item.keywords.some((keyword) => keyword.toLowerCase().includes(query))
+        return titleMatch || descMatch || keywordMatch
+      })
+      .slice(0, 8) // Limit to 8 results
+  }, [searchQuery])
+
+  const handleSearchResultClick = (href: string) => {
+    setSearchOpen(false)
+    setSearchQuery('')
+    navigate({ to: href })
+  }
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50">
-        <div className="glass backdrop-blur-md transition-all duration-300 bg-white/10 dark:bg-slate-950/40">
+      <header 
+        className="fixed top-0 left-0 right-0 z-50 no-blur-header"
+        style={{
+          backdropFilter: 'none',
+          WebkitBackdropFilter: 'none',
+          filter: 'none'
+        } as React.CSSProperties}
+      >
+        <div 
+          className={`no-blur-header transition-all duration-300 ${
+            scrolled
+              ? 'dark:bg-slate-950/90'
+              : 'dark:bg-slate-950/90'
+          }`}
+          style={{
+            backdropFilter: 'none',
+            WebkitBackdropFilter: 'none',
+            filter: 'none'
+          } as React.CSSProperties}
+        >
           <div className="w-full px-3 sm:px-4 md:px-8 py-2 sm:py-3">
             <div className="flex items-center justify-between gap-1.5 sm:gap-2 md:gap-8">
               {/* Left Side: Menu Button + Logo */}
@@ -229,9 +311,13 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                 </motion.button>
 
                 {/* Search - Hide on mobile */}
-                <div className="relative hidden md:block">
+                <div 
+                  className="relative hidden md:block" 
+                  ref={searchRef}
+                  onMouseEnter={() => setSearchOpen(true)}
+                  onMouseLeave={() => setSearchOpen(false)}
+                >
                   <motion.button
-                    onClick={() => setSearchOpen(!searchOpen)}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className={`p-2.5 rounded-lg transition-colors ${
@@ -247,27 +333,82 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                   <AnimatePresence>
                     {searchOpen && (
                       <motion.div
-                        initial={{ opacity: 0, width: 0 }}
-                        animate={{ opacity: 1, width: 300 }}
-                        exit={{ opacity: 0, width: 0 }}
-                        className="absolute right-0 top-full mt-2 glass backdrop-blur-xl bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-xl overflow-hidden"
+                        initial={{ opacity: 0, x: 20, width: 0 }}
+                        animate={{ opacity: 1, x: 0, width: 400 }}
+                        exit={{ opacity: 0, x: 20, width: 0 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
+                        className="absolute right-0 top-0 glass backdrop-blur-xl bg-white/95 dark:bg-slate-800/95 rounded-lg border border-gray-200 dark:border-gray-700 shadow-xl overflow-hidden z-[100]"
                       >
-                        <input
-                          type="text"
-                          placeholder="Search..."
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          autoFocus
-                          className="w-full px-4 py-3 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 outline-none focus:ring-2 focus:ring-emerald-500"
-                        />
+                        <div className="relative flex items-center">
+                          <div className="absolute left-4 text-gray-400 dark:text-gray-500 pointer-events-none">
+                            <SearchIcon />
+                          </div>
+                          <input
+                            type="text"
+                            placeholder="Type to search"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' && searchResults.length > 0) {
+                                handleSearchResultClick(searchResults[0].href)
+                              } else if (e.key === 'Escape') {
+                                setSearchOpen(false)
+                                setSearchQuery('')
+                              }
+                            }}
+                            autoFocus
+                            className="w-full pl-12 pr-4 py-3 bg-transparent text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 outline-none focus:ring-0 border-0"
+                          />
+                        </div>
                         {searchQuery && (
                           <div className="max-h-64 overflow-y-auto border-t border-gray-200 dark:border-gray-700">
-                            <div className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400">
-                              Search results for "{searchQuery}"
-                            </div>
-                            <div className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer text-sm text-gray-700 dark:text-gray-300">
-                              No results found. Try different keywords.
-                            </div>
+                            {searchResults.length > 0 ? (
+                              <>
+                                <div className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide border-b border-gray-200 dark:border-gray-700">
+                                  {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} found
+                                </div>
+                                {searchResults.map((result, idx) => (
+                                  <motion.div
+                                    key={`${result.type}-${result.href}-${idx}`}
+                                    initial={{ opacity: 0, y: -5 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: idx * 0.03 }}
+                                    onClick={() => handleSearchResultClick(result.href)}
+                                    className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-gray-100 dark:border-gray-800 last:border-b-0"
+                                  >
+                                    <div className="flex items-start gap-3">
+                                      <div className={`mt-0.5 flex-shrink-0 w-2 h-2 rounded-full ${
+                                        result.type === 'page' ? 'bg-cta-green-500' :
+                                        result.type === 'solution' ? 'bg-blue-500' :
+                                        'bg-info-gold-500'
+                                      }`} />
+                                      <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 mb-1">
+                                          <span className="text-xs font-semibold text-gray-900 dark:text-white line-clamp-1">
+                                            {result.title}
+                                          </span>
+                                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 uppercase">
+                                            {result.type}
+                                          </span>
+                                        </div>
+                                        <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-1">
+                                          {result.description}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </motion.div>
+                                ))}
+                              </>
+                            ) : (
+                              <div className="px-4 py-6 text-center">
+                                <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                                  No results found
+                                </div>
+                                <div className="text-xs text-gray-400 dark:text-gray-500">
+                                  Try different keywords
+                                </div>
+                              </div>
+                            )}
                           </div>
                         )}
                       </motion.div>

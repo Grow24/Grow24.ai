@@ -2,25 +2,25 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useLocation } from '@tanstack/react-router'
 
-// Hamburger Icon (3 lines)
-const HamburgerIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+// Hamburger Icon (3 lines) - BCG style
+const HamburgerIcon = ({ isHovered }: { isHovered?: boolean }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={isHovered ? "white" : "black"} strokeWidth="2" strokeLinecap="round">
     <line x1="3" y1="6" x2="21" y2="6" />
     <line x1="3" y1="12" x2="21" y2="12" />
     <line x1="3" y1="18" x2="21" y2="18" />
   </svg>
 )
 
-// Close/X Icon
+// Close/X Icon - BCG style (white when in green background)
 const CloseIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <line x1="18" y1="6" x2="6" y2="18" />
     <line x1="6" y1="6" x2="18" y2="18" />
   </svg>
 )
 
 // Menu Icon - BCG style (separate icons, no overlap)
-const MenuIcon = ({ isOpen }: { isOpen: boolean }) => {
+const MenuIcon = ({ isOpen, isHovered }: { isOpen: boolean; isHovered?: boolean }) => {
   return (
     <div className="relative w-6 h-6 flex items-center justify-center">
       <AnimatePresence mode="wait" initial={false}>
@@ -44,7 +44,7 @@ const MenuIcon = ({ isOpen }: { isOpen: boolean }) => {
             transition={{ duration: 0.2, ease: "easeInOut" }}
             className="absolute inset-0 flex items-center justify-center"
           >
-            <HamburgerIcon />
+            <HamburgerIcon isHovered={isHovered} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -114,6 +114,7 @@ const menuItems: MenuItem[] = [
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
   const location = useLocation()
 
   return (
@@ -121,12 +122,28 @@ export default function Sidebar() {
       {/* Toggle Button - Fixed on left side - Hidden on mobile since header has menu button */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className="hidden md:flex fixed top-6 left-6 z-[60] w-12 h-12 rounded-xl glass backdrop-blur-xl bg-gray-800/90 dark:bg-slate-800/90 border border-gray-700/50 dark:border-slate-700/50 items-center justify-center text-white hover:bg-gray-700/90 dark:hover:bg-slate-700/90 transition-colors shadow-lg"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className={`hidden md:flex fixed top-6 left-6 z-[60] w-12 h-12 rounded-lg items-center justify-center transition-all duration-200 ${
+          isOpen
+            ? 'bg-cta-green-500 hover:bg-cta-green-600'
+            : isHovered
+            ? 'bg-cta-green-500'
+            : 'bg-gray-200 dark:bg-gray-300'
+        }`}
+        style={{
+          backdropFilter: 'none',
+          WebkitBackdropFilter: 'none',
+          border: 'none',
+          outline: 'none',
+          backgroundColor: isOpen ? '#00C896' : undefined,
+          boxShadow: 'none'
+        } as React.CSSProperties}
+        whileHover={isOpen ? {} : { scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
         aria-label="Toggle menu"
       >
-        <MenuIcon isOpen={isOpen} />
+        <MenuIcon isOpen={isOpen} isHovered={isHovered || isOpen} />
       </motion.button>
 
       {/* Backdrop - No blur */}

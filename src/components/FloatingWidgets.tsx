@@ -55,11 +55,11 @@ export const FloatingWhatsApp: React.FC<FloatingWidgetProps> = () => {
   const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '+919370239600'
 
   // Position above GlobalCTABar when visible, otherwise normal position
-  // WhatsApp is positioned BELOW Social Links (social is at bottom-32, WhatsApp at bottom-6)
+  // WhatsApp is positioned BELOW Social Links, with enough space from footer
   // Increased offset to ensure widgets are fully above the GlobalCTABar
   const bottomPosition = isCTABarVisible 
-    ? 'bottom-[220px] sm:bottom-[200px] md:bottom-6' 
-    : 'bottom-6'
+    ? 'bottom-[240px] sm:bottom-[220px] md:bottom-28' 
+    : 'bottom-28'
 
   return (
     <motion.div
@@ -96,7 +96,7 @@ export const FloatingWhatsApp: React.FC<FloatingWidgetProps> = () => {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-green-400 to-green-600 text-white shadow-lg hover:shadow-xl transition-shadow duration-300"
+        className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-green-400 to-green-600 text-white transition-all duration-300"
       >
         <WhatsAppIcon />
       </motion.button>
@@ -261,7 +261,7 @@ export const Chatbot: React.FC<FloatingWidgetProps> = () => {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-white shadow-lg hover:shadow-xl transition-shadow duration-300 relative"
+        className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-white transition-all duration-300 relative"
       >
         <ChatbotIcon />
         {!isOpen && (
@@ -333,10 +333,10 @@ export const SocialLinks: React.FC = () => {
   }, [isCTABarVisible, x, y])
 
   // Position above GlobalCTABar when visible, otherwise normal position
-  // Social Links positioned ABOVE WhatsApp to avoid overlap
+  // Social Links positioned ABOVE WhatsApp (moved further upward)
   const bottomPosition = isCTABarVisible 
-    ? 'bottom-[260px] sm:bottom-[240px] md:bottom-32' 
-    : 'bottom-32'
+    ? 'bottom-[320px] sm:bottom-[300px] md:bottom-56' 
+    : 'bottom-56'
 
   const socialLinks = [
     { id: 'linkedin', icon: LinkedInIcon, url: 'https://www.linkedin.com/company/personalandbusinessmgmtplatform/', label: 'LinkedIn', color: 'hover:bg-blue-600' },
@@ -386,7 +386,7 @@ export const SocialLinks: React.FC = () => {
                   transition={{ delay: idx * 0.05 }}
                   whileHover={{ scale: 1.05, x: 5 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`flex items-center gap-3 px-4 py-2 rounded-xl bg-gray-100 dark:bg-slate-700 shadow-md border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 ${social.color} dark:hover:bg-opacity-70 transition-all duration-200 group`}
+                  className={`flex items-center gap-3 px-4 py-2 rounded-xl bg-gray-100 dark:bg-slate-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 ${social.color} dark:hover:bg-opacity-70 transition-all duration-200 group`}
                 >
                   <social.icon />
                   <span className="text-sm font-medium whitespace-nowrap">{social.label}</span>
@@ -401,7 +401,7 @@ export const SocialLinks: React.FC = () => {
         onClick={() => setIsExpanded(!isExpanded)}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-slate-600 to-slate-800 text-white shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+        className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-slate-600 to-slate-800 text-white transition-all duration-300 cursor-pointer"
         aria-label="Toggle social media links"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

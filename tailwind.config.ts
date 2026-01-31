@@ -19,31 +19,31 @@ export default {
           900: '#145231',
           950: '#052e16',
         },
-        // BCG-style light green for CTA buttons
+        // BCG-style light green for CTA buttons (lighter mint/turquoise green)
         'cta-green': {
-          50: '#f0fdf9',
+          50: '#f0fdfa',
           100: '#ccfef0',
           200: '#99fde1',
           300: '#66fcd2',
           400: '#33fbc3',
-          500: '#00D084', // Main BCG-style light green
-          600: '#00b870',
-          700: '#008f58',
-          800: '#006640',
-          900: '#003d28',
+          500: '#00C896', // BCG-style light mint green (lighter than before)
+          600: '#00A67A',
+          700: '#00845E',
+          800: '#006242',
+          900: '#004026',
         },
-        // Gold theme for call-to-information buttons
+        // Gold theme for call-to-information buttons (warmer, richer gold)
         'info-gold': {
           50: '#fffbf0',
           100: '#fef3c7',
           200: '#fde68a',
           300: '#fcd34d',
           400: '#fbbf24',
-          500: '#D4AF37', // Main gold color
-          600: '#b8941f',
-          700: '#9a7a1a',
-          800: '#7c6015',
-          900: '#5e4610',
+          500: '#C9A961', // Warmer BCG-style gold
+          600: '#A68B4F',
+          700: '#836D3D',
+          800: '#604F2B',
+          900: '#3D3119',
         },
       },
       backdropBlur: {

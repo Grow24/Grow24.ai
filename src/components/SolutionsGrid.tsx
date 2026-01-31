@@ -193,7 +193,7 @@ const SolutionSummary: React.FC<SolutionSummaryProps> = ({ solution }) => {
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="mt-6 w-full px-6 py-3 rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-semibold hover:shadow-lg transition-shadow duration-300"
+        className="mt-6 w-full px-6 py-3 rounded-lg bg-info-gold-50 dark:bg-info-gold-900/20 border-2 border-info-gold-500 dark:border-info-gold-600 text-info-gold-700 dark:text-info-gold-300 font-semibold hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 transition-colors duration-300"
       >
         Learn More
       </motion.button>

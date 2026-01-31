@@ -538,22 +538,32 @@ export default function SolutionDetailPage() {
 
     useEffect(() => {
         const handleScroll = () => {
-            setScrolled(window.scrollY > 100)
+            const scrollY = window.scrollY
+            setScrolled(scrollY > 50)
             
             // Determine active section based on scroll position
             const sections = ['overview', 'capabilities', 'templates', 'testimonials', 'resources', 'implementation', 'corporate-goal']
-            const scrollPosition = window.scrollY + 200
+            const headerOffset = 150 // Account for header + nav bar
             
             for (let i = sections.length - 1; i >= 0; i--) {
                 const section = document.getElementById(sections[i])
-                if (section && section.offsetTop <= scrollPosition) {
-                    setActiveSection(sections[i])
-                    break
+                if (section) {
+                    const sectionTop = section.offsetTop
+                    const sectionHeight = section.offsetHeight
+                    const scrollPosition = scrollY + headerOffset
+                    
+                    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                        setActiveSection(sections[i])
+                        break
+                    }
                 }
             }
         }
 
-        window.addEventListener('scroll', handleScroll)
+        // Initial check
+        handleScroll()
+        
+        window.addEventListener('scroll', handleScroll, { passive: true })
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
 
@@ -580,109 +590,130 @@ export default function SolutionDetailPage() {
     return (
         <div className="min-h-screen bg-white dark:bg-slate-950 relative z-50">
             {/* Navigation Bar - Sticky */}
-            <div className={`sticky top-0 z-50 transition-all duration-300 ${
+            <div className={`sticky top-[60px] sm:top-[70px] md:top-[80px] z-50 transition-all duration-300 ${
                 scrolled 
-                    ? 'bg-white dark:bg-slate-900 shadow-lg border-b border-gray-200 dark:border-slate-700' 
+                    ? 'bg-white/95 dark:bg-slate-900/95 shadow-lg border-b border-gray-200 dark:border-slate-700' 
                     : 'bg-slate-800 dark:bg-slate-900 shadow-sm border-b border-slate-700'
             }`}>
                 <div className="max-w-7xl mx-auto px-8 py-3">
                     <nav className="flex items-center gap-8 overflow-x-auto">
                         <a 
                             href="#overview" 
-                            className={`font-medium text-sm transition-colors whitespace-nowrap ${
+                            className={`font-medium text-sm transition-all duration-200 whitespace-nowrap relative ${
                                 scrolled
                                     ? activeSection === 'overview'
-                                        ? 'text-gray-900 dark:text-white font-bold'
-                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                        ? 'text-cta-green-600 dark:text-cta-green-400 font-bold'
+                                        : 'text-gray-600 dark:text-gray-400 hover:text-cta-green-600 dark:hover:text-cta-green-400'
                                     : activeSection === 'overview'
                                         ? 'text-white font-bold'
                                         : 'text-white/90 hover:text-white'
                             }`}
                         >
+                            {activeSection === 'overview' && (
+                                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-cta-green-500" />
+                            )}
                             Overview
                         </a>
                         <a 
                             href="#capabilities" 
-                            className={`text-sm transition-colors whitespace-nowrap ${
+                            className={`text-sm transition-all duration-200 whitespace-nowrap relative ${
                                 scrolled
                                     ? activeSection === 'capabilities'
-                                        ? 'text-gray-900 dark:text-white font-bold'
-                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                        ? 'text-cta-green-600 dark:text-cta-green-400 font-bold'
+                                        : 'text-gray-600 dark:text-gray-400 hover:text-cta-green-600 dark:hover:text-cta-green-400'
                                     : activeSection === 'capabilities'
                                         ? 'text-white font-bold'
                                         : 'text-white/90 hover:text-white'
                             }`}
                         >
+                            {activeSection === 'capabilities' && (
+                                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-cta-green-500" />
+                            )}
                             Capabilities
                         </a>
                         <a 
                             href="#templates" 
-                            className={`text-sm transition-colors whitespace-nowrap ${
+                            className={`text-sm transition-all duration-200 whitespace-nowrap relative ${
                                 scrolled
                                     ? activeSection === 'templates'
-                                        ? 'text-gray-900 dark:text-white font-bold'
-                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                        ? 'text-cta-green-600 dark:text-cta-green-400 font-bold'
+                                        : 'text-gray-600 dark:text-gray-400 hover:text-cta-green-600 dark:hover:text-cta-green-400'
                                     : activeSection === 'templates'
                                         ? 'text-white font-bold'
                                         : 'text-white/90 hover:text-white'
                             }`}
                         >
+                            {activeSection === 'templates' && (
+                                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-cta-green-500" />
+                            )}
                             Template & Outputs
                         </a>
                         <a 
                             href="#testimonials" 
-                            className={`text-sm transition-colors whitespace-nowrap ${
+                            className={`text-sm transition-all duration-200 whitespace-nowrap relative ${
                                 scrolled
                                     ? activeSection === 'testimonials'
-                                        ? 'text-gray-900 dark:text-white font-bold'
-                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                        ? 'text-cta-green-600 dark:text-cta-green-400 font-bold'
+                                        : 'text-gray-600 dark:text-gray-400 hover:text-cta-green-600 dark:hover:text-cta-green-400'
                                     : activeSection === 'testimonials'
                                         ? 'text-white font-bold'
                                         : 'text-white/90 hover:text-white'
                             }`}
                         >
+                            {activeSection === 'testimonials' && (
+                                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-cta-green-500" />
+                            )}
                             Testimonials
                         </a>
                         <a 
                             href="#resources" 
-                            className={`text-sm transition-colors whitespace-nowrap ${
+                            className={`text-sm transition-all duration-200 whitespace-nowrap relative ${
                                 scrolled
                                     ? activeSection === 'resources'
-                                        ? 'text-gray-900 dark:text-white font-bold'
-                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                        ? 'text-cta-green-600 dark:text-cta-green-400 font-bold'
+                                        : 'text-gray-600 dark:text-gray-400 hover:text-cta-green-600 dark:hover:text-cta-green-400'
                                     : activeSection === 'resources'
                                         ? 'text-white font-bold'
                                         : 'text-white/90 hover:text-white'
                             }`}
                         >
+                            {activeSection === 'resources' && (
+                                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-cta-green-500" />
+                            )}
                             Resources
                         </a>
                         <a 
                             href="#implementation" 
-                            className={`text-sm transition-colors whitespace-nowrap ${
+                            className={`text-sm transition-all duration-200 whitespace-nowrap relative ${
                                 scrolled
                                     ? activeSection === 'implementation'
-                                        ? 'text-gray-900 dark:text-white font-bold'
-                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                        ? 'text-cta-green-600 dark:text-cta-green-400 font-bold'
+                                        : 'text-gray-600 dark:text-gray-400 hover:text-cta-green-600 dark:hover:text-cta-green-400'
                                     : activeSection === 'implementation'
                                         ? 'text-white font-bold'
                                         : 'text-white/90 hover:text-white'
                             }`}
                         >
+                            {activeSection === 'implementation' && (
+                                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-cta-green-500" />
+                            )}
                             Implementation
                         </a>
                         <a 
                             href="#corporate-goal" 
-                            className={`text-sm transition-colors whitespace-nowrap ${
+                            className={`text-sm transition-all duration-200 whitespace-nowrap relative ${
                                 scrolled
                                     ? activeSection === 'corporate-goal'
-                                        ? 'text-gray-900 dark:text-white font-bold'
-                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                        ? 'text-cta-green-600 dark:text-cta-green-400 font-bold'
+                                        : 'text-gray-600 dark:text-gray-400 hover:text-cta-green-600 dark:hover:text-cta-green-400'
                                     : activeSection === 'corporate-goal'
                                         ? 'text-white font-bold'
                                         : 'text-white/90 hover:text-white'
                             }`}
                         >
+                            {activeSection === 'corporate-goal' && (
+                                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-cta-green-500" />
+                            )}
                             Corporate Goal
                         </a>
                     </nav>

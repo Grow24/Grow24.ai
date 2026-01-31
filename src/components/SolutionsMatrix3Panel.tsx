@@ -531,7 +531,7 @@ export default function SolutionsMatrix3Panel() {
                                     }}
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
-                                    className="w-full px-3 py-2.5 bg-gray-800 dark:bg-gray-200 hover:bg-gray-900 dark:hover:bg-gray-100 text-white dark:text-gray-900 text-xs font-semibold rounded-lg shadow-md transition-colors duration-200 cursor-pointer break-words mt-auto"
+                                    className="w-full px-3 py-2.5 bg-cta-green-500 hover:bg-cta-green-600 text-white text-xs font-semibold rounded-lg shadow-md transition-colors duration-200 cursor-pointer break-words mt-auto"
                                 >
                                     <span className="line-clamp-2">Explore {selectedSolution.title} &gt;</span>
                                 </motion.button>
