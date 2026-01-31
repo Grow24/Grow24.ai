@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Link, useParams } from '@tanstack/react-router'
 import { useComingSoon } from '../contexts/ComingSoonContext'
@@ -533,6 +533,29 @@ export default function SolutionDetailPage() {
     const solutionId = params.solutionId as string
     const solution = solutionDetails[solutionId || '']
     const { showComingSoon } = useComingSoon()
+    const [scrolled, setScrolled] = useState(false)
+    const [activeSection, setActiveSection] = useState('overview')
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 100)
+            
+            // Determine active section based on scroll position
+            const sections = ['overview', 'capabilities', 'templates', 'testimonials', 'resources', 'implementation', 'corporate-goal']
+            const scrollPosition = window.scrollY + 200
+            
+            for (let i = sections.length - 1; i >= 0; i--) {
+                const section = document.getElementById(sections[i])
+                if (section && section.offsetTop <= scrollPosition) {
+                    setActiveSection(sections[i])
+                    break
+                }
+            }
+        }
+
+        window.addEventListener('scroll', handleScroll)
+        return () => window.removeEventListener('scroll', handleScroll)
+    }, [])
 
     console.log('SolutionDetailPage rendered with solutionId:', solutionId)
     console.log('All params:', params)
@@ -556,16 +579,112 @@ export default function SolutionDetailPage() {
 
     return (
         <div className="min-h-screen bg-white dark:bg-slate-950 relative z-50">
-            {/* Navigation Bar */}
-            <div className="bg-slate-800 dark:bg-slate-900 text-white shadow-sm border-b border-slate-700">
+            {/* Navigation Bar - Sticky */}
+            <div className={`sticky top-0 z-50 transition-all duration-300 ${
+                scrolled 
+                    ? 'bg-white dark:bg-slate-900 shadow-lg border-b border-gray-200 dark:border-slate-700' 
+                    : 'bg-slate-800 dark:bg-slate-900 shadow-sm border-b border-slate-700'
+            }`}>
                 <div className="max-w-7xl mx-auto px-8 py-3">
                     <nav className="flex items-center gap-8 overflow-x-auto">
-                        <a href="#overview" className="font-medium text-white hover:text-white/80 text-sm transition-colors whitespace-nowrap">Overview</a>
-                        <a href="#capabilities" className="text-white/90 hover:text-white text-sm transition-colors whitespace-nowrap">Capabilities</a>
-                        <a href="#templates" className="text-white/90 hover:text-white text-sm transition-colors whitespace-nowrap">Template & Outputs</a>
-                        <a href="#testimonials" className="text-white/90 hover:text-white text-sm transition-colors whitespace-nowrap">Testimonials</a>
-                        <a href="#resources" className="text-white/90 hover:text-white text-sm transition-colors whitespace-nowrap">Resources</a>
-                        <a href="#implementation" className="text-white/90 hover:text-white text-sm transition-colors whitespace-nowrap">Implementation</a>
+                        <a 
+                            href="#overview" 
+                            className={`font-medium text-sm transition-colors whitespace-nowrap ${
+                                scrolled
+                                    ? activeSection === 'overview'
+                                        ? 'text-gray-900 dark:text-white font-bold'
+                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                    : activeSection === 'overview'
+                                        ? 'text-white font-bold'
+                                        : 'text-white/90 hover:text-white'
+                            }`}
+                        >
+                            Overview
+                        </a>
+                        <a 
+                            href="#capabilities" 
+                            className={`text-sm transition-colors whitespace-nowrap ${
+                                scrolled
+                                    ? activeSection === 'capabilities'
+                                        ? 'text-gray-900 dark:text-white font-bold'
+                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                    : activeSection === 'capabilities'
+                                        ? 'text-white font-bold'
+                                        : 'text-white/90 hover:text-white'
+                            }`}
+                        >
+                            Capabilities
+                        </a>
+                        <a 
+                            href="#templates" 
+                            className={`text-sm transition-colors whitespace-nowrap ${
+                                scrolled
+                                    ? activeSection === 'templates'
+                                        ? 'text-gray-900 dark:text-white font-bold'
+                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                    : activeSection === 'templates'
+                                        ? 'text-white font-bold'
+                                        : 'text-white/90 hover:text-white'
+                            }`}
+                        >
+                            Template & Outputs
+                        </a>
+                        <a 
+                            href="#testimonials" 
+                            className={`text-sm transition-colors whitespace-nowrap ${
+                                scrolled
+                                    ? activeSection === 'testimonials'
+                                        ? 'text-gray-900 dark:text-white font-bold'
+                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                    : activeSection === 'testimonials'
+                                        ? 'text-white font-bold'
+                                        : 'text-white/90 hover:text-white'
+                            }`}
+                        >
+                            Testimonials
+                        </a>
+                        <a 
+                            href="#resources" 
+                            className={`text-sm transition-colors whitespace-nowrap ${
+                                scrolled
+                                    ? activeSection === 'resources'
+                                        ? 'text-gray-900 dark:text-white font-bold'
+                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                    : activeSection === 'resources'
+                                        ? 'text-white font-bold'
+                                        : 'text-white/90 hover:text-white'
+                            }`}
+                        >
+                            Resources
+                        </a>
+                        <a 
+                            href="#implementation" 
+                            className={`text-sm transition-colors whitespace-nowrap ${
+                                scrolled
+                                    ? activeSection === 'implementation'
+                                        ? 'text-gray-900 dark:text-white font-bold'
+                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                    : activeSection === 'implementation'
+                                        ? 'text-white font-bold'
+                                        : 'text-white/90 hover:text-white'
+                            }`}
+                        >
+                            Implementation
+                        </a>
+                        <a 
+                            href="#corporate-goal" 
+                            className={`text-sm transition-colors whitespace-nowrap ${
+                                scrolled
+                                    ? activeSection === 'corporate-goal'
+                                        ? 'text-gray-900 dark:text-white font-bold'
+                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                    : activeSection === 'corporate-goal'
+                                        ? 'text-white font-bold'
+                                        : 'text-white/90 hover:text-white'
+                            }`}
+                        >
+                            Corporate Goal
+                        </a>
                     </nav>
                 </div>
             </div>
@@ -742,6 +861,136 @@ export default function SolutionDetailPage() {
                         >
                             Download Playbook
                         </motion.button>
+                    </div>
+                </div>
+            </section>
+
+            {/* Corporate Goal Section */}
+            <section id="corporate-goal" className="py-16 px-8 bg-white dark:bg-slate-950">
+                <div className="max-w-7xl mx-auto">
+                    {/* Solution Thumbnail Label */}
+                    <div className="text-left mb-8">
+                        <span className="text-xs text-gray-400 dark:text-gray-400 uppercase tracking-wider font-normal">SOLUTION THUMBNAIL</span>
+                    </div>
+
+                    {/* Title Section */}
+                    <div className="text-center mb-20">
+                        <h2 className="text-5xl lg:text-6xl font-bold text-blue-600 dark:text-blue-600 mb-4" style={{ color: '#2563eb' }}>Corporate Goal</h2>
+                        <p className="text-xl lg:text-2xl text-blue-600 dark:text-blue-600" style={{ color: '#2563eb' }}>Set direction. Detect anomalies. Align the enterprise.</p>
+                    </div>
+
+                    {/* Diagram Container */}
+                    <div className="flex justify-center items-center my-16 relative min-h-[750px]">
+                        <div className="relative w-full max-w-4xl mx-auto" style={{ aspectRatio: '1/1', maxWidth: '800px' }}>
+                            {/* External Factors */}
+                            {/* Market - Left */}
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-28 md:-translate-x-40 flex flex-col items-center z-10">
+                                <div className="w-20 h-20 md:w-24 md:h-24 bg-gray-100 dark:bg-gray-200 rounded-lg flex items-center justify-center mb-3 shadow-md border border-gray-300 dark:border-gray-400 p-3">
+                                    <svg className="w-12 h-12 md:w-14 md:h-14 text-gray-800 dark:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                    </svg>
+                                </div>
+                                <span className="text-base md:text-lg font-semibold text-gray-800 dark:text-gray-900">Market</span>
+                            </div>
+
+                            {/* Competition - Right */}
+                            <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-28 md:translate-x-40 flex flex-col items-center z-10">
+                                <div className="w-20 h-20 md:w-24 md:h-24 bg-gray-100 dark:bg-gray-200 rounded-lg flex items-center justify-center mb-3 shadow-md border border-gray-300 dark:border-gray-400 p-3">
+                                    <svg className="w-12 h-12 md:w-14 md:h-14 text-gray-800 dark:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        {/* Globe */}
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        {/* Gear icon inside globe */}
+                                        <circle cx="12" cy="12" r="2" fill="currentColor" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v2M12 16v2M6 12h2M16 12h2M8.5 8.5l1.4 1.4M14.1 14.1l1.4 1.4M8.5 15.5l1.4-1.4M14.1 9.9l1.4-1.4" />
+                                    </svg>
+                                </div>
+                                <span className="text-base md:text-lg font-semibold text-gray-800 dark:text-gray-900">Competition</span>
+                            </div>
+
+                            {/* Regulation - Bottom Right */}
+                            <div className="absolute right-16 md:right-20 bottom-0 translate-y-24 md:translate-y-32 flex flex-col items-center z-10">
+                                <div className="w-20 h-20 md:w-24 md:h-24 bg-gray-100 dark:bg-gray-200 rounded-lg flex items-center justify-center mb-3 shadow-md border border-gray-300 dark:border-gray-400 p-3">
+                                    <svg className="w-12 h-12 md:w-14 md:h-14 text-gray-800 dark:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        {/* Document with gavel */}
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        {/* Gavel handle */}
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8l3-3m0 0l3 3m-3-3v12" />
+                                    </svg>
+                                </div>
+                                <span className="text-base md:text-lg font-semibold text-gray-800 dark:text-gray-900">Regulation</span>
+                            </div>
+
+                            {/* Circular Lifecycle Diagram */}
+                            <div className="relative w-full h-full mx-auto">
+                                <svg viewBox="0 0 600 600" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
+                                    <defs>
+                                        {/* Small triangular blue arrows - matching image style */}
+                                        <marker id="arrowhead-blue" markerWidth="8" markerHeight="8" refX="7.5" refY="2.5" orient="auto" markerUnits="userSpaceOnUse">
+                                            <polygon points="0 0, 8 2.5, 0 5" fill="#2563eb" stroke="none" />
+                                        </marker>
+                                    </defs>
+                                    
+                                    {/* Center point */}
+                                    <g transform="translate(300, 300)">
+                                        {/* Outer radius: 220, Inner radius: 120 */}
+                                        {/* 8 segments, each 45 degrees */}
+                                        {/* Starting from top (270° = -90° in standard coordinates) */}
+                                        
+                                        {/* Stage 1: Identify Goals (Top, 270° to 315°) - Blue */}
+                                        <path d="M 0 -220 A 220 220 0 0 1 155.56 -155.56 L 86.42 -86.42 A 120 120 0 0 0 0 -120 Z" fill="#2563eb" stroke="white" strokeWidth="2.5" />
+                                        <text x="70" y="-170" textAnchor="middle" fill="white" fontSize="14" fontWeight="700" transform="rotate(-67.5 70 -170)">Identify Goals</text>
+                                        
+                                        {/* Stage 2: Conduct Assessment (315° to 360°/0°) - Green */}
+                                        <path d="M 155.56 -155.56 A 220 220 0 0 1 220 0 L 120 0 A 120 120 0 0 0 86.42 -86.42 Z" fill="#10b981" stroke="white" strokeWidth="2.5" />
+                                        <text x="190" y="-60" textAnchor="middle" fill="white" fontSize="14" fontWeight="700" transform="rotate(-22.5 190 -60)">Conduct Assessment</text>
+                                        
+                                        {/* Stage 3: Choose Direction (0° to 45°) - Green */}
+                                        <path d="M 220 0 A 220 220 0 0 1 155.56 155.56 L 86.42 86.42 A 120 120 0 0 0 120 0 Z" fill="#10b981" stroke="white" strokeWidth="2.5" />
+                                        <text x="190" y="60" textAnchor="middle" fill="white" fontSize="14" fontWeight="700" transform="rotate(22.5 190 60)">Choose Direction</text>
+                                        
+                                        {/* Stage 4: Define Strategy (45° to 90°) - Green */}
+                                        <path d="M 155.56 155.56 A 220 220 0 0 1 0 220 L 0 120 A 120 120 0 0 0 86.42 86.42 Z" fill="#10b981" stroke="white" strokeWidth="2.5" />
+                                        <text x="70" y="190" textAnchor="middle" fill="white" fontSize="14" fontWeight="700" transform="rotate(67.5 70 190)">Define Strategy</text>
+                                        
+                                        {/* Stage 5: Build Plan (90° to 135°) - Green */}
+                                        <path d="M 0 220 A 220 220 0 0 1 -155.56 155.56 L -86.42 86.42 A 120 120 0 0 0 0 120 Z" fill="#10b981" stroke="white" strokeWidth="2.5" />
+                                        <text x="-70" y="190" textAnchor="middle" fill="white" fontSize="14" fontWeight="700" transform="rotate(112.5 -70 190)">Build Plan</text>
+                                        
+                                        {/* Stage 6: Execute Projects (135° to 180°) - Blue */}
+                                        <path d="M -155.56 155.56 A 220 220 0 0 1 -220 0 L -120 0 A 120 120 0 0 0 -86.42 86.42 Z" fill="#2563eb" stroke="white" strokeWidth="2.5" />
+                                        <text x="-190" y="60" textAnchor="middle" fill="white" fontSize="14" fontWeight="700" transform="rotate(157.5 -190 60)">Execute Projects</text>
+                                        
+                                        {/* Stage 7: Assess Outcome + Calibrate (180° to 225°) - Blue */}
+                                        <path d="M -220 0 A 220 220 0 0 1 -155.56 -155.56 L -86.42 -86.42 A 120 120 0 0 0 -120 0 Z" fill="#2563eb" stroke="white" strokeWidth="2.5" />
+                                        <text x="-190" y="-60" textAnchor="middle" fill="white" fontSize="12" fontWeight="700" transform="rotate(202.5 -190 -60)">Assess Outcome + Calibrate</text>
+                                        
+                                        {/* Stage 8: Back to Identify Goals (225° to 270°) - Blue */}
+                                        <path d="M -155.56 -155.56 A 220 220 0 0 1 0 -220 L 0 -120 A 120 120 0 0 0 -86.42 -86.42 Z" fill="#2563eb" stroke="white" strokeWidth="2.5" />
+                                        
+                                        {/* Arrows between segments - all blue, positioned at outer edge */}
+                                        <path d="M 155.56 -155.56 A 230 230 0 0 1 230 0" fill="none" stroke="#2563eb" strokeWidth="2.5" markerEnd="url(#arrowhead-blue)" />
+                                        <path d="M 230 0 A 230 230 0 0 1 155.56 155.56" fill="none" stroke="#2563eb" strokeWidth="2.5" markerEnd="url(#arrowhead-blue)" />
+                                        <path d="M 155.56 155.56 A 230 230 0 0 1 0 230" fill="none" stroke="#2563eb" strokeWidth="2.5" markerEnd="url(#arrowhead-blue)" />
+                                        <path d="M 0 230 A 230 230 0 0 1 -155.56 155.56" fill="none" stroke="#2563eb" strokeWidth="2.5" markerEnd="url(#arrowhead-blue)" />
+                                        <path d="M -155.56 155.56 A 230 230 0 0 1 -230 0" fill="none" stroke="#2563eb" strokeWidth="2.5" markerEnd="url(#arrowhead-blue)" />
+                                        <path d="M -230 0 A 230 230 0 0 1 -155.56 -155.56" fill="none" stroke="#2563eb" strokeWidth="2.5" markerEnd="url(#arrowhead-blue)" />
+                                        <path d="M -155.56 -155.56 A 230 230 0 0 1 0 -230" fill="none" stroke="#2563eb" strokeWidth="2.5" markerEnd="url(#arrowhead-blue)" />
+                                        
+                                        {/* Inner Circle - Corporate */}
+                                        <circle cx="0" cy="0" r="120" fill="#2563eb" />
+                                        <text x="0" y="10" textAnchor="middle" fill="white" fontSize="26" fontWeight="bold" letterSpacing="0.5">Corporate</text>
+                                    </g>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Bottom Section */}
+                    <div className="text-center mt-20 mb-8">
+                        <p className="text-lg md:text-xl text-gray-700 dark:text-gray-700 mb-10 leading-relaxed max-w-4xl mx-auto" style={{ color: '#374151' }}>
+                            Define corporate goals using evidence, environment awareness, and a closed-loop lifecycle.
+                        </p>
+                        <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold text-blue-600 dark:text-blue-600 tracking-tight" style={{ color: '#2563eb' }}>Lifecycle-driven Goal Setting</h3>
                     </div>
                 </div>
             </section>

@@ -258,184 +258,114 @@ export const ResourceHub: React.FC = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Filters Sidebar */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="lg:col-span-1"
-          >
-            <div className="sticky top-24 space-y-4">
-              {/* Clear Filters */}
-              {Object.values(filters).some((f) => f?.length) && (
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={clearFilters}
-                  className="w-full px-4 py-2 rounded-lg bg-red-500/20 text-red-700 dark:text-red-300 hover:bg-red-500/30 transition-colors duration-300 text-sm font-medium"
-                >
-                  Clear All Filters
-                </motion.button>
-              )}
-
-              {/* Filter Groups */}
-              {(Object.entries(filterConfigs) as [FilterType, FilterConfig][]).map(
-                ([filterType, config]) => (
-                  <motion.div
-                    key={filterType}
-                    className="bg-slate-800 dark:bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-lg"
-                  >
+        {/* Filters Section - Top */}
+        <div className="mb-6">
+          <div className="flex flex-wrap gap-2 sm:gap-3 mb-4">
+            {(Object.entries(filterConfigs) as [FilterType, FilterConfig][]).map(
+              ([filterType, config]) =>
+                config.options.map((option) => {
+                  const isSelected = filters[filterType]?.includes(option) || false
+                  return (
                     <button
-                      onClick={() =>
-                        setOpenFilterGroup(openFilterGroup === filterType ? null : filterType)
-                      }
-                      className="w-full flex items-center justify-between p-4 hover:bg-slate-700 transition-colors duration-200"
+                      key={`${filterType}-${option}`}
+                      onClick={() => toggleFilter(filterType, option)}
+                      className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                        isSelected
+                          ? 'bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-900 shadow-md'
+                          : 'bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                      }`}
                     >
-                      <h3 className="font-semibold text-white text-sm">
-                        {config.label}
-                      </h3>
-                      <motion.svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        animate={{ rotate: openFilterGroup === filterType ? 180 : 0 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <path d="M6 9l6 6 6-6" />
-                      </motion.svg>
+                      {config.label}: {option.replace(/_/g, ' ')}
                     </button>
+                  )
+                }),
+            )}
+          </div>
+          {Object.values(filters).some((f) => f?.length) && (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={clearFilters}
+              className="px-4 py-2 rounded-lg bg-red-500/20 text-red-700 dark:text-red-300 hover:bg-red-500/30 transition-colors duration-300 text-sm font-medium"
+            >
+              Clear All Filters
+            </motion.button>
+          )}
+        </div>
 
-                    <AnimatePresence>
-                      {openFilterGroup === filterType && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          className="border-t border-slate-700 bg-slate-700/50 px-4 pb-4 pt-2 space-y-2"
-                        >
-                          {config.options.map((option) => (
-                            <motion.label
-                              key={option}
-                              whileHover={{ x: 5 }}
-                              className="flex items-center gap-3 cursor-pointer text-sm"
-                            >
-                              <input
-                                type="checkbox"
-                                checked={filters[filterType]?.includes(option) || false}
-                                onChange={() => toggleFilter(filterType, option)}
-                                className="w-4 h-4 rounded border-2 border-emerald-500 text-emerald-600 focus:ring-2 focus:ring-emerald-500 cursor-pointer bg-slate-800"
-                              />
-                              <span className="text-slate-300">
-                                {option.replace(/_/g, ' ')}
-                              </span>
-                            </motion.label>
-                          ))}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                ),
+        {/* Dashboard Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-6"
+        >
+          {/* Search Bar */}
+          <div className="mb-8 relative">
+            <div className="relative">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-400">
+                <SearchIcon />
+              </div>
+              <input
+                type="text"
+                placeholder="Search resources..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-300 dark:border-slate-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-400 hover:text-gray-600 dark:hover:text-slate-200 transition-colors"
+                >
+                  <CloseIcon />
+                </button>
               )}
             </div>
-          </motion.div>
+          </div>
 
-          {/* Main Content */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="lg:col-span-3"
-          >
-            {/* Search Bar */}
-            <div className="mb-8 relative">
-              <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-                <SearchIcon />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Search resources..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors"
-                  >
-                    <CloseIcon />
-                  </button>
-                )}
-              </div>
-            </div>
+          {/* Results */}
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+              {filteredResources.length} Resources Found
+            </h2>
+          </div>
 
-            {/* Active Filters Display */}
-            {Object.values(filters).some((f) => f?.length) && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6 flex flex-wrap gap-2">
-                {(Object.entries(filters) as [FilterType, string[] | undefined][]).map(
-                  ([filterType, values]) =>
-                    values?.map((value) => (
-                      <motion.button
-                        key={`${filterType}-${value}`}
-                        whileHover={{ scale: 1.05 }}
-                        onClick={() => toggleFilter(filterType, value)}
-                        className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-medium hover:bg-emerald-500/30 transition-colors duration-300 flex items-center gap-2"
-                      >
-                        {value.replace(/_/g, ' ')}
-                        <CloseIcon />
-                      </motion.button>
-                    )),
-                )}
-              </motion.div>
-            )}
-
-            {/* Results */}
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-white">
-                {filteredResources.length} Resources Found
-              </h2>
-            </div>
-
-            {/* Resource Grid */}
-            {filteredResources.length > 0 ? (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="grid grid-cols-1 md:grid-cols-2 gap-6"
-              >
-                {filteredResources.map((resource, idx) => (
-                  <motion.div
-                    key={resource.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.05 }}
-                  >
-                    <ResourceCard resource={resource} />
-                  </motion.div>
-                ))}
-              </motion.div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center py-12"
-              >
-                <p className="text-slate-300 text-lg mb-4">
-                  No resources found matching your filters
-                </p>
-                <button
-                  onClick={clearFilters}
-                  className="px-6 py-2 rounded-lg bg-cta-green-500 text-white font-medium hover:bg-cta-green-600 transition-colors duration-300"
+          {/* Resource Grid */}
+          {filteredResources.length > 0 ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-6"
+            >
+              {filteredResources.map((resource, idx) => (
+                <motion.div
+                  key={resource.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.05 }}
                 >
-                  Reset Filters
-                </button>
-              </motion.div>
-            )}
-          </motion.div>
-        </div>
+                  <ResourceCard resource={resource} />
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-12"
+            >
+              <p className="text-gray-600 dark:text-slate-300 text-lg mb-4">
+                No resources found matching your filters
+              </p>
+              <button
+                onClick={clearFilters}
+                className="px-6 py-2 rounded-lg bg-cta-green-500 text-white font-medium hover:bg-cta-green-600 transition-colors duration-300"
+              >
+                Reset Filters
+              </button>
+            </motion.div>
+          )}
+        </motion.div>
       </div>
     </div>
   )

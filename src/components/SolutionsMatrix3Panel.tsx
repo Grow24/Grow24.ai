@@ -376,51 +376,43 @@ export default function SolutionsMatrix3Panel() {
                     <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2">Solution Dashboard</h1>
                     <p className="text-xl text-gray-600 dark:text-gray-400">Explore solutions by function and category</p>
                 </div>
-                <div className="grid grid-cols-1 lg:grid-cols-[180px_1fr_320px] gap-2 sm:gap-4">
-                    {/* Left Panel: Function Column */}
-                    <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden order-last lg:order-first">
-                        <div className="bg-gray-100 dark:bg-gray-700 px-2 sm:px-3 py-1.5 sm:py-2 border-b border-gray-200 dark:border-gray-600">
-                            <h3 className="font-bold text-xs text-gray-900 dark:text-white uppercase">Function</h3>
-                        </div>
-                        <div className="divide-y divide-gray-200 dark:divide-gray-700">
-                            {functions.map((func) => {
-                                const isSelected = selectedFunction === func.id
-                                const isExpanded = expandedFunctions.has(func.id)
-                                const hasSubItems = func.subItems && func.subItems.length > 0
-                                
-                                return (
-                                    <div key={func.id}>
-                                        <button
-                                            onClick={() => handleFunctionClick(func.id)}
-                                            className={`w-full px-2 sm:px-3 py-1 sm:py-1.5 flex items-center justify-between text-left transition-colors ${
-                                                isSelected
-                                                    ? 'bg-gray-100 dark:bg-gray-700 font-semibold'
-                                                    : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
-                                            }`}
-                                        >
-                                            <span className={`text-xs text-gray-900 dark:text-white ${
-                                                isSelected ? 'font-bold' : 'font-semibold'
-                                            }`}>
-                                                {func.name}
-                                            </span>
-                                            {hasSubItems && (
-                                                <ChevronIcon isOpen={isExpanded} />
-                                            )}
-                                        </button>
-                                        {hasSubItems && isExpanded && func.subItems && (
-                                            <div className="bg-gray-50 dark:bg-gray-800 px-2 sm:px-3 py-1 sm:py-1.5 space-y-1">
-                                                {func.subItems.map((item, idx) => (
-                                                    <div key={idx} className="text-xs text-gray-600 dark:text-gray-400 pl-2 sm:pl-3">
-                                                        {item}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                )
-                            })}
-                        </div>
+
+                {/* Filters Section - Top */}
+                <div className="mb-6 px-2">
+                    <div className="flex flex-wrap gap-2 sm:gap-3">
+                        {functions.map((func) => {
+                            const isSelected = selectedFunction === func.id
+                            const hasSubItems = func.subItems && func.subItems.length > 0
+                            
+                            return (
+                                <div key={func.id} className="relative">
+                                    <button
+                                        onClick={() => handleFunctionClick(func.id)}
+                                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                                            isSelected
+                                                ? 'bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-900 shadow-md'
+                                                : 'bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                                        }`}
+                                    >
+                                        {func.name}
+                                    </button>
+                                    {hasSubItems && expandedFunctions.has(func.id) && func.subItems && (
+                                        <div className="absolute top-full left-0 mt-1 bg-white dark:bg-slate-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg p-2 z-10 min-w-[150px]">
+                                            {func.subItems.map((item, idx) => (
+                                                <div key={idx} className="text-xs text-gray-600 dark:text-gray-400 px-2 py-1 hover:bg-gray-50 dark:hover:bg-gray-700 rounded">
+                                                    {item}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )
+                        })}
                     </div>
+                </div>
+
+                {/* Dashboard Section */}
+                <div className="grid grid-cols-1 lg:grid-cols-[1fr] gap-2 sm:gap-4 mb-6">
 
                     {/* Middle Panel: Category Columns */}
                     <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -487,82 +479,83 @@ export default function SolutionsMatrix3Panel() {
                         </div>
                     </div>
 
-                    {/* Right Panel: Solution Summary */}
-                    <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col order-first lg:order-last">
-                        <div className="bg-gray-100 dark:bg-gray-700 px-3 py-2 border-b border-gray-200 dark:border-gray-600">
-                            <h3 className="font-bold text-xs text-gray-900 dark:text-white uppercase">Solution Summary</h3>
-                        </div>
-                        <AnimatePresence mode="wait">
-                            {selectedSolution ? (
-                                <motion.div
-                                    key={selectedSolution.id}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -20 }}
-                                    className="p-4 flex-1 flex flex-col"
-                                >
-                                    <div className="flex items-start gap-2 mb-3">
-                                        <div className="text-gray-700 dark:text-gray-300 flex-shrink-0">
-                                            {selectedSolution.icon}
-                                        </div>
-                                        <h3 className="text-base font-bold text-gray-900 dark:text-white break-words">
-                                            {selectedSolution.title}
-                                        </h3>
-                                    </div>
-                                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-4 leading-relaxed break-words">
-                                        {selectedSolution.description}
-                                    </p>
-                                    <div className="space-y-2 mb-4 flex-1">
-                                        <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">Features:</p>
-                                        {selectedSolution.features.map((feature, idx) => (
-                                            <motion.div
-                                                key={idx}
-                                                initial={{ opacity: 0, x: -10 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                transition={{ delay: idx * 0.05 }}
-                                                className="flex items-start gap-2 bg-gray-50 dark:bg-gray-700/50 rounded px-2 py-1.5"
-                                            >
-                                                <svg className="w-4 h-4 text-gray-600 dark:text-gray-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                </svg>
-                                                <span className="text-xs text-gray-700 dark:text-gray-300 break-words">{feature}</span>
-                                            </motion.div>
-                                        ))}
-                                    </div>
-                                    <motion.button
-                                        onClick={(e) => {
-                                            e.preventDefault()
-                                            e.stopPropagation()
-                                            handleLearnMore()
-                                        }}
-                                        whileHover={{ scale: 1.02 }}
-                                        whileTap={{ scale: 0.98 }}
-                                        className="w-full px-3 py-2.5 bg-gray-800 dark:bg-gray-200 hover:bg-gray-900 dark:hover:bg-gray-100 text-white dark:text-gray-900 text-xs font-semibold rounded-lg shadow-md transition-colors duration-200 cursor-pointer break-words mt-auto"
-                                    >
-                                        <span className="line-clamp-2">Explore {selectedSolution.title} &gt;</span>
-                                    </motion.button>
-                                </motion.div>
-                            ) : (
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    className="flex flex-col items-center justify-center h-full min-h-[400px] text-center p-4"
-                                >
-                                    <div className="bg-gray-100 dark:bg-gray-700 rounded-full p-4 mb-4">
-                                        <svg className="w-12 h-12 text-gray-400 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                        </svg>
-                                    </div>
-                                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                                        No Solution Selected
-                                    </p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-500">
-                                        Click on a solution card to view details
-                                    </p>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                </div>
+
+                {/* Solution Summary Section - Below Dashboard */}
+                <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <div className="bg-gray-100 dark:bg-gray-700 px-3 py-2 border-b border-gray-200 dark:border-gray-600">
+                        <h3 className="font-bold text-xs text-gray-900 dark:text-white uppercase">Solution Summary</h3>
                     </div>
+                    <AnimatePresence mode="wait">
+                        {selectedSolution ? (
+                            <motion.div
+                                key={selectedSolution.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                className="p-4 flex-1 flex flex-col"
+                            >
+                                <div className="flex items-start gap-2 mb-3">
+                                    <div className="text-gray-700 dark:text-gray-300 flex-shrink-0">
+                                        {selectedSolution.icon}
+                                    </div>
+                                    <h3 className="text-base font-bold text-gray-900 dark:text-white break-words">
+                                        {selectedSolution.title}
+                                    </h3>
+                                </div>
+                                <p className="text-xs text-gray-600 dark:text-gray-400 mb-4 leading-relaxed break-words">
+                                    {selectedSolution.description}
+                                </p>
+                                <div className="space-y-2 mb-4 flex-1">
+                                    <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">Features:</p>
+                                    {selectedSolution.features.map((feature, idx) => (
+                                        <motion.div
+                                            key={idx}
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: idx * 0.05 }}
+                                            className="flex items-start gap-2 bg-gray-50 dark:bg-gray-700/50 rounded px-2 py-1.5"
+                                        >
+                                            <svg className="w-4 h-4 text-gray-600 dark:text-gray-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                            </svg>
+                                            <span className="text-xs text-gray-700 dark:text-gray-300 break-words">{feature}</span>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                                <motion.button
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        e.stopPropagation()
+                                        handleLearnMore()
+                                    }}
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    className="w-full px-3 py-2.5 bg-gray-800 dark:bg-gray-200 hover:bg-gray-900 dark:hover:bg-gray-100 text-white dark:text-gray-900 text-xs font-semibold rounded-lg shadow-md transition-colors duration-200 cursor-pointer break-words mt-auto"
+                                >
+                                    <span className="line-clamp-2">Explore {selectedSolution.title} &gt;</span>
+                                </motion.button>
+                            </motion.div>
+                        ) : (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="flex flex-col items-center justify-center h-full min-h-[200px] text-center p-4"
+                            >
+                                <div className="bg-gray-100 dark:bg-gray-700 rounded-full p-4 mb-4">
+                                    <svg className="w-12 h-12 text-gray-400 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                </div>
+                                <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                                    No Solution Selected
+                                </p>
+                                <p className="text-xs text-gray-500 dark:text-gray-500">
+                                    Click on a solution card to view details
+                                </p>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
             </div>
         </div>
