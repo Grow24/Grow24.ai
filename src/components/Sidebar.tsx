@@ -2,21 +2,55 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useLocation } from '@tanstack/react-router'
 
-// SVG Icons
-const MenuIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <line x1="3" y1="12" x2="21" y2="12" />
+// Hamburger Icon (3 lines)
+const HamburgerIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
     <line x1="3" y1="6" x2="21" y2="6" />
+    <line x1="3" y1="12" x2="21" y2="12" />
     <line x1="3" y1="18" x2="21" y2="18" />
   </svg>
 )
 
+// Close/X Icon
 const CloseIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
     <line x1="18" y1="6" x2="6" y2="18" />
     <line x1="6" y1="6" x2="18" y2="18" />
   </svg>
 )
+
+// Menu Icon - BCG style (separate icons, no overlap)
+const MenuIcon = ({ isOpen }: { isOpen: boolean }) => {
+  return (
+    <div className="relative w-6 h-6 flex items-center justify-center">
+      <AnimatePresence mode="wait" initial={false}>
+        {isOpen ? (
+          <motion.div
+            key="close"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className="absolute inset-0 flex items-center justify-center"
+          >
+            <CloseIcon />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="menu"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className="absolute inset-0 flex items-center justify-center"
+          >
+            <HamburgerIcon />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
 
 const OfferIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -87,34 +121,12 @@ export default function Sidebar() {
       {/* Toggle Button - Fixed on left side - Hidden on mobile since header has menu button */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className="hidden md:flex fixed top-6 left-6 z-[60] w-12 h-12 rounded-xl glass backdrop-blur-xl bg-white/10 border border-white/20 items-center justify-center text-white hover:bg-white/20 transition-colors shadow-lg"
+        className="hidden md:flex fixed top-6 left-6 z-[60] w-12 h-12 rounded-xl glass backdrop-blur-xl bg-gray-800/90 dark:bg-slate-800/90 border border-gray-700/50 dark:border-slate-700/50 items-center justify-center text-white hover:bg-gray-700/90 dark:hover:bg-slate-700/90 transition-colors shadow-lg"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         aria-label="Toggle menu"
       >
-        <AnimatePresence mode="wait">
-          {isOpen ? (
-            <motion.div
-              key="close"
-              initial={{ rotate: -90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: 90, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              <CloseIcon />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="menu"
-              initial={{ rotate: 90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: -90, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              <MenuIcon />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <MenuIcon isOpen={isOpen} />
       </motion.button>
 
       {/* Backdrop - No blur */}
@@ -144,7 +156,7 @@ export default function Sidebar() {
               {/* Header */}
               <div className="px-6 py-8 border-b border-gray-200 dark:border-white/10">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-lg">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 dark:from-emerald-600 dark:to-emerald-800 flex items-center justify-center shadow-lg">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white">
                       <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
                       <path d="M12 6v12M6 12h12" stroke="currentColor" strokeWidth="2" />

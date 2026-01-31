@@ -315,29 +315,22 @@ const CloseIconWidget = () => (
 // Social Links Component
 export const SocialLinks: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false)
-  const [isClosed, setIsClosed] = useState(() => {
-    // Check localStorage to see if widget was closed
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('socialWidgetClosed') === 'true'
-    }
-    return false
-  })
   const { isVisible: isCTABarVisible } = useGlobalCTABar()
   const x = useMotionValue(0)
   const y = useMotionValue(0)
+
+  // Clean up old localStorage entry if it exists (for users who had widget closed before)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('socialWidgetClosed')
+    }
+  }, [])
 
   // Reset position when CTA bar visibility changes to ensure alignment
   useEffect(() => {
     x.set(0)
     y.set(0)
   }, [isCTABarVisible, x, y])
-
-  // Handle closing the widget completely
-  const handleCloseWidget = () => {
-    setIsClosed(true)
-    setIsExpanded(false)
-    localStorage.setItem('socialWidgetClosed', 'true')
-  }
 
   // Position above GlobalCTABar when visible, otherwise normal position
   // Social Links positioned ABOVE WhatsApp to avoid overlap
@@ -351,11 +344,6 @@ export const SocialLinks: React.FC = () => {
     { id: 'youtube', icon: YouTubeIcon, url: 'https://www.youtube.com/channel/UC3iIvyLHuVbb0qEeKjEXKcQ', label: 'YouTube', color: 'hover:bg-red-600' },
     { id: 'reddit', icon: RedditIcon, url: 'https://www.reddit.com/user/SandeepSethDS/', label: 'Reddit', color: 'hover:bg-orange-600' },
   ]
-
-  // Don't render if widget is closed
-  if (isClosed) {
-    return null
-  }
 
   return (
     <motion.div
@@ -379,18 +367,9 @@ export const SocialLinks: React.FC = () => {
             transition={{ duration: 0.2 }}
             className="absolute bottom-16 left-12 sm:left-14 flex flex-col gap-2 mb-2 p-4 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700"
           >
-            {/* Header with Close Button */}
+            {/* Header */}
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Follow us</h3>
-              <motion.button
-                onClick={handleCloseWidget}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center justify-center p-1 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-all duration-200"
-                aria-label="Close social links widget"
-              >
-                <CloseIconWidget />
-              </motion.button>
             </div>
 
             {/* Social Links */}
