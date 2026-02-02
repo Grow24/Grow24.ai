@@ -130,32 +130,31 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Toggle Button - Fixed on left side - Hidden on mobile since header has menu button */}
-      <motion.button
-        onClick={() => setIsOpen(!isOpen)}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        className={`hidden md:flex fixed top-6 left-6 z-[60] w-12 h-12 rounded-lg items-center justify-center transition-all duration-200 ${
-          isOpen
-            ? 'bg-cta-green-500 hover:bg-cta-green-600'
-            : isHovered
-            ? 'bg-cta-green-500'
-            : 'bg-gray-200 dark:bg-gray-300'
-        }`}
-        style={{
-          backdropFilter: 'none',
-          WebkitBackdropFilter: 'none',
-          border: 'none',
-          outline: 'none',
-          backgroundColor: isOpen ? '#00C896' : undefined,
-          boxShadow: 'none'
-        } as React.CSSProperties}
-        whileHover={isOpen ? {} : { scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        aria-label="Toggle menu"
-      >
-        <MenuIcon isOpen={isOpen} isHovered={isHovered || isOpen} />
-      </motion.button>
+      {/* Toggle Button - Fixed on left side - Hidden when sidebar is open and hidden on mobile since header has menu button */}
+      {!isOpen && (
+        <motion.button
+          onClick={() => setIsOpen(!isOpen)}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          className={`hidden md:flex fixed top-6 left-6 z-[70] w-12 h-12 rounded-lg items-center justify-center transition-all duration-200 ${
+            isHovered
+              ? 'bg-cta-green-500'
+              : 'bg-gray-200 dark:bg-gray-300'
+          }`}
+          style={{
+            backdropFilter: 'none',
+            WebkitBackdropFilter: 'none',
+            border: 'none',
+            outline: 'none',
+            boxShadow: 'none'
+          } as React.CSSProperties}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          aria-label="Toggle menu"
+        >
+          <MenuIcon isOpen={isOpen} isHovered={isHovered || isOpen} />
+        </motion.button>
+      )}
 
       {/* Backdrop - No blur */}
       <AnimatePresence>
@@ -165,7 +164,7 @@ export default function Sidebar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
-            className="fixed inset-0 bg-black/20 z-[55]"
+            className="fixed inset-0 bg-black/20 z-[65]"
           />
         )}
       </AnimatePresence>
@@ -178,16 +177,24 @@ export default function Sidebar() {
             animate={{ x: 0 }}
             exit={{ x: -320 }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed top-0 left-0 h-screen w-80 z-[56] glass backdrop-blur-2xl bg-white/95 dark:bg-slate-900/95 border-r border-gray-200 dark:border-white/10 shadow-2xl"
+            className="fixed top-0 left-0 h-screen w-80 z-[66] glass backdrop-blur-2xl bg-white/95 dark:bg-slate-900/95 border-r border-gray-200 dark:border-white/10 shadow-2xl"
           >
             <div className="flex flex-col h-full">
               {/* Header */}
               <div className="px-6 py-8 border-b border-gray-200 dark:border-white/10">
-                <div className="flex items-center gap-3">
-                  
-                  <div>
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">Grow24.ai11</h2>
-                    <p className="text-xs text-emerald-600 dark:text-emerald-400">Transform & Thrive</p>
+                <div className="flex items-center gap-4">
+                  <motion.button
+                    onClick={() => setIsOpen(false)}
+                    className="w-10 h-10 flex-shrink-0 rounded-lg bg-emerald-500 hover:bg-emerald-600 flex items-center justify-center transition-colors duration-200"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    aria-label="Close menu"
+                  >
+                    <CloseIcon />
+                  </motion.button>
+                  <div className="flex-1 min-w-0">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white whitespace-nowrap">Grow24.ai11</h2>
+                    <p className="text-xs text-emerald-600 dark:text-emerald-400 whitespace-nowrap">Transform & Thrive</p>
                   </div>
                 </div>
               </div>

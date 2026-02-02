@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { submitLead } from '../services/leadService'
 
@@ -24,11 +24,30 @@ const ComingSoonModal: React.FC<ComingSoonModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitMessage, setSubmitMessage] = useState('')
   const [isSuccess, setIsSuccess] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   // Check if this is the watch-concept modal
   const isWatchConcept = source === 'watch-concept'
   // Check if this is the free trial form
   const isFreeTrialForm = source === 'start-free-trial'
+
+  // Cleanup video when modal closes or component unmounts
+  useEffect(() => {
+    if (!isOpen && videoRef.current) {
+      videoRef.current.pause()
+      videoRef.current.currentTime = 0
+    }
+  }, [isOpen])
+
+  // Cleanup on component unmount
+  useEffect(() => {
+    return () => {
+      if (videoRef.current) {
+        videoRef.current.pause()
+        videoRef.current.currentTime = 0
+      }
+    }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -103,6 +122,12 @@ const ComingSoonModal: React.FC<ComingSoonModalProps> = ({
   }
 
   const handleClose = () => {
+    // Pause and reset video when closing modal
+    if (videoRef.current) {
+      videoRef.current.pause()
+      videoRef.current.currentTime = 0
+    }
+    
     if (!isSubmitting) {
       setEmail('')
       setName('')
@@ -153,8 +178,8 @@ const ComingSoonModal: React.FC<ComingSoonModalProps> = ({
                 {/* Video Player */}
                 <div className="aspect-video w-full bg-black rounded-lg overflow-hidden">
                   <video 
+                    ref={videoRef}
                     controls 
-                    autoPlay 
                     className="w-full h-full"
                     poster="/video-thumbnail.jpg"
                   >

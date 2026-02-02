@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 // SVG Icons
 const SunIcon = () => (
@@ -50,6 +50,25 @@ function WhatWeOfferPage() {
   const [personalBgWhite, setPersonalBgWhite] = useState(false)
   const [professionalBgWhite, setProfessionalBgWhite] = useState(false)
   const [showVideoModal, setShowVideoModal] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  // Cleanup video when modal closes or component unmounts
+  useEffect(() => {
+    if (!showVideoModal && videoRef.current) {
+      videoRef.current.pause()
+      videoRef.current.currentTime = 0
+    }
+  }, [showVideoModal])
+
+  // Cleanup on component unmount
+  useEffect(() => {
+    return () => {
+      if (videoRef.current) {
+        videoRef.current.pause()
+        videoRef.current.currentTime = 0
+      }
+    }
+  }, [])
 
   return (
     <div className="min-h-screen py-20 px-4">
@@ -405,7 +424,13 @@ function WhatWeOfferPage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
-            onClick={() => setShowVideoModal(false)}
+            onClick={() => {
+              if (videoRef.current) {
+                videoRef.current.pause()
+                videoRef.current.currentTime = 0
+              }
+              setShowVideoModal(false)
+            }}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
@@ -416,7 +441,13 @@ function WhatWeOfferPage() {
             >
               {/* Close Button */}
               <button
-                onClick={() => setShowVideoModal(false)}
+                onClick={() => {
+                  if (videoRef.current) {
+                    videoRef.current.pause()
+                    videoRef.current.currentTime = 0
+                  }
+                  setShowVideoModal(false)
+                }}
                 className="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -427,9 +458,9 @@ function WhatWeOfferPage() {
               {/* Video Player */}
               <div className="relative aspect-video">
                 <video
+                  ref={videoRef}
                   className="w-full h-full"
                   controls
-                  autoPlay
                   src="/concept-video.mp4"
                 >
                   Your browser does not support the video tag.
