@@ -50,6 +50,16 @@ const ResourcesIcon = () => (
   </svg>
 )
 
+const LibraryIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+    <line x1="8" y1="7" x2="16" y2="7" />
+    <line x1="8" y1="11" x2="16" y2="11" />
+    <line x1="8" y1="15" x2="14" y2="15" />
+  </svg>
+)
+
 const HomeIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -118,6 +128,7 @@ const navItems: NavItem[] = [
   { label: 'The Concept', href: '/what-we-offer', icon: OfferIcon, badge: 'PBMP' },
   { label: 'Solutions', href: '/solutions', icon: SolutionsIcon },
   { label: 'Resources', href: '/resources', icon: ResourcesIcon },
+  { label: 'Library', href: '/library', icon: LibraryIcon },
 ]
 
 interface HeaderProps {
@@ -131,6 +142,7 @@ const searchIndex = [
   { type: 'page', title: 'The Concept', description: 'Learn about PBMP methodology', href: '/what-we-offer', keywords: ['concept', 'pbmp', 'methodology', 'plan', 'build', 'measure', 'progress'] },
   { type: 'page', title: 'Solutions', description: 'Explore our solutions', href: '/solutions', keywords: ['solutions', 'dashboard', 'corporate', 'sales', 'marketing'] },
   { type: 'page', title: 'Resources', description: 'Learn and engage with resources', href: '/resources', keywords: ['resources', 'learn', 'engage', 'articles', 'webinars', 'videos'] },
+  { type: 'page', title: 'Library', description: 'Access curated information and training resources', href: '/library', keywords: ['library', 'information', 'training', 'resources', 'content'] },
   
   // Solutions
   { type: 'solution', title: 'Strategy Goalsetting', description: 'Define measurable objectives for sustained growth', href: '/solutions/corp-goal-1', keywords: ['goals', 'strategy', 'objectives', 'growth', 'corporate'] },

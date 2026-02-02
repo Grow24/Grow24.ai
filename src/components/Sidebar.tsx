@@ -66,6 +66,16 @@ const ResourcesIcon = () => (
   </svg>
 )
 
+const LibraryIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+    <line x1="8" y1="7" x2="16" y2="7" />
+    <line x1="8" y1="11" x2="16" y2="11" />
+    <line x1="8" y1="15" x2="14" y2="15" />
+  </svg>
+)
+
 const PricingIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <line x1="12" y1="1" x2="12" y2="23" />
@@ -110,6 +120,7 @@ const menuItems: MenuItem[] = [
   { label: 'The Concept', href: '/what-we-offer', icon: OfferIcon, badge: 'PBMP' },
   { label: 'Solutions', href: '/solutions', icon: SolutionsIcon },
   { label: 'Resources', href: '/resources', icon: ResourcesIcon },
+  { label: 'Library', href: '/library', icon: LibraryIcon },
 ]
 
 export default function Sidebar() {
@@ -173,14 +184,9 @@ export default function Sidebar() {
               {/* Header */}
               <div className="px-6 py-8 border-b border-gray-200 dark:border-white/10">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 dark:from-emerald-600 dark:to-emerald-800 flex items-center justify-center shadow-lg">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white">
-                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
-                      <path d="M12 6v12M6 12h12" stroke="currentColor" strokeWidth="2" />
-                    </svg>
-                  </div>
+                  
                   <div>
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">Grow24.ai</h2>
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">Grow24.ai11</h2>
                     <p className="text-xs text-emerald-600 dark:text-emerald-400">Transform & Thrive</p>
                   </div>
                 </div>

@@ -370,102 +370,170 @@ export default function SolutionsMatrix3Panel() {
     }
 
     return (
-        <div className="w-full min-h-screen pt-20 sm:pt-24 pb-12 sm:pb-16 px-2 sm:px-4">
+        <div className="w-full min-h-screen pt-20 sm:pt-24 pb-12 sm:pb-16 px-2 sm:px-4 bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
             <div className="max-w-[95vw] mx-auto">
-                <div className="mb-4 sm:mb-6 px-2">
-                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2">Solution Dashboard</h1>
-                    <p className="text-xl text-gray-600 dark:text-gray-400">Explore solutions by function and category</p>
+                <div className="mb-6 sm:mb-8 px-2">
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-900 via-emerald-700 to-slate-900 dark:from-white dark:via-emerald-400 dark:to-white bg-clip-text text-transparent mb-2">
+                            Solution Dashboard
+                        </h1>
+                        <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 font-medium">
+                            Explore solutions by function and category
+                        </p>
+                    </motion.div>
                 </div>
 
-                {/* Filters Section - Top */}
-                <div className="mb-6 px-2">
-                    <div className="flex flex-wrap gap-2 sm:gap-3">
-                        {functions.map((func) => {
-                            const isSelected = selectedFunction === func.id
-                            const hasSubItems = func.subItems && func.subItems.length > 0
-                            
-                            return (
-                                <div key={func.id} className="relative">
-                                    <button
-                                        onClick={() => handleFunctionClick(func.id)}
-                                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
-                                            isSelected
-                                                ? 'bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-900 shadow-md'
-                                                : 'bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
-                                        }`}
-                                    >
-                                        {func.name}
-                                    </button>
-                                    {hasSubItems && expandedFunctions.has(func.id) && func.subItems && (
-                                        <div className="absolute top-full left-0 mt-1 bg-white dark:bg-slate-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg p-2 z-10 min-w-[150px]">
-                                            {func.subItems.map((item, idx) => (
-                                                <div key={idx} className="text-xs text-gray-600 dark:text-gray-400 px-2 py-1 hover:bg-gray-50 dark:hover:bg-gray-700 rounded">
-                                                    {item}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            )
-                        })}
-                    </div>
-                </div>
-
-                {/* Dashboard Section */}
-                <div className="grid grid-cols-1 lg:grid-cols-[1fr] gap-2 sm:gap-4 mb-6">
+                {/* Main Dashboard Layout - Single Row */}
+                <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
+                    {/* Left Sidebar - FUNCTION */}
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
+                        className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl shadow-xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden lg:w-52 flex-shrink-0"
+                    >
+                        <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 dark:from-emerald-600 dark:to-emerald-700 px-4 py-3 border-b border-emerald-600/20">
+                            <h3 className="font-bold text-sm text-white uppercase tracking-wider flex items-center gap-2">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                                Function
+                            </h3>
+                        </div>
+                        <div className="p-3 space-y-2">
+                            {functions.map((func) => {
+                                const isSelected = selectedFunction === func.id
+                                const hasSubItems = func.subItems && func.subItems.length > 0
+                                
+                                return (
+                                    <div key={func.id} className="relative">
+                                        <motion.button
+                                            onClick={() => handleFunctionClick(func.id)}
+                                            whileHover={{ scale: 1.02, x: 2 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            className={`w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all text-left flex items-center justify-between ${
+                                                isSelected
+                                                    ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/30'
+                                                    : 'bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:border-emerald-300 dark:hover:border-emerald-700'
+                                            }`}
+                                        >
+                                            <span className="flex items-center gap-2">
+                                                {isSelected && (
+                                                    <motion.div
+                                                        layoutId="function-indicator"
+                                                        className="w-1.5 h-1.5 rounded-full bg-white"
+                                                    />
+                                                )}
+                                                {func.name}
+                                            </span>
+                                            {hasSubItems && (
+                                                <ChevronIcon isOpen={expandedFunctions.has(func.id)} />
+                                            )}
+                                        </motion.button>
+                                        {hasSubItems && expandedFunctions.has(func.id) && func.subItems && (
+                                            <motion.div
+                                                initial={{ opacity: 0, height: 0 }}
+                                                animate={{ opacity: 1, height: 'auto' }}
+                                                exit={{ opacity: 0, height: 0 }}
+                                                className="mt-2 ml-4 space-y-1 border-l-2 border-emerald-200 dark:border-emerald-800 pl-3"
+                                            >
+                                                {func.subItems.map((item, idx) => (
+                                                    <div key={idx} className="text-xs text-slate-600 dark:text-slate-400 px-3 py-1.5 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-colors cursor-pointer">
+                                                        {item}
+                                                    </div>
+                                                ))}
+                                            </motion.div>
+                                        )}
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </motion.div>
 
                     {/* Middle Panel: Category Columns */}
-                    <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-                        <div className="grid grid-cols-5 border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
-                            {categories.map((category) => (
-                                <div
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
+                        className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl shadow-xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden flex-1 min-w-0"
+                    >
+                        <div className="grid grid-cols-5 border-b border-slate-200 dark:border-slate-700 overflow-x-auto bg-gradient-to-r from-slate-50 to-emerald-50/30 dark:from-slate-800 dark:to-slate-800">
+                            {categories.map((category, idx) => (
+                                <motion.div
                                     key={category}
-                                    className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-center bg-gray-100 dark:bg-gray-700 border-r border-gray-200 dark:border-gray-600 last:border-r-0 min-w-[80px]"
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.3 + idx * 0.05 }}
+                                    className="px-2 sm:px-3 md:px-4 py-3 sm:py-4 text-center border-r border-slate-200 dark:border-slate-700 last:border-r-0 min-w-[80px]"
                                 >
-                                    <h3 className="font-bold text-xs sm:text-sm uppercase text-gray-900 dark:text-white">{category}</h3>
-                                </div>
+                                    <h3 className="font-bold text-xs sm:text-sm uppercase text-slate-700 dark:text-slate-300 tracking-wider">
+                                        {category}
+                                    </h3>
+                                </motion.div>
                             ))}
                         </div>
-                        <div className="grid grid-cols-5 divide-x divide-gray-200 dark:divide-gray-700 overflow-x-auto lg:overflow-visible">
+                        <div className="grid grid-cols-5 divide-x divide-slate-200 dark:divide-slate-700 overflow-x-auto lg:overflow-visible bg-gradient-to-b from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-900/50">
                             {categories.map((category) => {
                                 const currentFunction = functions.find(f => f.id === selectedFunction)
                                 const solutions = currentFunction?.solutions[category] || []
                                 return (
-                                    <div key={category} className="p-2 sm:p-3 space-y-2 sm:space-y-3 min-h-[200px] min-w-[120px]">
+                                    <div key={category} className="p-3 sm:p-4 space-y-3 min-h-[200px] min-w-[120px]">
                                         {solutions.length === 0 ? (
-                                            <div className="flex flex-col items-center justify-center h-full min-h-[150px] text-center py-8 px-2">
-                                                <svg className="w-8 h-8 text-gray-300 dark:text-gray-700 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                </svg>
-                                                <p className="text-xs text-gray-400 dark:text-gray-600 font-medium">
+                                            <motion.div
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                className="flex flex-col items-center justify-center h-full min-h-[150px] text-center py-8 px-2"
+                                            >
+                                                <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-3">
+                                                    <svg className="w-6 h-6 text-slate-400 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                    </svg>
+                                                </div>
+                                                <p className="text-xs text-slate-500 dark:text-slate-500 font-medium">
                                                     No {category.toLowerCase()} solutions
                                                 </p>
-                                                <p className="text-xs text-gray-300 dark:text-gray-700 mt-1">
+                                                <p className="text-xs text-slate-400 dark:text-slate-600 mt-1">
                                                     Coming soon
                                                 </p>
-                                            </div>
+                                            </motion.div>
                                         ) : (
                                             solutions.map((solution) => (
                                                 <motion.button
                                                     key={solution.id}
                                                     onClick={() => setSelectedSolution(solution)}
-                                                    whileHover={{ scale: 1.02 }}
-                                                    whileTap={{ scale: 0.98 }}
-                                                    className={`w-full p-2 sm:p-3 rounded-lg border-2 transition-all text-left overflow-hidden ${
+                                                    whileHover={{ scale: 1.03, y: -2 }}
+                                                    whileTap={{ scale: 0.97 }}
+                                                    className={`w-full p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 text-left overflow-hidden group ${
                                                         selectedSolution?.id === solution.id
-                                                            ? 'border-gray-800 dark:border-gray-300 bg-gray-100 dark:bg-gray-700 shadow-md'
-                                                            : 'border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 bg-white dark:bg-slate-800 hover:shadow-sm'
+                                                            ? 'border-emerald-500 bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-900/30 dark:to-emerald-800/20 shadow-lg shadow-emerald-500/20 ring-2 ring-emerald-500/20'
+                                                            : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 hover:border-emerald-300 dark:hover:border-emerald-700 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 hover:shadow-md'
                                                     }`}
                                                 >
-                                                    <div className="flex items-start gap-1.5 sm:gap-2 mb-1 sm:mb-2">
-                                                        <div className="text-gray-700 dark:text-gray-300 flex-shrink-0 mt-0.5 w-4 h-4 sm:w-5 sm:h-5">
+                                                    <div className="flex items-start gap-2 sm:gap-3 mb-2">
+                                                        <div className={`flex-shrink-0 mt-0.5 w-5 h-5 sm:w-6 sm:h-6 transition-colors ${
+                                                            selectedSolution?.id === solution.id
+                                                                ? 'text-emerald-600 dark:text-emerald-400'
+                                                                : 'text-slate-600 dark:text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400'
+                                                        }`}>
                                                             {solution.icon}
                                                         </div>
                                                         <div className="flex-1 min-w-0 overflow-hidden">
-                                                            <h4 className="text-[10px] sm:text-xs font-semibold text-gray-900 dark:text-white leading-tight mb-0.5 sm:mb-1 line-clamp-2 break-words">
+                                                            <h4 className={`text-xs sm:text-sm font-bold leading-tight mb-1 line-clamp-2 break-words transition-colors ${
+                                                                selectedSolution?.id === solution.id
+                                                                    ? 'text-slate-900 dark:text-white'
+                                                                    : 'text-slate-800 dark:text-slate-200 group-hover:text-slate-900 dark:group-hover:text-white'
+                                                            }`}>
                                                                 {solution.title}
                                                             </h4>
-                                                            <p className="text-[9px] sm:text-xs text-gray-600 dark:text-gray-400 leading-tight line-clamp-2 break-words">
+                                                            <p className={`text-[10px] sm:text-xs leading-tight line-clamp-2 break-words transition-colors ${
+                                                                selectedSolution?.id === solution.id
+                                                                    ? 'text-slate-600 dark:text-slate-300'
+                                                                    : 'text-slate-500 dark:text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300'
+                                                            }`}>
                                                                 {solution.description}
                                                             </p>
                                                         </div>
@@ -477,85 +545,103 @@ export default function SolutionsMatrix3Panel() {
                                 )
                             })}
                         </div>
-                    </div>
+                    </motion.div>
 
-                </div>
-
-                {/* Solution Summary Section - Below Dashboard */}
-                <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-                    <div className="bg-gray-100 dark:bg-gray-700 px-3 py-2 border-b border-gray-200 dark:border-gray-600">
-                        <h3 className="font-bold text-xs text-gray-900 dark:text-white uppercase">Solution Summary</h3>
-                    </div>
-                    <AnimatePresence mode="wait">
-                        {selectedSolution ? (
-                            <motion.div
-                                key={selectedSolution.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -20 }}
-                                className="p-4 flex-1 flex flex-col"
-                            >
-                                <div className="flex items-start gap-2 mb-3">
-                                    <div className="text-gray-700 dark:text-gray-300 flex-shrink-0">
-                                        {selectedSolution.icon}
-                                    </div>
-                                    <h3 className="text-base font-bold text-gray-900 dark:text-white break-words">
-                                        {selectedSolution.title}
-                                    </h3>
-                                </div>
-                                <p className="text-xs text-gray-600 dark:text-gray-400 mb-4 leading-relaxed break-words">
-                                    {selectedSolution.description}
-                                </p>
-                                <div className="space-y-2 mb-4 flex-1">
-                                    <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">Features:</p>
-                                    {selectedSolution.features.map((feature, idx) => (
-                                        <motion.div
-                                            key={idx}
-                                            initial={{ opacity: 0, x: -10 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: idx * 0.05 }}
-                                            className="flex items-start gap-2 bg-gray-50 dark:bg-gray-700/50 rounded px-2 py-1.5"
-                                        >
-                                            <svg className="w-4 h-4 text-gray-600 dark:text-gray-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                            </svg>
-                                            <span className="text-xs text-gray-700 dark:text-gray-300 break-words">{feature}</span>
-                                        </motion.div>
-                                    ))}
-                                </div>
-                                <motion.button
-                                    onClick={(e) => {
-                                        e.preventDefault()
-                                        e.stopPropagation()
-                                        handleLearnMore()
-                                    }}
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                    className="w-full px-3 py-2.5 bg-cta-green-500 hover:bg-cta-green-600 text-white text-xs font-semibold rounded-lg shadow-md transition-colors duration-200 cursor-pointer break-words mt-auto"
+                    {/* Right Sidebar - SOLUTION SUMMARY */}
+                    <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: 0.3 }}
+                        className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl shadow-xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden lg:w-80 flex-shrink-0 flex flex-col"
+                    >
+                        <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 dark:from-emerald-600 dark:to-emerald-700 px-4 py-3 border-b border-emerald-600/20">
+                            <h3 className="font-bold text-sm text-white uppercase tracking-wider flex items-center gap-2">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                Solution Summary
+                            </h3>
+                        </div>
+                        <AnimatePresence mode="wait">
+                            {selectedSolution ? (
+                                <motion.div
+                                    key={selectedSolution.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="p-5 flex-1 flex flex-col bg-gradient-to-b from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-900/50"
                                 >
-                                    <span className="line-clamp-2">Explore {selectedSolution.title} &gt;</span>
-                                </motion.button>
-                            </motion.div>
-                        ) : (
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="flex flex-col items-center justify-center h-full min-h-[200px] text-center p-4"
-                            >
-                                <div className="bg-gray-100 dark:bg-gray-700 rounded-full p-4 mb-4">
-                                    <svg className="w-12 h-12 text-gray-400 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                </div>
-                                <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                                    No Solution Selected
-                                </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-500">
-                                    Click on a solution card to view details
-                                </p>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                                    <div className="flex items-start gap-3 mb-4">
+                                        <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 dark:from-emerald-600 dark:to-emerald-700 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
+                                            <div className="w-6 h-6">
+                                                {selectedSolution.icon}
+                                            </div>
+                                        </div>
+                                        <h3 className="text-lg font-bold text-slate-900 dark:text-white break-words leading-tight">
+                                            {selectedSolution.title}
+                                        </h3>
+                                    </div>
+                                    <p className="text-sm text-slate-600 dark:text-slate-300 mb-5 leading-relaxed break-words">
+                                        {selectedSolution.description}
+                                    </p>
+                                    <div className="space-y-2.5 mb-5 flex-1">
+                                        <p className="text-xs font-bold text-slate-700 dark:text-slate-300 mb-3 uppercase tracking-widest flex items-center gap-2">
+                                            <span className="w-1 h-1 rounded-full bg-emerald-500"></span>
+                                            Features
+                                        </p>
+                                        {selectedSolution.features.map((feature, idx) => (
+                                            <motion.div
+                                                key={idx}
+                                                initial={{ opacity: 0, x: -10 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                transition={{ delay: idx * 0.05 }}
+                                                className="flex items-start gap-3 bg-gradient-to-r from-emerald-50 to-emerald-100/50 dark:from-emerald-900/20 dark:to-emerald-800/10 rounded-lg px-3 py-2.5 border border-emerald-200/50 dark:border-emerald-800/50"
+                                            >
+                                                <svg className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                                                </svg>
+                                                <span className="text-sm text-slate-700 dark:text-slate-300 break-words font-medium">{feature}</span>
+                                            </motion.div>
+                                        ))}
+                                    </div>
+                                    <motion.button
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            e.stopPropagation()
+                                            handleLearnMore()
+                                        }}
+                                        whileHover={{ scale: 1.02, y: -2 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        className="w-full px-4 py-3 bg-gradient-to-r from-cta-green-500 to-cta-green-600 hover:from-cta-green-600 hover:to-cta-green-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-cta-green-500/30 hover:shadow-xl hover:shadow-cta-green-500/40 transition-all duration-200 cursor-pointer break-words mt-auto flex items-center justify-center gap-2"
+                                    >
+                                        <span>Explore {selectedSolution.title}</span>
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </motion.button>
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="flex flex-col items-center justify-center h-full min-h-[300px] text-center p-6"
+                                >
+                                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center mb-4 shadow-inner">
+                                        <svg className="w-8 h-8 text-slate-400 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                    </div>
+                                    <p className="text-base font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                        No Solution Selected
+                                    </p>
+                                    <p className="text-sm text-slate-500 dark:text-slate-500">
+                                        Click on a solution card to view details
+                                    </p>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </motion.div>
                 </div>
             </div>
         </div>
