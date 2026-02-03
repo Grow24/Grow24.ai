@@ -76,7 +76,7 @@ export function formatEmailBySource(data: LeadData): EmailFormattedData {
  * Free Trial Signup Email Format
  */
 function formatFreeTrialEmail(data: LeadData): EmailFormattedData {
-  const subject = data.pageTitle || `New Free Trial Signup - ${data.name || 'User'}`
+  const subject = 'Welcome to Grow24.ai – Sign up for our Free Trial'
   
   const body = `
 New Free Trial Signup Request
@@ -92,6 +92,9 @@ Request Details:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Type: Free Trial Signup
 Timestamp: ${new Date().toLocaleString()}
+Source: ${data.source || 'start-free-trial'}
+${data.metadata?.formTitle ? `Form Title: ${data.metadata.formTitle}` : ''}
+${data.metadata?.formMessage ? `Form Message: ${data.metadata.formMessage}` : ''}
 
 Next Steps:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -107,7 +110,8 @@ Please follow up with the user to complete their free trial setup.
       name: data.name,
       designation: data.designation,
       phone: data.phone,
-      formType: 'free-trial'
+      formType: 'free-trial',
+      ...data.metadata
     }
   }
 }
@@ -116,7 +120,7 @@ Please follow up with the user to complete their free trial setup.
  * Demo Request Email Format
  */
 function formatDemoRequestEmail(data: LeadData): EmailFormattedData {
-  const subject = data.pageTitle || `Demo Request - ${data.name || data.email}`
+  const subject = 'Welcome to Grow24.ai – Get a Demo Mail'
   
   const body = `
 New Demo Request
@@ -132,7 +136,14 @@ Request Details:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Type: Personalized Demo Request
 Timestamp: ${new Date().toLocaleString()}
-Source: ${data.source}
+Source: ${data.source || 'get-demo'}
+${data.metadata?.formTitle ? `Form Title: ${data.metadata.formTitle}` : ''}
+${data.metadata?.formMessage ? `Form Message: ${data.metadata.formMessage}` : ''}
+
+Additional Information:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${data.metadata?.solutionId ? `Solution ID: ${data.metadata.solutionId}` : ''}
+${data.metadata?.solutionTitle ? `Solution: ${data.metadata.solutionTitle}` : ''}
 
 Next Steps:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -148,7 +159,8 @@ Please schedule a personalized demo session with the user.
       name: data.name,
       phone: data.phone,
       designation: data.designation,
-      formType: 'demo-request'
+      formType: 'demo-request',
+      ...data.metadata
     }
   }
 }
@@ -166,12 +178,19 @@ Contact Information:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Name: ${data.name || 'Not provided'}
 Email: ${data.email}
+${data.phone ? `Phone: ${data.phone}` : ''}
+${data.designation ? `Designation: ${data.designation}` : ''}
 
 Request Details:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Type: Guide Download
 Resource: Solution Guide
 Timestamp: ${new Date().toLocaleString()}
+Source: ${data.source || 'download-guide'}
+${data.metadata?.formTitle ? `Form Title: ${data.metadata.formTitle}` : ''}
+${data.metadata?.formMessage ? `Form Message: ${data.metadata.formMessage}` : ''}
+${data.metadata?.solutionId ? `Solution ID: ${data.metadata.solutionId}` : ''}
+${data.metadata?.solutionTitle ? `Solution: ${data.metadata.solutionTitle}` : ''}
 
 Action Required:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -185,8 +204,11 @@ Please send the requested guide to the user's email address.
     source: 'download-guide',
     metadata: {
       name: data.name,
+      phone: data.phone,
+      designation: data.designation,
       resourceType: 'guide',
-      formType: 'download'
+      formType: 'download',
+      ...data.metadata
     }
   }
 }
@@ -204,12 +226,19 @@ Contact Information:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Name: ${data.name || 'Not provided'}
 Email: ${data.email}
+${data.phone ? `Phone: ${data.phone}` : ''}
+${data.designation ? `Designation: ${data.designation}` : ''}
 
 Request Details:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Type: Source Sheet Access
 Resource: Solution Source Sheet
 Timestamp: ${new Date().toLocaleString()}
+Source: ${data.source || 'source-sheet'}
+${data.metadata?.formTitle ? `Form Title: ${data.metadata.formTitle}` : ''}
+${data.metadata?.formMessage ? `Form Message: ${data.metadata.formMessage}` : ''}
+${data.metadata?.solutionId ? `Solution ID: ${data.metadata.solutionId}` : ''}
+${data.metadata?.solutionTitle ? `Solution: ${data.metadata.solutionTitle}` : ''}
 
 Action Required:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -223,8 +252,11 @@ Please provide access to the source sheet for this solution.
     source: 'source-sheet',
     metadata: {
       name: data.name,
+      phone: data.phone,
+      designation: data.designation,
       resourceType: 'source-sheet',
-      formType: 'access'
+      formType: 'access',
+      ...data.metadata
     }
   }
 }
@@ -242,12 +274,19 @@ Contact Information:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Name: ${data.name || 'Not provided'}
 Email: ${data.email}
+${data.phone ? `Phone: ${data.phone}` : ''}
+${data.designation ? `Designation: ${data.designation}` : ''}
 
 Request Details:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Type: Playbook Download
 Resource: Solution Playbook
 Timestamp: ${new Date().toLocaleString()}
+Source: ${data.source || 'download-playbook'}
+${data.metadata?.formTitle ? `Form Title: ${data.metadata.formTitle}` : ''}
+${data.metadata?.formMessage ? `Form Message: ${data.metadata.formMessage}` : ''}
+${data.metadata?.solutionId ? `Solution ID: ${data.metadata.solutionId}` : ''}
+${data.metadata?.solutionTitle ? `Solution: ${data.metadata.solutionTitle}` : ''}
 
 Action Required:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -261,8 +300,11 @@ Please send the playbook download link to the user's email address.
     source: 'download-playbook',
     metadata: {
       name: data.name,
+      phone: data.phone,
+      designation: data.designation,
       resourceType: 'playbook',
-      formType: 'download'
+      formType: 'download',
+      ...data.metadata
     }
   }
 }
@@ -281,12 +323,17 @@ Contact Information:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Name: ${data.name || 'Not provided'}
 Email: ${data.email}
+${data.phone ? `Phone: ${data.phone}` : ''}
+${data.designation ? `Designation: ${data.designation}` : ''}
 
 Request Details:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Type: Library Resource Access
 Resource Category: ${resourceType}
 Timestamp: ${new Date().toLocaleString()}
+Source: ${data.source || 'library-information'}
+${data.metadata?.formTitle ? `Form Title: ${data.metadata.formTitle}` : ''}
+${data.metadata?.formMessage ? `Form Message: ${data.metadata.formMessage}` : ''}
 ${data.metadata?.resourceTitle ? `Resource: ${data.metadata.resourceTitle}` : ''}
 
 Action Required:
@@ -301,9 +348,12 @@ Please grant access to the requested ${resourceType.toLowerCase()} resource.
     source: data.source || 'library-information',
     metadata: {
       name: data.name,
+      phone: data.phone,
+      designation: data.designation,
       resourceType: resourceType.toLowerCase(),
       resourceTitle: data.metadata?.resourceTitle,
-      formType: 'library-access'
+      formType: 'library-access',
+      ...data.metadata
     }
   }
 }
@@ -321,11 +371,16 @@ Contact Information:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Name: ${data.name || 'Not provided'}
 Email: ${data.email}
+${data.phone ? `Phone: ${data.phone}` : ''}
+${data.designation ? `Designation: ${data.designation}` : ''}
 
 Request Details:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Type: Resource Hub Access
 Timestamp: ${new Date().toLocaleString()}
+Source: ${data.source || 'resource-hub'}
+${data.metadata?.formTitle ? `Form Title: ${data.metadata.formTitle}` : ''}
+${data.metadata?.formMessage ? `Form Message: ${data.metadata.formMessage}` : ''}
 ${data.metadata?.resourceTitle ? `Resource: ${data.metadata.resourceTitle}` : ''}
 
 Action Required:
@@ -340,8 +395,11 @@ Please provide access to the requested resource from the Resource Hub.
     source: 'resource-hub',
     metadata: {
       name: data.name,
+      phone: data.phone,
+      designation: data.designation,
       resourceTitle: data.metadata?.resourceTitle,
-      formType: 'resource-access'
+      formType: 'resource-access',
+      ...data.metadata
     }
   }
 }
@@ -350,7 +408,16 @@ Please provide access to the requested resource from the Resource Hub.
  * Newsletter Subscription Email Format
  */
 function formatNewsletterSubscriptionEmail(data: LeadData): EmailFormattedData {
-  const subject = data.pageTitle || `Newsletter Subscription - ${data.email}`
+  // Determine subject based on source
+  let subject = 'Welcome to Grow24.ai – Subscribe'
+  
+  // If it's from cta-section (homepage CTA), keep the same subject
+  // If it's from cta-bar (Global CTA Bar), use Subscribe subject
+  if (data.source === 'cta-section') {
+    subject = 'Welcome to Grow24.ai – Subscribe'
+  } else if (data.source === 'cta-bar') {
+    subject = 'Welcome to Grow24.ai – Subscribe'
+  }
   
   const body = `
 New Newsletter Subscription
@@ -359,12 +426,16 @@ Contact Information:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Email: ${data.email}
 ${data.name ? `Name: ${data.name}` : ''}
+${data.phone ? `Phone: ${data.phone}` : ''}
+${data.designation ? `Designation: ${data.designation}` : ''}
 
 Subscription Details:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Type: Newsletter Subscription
-Source: ${data.source === 'cta-bar' ? 'Global CTA Bar' : 'Homepage CTA Section'}
+Source: ${data.source === 'cta-bar' ? 'Global CTA Bar - Subscribe Free' : data.source === 'cta-section' ? 'Homepage CTA Section' : 'Unknown'}
 Timestamp: ${new Date().toLocaleString()}
+${data.metadata?.formTitle ? `Form Title: ${data.metadata.formTitle}` : ''}
+${data.metadata?.formMessage ? `Form Message: ${data.metadata.formMessage}` : ''}
 
 Action Required:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -378,8 +449,11 @@ Please add this user to the newsletter mailing list.
     source: data.source || 'cta-bar',
     metadata: {
       name: data.name,
+      phone: data.phone,
+      designation: data.designation,
       subscriptionType: 'newsletter',
-      formType: 'subscription'
+      formType: 'subscription',
+      ...data.metadata
     }
   }
 }
@@ -397,12 +471,16 @@ Contact Information:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Name: ${data.name || 'Not provided'}
 Email: ${data.email}
+${data.phone ? `Phone: ${data.phone}` : ''}
+${data.designation ? `Designation: ${data.designation}` : ''}
 
 Inquiry Details:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Type: Solution Information Request
 Source: ${data.source === 'explore-solution' ? 'Solution Detail Page' : 'Solutions Matrix'}
 Timestamp: ${new Date().toLocaleString()}
+${data.metadata?.formTitle ? `Form Title: ${data.metadata.formTitle}` : ''}
+${data.metadata?.formMessage ? `Form Message: ${data.metadata.formMessage}` : ''}
 ${data.metadata?.solutionId ? `Solution ID: ${data.metadata.solutionId}` : ''}
 ${data.metadata?.solutionTitle ? `Solution: ${data.metadata.solutionTitle}` : ''}
 
@@ -418,9 +496,12 @@ Please follow up with more information about the requested solution.
     source: data.source || 'explore-solution',
     metadata: {
       name: data.name,
+      phone: data.phone,
+      designation: data.designation,
       solutionId: data.metadata?.solutionId,
       solutionTitle: data.metadata?.solutionTitle,
-      formType: 'solution-inquiry'
+      formType: 'solution-inquiry',
+      ...data.metadata
     }
   }
 }
@@ -438,12 +519,17 @@ Contact Information:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Name: ${data.name || 'Not provided'}
 Email: ${data.email}
+${data.phone ? `Phone: ${data.phone}` : ''}
+${data.designation ? `Designation: ${data.designation}` : ''}
 
 Interest Details:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Type: Concept Video View
 Action: User watched the Grow24.ai concept video
 Timestamp: ${new Date().toLocaleString()}
+Source: ${data.source || 'watch-concept'}
+${data.metadata?.formTitle ? `Form Title: ${data.metadata.formTitle}` : ''}
+${data.metadata?.formMessage ? `Form Message: ${data.metadata.formMessage}` : ''}
 
 Next Steps:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -457,8 +543,11 @@ User has shown interest by watching the concept video. Consider following up wit
     source: 'watch-concept',
     metadata: {
       name: data.name,
+      phone: data.phone,
+      designation: data.designation,
       action: 'video-watched',
-      formType: 'interest'
+      formType: 'interest',
+      ...data.metadata
     }
   }
 }
@@ -476,6 +565,8 @@ Contact Information:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Name: ${data.name || 'Not provided'}
 Email: ${data.email}
+${data.phone ? `Phone: ${data.phone}` : ''}
+${data.designation ? `Designation: ${data.designation}` : ''}
 ${data.title ? `Title: ${data.title}` : ''}
 
 Meeting Details:
@@ -484,6 +575,9 @@ Date: ${data.date || 'Not specified'}
 Time: ${data.time || 'Not specified'}
 Timezone: ${data.timezone || 'Not specified'}
 Timestamp: ${new Date().toLocaleString()}
+Source: ${data.source || 'meeting-booking'}
+${data.metadata?.formTitle ? `Form Title: ${data.metadata.formTitle}` : ''}
+${data.metadata?.formMessage ? `Form Message: ${data.metadata.formMessage}` : ''}
 
 Confirmation:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -497,11 +591,14 @@ A meeting has been scheduled. Please send a calendar invitation to the user.
     source: 'meeting-booking',
     metadata: {
       name: data.name,
+      phone: data.phone,
+      designation: data.designation,
       title: data.title,
       date: data.date,
       time: data.time,
       timezone: data.timezone,
-      formType: 'meeting-booking'
+      formType: 'meeting-booking',
+      ...data.metadata
     }
   }
 }
@@ -527,6 +624,8 @@ Inquiry Details:
 Type: General Inquiry
 Source: ${data.source || 'general'}
 Timestamp: ${new Date().toLocaleString()}
+${data.metadata?.formTitle ? `Form Title: ${data.metadata.formTitle}` : ''}
+${data.metadata?.formMessage ? `Form Message: ${data.metadata.formMessage}` : ''}
 
 Please follow up with the user.
   `.trim()
@@ -540,7 +639,8 @@ Please follow up with the user.
       name: data.name,
       phone: data.phone,
       designation: data.designation,
-      formType: 'general-inquiry'
+      formType: 'general-inquiry',
+      ...data.metadata
     }
   }
 }
