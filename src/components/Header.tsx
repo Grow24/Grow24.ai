@@ -71,6 +71,104 @@ const SolutionsIcon = () => (
   </svg>
 )
 
+// New menu item icons
+const SupportIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+    <path d="M12 17h.01" />
+  </svg>
+)
+
+const EngageIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    <line x1="9" y1="10" x2="15" y2="10" />
+    <line x1="12" y1="7" x2="12" y2="13" />
+  </svg>
+)
+
+const ContactIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+    <polyline points="22,6 12,13 2,6" />
+  </svg>
+)
+
+const AboutIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 16v-4" />
+    <path d="M12 8h.01" />
+  </svg>
+)
+
+const PartnerIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+    <circle cx="9" cy="7" r="4" />
+    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+  </svg>
+)
+
+const JoinUsIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+    <circle cx="8.5" cy="7" r="4" />
+    <line x1="20" y1="8" x2="20" y2="14" />
+    <line x1="23" y1="11" x2="17" y2="11" />
+  </svg>
+)
+
+const PrivacyIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+  </svg>
+)
+
+const TermsIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+    <polyline points="14 2 14 8 20 8" />
+    <line x1="16" y1="13" x2="8" y2="13" />
+    <line x1="16" y1="17" x2="8" y2="17" />
+    <polyline points="10 9 9 9 8 9" />
+  </svg>
+)
+
+const CookieIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="12" cy="12" r="10" />
+    <circle cx="8" cy="10" r="1" />
+    <circle cx="16" cy="10" r="1" />
+    <circle cx="10" cy="16" r="1" />
+    <circle cx="14" cy="16" r="1" />
+    <path d="M12 8v4" />
+  </svg>
+)
+
+const SitemapIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <rect x="3" y="3" width="7" height="7" />
+    <rect x="14" y="3" width="7" height="7" />
+    <rect x="14" y="14" width="7" height="7" />
+    <rect x="3" y="14" width="7" height="7" />
+    <line x1="6.5" y1="10" x2="17.5" y2="10" />
+    <line x1="17.5" y1="14" x2="17.5" y2="10" />
+    <line x1="6.5" y1="14" x2="6.5" y2="10" />
+    <line x1="10" y1="17.5" x2="14" y2="17.5" />
+  </svg>
+)
+
+const PressroomIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" />
+    <rect x="7" y="7" width="6" height="4" />
+    <rect x="7" y="13" width="10" height="4" />
+  </svg>
+)
+
 // Theme Toggle Icons
 const SunIcon = () => (
   <svg
@@ -119,9 +217,20 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: 'Home', href: '#home', icon: HomeIcon },
-  { label: 'The Concept', href: '#concept', icon: OfferIcon, badge: 'PBMP' },
+  { label: 'Concept', href: '#concept', icon: OfferIcon, badge: 'PBMP' },
   { label: 'Solutions', href: '#solutions', icon: SolutionsIcon },
   { label: 'Library', href: '#library', icon: LibraryIcon },
+  { label: 'Get Support', href: '#support', icon: SupportIcon },
+  { label: 'Engage', href: '#engage', icon: EngageIcon },
+  { label: 'Contact Us', href: '#contact', icon: ContactIcon },
+  { label: 'About Us', href: '#about', icon: AboutIcon },
+  { label: 'Become Partner', href: '#partner', icon: PartnerIcon },
+  { label: 'Join Us', href: '#join', icon: JoinUsIcon },
+  { label: 'Privacy Policy', href: '#privacy', icon: PrivacyIcon },
+  { label: 'Terms of Use', href: '#terms', icon: TermsIcon },
+  { label: 'Cookie Settings', href: '#cookies', icon: CookieIcon },
+  { label: 'Sitemap', href: '#sitemap', icon: SitemapIcon },
+  { label: 'Pressroom', href: '#pressroom', icon: PressroomIcon },
 ]
 
 // Helper function to scroll to section
@@ -135,6 +244,37 @@ const scrollToSection = (href: string) => {
   }
 }
 
+// Helper function to highlight search query in text
+const highlightText = (text: string, query: string): JSX.Element => {
+  if (!query.trim()) {
+    return <>{text}</>
+  }
+
+  // Escape special regex characters in the query
+  const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const regex = new RegExp(`(${escapedQuery})`, 'gi')
+  const parts = text.split(regex)
+
+  return (
+    <>
+      {parts.map((part, index) => {
+        // Check if this part matches the query (case-insensitive)
+        const matches = part.toLowerCase() === query.toLowerCase()
+        return matches ? (
+          <mark 
+            key={index} 
+            className="bg-emerald-200 dark:bg-emerald-900/50 text-emerald-900 dark:text-emerald-100 font-semibold px-0.5 rounded"
+          >
+            {part}
+          </mark>
+        ) : (
+          <span key={index}>{part}</span>
+        )
+      })}
+    </>
+  )
+}
+
 interface HeaderProps {
   onMegaMenuToggle?: () => void
 }
@@ -143,9 +283,20 @@ interface HeaderProps {
 const searchIndex = [
   // Pages
   { type: 'page', title: 'Home', description: 'Welcome to Grow24.ai', href: '#home', keywords: ['home', 'main', 'landing'] },
-  { type: 'page', title: 'The Concept', description: 'Learn about PBMP methodology', href: '#concept', keywords: ['concept', 'pbmp', 'methodology', 'plan', 'build', 'measure', 'progress'] },
+  { type: 'page', title: 'Concept', description: 'Learn about PBMP methodology', href: '#concept', keywords: ['concept', 'pbmp', 'methodology', 'plan', 'build', 'measure', 'progress'] },
   { type: 'page', title: 'Solutions', description: 'Explore our solutions', href: '#solutions', keywords: ['solutions', 'dashboard', 'corporate', 'sales', 'marketing'] },
   { type: 'page', title: 'Library', description: 'Access curated information and training resources', href: '#library', keywords: ['library', 'information', 'training', 'resources', 'content'] },
+  { type: 'page', title: 'Get Support', description: 'Get help and support for Grow24.ai', href: '#support', keywords: ['support', 'help', 'assistance', 'faq', 'contact'] },
+  { type: 'page', title: 'Engage', description: 'Engage with our community and platform', href: '#engage', keywords: ['engage', 'community', 'interact', 'participate'] },
+  { type: 'page', title: 'Contact Us', description: 'Get in touch with our team', href: '#contact', keywords: ['contact', 'reach', 'email', 'phone', 'get in touch'] },
+  { type: 'page', title: 'About Us', description: 'Learn more about Grow24.ai', href: '#about', keywords: ['about', 'company', 'team', 'mission', 'vision'] },
+  { type: 'page', title: 'Become Partner', description: 'Partner with Grow24.ai', href: '#partner', keywords: ['partner', 'partnership', 'collaborate', 'business'] },
+  { type: 'page', title: 'Join Us', description: 'Join the Grow24.ai team', href: '#join', keywords: ['join', 'careers', 'jobs', 'hiring', 'team'] },
+  { type: 'page', title: 'Privacy Policy', description: 'Read our privacy policy', href: '#privacy', keywords: ['privacy', 'policy', 'data', 'protection', 'gdpr'] },
+  { type: 'page', title: 'Terms of Use', description: 'Read our terms of use', href: '#terms', keywords: ['terms', 'conditions', 'legal', 'agreement'] },
+  { type: 'page', title: 'Cookie Settings', description: 'Manage your cookie preferences', href: '#cookies', keywords: ['cookies', 'settings', 'preferences', 'tracking'] },
+  { type: 'page', title: 'Sitemap', description: 'View our website sitemap', href: '#sitemap', keywords: ['sitemap', 'navigation', 'map', 'structure'] },
+  { type: 'page', title: 'Pressroom', description: 'Press releases and media resources', href: '#pressroom', keywords: ['press', 'media', 'news', 'releases', 'pressroom'] },
   
   // Solutions
   { type: 'solution', title: 'Strategy Goalsetting', description: 'Define measurable objectives for sustained growth', href: '/solutions/corp-goal-1', keywords: ['goals', 'strategy', 'objectives', 'growth', 'corporate'] },
@@ -245,19 +396,24 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
               {/* Left Side: Menu Button + Logo */}
               <div className="flex items-center gap-3 sm:gap-4 md:gap-6 flex-1 md:flex-none overflow-visible">
                 {/* Hamburger Menu Button - Only visible on mobile/tablet, hidden on laptop/desktop */}
-                <motion.button
-                  onClick={() => setSideMenuOpen(true)}
+                <motion.a
+                  href="#home"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    scrollToSection('#home')
+                    setSideMenuOpen(true)
+                  }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`p-1.5 sm:p-2 rounded-lg transition-all flex-shrink-0 backdrop-blur-sm md:hidden shadow-md ${
+                  className={`p-1.5 sm:p-2 rounded-lg transition-all flex-shrink-0 backdrop-blur-sm md:hidden shadow-md cursor-pointer ${
                     theme === 'dark'
                       ? 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
                       : 'bg-gray-800 text-white hover:bg-gray-700 border border-gray-900'
                     }`}
-                  aria-label="Open menu"
+                  aria-label="Go to home and open menu"
                 >
                   <HamburgerIcon />
-                </motion.button>
+                </motion.a>
 
                 {/* Logo */}
                 <a
@@ -384,7 +540,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                           />
                         </div>
                         {searchQuery && (
-                          <div className="max-h-64 overflow-y-auto border-t border-gray-200 dark:border-gray-700">
+                          <div className="max-h-64 overflow-y-auto border-t border-gray-200 dark:border-gray-700 search-results-scrollbar pr-2">
                             {searchResults.length > 0 ? (
                               <>
                                 <div className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide border-b border-gray-200 dark:border-gray-700">
@@ -408,14 +564,14 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                                       <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2 mb-1">
                                           <span className="text-xs font-semibold text-gray-900 dark:text-white line-clamp-1">
-                                            {result.title}
+                                            {highlightText(result.title, searchQuery)}
                                           </span>
                                           <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 uppercase">
                                             {result.type}
                                           </span>
                                         </div>
                                         <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-1">
-                                          {result.description}
+                                          {highlightText(result.description, searchQuery)}
                                         </p>
                                       </div>
                                     </div>

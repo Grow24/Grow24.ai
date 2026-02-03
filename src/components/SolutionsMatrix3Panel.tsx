@@ -447,8 +447,8 @@ export default function SolutionsMatrix3Panel() {
     }
 
     return (
-        <div className="w-full min-h-screen pt-20 sm:pt-24 pb-12 sm:pb-16 px-2 sm:px-4 bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-            <div className="max-w-[95vw] mx-auto">
+        <div className="w-full min-h-screen pt-20 sm:pt-24 pb-12 sm:pb-16 px-2 sm:px-4 md:px-6 bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+            <div className="max-w-[100vw] sm:max-w-[95vw] mx-auto">
                 <div className="mb-6 sm:mb-8 px-2">
                     <motion.div
                         initial={{ opacity: 0, y: -20 }}
@@ -465,13 +465,13 @@ export default function SolutionsMatrix3Panel() {
                 </div>
 
                 {/* Main Dashboard Layout - Single Row */}
-                <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
+                <div className="flex flex-col xl:flex-row gap-4 xl:gap-6">
                     {/* Left Sidebar - FUNCTION */}
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5, delay: 0.1 }}
-                        className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl shadow-xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden lg:w-52 flex-shrink-0"
+                        className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl shadow-xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden w-full xl:w-52 flex-shrink-0"
                     >
                         <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 dark:from-emerald-600 dark:to-emerald-700 px-4 py-3 border-b border-emerald-600/20">
                             <h3 className="font-bold text-sm text-white uppercase tracking-wider flex items-center gap-2">
@@ -538,42 +538,47 @@ export default function SolutionsMatrix3Panel() {
                         transition={{ duration: 0.5, delay: 0.2 }}
                         className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl shadow-xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden flex-1 min-w-0"
                     >
-                        <div className="grid grid-cols-6 border-b border-slate-200 dark:border-slate-700 overflow-x-auto bg-gradient-to-r from-slate-50 to-emerald-50/30 dark:from-slate-800 dark:to-slate-800">
-                            {categories.map((category, idx) => (
-                                <motion.div
-                                    key={category}
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.3 + idx * 0.05 }}
-                                    className="px-2 sm:px-3 md:px-4 py-3 sm:py-4 text-center border-r border-slate-200 dark:border-slate-700 last:border-r-0 min-w-[80px]"
-                                >
-                                    <h3 className="font-bold text-xs sm:text-sm uppercase text-slate-700 dark:text-slate-300 tracking-wider">
-                                        {category}
-                                    </h3>
-                                </motion.div>
-                            ))}
+                        {/* Category Headers - Horizontal Scroll on Mobile/Tablet */}
+                        <div className="border-b border-slate-200 dark:border-slate-700 overflow-x-auto bg-gradient-to-r from-slate-50 to-emerald-50/30 dark:from-slate-800 dark:to-slate-800">
+                            <div className="grid grid-cols-6 min-w-[600px] md:min-w-full">
+                                {categories.map((category, idx) => (
+                                    <motion.div
+                                        key={category}
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.3 + idx * 0.05 }}
+                                        className="px-2 sm:px-3 md:px-4 py-3 sm:py-4 text-center border-r border-slate-200 dark:border-slate-700 last:border-r-0"
+                                    >
+                                        <h3 className="font-bold text-xs sm:text-sm uppercase text-slate-700 dark:text-slate-300 tracking-wider whitespace-nowrap">
+                                            {category}
+                                        </h3>
+                                    </motion.div>
+                                ))}
+                            </div>
                         </div>
-                        <div className="grid grid-cols-6 divide-x divide-slate-200 dark:divide-slate-700 overflow-x-auto lg:overflow-visible bg-gradient-to-b from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-900/50">
-                            {categories.map((category) => {
-                                const currentFunction = functions.find(f => f.id === selectedFunction)
-                                const solutions = currentFunction?.solutions[category] || []
-                                return (
-                                    <div key={category} className="p-3 sm:p-4 space-y-3 min-h-[200px] min-w-[120px]">
+                        {/* Solutions Grid - Horizontal Scroll on Mobile/Tablet */}
+                        <div className="overflow-x-auto">
+                            <div className="grid grid-cols-6 divide-x divide-slate-200 dark:divide-slate-700 min-w-[600px] md:min-w-full bg-gradient-to-b from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-900/50">
+                                {categories.map((category) => {
+                                    const currentFunction = functions.find(f => f.id === selectedFunction)
+                                    const solutions = currentFunction?.solutions[category] || []
+                                    return (
+                                        <div key={category} className="p-2 sm:p-3 md:p-4 space-y-2 sm:space-y-3 min-h-[200px] min-w-[100px] sm:min-w-[120px]">
                                         {solutions.length === 0 ? (
                                             <motion.div
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
-                                                className="flex flex-col items-center justify-center h-full min-h-[150px] text-center py-8 px-2"
+                                                className="flex flex-col items-center justify-center h-full min-h-[150px] sm:min-h-[180px] text-center py-4 sm:py-8 px-1 sm:px-2"
                                             >
-                                                <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-3">
-                                                    <svg className="w-6 h-6 text-slate-400 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-2 sm:mb-3">
+                                                    <svg className="w-4 h-4 sm:w-6 sm:h-6 text-slate-400 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                                     </svg>
                                                 </div>
-                                                <p className="text-xs text-slate-500 dark:text-slate-500 font-medium">
-                                                    No {category.toLowerCase()} solutions
+                                                <p className="text-[9px] xs:text-xs text-slate-500 dark:text-slate-500 font-medium">
+                                                    No {category.toLowerCase()}
                                                 </p>
-                                                <p className="text-xs text-slate-400 dark:text-slate-600 mt-1">
+                                                <p className="text-[8px] xs:text-[9px] text-slate-400 dark:text-slate-600 mt-0.5 sm:mt-1">
                                                     Coming soon
                                                 </p>
                                             </motion.div>
@@ -583,41 +588,42 @@ export default function SolutionsMatrix3Panel() {
                                                     key={solution.id}
                                                     onClick={() => {
                                                         setSelectedSolution(solution)
-                                                        // Scroll to Solution Summary on mobile when clicking Goals or Strategy items
-                                                        if (window.innerWidth < 1024 && (category === 'Goals' || category === 'Strategy')) {
+                                                        // Scroll to Solution Summary on mobile/tablet when clicking any solution
+                                                        if (window.innerWidth < 1280) {
                                                             setTimeout(() => {
                                                                 solutionSummaryRef.current?.scrollIntoView({ 
                                                                     behavior: 'smooth', 
-                                                                    block: 'start' 
+                                                                    block: 'start',
+                                                                    inline: 'nearest'
                                                                 })
                                                             }, 100)
                                                         }
                                                     }}
                                                     whileHover={{ scale: 1.03, y: -2 }}
                                                     whileTap={{ scale: 0.97 }}
-                                                    className={`w-full p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 text-left overflow-hidden group ${
+                                                    className={`w-full p-2 sm:p-3 md:p-4 rounded-lg sm:rounded-xl border-2 transition-all duration-200 text-center overflow-hidden group ${
                                                         selectedSolution?.id === solution.id
                                                             ? 'border-emerald-500 bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-900/30 dark:to-emerald-800/20 shadow-lg shadow-emerald-500/20 ring-2 ring-emerald-500/20'
-                                                            : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 hover:border-emerald-300 dark:hover:border-emerald-700 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 hover:shadow-md'
+                                                            : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 hover:border-emerald-300 dark:hover:border-emerald-700 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 hover:shadow-md active:scale-95'
                                                     }`}
                                                 >
-                                                    <div className="flex items-start gap-2 sm:gap-3 mb-2">
-                                                        <div className={`flex-shrink-0 mt-0.5 w-5 h-5 sm:w-6 sm:h-6 transition-colors ${
+                                                    <div className="flex flex-col items-center text-center gap-2 mb-2">
+                                                        <div className={`flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 transition-colors ${
                                                             selectedSolution?.id === solution.id
                                                                 ? 'text-emerald-600 dark:text-emerald-400'
                                                                 : 'text-slate-600 dark:text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400'
                                                         }`}>
                                                             {solution.icon}
                                                         </div>
-                                                        <div className="flex-1 min-w-0 overflow-hidden">
-                                                            <h4 className={`text-xs sm:text-sm font-bold leading-tight mb-1 line-clamp-2 break-words transition-colors ${
+                                                        <div className="flex-1 min-w-0 w-full">
+                                                            <h4 className={`text-[10px] xs:text-xs sm:text-sm font-bold leading-tight mb-1 line-clamp-2 break-words transition-colors ${
                                                                 selectedSolution?.id === solution.id
                                                                     ? 'text-slate-900 dark:text-white'
                                                                     : 'text-slate-800 dark:text-slate-200 group-hover:text-slate-900 dark:group-hover:text-white'
                                                             }`}>
                                                                 {solution.title}
                                                             </h4>
-                                                            <p className={`text-[10px] sm:text-xs leading-tight line-clamp-2 break-words transition-colors ${
+                                                            <p className={`text-[9px] xs:text-[10px] sm:text-xs leading-tight line-clamp-2 break-words transition-colors ${
                                                                 selectedSolution?.id === solution.id
                                                                     ? 'text-slate-600 dark:text-slate-300'
                                                                     : 'text-slate-500 dark:text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300'
@@ -632,6 +638,7 @@ export default function SolutionsMatrix3Panel() {
                                     </div>
                                 )
                             })}
+                            </div>
                         </div>
                     </motion.div>
 
@@ -641,7 +648,7 @@ export default function SolutionsMatrix3Panel() {
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5, delay: 0.3 }}
-                        className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl shadow-xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden lg:w-80 flex-shrink-0 flex flex-col"
+                        className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl shadow-xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden w-full xl:w-80 flex-shrink-0 flex flex-col"
                     >
                         <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 dark:from-emerald-600 dark:to-emerald-700 px-4 py-3 border-b border-emerald-600/20">
                             <h3 className="font-bold text-sm text-white uppercase tracking-wider flex items-center gap-2">

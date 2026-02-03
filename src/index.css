@@ -27,6 +27,43 @@ body {
   @apply bg-emerald-500 rounded-full hover:bg-emerald-600;
 }
 
+/* Search results scrollbar - wider and stable */
+.search-results-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(16 185 129) rgb(241 245 249);
+  scrollbar-gutter: stable;
+  /* Reserve space for scrollbar to prevent layout shift */
+  padding-right: 4px;
+  margin-right: -4px;
+}
+
+.search-results-scrollbar::-webkit-scrollbar {
+  width: 12px;
+}
+
+.search-results-scrollbar::-webkit-scrollbar-track {
+  @apply bg-slate-100 dark:bg-slate-900;
+  border-radius: 6px;
+  margin: 4px 0;
+}
+
+.search-results-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-emerald-500 rounded-full hover:bg-emerald-600;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  min-height: 40px;
+  border-radius: 6px;
+}
+
+.search-results-scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-emerald-600;
+}
+
+/* Prevent jitter by always showing scrollbar track */
+.search-results-scrollbar::-webkit-scrollbar-track-piece {
+  @apply bg-slate-100 dark:bg-slate-900;
+}
+
 ::selection {
   @apply bg-emerald-500 text-white;
 }
