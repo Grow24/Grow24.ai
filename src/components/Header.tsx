@@ -43,12 +43,6 @@ const OfferIcon = () => (
   </svg>
 )
 
-const ResourcesIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-  </svg>
-)
 
 const LibraryIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -127,7 +121,6 @@ const navItems: NavItem[] = [
   { label: 'Home', href: '/', icon: HomeIcon },
   { label: 'The Concept', href: '/what-we-offer', icon: OfferIcon, badge: 'PBMP' },
   { label: 'Solutions', href: '/solutions', icon: SolutionsIcon },
-  { label: 'Resources', href: '/resources', icon: ResourcesIcon },
   { label: 'Library', href: '/library', icon: LibraryIcon },
 ]
 
@@ -141,7 +134,6 @@ const searchIndex = [
   { type: 'page', title: 'Home', description: 'Welcome to Grow24.ai', href: '/', keywords: ['home', 'main', 'landing'] },
   { type: 'page', title: 'The Concept', description: 'Learn about PBMP methodology', href: '/what-we-offer', keywords: ['concept', 'pbmp', 'methodology', 'plan', 'build', 'measure', 'progress'] },
   { type: 'page', title: 'Solutions', description: 'Explore our solutions', href: '/solutions', keywords: ['solutions', 'dashboard', 'corporate', 'sales', 'marketing'] },
-  { type: 'page', title: 'Resources', description: 'Learn and engage with resources', href: '/resources', keywords: ['resources', 'learn', 'engage', 'articles', 'webinars', 'videos'] },
   { type: 'page', title: 'Library', description: 'Access curated information and training resources', href: '/library', keywords: ['library', 'information', 'training', 'resources', 'content'] },
   
   // Solutions
@@ -154,13 +146,6 @@ const searchIndex = [
   { type: 'solution', title: 'GTM Strategy', description: 'Define your go-to-market strategy with actionable tactics', href: '/solutions/sales-strat-1', keywords: ['gtm', 'go-to-market', 'sales', 'strategy', 'tactics'] },
   { type: 'solution', title: 'Marketing Goalsetting', description: 'Translate growth targets and inspirational objectives', href: '/solutions/mkt-goal-1', keywords: ['marketing', 'goals', 'growth', 'targets', 'objectives'] },
   { type: 'solution', title: 'Marketing GTM Strategy', description: 'Craft growth-oriented strategy to ignite growth', href: '/solutions/mkt-strat-1', keywords: ['marketing', 'gtm', 'strategy', 'growth'] },
-  
-  // Resources
-  { type: 'resource', title: 'Getting Started with Goal Setting', description: 'Learn the fundamentals of goal setting', href: '/resources', keywords: ['goals', 'planning', 'personal', 'getting started', 'beginner'] },
-  { type: 'resource', title: 'Advanced Project Management Masterclass', description: 'Master project management techniques', href: '/resources', keywords: ['project', 'management', 'masterclass', 'advanced', 'leadership'] },
-  { type: 'resource', title: 'Financial Planning Framework', description: 'Framework for financial planning', href: '/resources', keywords: ['finance', 'planning', 'strategy', 'framework'] },
-  { type: 'resource', title: 'Communication Skills for Leaders', description: 'Enhance your communication skills', href: '/resources', keywords: ['communication', 'leadership', 'skills', 'management'] },
-  { type: 'resource', title: 'Strategic Planning Workshop', description: 'Workshop on strategic planning', href: '/resources', keywords: ['strategy', 'planning', 'workshop', 'business'] },
 ]
 
 export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {

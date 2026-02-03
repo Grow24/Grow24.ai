@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WhatWeOfferRouteImport } from './routes/what-we-offer'
 import { Route as SolutionsRouteImport } from './routes/solutions'
-import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as LibraryRouteImport } from './routes/library'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
@@ -25,11 +24,6 @@ const WhatWeOfferRoute = WhatWeOfferRouteImport.update({
 const SolutionsRoute = SolutionsRouteImport.update({
   id: '/solutions',
   path: '/solutions',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResourcesRoute = ResourcesRouteImport.update({
-  id: '/resources',
-  path: '/resources',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LibraryRoute = LibraryRouteImport.update({
@@ -57,7 +51,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/library': typeof LibraryRoute
-  '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRouteWithChildren
   '/what-we-offer': typeof WhatWeOfferRoute
   '/solutions/$solutionId': typeof SolutionsSolutionIdRoute
@@ -66,7 +59,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/library': typeof LibraryRoute
-  '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRouteWithChildren
   '/what-we-offer': typeof WhatWeOfferRoute
   '/solutions/$solutionId': typeof SolutionsSolutionIdRoute
@@ -76,7 +68,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/library': typeof LibraryRoute
-  '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRouteWithChildren
   '/what-we-offer': typeof WhatWeOfferRoute
   '/solutions/$solutionId': typeof SolutionsSolutionIdRoute
@@ -87,7 +78,6 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/library'
-    | '/resources'
     | '/solutions'
     | '/what-we-offer'
     | '/solutions/$solutionId'
@@ -96,7 +86,6 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/library'
-    | '/resources'
     | '/solutions'
     | '/what-we-offer'
     | '/solutions/$solutionId'
@@ -105,7 +94,6 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/library'
-    | '/resources'
     | '/solutions'
     | '/what-we-offer'
     | '/solutions/$solutionId'
@@ -115,7 +103,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   LibraryRoute: typeof LibraryRoute
-  ResourcesRoute: typeof ResourcesRoute
   SolutionsRoute: typeof SolutionsRouteWithChildren
   WhatWeOfferRoute: typeof WhatWeOfferRoute
 }
@@ -134,13 +121,6 @@ declare module '@tanstack/react-router' {
       path: '/solutions'
       fullPath: '/solutions'
       preLoaderRoute: typeof SolutionsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/resources': {
-      id: '/resources'
-      path: '/resources'
-      fullPath: '/resources'
-      preLoaderRoute: typeof ResourcesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/library': {
@@ -190,7 +170,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   LibraryRoute: LibraryRoute,
-  ResourcesRoute: ResourcesRoute,
   SolutionsRoute: SolutionsRouteWithChildren,
   WhatWeOfferRoute: WhatWeOfferRoute,
 }

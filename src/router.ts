@@ -2,7 +2,6 @@ import { RootRoute, Route, RootRouteWithContext, createRouter } from '@tanstack/
 import { RootLayout } from './components/RootLayout'
 import { IndexPage } from './routes'
 import { SolutionsPage } from './routes/solutions'
-import { ResourcesPage } from './routes/resources'
 import LibraryPageComponent from './routes/library'
 import WhatWeOfferPage from './routes/what-we-offer'
 
@@ -25,13 +24,6 @@ const solutionsRoute = new Route({
   component: SolutionsPage,
 })
 
-// Resources page
-const resourcesRoute = new Route({
-  getParentRoute: () => rootRoute,
-  path: '/resources',
-  component: ResourcesPage,
-})
-
 // Library page
 const libraryRoute = new Route({
   getParentRoute: () => rootRoute,
@@ -47,7 +39,7 @@ const whatWeOfferRoute = new Route({
 })
 
 // Create route tree
-const routeTree = rootRoute.addChildren([indexRoute, solutionsRoute, resourcesRoute, libraryRoute, whatWeOfferRoute])
+const routeTree = rootRoute.addChildren([indexRoute, solutionsRoute, libraryRoute, whatWeOfferRoute])
 
 // Create router
 export const router = createRouter({ routeTree })

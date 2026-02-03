@@ -55,7 +55,6 @@ export const RootLayout: React.FC = () => {
                 <li><Link to="/" className="hover:text-white transition-colors">Home</Link></li>
                 <li><Link to="/what-we-offer" className="hover:text-white transition-colors">The Concept</Link></li>
                 <li><Link to="/solutions" className="hover:text-white transition-colors">Solutions</Link></li>
-                <li><Link to="/resources" className="hover:text-white transition-colors">Learn & Engage</Link></li>
               </ul>
             </div>
             <div>

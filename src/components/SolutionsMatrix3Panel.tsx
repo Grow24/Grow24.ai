@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from '@tanstack/react-router'
 import { useComingSoon } from '../contexts/ComingSoonContext'
@@ -87,7 +87,20 @@ const functions: FunctionRow[] = [
                     )
                 }
             ],
-            Objective: [],
+            Objective: [
+                {
+                    id: 'corp-obj-1',
+                    title: 'Strategic Objectives',
+                    description: 'Define clear, measurable objectives aligned with strategic goals.',
+                    category: 'Objective',
+                    features: ['Objective Setting', 'KPI Alignment', 'Target Definition'],
+                    icon: (
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                        </svg>
+                    )
+                }
+            ],
             Plan: [
                 {
                     id: 'corp-plan-1',
@@ -165,7 +178,20 @@ const functions: FunctionRow[] = [
                     )
                 }
             ],
-            Objective: [],
+            Objective: [
+                {
+                    id: 'sales-obj-1',
+                    title: 'Sales Objectives',
+                    description: 'Set and track sales objectives to drive revenue growth.',
+                    category: 'Objective',
+                    features: ['Revenue Targets', 'Quota Objectives', 'Performance Goals'],
+                    icon: (
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                    )
+                }
+            ],
             Plan: [
                 {
                     id: 'sales-plan-1',
@@ -242,7 +268,21 @@ const functions: FunctionRow[] = [
                     )
                 }
             ],
-            Objective: [],
+            Objective: [
+                {
+                    id: 'mkt-obj-1',
+                    title: 'Marketing Objectives',
+                    description: 'Establish marketing objectives to achieve brand and growth targets.',
+                    category: 'Objective',
+                    features: ['Brand Objectives', 'Growth Targets', 'Campaign Goals'],
+                    icon: (
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+                        </svg>
+                    )
+                }
+            ],
             Plan: [
                 {
                     id: 'mkt-plan-1',
@@ -293,7 +333,20 @@ const functions: FunctionRow[] = [
         solutions: {
             Goals: [],
             Strategy: [],
-            Objective: [],
+            Objective: [
+                {
+                    id: 'prog-obj-1',
+                    title: 'Program Objectives',
+                    description: 'Set objectives for strategic programs and initiatives.',
+                    category: 'Objective',
+                    features: ['Program Goals', 'Milestone Tracking', 'Success Metrics'],
+                    icon: (
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                        </svg>
+                    )
+                }
+            ],
             Plan: [],
             Project: [],
             Operations: []
@@ -306,7 +359,20 @@ const functions: FunctionRow[] = [
         solutions: {
             Goals: [],
             Strategy: [],
-            Objective: [],
+            Objective: [
+                {
+                    id: 'ssp-obj-1',
+                    title: 'SSP Objectives',
+                    description: 'Define objectives for structures, systems, and processes optimization.',
+                    category: 'Objective',
+                    features: ['Structure Goals', 'System Objectives', 'Process Targets'],
+                    icon: (
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM14 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3z" />
+                        </svg>
+                    )
+                }
+            ],
             Plan: [],
             Project: [],
             Operations: []
@@ -321,6 +387,7 @@ export default function SolutionsMatrix3Panel() {
     const { showComingSoon } = useComingSoon()
     const [selectedFunction, setSelectedFunction] = useState<string>('corporate')
     const [expandedFunctions, setExpandedFunctions] = useState<Set<string>>(new Set())
+    const solutionSummaryRef = useRef<HTMLDivElement>(null)
     const [selectedSolution, setSelectedSolution] = useState<Solution | null>(
         functions[0].solutions.Strategy?.[0] || null
     )
@@ -511,7 +578,18 @@ export default function SolutionsMatrix3Panel() {
                                             solutions.map((solution) => (
                                                 <motion.button
                                                     key={solution.id}
-                                                    onClick={() => setSelectedSolution(solution)}
+                                                    onClick={() => {
+                                                        setSelectedSolution(solution)
+                                                        // Scroll to Solution Summary on mobile when clicking Goals or Strategy items
+                                                        if (window.innerWidth < 1024 && (category === 'Goals' || category === 'Strategy')) {
+                                                            setTimeout(() => {
+                                                                solutionSummaryRef.current?.scrollIntoView({ 
+                                                                    behavior: 'smooth', 
+                                                                    block: 'start' 
+                                                                })
+                                                            }, 100)
+                                                        }
+                                                    }}
                                                     whileHover={{ scale: 1.03, y: -2 }}
                                                     whileTap={{ scale: 0.97 }}
                                                     className={`w-full p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 text-left overflow-hidden group ${
@@ -556,6 +634,7 @@ export default function SolutionsMatrix3Panel() {
 
                     {/* Right Sidebar - SOLUTION SUMMARY */}
                     <motion.div
+                        ref={solutionSummaryRef}
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5, delay: 0.3 }}
