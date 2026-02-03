@@ -323,7 +323,7 @@ const ResourceCard: React.FC<ResourceCardProps> = React.memo(({ resource, type }
       </div>
 
       <motion.button
-        onClick={() => showComingSoon(`library-${type}`, 'Access Resource', `Enter your email to access this ${type} resource.`)}
+        onClick={() => showComingSoon(`library-${type}`, 'Access Resource', `Enter your email to access this ${type} resource.`, { resourceTitle: resource.title })}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         className="w-full px-4 py-2 rounded-lg bg-gradient-to-r from-cta-green-500 to-cta-green-600 text-white font-medium hover:shadow-lg transition-shadow duration-300"

@@ -438,7 +438,10 @@ export default function SolutionsMatrix3Panel() {
                 }
             } else {
                 // Show coming soon modal for solutions without detail pages
-                showComingSoon('explore-solution', 'Get Started', 'Enter your email to learn more about this solution and stay updated.')
+                showComingSoon('explore-solution', 'Get Started', 'Enter your email to learn more about this solution and stay updated.', { 
+                  solutionId: selectedSolution.id, 
+                  solutionTitle: selectedSolution.title 
+                })
             }
         }
     }

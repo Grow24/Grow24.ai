@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react'
 import ComingSoonModal from '../components/ComingSoonModal'
 
 interface ComingSoonContextType {
-  showComingSoon: (source?: string, title?: string, message?: string) => void
+  showComingSoon: (source?: string, title?: string, message?: string, metadata?: Record<string, any>) => void
 }
 
 const ComingSoonContext = createContext<ComingSoonContextType | undefined>(undefined)
@@ -24,11 +24,13 @@ export const ComingSoonProvider: React.FC<ComingSoonProviderProps> = ({ children
   const [source, setSource] = useState<string>('general')
   const [title, setTitle] = useState<string>('Get Started with Grow24.ai')
   const [message, setMessage] = useState<string>('Stay updated on our latest features and product updates. We\'ll keep you informed!')
+  const [metadata, setMetadata] = useState<Record<string, any>>({})
 
-  const showComingSoon = (modalSource?: string, modalTitle?: string, modalMessage?: string) => {
+  const showComingSoon = (modalSource?: string, modalTitle?: string, modalMessage?: string, modalMetadata?: Record<string, any>) => {
     setSource(modalSource || 'general')
     setTitle(modalTitle || 'Get Started with Grow24.ai')
     setMessage(modalMessage || 'Stay updated on our latest features and product updates. We\'ll keep you informed!')
+    setMetadata(modalMetadata || {})
     setIsOpen(true)
   }
 
@@ -41,6 +43,7 @@ export const ComingSoonProvider: React.FC<ComingSoonProviderProps> = ({ children
         source={source}
         title={title}
         message={message}
+        metadata={metadata}
       />
     </ComingSoonContext.Provider>
   )

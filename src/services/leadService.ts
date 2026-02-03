@@ -1,4 +1,6 @@
-interface LeadData {
+import { formatEmailBySource, LeadData as EmailLeadData } from './emailService'
+
+export interface LeadData {
   email: string
   name?: string
   designation?: string
@@ -7,6 +9,7 @@ interface LeadData {
   date?: string // Date in YYYY-MM-DD format
   time?: string // Time in HH:MM am/pm format
   timezone?: string // Timezone (e.g., 'America/New_York')
+  title?: string // Job title (for meeting booking)
   metadata?: Record<string, any>
 }
 
@@ -24,24 +27,51 @@ export async function submitLead(data: LeadData): Promise<{ success: boolean; me
   try {
     const API_ENDPOINT = getApiEndpoint()
 
-    console.log('📤 Submitting lead:', { ...data, endpoint: API_ENDPOINT })
+    // Format email data based on source/purpose
+    const emailData: EmailLeadData = {
+      email: data.email,
+      name: data.name,
+      designation: data.designation,
+      phone: data.phone,
+      source: data.source,
+      date: data.date,
+      time: data.time,
+      timezone: data.timezone,
+      title: data.title,
+      metadata: data.metadata
+    }
 
+    const formattedEmail = formatEmailBySource(emailData)
+
+    console.log('📤 Submitting lead:', { ...data, endpoint: API_ENDPOINT })
+    console.log('📧 Formatted email:', formattedEmail)
+
+    // Send formatted email data to backend
     const response = await fetch(API_ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        // Include original data for backward compatibility
         ...data,
+        // Include formatted email data
+        emailFormat: {
+          subject: formattedEmail.subject,
+          body: formattedEmail.body,
+          source: formattedEmail.source,
+        },
+        // Include metadata
+        metadata: formattedEmail.metadata,
         timestamp: new Date().toISOString(),
-        // Add date and time if not provided
-        date: data.date || new Date().toISOString().split('T')[0], // YYYY-MM-DD
-        time: data.time || new Date().toLocaleTimeString('en-US', {
+        // Add date and time if not provided (for meeting bookings)
+        date: data.date || (data.source === 'meeting-booking' ? undefined : new Date().toISOString().split('T')[0]),
+        time: data.time || (data.source === 'meeting-booking' ? undefined : new Date().toLocaleTimeString('en-US', {
           hour: 'numeric',
           minute: '2-digit',
           hour12: true
-        }), // HH:MM am/pm
-        timezone: data.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone, // e.g., 'America/New_York'
+        })),
+        timezone: data.timezone || (data.source === 'meeting-booking' ? undefined : Intl.DateTimeFormat().resolvedOptions().timeZone),
       }),
     })
 

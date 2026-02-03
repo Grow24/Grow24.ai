@@ -737,7 +737,7 @@ export default function SolutionDetailPage() {
                             </p>
                             <div className="flex flex-wrap gap-3">
                                 <motion.button
-                                    onClick={() => showComingSoon('request-demo', 'Request Demo', 'Enter your details to request a personalized demo for this solution.')}
+                                    onClick={() => showComingSoon('request-demo', 'Request Demo', 'Enter your details to request a personalized demo for this solution.', { solutionId, solutionTitle: solution?.title })}
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     className="bg-cta-green-500 hover:bg-cta-green-600 text-white px-6 py-2.5 rounded-lg font-semibold text-sm transition-colors shadow-md"
@@ -745,7 +745,7 @@ export default function SolutionDetailPage() {
                                     Request Demo
                                 </motion.button>
                                 <motion.button
-                                    onClick={() => showComingSoon('download-guide', 'Download Guide', 'Enter your email to download this guide and access exclusive resources.')}
+                                    onClick={() => showComingSoon('download-guide', 'Download Guide', 'Enter your email to download this guide and access exclusive resources.', { solutionId, solutionTitle: solution?.title })}
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     className="bg-info-gold-50 dark:bg-info-gold-900/20 border-2 border-info-gold-500 dark:border-info-gold-600 text-info-gold-700 dark:text-info-gold-300 px-6 py-2.5 rounded-lg font-semibold text-sm hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 transition-colors shadow-sm"
@@ -860,7 +860,7 @@ export default function SolutionDetailPage() {
                                 {solution.description}
                             </p>
                             <button
-                                onClick={() => showComingSoon('source-sheet', 'Access Source Sheet', 'Enter your email to access the source sheet for this solution.')}
+                                onClick={() => showComingSoon('source-sheet', 'Access Source Sheet', 'Enter your email to access the source sheet for this solution.', { solutionId, solutionTitle: solution?.title })}
                                 className="w-full bg-cta-green-500 hover:bg-cta-green-600 text-white py-2 rounded-lg transition-colors"
                             >
                                 Source Sheet
@@ -877,7 +877,7 @@ export default function SolutionDetailPage() {
                     <p className="text-gray-600 dark:text-gray-300 mb-8">{solution.ctaSubtext}</p>
                     <div className="flex gap-4 justify-center">
                         <motion.button
-                            onClick={() => showComingSoon('cta-request-demo', 'Request Demo', 'Enter your details to request a personalized demo.')}
+                            onClick={() => showComingSoon('cta-request-demo', 'Request Demo', 'Enter your details to request a personalized demo.', { solutionId, solutionTitle: solution?.title })}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className="bg-cta-green-500 hover:bg-cta-green-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
@@ -885,7 +885,7 @@ export default function SolutionDetailPage() {
                             Request Demo
                         </motion.button>
                         <motion.button
-                            onClick={() => showComingSoon('download-playbook', 'Download Playbook', 'Enter your email to download the playbook for this solution.')}
+                            onClick={() => showComingSoon('download-playbook', 'Download Playbook', 'Enter your email to download the playbook for this solution.', { solutionId, solutionTitle: solution?.title })}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className="bg-info-gold-50 dark:bg-info-gold-900/20 border-2 border-info-gold-500 dark:border-info-gold-600 text-info-gold-700 dark:text-info-gold-300 px-8 py-3 rounded-lg font-semibold hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 transition-colors"

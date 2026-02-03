@@ -394,7 +394,11 @@ const MeetingBooking = ({ onComplete }: MeetingBookingProps) => {
       const response = await fetch(leadsEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(leadData)
+        body: JSON.stringify({
+          ...leadData,
+          source: 'meeting-booking',
+          timestamp: new Date().toISOString()
+        })
       })
 
       if (response.ok) {

@@ -8,6 +8,7 @@ interface ComingSoonModalProps {
   source?: string // e.g., 'get-demo', 'start-free-trial'
   title?: string
   message?: string
+  metadata?: Record<string, any> // Additional metadata to include in email
 }
 
 const ComingSoonModal: React.FC<ComingSoonModalProps> = ({ 
@@ -15,7 +16,8 @@ const ComingSoonModal: React.FC<ComingSoonModalProps> = ({
   onClose, 
   source = 'general',
   title = 'Get Started with Grow24.ai',
-  message = 'Stay updated on our latest features and product updates. We\'ll keep you informed!'
+  message = 'Stay updated on our latest features and product updates. We\'ll keep you informed!',
+  metadata = {}
 }) => {
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
@@ -93,6 +95,11 @@ const ComingSoonModal: React.FC<ComingSoonModalProps> = ({
       designation: designation.trim() || undefined,
       phone: phone.trim() || undefined,
       source,
+      metadata: {
+        ...metadata,
+        formTitle: title,
+        formMessage: message,
+      },
     })
 
     console.log('📊 Submission result:', result)

@@ -188,7 +188,7 @@ const ResourceCard: React.FC<ResourceCardProps> = ({ resource }) => {
       </div>
 
       <motion.button
-        onClick={() => showComingSoon('resource-hub', 'Access Resource', 'Enter your email to access this resource and stay updated.')}
+        onClick={() => showComingSoon('resource-hub', 'Access Resource', 'Enter your email to access this resource and stay updated.', { resourceTitle: resource.title })}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         className="w-full px-4 py-2 rounded-lg bg-gradient-to-r from-cta-green-500 to-cta-green-600 text-white font-medium hover:shadow-lg transition-shadow duration-300"
