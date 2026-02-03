@@ -36,7 +36,7 @@ interface Solution {
     description: string
     icon: JSX.Element
     features: string[]
-    category: 'Goals' | 'Strategy' | 'Plan' | 'Project' | 'Operations'
+    category: 'Goals' | 'Strategy' | 'Objective' | 'Plan' | 'Project' | 'Operations'
 }
 
 interface FunctionRow {
@@ -46,6 +46,7 @@ interface FunctionRow {
     solutions: {
         Goals?: Solution[]
         Strategy?: Solution[]
+        Objective?: Solution[]
         Plan?: Solution[]
         Project?: Solution[]
         Operations?: Solution[]
@@ -86,6 +87,7 @@ const functions: FunctionRow[] = [
                     )
                 }
             ],
+            Objective: [],
             Plan: [
                 {
                     id: 'corp-plan-1',
@@ -163,6 +165,7 @@ const functions: FunctionRow[] = [
                     )
                 }
             ],
+            Objective: [],
             Plan: [
                 {
                     id: 'sales-plan-1',
@@ -239,6 +242,7 @@ const functions: FunctionRow[] = [
                     )
                 }
             ],
+            Objective: [],
             Plan: [
                 {
                     id: 'mkt-plan-1',
@@ -289,6 +293,7 @@ const functions: FunctionRow[] = [
         solutions: {
             Goals: [],
             Strategy: [],
+            Objective: [],
             Plan: [],
             Project: [],
             Operations: []
@@ -301,6 +306,7 @@ const functions: FunctionRow[] = [
         solutions: {
             Goals: [],
             Strategy: [],
+            Objective: [],
             Plan: [],
             Project: [],
             Operations: []
@@ -308,7 +314,7 @@ const functions: FunctionRow[] = [
     }
 ]
 
-const categories = ['Goals', 'Strategy', 'Plan', 'Project', 'Operations'] as const
+const categories = ['Goals', 'Strategy', 'Objective', 'Plan', 'Project', 'Operations'] as const
 
 export default function SolutionsMatrix3Panel() {
     const navigate = useNavigate()
@@ -339,6 +345,7 @@ export default function SolutionsMatrix3Panel() {
             if (func) {
                 const firstSolution = func.solutions.Goals?.[0] || 
                                      func.solutions.Strategy?.[0] || 
+                                     func.solutions.Objective?.[0] || 
                                      func.solutions.Plan?.[0] || 
                                      func.solutions.Project?.[0] || 
                                      func.solutions.Operations?.[0] || null
@@ -461,7 +468,7 @@ export default function SolutionsMatrix3Panel() {
                         transition={{ duration: 0.5, delay: 0.2 }}
                         className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl shadow-xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden flex-1 min-w-0"
                     >
-                        <div className="grid grid-cols-5 border-b border-slate-200 dark:border-slate-700 overflow-x-auto bg-gradient-to-r from-slate-50 to-emerald-50/30 dark:from-slate-800 dark:to-slate-800">
+                        <div className="grid grid-cols-6 border-b border-slate-200 dark:border-slate-700 overflow-x-auto bg-gradient-to-r from-slate-50 to-emerald-50/30 dark:from-slate-800 dark:to-slate-800">
                             {categories.map((category, idx) => (
                                 <motion.div
                                     key={category}
@@ -476,7 +483,7 @@ export default function SolutionsMatrix3Panel() {
                                 </motion.div>
                             ))}
                         </div>
-                        <div className="grid grid-cols-5 divide-x divide-slate-200 dark:divide-slate-700 overflow-x-auto lg:overflow-visible bg-gradient-to-b from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-900/50">
+                        <div className="grid grid-cols-6 divide-x divide-slate-200 dark:divide-slate-700 overflow-x-auto lg:overflow-visible bg-gradient-to-b from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-900/50">
                             {categories.map((category) => {
                                 const currentFunction = functions.find(f => f.id === selectedFunction)
                                 const solutions = currentFunction?.solutions[category] || []
