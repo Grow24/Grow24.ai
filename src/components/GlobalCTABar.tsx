@@ -38,6 +38,7 @@ export default function GlobalCTABar() {
     const result = await submitLead({
       email: email.trim(),
       source: 'cta-bar',
+      pageTitle: 'Newsletter Subscription - Global CTA Bar',
     })
 
     setMessage(result.message)

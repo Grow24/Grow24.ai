@@ -1,16 +1,17 @@
 import { createFileRoute } from '@tanstack/react-router'
-import LibraryPage from '../components/Library'
+import { useEffect } from 'react'
 
 export const Route = createFileRoute('/library')({
   component: LibraryPageComponent,
 })
 
 function LibraryPageComponent() {
-  return (
-    <div className="min-h-screen">
-      <LibraryPage />
-    </div>
-  )
+  useEffect(() => {
+    // Redirect to index with hash fragment
+    window.location.replace('/#library')
+  }, [])
+  
+  return null
 }
 
 export default LibraryPageComponent

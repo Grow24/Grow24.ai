@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Link, useLocation, useNavigate } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { useComingSoon } from '../contexts/ComingSoonContext'
 import { useTheme } from '../contexts/ThemeContext'
 
@@ -118,11 +118,22 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: 'Home', href: '/', icon: HomeIcon },
-  { label: 'The Concept', href: '/what-we-offer', icon: OfferIcon, badge: 'PBMP' },
-  { label: 'Solutions', href: '/solutions', icon: SolutionsIcon },
-  { label: 'Library', href: '/library', icon: LibraryIcon },
+  { label: 'Home', href: '#home', icon: HomeIcon },
+  { label: 'The Concept', href: '#concept', icon: OfferIcon, badge: 'PBMP' },
+  { label: 'Solutions', href: '#solutions', icon: SolutionsIcon },
+  { label: 'Library', href: '#library', icon: LibraryIcon },
 ]
+
+// Helper function to scroll to section
+const scrollToSection = (href: string) => {
+  if (href.startsWith('#')) {
+    const sectionId = href.substring(1)
+    const element = document.getElementById(sectionId)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
+}
 
 interface HeaderProps {
   onMegaMenuToggle?: () => void
@@ -131,10 +142,10 @@ interface HeaderProps {
 // Search index data
 const searchIndex = [
   // Pages
-  { type: 'page', title: 'Home', description: 'Welcome to Grow24.ai', href: '/', keywords: ['home', 'main', 'landing'] },
-  { type: 'page', title: 'The Concept', description: 'Learn about PBMP methodology', href: '/what-we-offer', keywords: ['concept', 'pbmp', 'methodology', 'plan', 'build', 'measure', 'progress'] },
-  { type: 'page', title: 'Solutions', description: 'Explore our solutions', href: '/solutions', keywords: ['solutions', 'dashboard', 'corporate', 'sales', 'marketing'] },
-  { type: 'page', title: 'Library', description: 'Access curated information and training resources', href: '/library', keywords: ['library', 'information', 'training', 'resources', 'content'] },
+  { type: 'page', title: 'Home', description: 'Welcome to Grow24.ai', href: '#home', keywords: ['home', 'main', 'landing'] },
+  { type: 'page', title: 'The Concept', description: 'Learn about PBMP methodology', href: '#concept', keywords: ['concept', 'pbmp', 'methodology', 'plan', 'build', 'measure', 'progress'] },
+  { type: 'page', title: 'Solutions', description: 'Explore our solutions', href: '#solutions', keywords: ['solutions', 'dashboard', 'corporate', 'sales', 'marketing'] },
+  { type: 'page', title: 'Library', description: 'Access curated information and training resources', href: '#library', keywords: ['library', 'information', 'training', 'resources', 'content'] },
   
   // Solutions
   { type: 'solution', title: 'Strategy Goalsetting', description: 'Define measurable objectives for sustained growth', href: '/solutions/corp-goal-1', keywords: ['goals', 'strategy', 'objectives', 'growth', 'corporate'] },
@@ -155,7 +166,6 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
   const [scrolled, setScrolled] = useState(false)
   const { showComingSoon } = useComingSoon()
   const { theme, toggleTheme } = useTheme()
-  const location = useLocation()
   const navigate = useNavigate()
   const searchRef = useRef<HTMLDivElement>(null)
 
@@ -190,7 +200,22 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
   const handleSearchResultClick = (href: string) => {
     setSearchOpen(false)
     setSearchQuery('')
-    navigate({ to: href })
+    if (href.startsWith('#')) {
+      scrollToSection(href)
+    } else if (href.startsWith('/solutions/')) {
+      // For solution detail pages, use navigation
+      navigate({ to: href })
+    } else {
+      // For other routes, scroll to section
+      const sectionMap: Record<string, string> = {
+        '/': '#home',
+        '/what-we-offer': '#concept',
+        '/solutions': '#solutions',
+        '/library': '#library',
+      }
+      const sectionId = sectionMap[href] || '#home'
+      scrollToSection(sectionId)
+    }
   }
 
   return (
@@ -235,10 +260,11 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                 </motion.button>
 
                 {/* Logo */}
-                <Link
-                  to="/"
-                  onClick={() => {
-                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                <a
+                  href="#home"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    scrollToSection('#home')
                   }}
                   className="flex items-center hover:opacity-80 transition-opacity shrink-0 overflow-visible -mt-1 sm:-mt-2 md:-mt-3 ml-6 sm:ml-8 md:ml-12 lg:ml-12"
                 >
@@ -248,7 +274,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                     className="h-10 sm:h-14 md:h-20 lg:h-24 w-auto object-contain"
                     style={{ display: 'block', maxWidth: 'none' }}
                   />
-                </Link>
+                </a>
               </div>
 
               {/* Right Side: Search + Auth */}
@@ -470,10 +496,6 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
               <nav className="flex-1 overflow-y-auto py-6 px-4">
                 <div className="space-y-1">
                   {navItems.map((item, idx) => {
-                    const isActive = location.pathname === item.href ||
-                      (item.href === '/' && location.pathname === '/') ||
-                      (item.href !== '/' && location.pathname.startsWith(item.href))
-
                     return (
                       <motion.div
                         key={item.href}
@@ -481,57 +503,26 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: idx * 0.05 }}
                       >
-                        {item.href.startsWith('#') ? (
-                          <a
-                            href={item.href}
-                            onClick={() => setSideMenuOpen(false)}
-                            className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden ${isActive
-                              ? 'text-white dark:text-white bg-emerald-500/20 border border-emerald-500/30'
-                              : 'text-gray-700 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10'
-                              }`}
-                          >
-                            <div className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 ${isActive
-                              ? 'bg-emerald-500/30 scale-110'
-                              : 'bg-gray-100 dark:bg-white/5 group-hover:bg-emerald-500/20 group-hover:scale-110'
-                              }`}>
-                              <item.icon />
-                            </div>
-                            <span className="relative z-10 font-medium">{item.label}</span>
-                            {item.badge && (
-                              <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
-                                {item.badge}
-                              </span>
-                            )}
-                            {!isActive && (
-                              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                            )}
-                          </a>
-                        ) : (
-                          <Link
-                            to={item.href}
-                            onClick={() => setSideMenuOpen(false)}
-                            className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden ${isActive
-                              ? 'text-white dark:text-white bg-emerald-500/20 border border-emerald-500/30'
-                              : 'text-gray-700 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10'
-                              }`}
-                          >
-                            <div className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 ${isActive
-                              ? 'bg-emerald-500/30 scale-110'
-                              : 'bg-gray-100 dark:bg-white/5 group-hover:bg-emerald-500/20 group-hover:scale-110'
-                              }`}>
-                              <item.icon />
-                            </div>
-                            <span className="relative z-10 font-medium">{item.label}</span>
-                            {item.badge && (
-                              <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
-                                {item.badge}
-                              </span>
-                            )}
-                            {!isActive && (
-                              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                            )}
-                          </Link>
-                        )}
+                        <a
+                          href={item.href}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            scrollToSection(item.href)
+                            setSideMenuOpen(false)
+                          }}
+                          className="group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden text-gray-700 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10"
+                        >
+                          <div className="relative z-10 flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 bg-gray-100 dark:bg-white/5 group-hover:bg-emerald-500/20 group-hover:scale-110">
+                            <item.icon />
+                          </div>
+                          <span className="relative z-10 font-medium">{item.label}</span>
+                          {item.badge && (
+                            <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
+                              {item.badge}
+                            </span>
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        </a>
                       </motion.div>
                     )
                   })}

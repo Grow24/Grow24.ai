@@ -17,7 +17,8 @@ export interface LeadData {
   date?: string
   time?: string
   timezone?: string
-  title?: string
+  title?: string // Job title (for meeting booking)
+  pageTitle?: string // Title from the page/form (used as email subject)
   metadata?: Record<string, any>
 }
 
@@ -75,7 +76,7 @@ export function formatEmailBySource(data: LeadData): EmailFormattedData {
  * Free Trial Signup Email Format
  */
 function formatFreeTrialEmail(data: LeadData): EmailFormattedData {
-  const subject = `New Free Trial Signup - ${data.name || 'User'}`
+  const subject = data.pageTitle || `New Free Trial Signup - ${data.name || 'User'}`
   
   const body = `
 New Free Trial Signup Request
@@ -115,7 +116,7 @@ Please follow up with the user to complete their free trial setup.
  * Demo Request Email Format
  */
 function formatDemoRequestEmail(data: LeadData): EmailFormattedData {
-  const subject = `Demo Request - ${data.name || data.email}`
+  const subject = data.pageTitle || `Demo Request - ${data.name || data.email}`
   
   const body = `
 New Demo Request
@@ -156,7 +157,7 @@ Please schedule a personalized demo session with the user.
  * Download Guide Email Format
  */
 function formatDownloadGuideEmail(data: LeadData): EmailFormattedData {
-  const subject = `Guide Download Request - ${data.name || data.email}`
+  const subject = data.pageTitle || `Guide Download Request - ${data.name || data.email}`
   
   const body = `
 Guide Download Request
@@ -194,7 +195,7 @@ Please send the requested guide to the user's email address.
  * Source Sheet Access Email Format
  */
 function formatSourceSheetEmail(data: LeadData): EmailFormattedData {
-  const subject = `Source Sheet Access Request - ${data.name || data.email}`
+  const subject = data.pageTitle || `Source Sheet Access Request - ${data.name || data.email}`
   
   const body = `
 Source Sheet Access Request
@@ -232,7 +233,7 @@ Please provide access to the source sheet for this solution.
  * Download Playbook Email Format
  */
 function formatDownloadPlaybookEmail(data: LeadData): EmailFormattedData {
-  const subject = `Playbook Download Request - ${data.name || data.email}`
+  const subject = data.pageTitle || `Playbook Download Request - ${data.name || data.email}`
   
   const body = `
 Playbook Download Request
@@ -271,7 +272,7 @@ Please send the playbook download link to the user's email address.
  */
 function formatLibraryResourceEmail(data: LeadData): EmailFormattedData {
   const resourceType = data.source === 'library-information' ? 'Information' : 'Training'
-  const subject = `Library ${resourceType} Resource Access - ${data.name || data.email}`
+  const subject = data.pageTitle || `Library ${resourceType} Resource Access - ${data.name || data.email}`
   
   const body = `
 Library Resource Access Request
@@ -311,7 +312,7 @@ Please grant access to the requested ${resourceType.toLowerCase()} resource.
  * Resource Hub Access Email Format
  */
 function formatResourceHubEmail(data: LeadData): EmailFormattedData {
-  const subject = `Resource Hub Access Request - ${data.name || data.email}`
+  const subject = data.pageTitle || `Resource Hub Access Request - ${data.name || data.email}`
   
   const body = `
 Resource Hub Access Request
@@ -349,7 +350,7 @@ Please provide access to the requested resource from the Resource Hub.
  * Newsletter Subscription Email Format
  */
 function formatNewsletterSubscriptionEmail(data: LeadData): EmailFormattedData {
-  const subject = `Newsletter Subscription - ${data.email}`
+  const subject = data.pageTitle || `Newsletter Subscription - ${data.email}`
   
   const body = `
 New Newsletter Subscription
@@ -387,7 +388,7 @@ Please add this user to the newsletter mailing list.
  * Solution Inquiry Email Format
  */
 function formatSolutionInquiryEmail(data: LeadData): EmailFormattedData {
-  const subject = `Solution Inquiry - ${data.name || data.email}`
+  const subject = data.pageTitle || `Solution Inquiry - ${data.name || data.email}`
   
   const body = `
 Solution Inquiry Request
@@ -428,7 +429,7 @@ Please follow up with more information about the requested solution.
  * Watch Concept Email Format
  */
 function formatWatchConceptEmail(data: LeadData): EmailFormattedData {
-  const subject = `Concept Video Interest - ${data.name || data.email}`
+  const subject = data.pageTitle || `Concept Video Interest - ${data.name || data.email}`
   
   const body = `
 Concept Video Interest
@@ -466,7 +467,7 @@ User has shown interest by watching the concept video. Consider following up wit
  * Meeting Booking Email Format
  */
 function formatMeetingBookingEmail(data: LeadData): EmailFormattedData {
-  const subject = `Meeting Booking Confirmation - ${data.name || data.email}`
+  const subject = data.pageTitle || `Meeting Booking Confirmation - ${data.name || data.email}`
   
   const body = `
 Meeting Booking Confirmation
@@ -509,7 +510,7 @@ A meeting has been scheduled. Please send a calendar invitation to the user.
  * General Email Format (fallback)
  */
 function formatGeneralEmail(data: LeadData): EmailFormattedData {
-  const subject = `New Inquiry - ${data.name || data.email}`
+  const subject = data.pageTitle || `New Inquiry - ${data.name || data.email}`
   
   const body = `
 New Inquiry Received

@@ -95,6 +95,7 @@ const ComingSoonModal: React.FC<ComingSoonModalProps> = ({
       designation: designation.trim() || undefined,
       phone: phone.trim() || undefined,
       source,
+      pageTitle: title, // Use form title as email subject
       metadata: {
         ...metadata,
         formTitle: title,

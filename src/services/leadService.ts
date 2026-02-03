@@ -10,6 +10,7 @@ export interface LeadData {
   time?: string // Time in HH:MM am/pm format
   timezone?: string // Timezone (e.g., 'America/New_York')
   title?: string // Job title (for meeting booking)
+  pageTitle?: string // Title from the page/form (used as email subject)
   metadata?: Record<string, any>
 }
 
@@ -38,6 +39,7 @@ export async function submitLead(data: LeadData): Promise<{ success: boolean; me
       time: data.time,
       timezone: data.timezone,
       title: data.title,
+      pageTitle: data.pageTitle,
       metadata: data.metadata
     }
 

@@ -397,6 +397,7 @@ const MeetingBooking = ({ onComplete }: MeetingBookingProps) => {
         body: JSON.stringify({
           ...leadData,
           source: 'meeting-booking',
+          pageTitle: 'Meeting Booking Confirmation',
           timestamp: new Date().toISOString()
         })
       })

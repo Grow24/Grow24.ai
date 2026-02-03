@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Link, useLocation } from '@tanstack/react-router'
 
 // Hamburger Icon (3 lines) - BCG style
 const HamburgerIcon = ({ isHovered }: { isHovered?: boolean }) => (
@@ -110,16 +109,26 @@ interface MenuItem {
 }
 
 const menuItems: MenuItem[] = [
-  { label: 'Home', href: '/', icon: HomeIcon },
-  { label: 'The Concept', href: '/what-we-offer', icon: OfferIcon, badge: 'PBMP' },
-  { label: 'Solutions', href: '/solutions', icon: SolutionsIcon },
-  { label: 'Library', href: '/library', icon: LibraryIcon },
+  { label: 'Home', href: '#home', icon: HomeIcon },
+  { label: 'The Concept', href: '#concept', icon: OfferIcon, badge: 'PBMP' },
+  { label: 'Solutions', href: '#solutions', icon: SolutionsIcon },
+  { label: 'Library', href: '#library', icon: LibraryIcon },
 ]
+
+// Helper function to scroll to section
+const scrollToSection = (href: string) => {
+  if (href.startsWith('#')) {
+    const sectionId = href.substring(1)
+    const element = document.getElementById(sectionId)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
+}
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
-  const location = useLocation()
 
   return (
     <>
@@ -196,10 +205,6 @@ export default function Sidebar() {
               <nav className="flex-1 overflow-y-auto py-6 px-4">
                 <div className="space-y-1">
                   {menuItems.map((item, idx) => {
-                    const isActive = location.pathname === item.href ||
-                      (item.href === '/' && location.pathname === '/') ||
-                      (item.href !== '/' && location.pathname.startsWith(item.href))
-
                     return (
                       <motion.div
                         key={item.href}
@@ -207,57 +212,26 @@ export default function Sidebar() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: idx * 0.05 }}
                       >
-                        {item.href.startsWith('#') ? (
-                          <a
-                            href={item.href}
-                            onClick={() => setIsOpen(false)}
-                            className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden ${isActive
-                              ? 'text-white dark:text-white bg-emerald-500/20 border border-emerald-500/30'
-                              : 'text-gray-700 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10'
-                              }`}
-                          >
-                            <div className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 ${isActive
-                              ? 'bg-emerald-500/30 scale-110'
-                              : 'bg-gray-100 dark:bg-white/5 group-hover:bg-emerald-500/20 group-hover:scale-110'
-                              }`}>
-                              <item.icon />
-                            </div>
-                            <span className="relative z-10 font-medium">{item.label}</span>
-                            {item.badge && (
-                              <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
-                                {item.badge}
-                              </span>
-                            )}
-                            {!isActive && (
-                              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                            )}
-                          </a>
-                        ) : (
-                          <Link
-                            to={item.href}
-                            onClick={() => setIsOpen(false)}
-                            className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden ${isActive
-                              ? 'text-white dark:text-white bg-emerald-500/20 border border-emerald-500/30'
-                              : 'text-gray-700 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10'
-                              }`}
-                          >
-                            <div className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 ${isActive
-                              ? 'bg-emerald-500/30 scale-110'
-                              : 'bg-gray-100 dark:bg-white/5 group-hover:bg-emerald-500/20 group-hover:scale-110'
-                              }`}>
-                              <item.icon />
-                            </div>
-                            <span className="relative z-10 font-medium">{item.label}</span>
-                            {item.badge && (
-                              <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
-                                {item.badge}
-                              </span>
-                            )}
-                            {!isActive && (
-                              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                            )}
-                          </Link>
-                        )}
+                        <a
+                          href={item.href}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            scrollToSection(item.href)
+                            setIsOpen(false)
+                          }}
+                          className="group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden text-gray-700 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10"
+                        >
+                          <div className="relative z-10 flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 bg-gray-100 dark:bg-white/5 group-hover:bg-emerald-500/20 group-hover:scale-110">
+                            <item.icon />
+                          </div>
+                          <span className="relative z-10 font-medium">{item.label}</span>
+                          {item.badge && (
+                            <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
+                              {item.badge}
+                            </span>
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        </a>
                       </motion.div>
                     )
                   })}
