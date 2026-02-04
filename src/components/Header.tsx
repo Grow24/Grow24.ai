@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useLocation } from '@tanstack/react-router'
 import { useComingSoon } from '../contexts/ComingSoonContext'
 import { useTheme } from '../contexts/ThemeContext'
 
@@ -32,6 +32,19 @@ const SearchIcon = () => (
 const ChevronDownIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <polyline points="6 9 12 15 18 9" />
+  </svg>
+)
+
+const ChevronUpIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <polyline points="18 15 12 9 6 15" />
+  </svg>
+)
+
+const ClearIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
   </svg>
 )
 
@@ -234,12 +247,27 @@ const navItems: NavItem[] = [
 ]
 
 // Helper function to scroll to section
-const scrollToSection = (href: string) => {
+const scrollToSection = (href: string, navigate: any, location: any) => {
   if (href.startsWith('#')) {
     const sectionId = href.substring(1)
-    const element = document.getElementById(sectionId)
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    
+    // If we're on an inner page, navigate to home first
+    if (location.pathname !== '/') {
+      navigate({ to: '/' }).then(() => {
+        // Wait for navigation and DOM update
+        setTimeout(() => {
+          const element = document.getElementById(sectionId)
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }
+        }, 100)
+      })
+    } else {
+      // We're already on home page, just scroll
+      const element = document.getElementById(sectionId)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
     }
   }
 }
@@ -315,10 +343,36 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [scrolled, setScrolled] = useState(false)
+  const [menuSearchQuery, setMenuSearchQuery] = useState('')
+  const [selectedMenuItem, setSelectedMenuItem] = useState<string>('')
+  const [selectedResultIndex, setSelectedResultIndex] = useState<number>(-1)
+  const [highlightedElements, setHighlightedElements] = useState<HTMLElement[]>([])
   const { showComingSoon } = useComingSoon()
   const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
+  const location = useLocation()
   const searchRef = useRef<HTMLDivElement>(null)
+  
+  // Track selected menu item based on current location/hash
+  useEffect(() => {
+    const hash = window.location.hash.substring(1)
+    if (hash) {
+      setSelectedMenuItem(`#${hash}`)
+    } else if (location.pathname === '/') {
+      setSelectedMenuItem('#home')
+    }
+  }, [location])
+  
+  // Filter menu items based on search query
+  const filteredNavItems = useMemo(() => {
+    if (!menuSearchQuery.trim()) {
+      return navItems
+    }
+    const query = menuSearchQuery.toLowerCase().trim()
+    return navItems.filter(item => 
+      item.label.toLowerCase().includes(query)
+    )
+  }, [menuSearchQuery])
 
   // Handle scroll to adjust translucency
   useEffect(() => {
@@ -335,10 +389,12 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
 
   // Search functionality
   const searchResults = useMemo(() => {
-    if (!searchQuery.trim()) return []
+    if (!searchQuery.trim()) {
+      return []
+    }
 
     const query = searchQuery.toLowerCase().trim()
-    return searchIndex
+    const results = searchIndex
       .filter((item) => {
         const titleMatch = item.title.toLowerCase().includes(query)
         const descMatch = item.description.toLowerCase().includes(query)
@@ -346,13 +402,156 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
         return titleMatch || descMatch || keywordMatch
       })
       .slice(0, 8) // Limit to 8 results
+    
+    return results
   }, [searchQuery])
+
+  // Reset selected index when results change
+  useEffect(() => {
+    if (searchResults.length > 0 && selectedResultIndex >= searchResults.length) {
+      setSelectedResultIndex(0)
+    } else if (searchResults.length === 0) {
+      setSelectedResultIndex(-1)
+    }
+  }, [searchResults.length, selectedResultIndex])
+
+  // Highlight search matches on the page
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      // Remove all highlights
+      highlightedElements.forEach(el => {
+        el.classList.remove('search-highlight')
+        el.style.backgroundColor = ''
+        el.style.borderRadius = ''
+        el.style.padding = ''
+      })
+      setHighlightedElements([])
+      return
+    }
+
+    const query = searchQuery.toLowerCase().trim()
+    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const regex = new RegExp(`(${escapedQuery})`, 'gi')
+    
+    // Find and highlight text nodes (excluding search box and menu)
+    const walker = document.createTreeWalker(
+      document.body,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode: (node) => {
+          const parent = node.parentElement
+          if (!parent) return NodeFilter.FILTER_REJECT
+          // Skip search box, menu, and other UI elements
+          if (parent.closest('[class*="search"]') || 
+              parent.closest('[class*="menu"]') ||
+              parent.closest('header') ||
+              parent.closest('nav') ||
+              parent.closest('aside')) {
+            return NodeFilter.FILTER_REJECT
+          }
+          return NodeFilter.FILTER_ACCEPT
+        }
+      }
+    )
+    
+    const newHighlightedElements: HTMLElement[] = []
+    let node
+    
+    while (node = walker.nextNode()) {
+      const text = node.textContent || ''
+      if (regex.test(text) && node.parentElement) {
+        const parent = node.parentElement
+        if (!parent.classList.contains('search-highlight') && 
+            !parent.closest('[class*="search"]') &&
+            !parent.closest('[class*="menu"]')) {
+          parent.classList.add('search-highlight')
+          parent.style.backgroundColor = 'rgba(16, 185, 129, 0.2)' // emerald-500 with opacity
+          parent.style.borderRadius = '2px'
+          parent.style.padding = '0 2px'
+          newHighlightedElements.push(parent)
+        }
+      }
+    }
+    
+    // Cleanup previous highlights
+    highlightedElements.forEach(el => {
+      if (!newHighlightedElements.includes(el)) {
+        el.classList.remove('search-highlight')
+        el.style.backgroundColor = ''
+        el.style.borderRadius = ''
+        el.style.padding = ''
+      }
+    })
+    
+    setHighlightedElements(newHighlightedElements)
+    
+    // Cleanup function
+    return () => {
+      newHighlightedElements.forEach(el => {
+        el.classList.remove('search-highlight')
+        el.style.backgroundColor = ''
+        el.style.borderRadius = ''
+        el.style.padding = ''
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery])
+
+  // Navigate to selected result
+  const navigateToResult = (index: number) => {
+    if (index >= 0 && index < searchResults.length) {
+      setSelectedResultIndex(index)
+      handleSearchResultClick(searchResults[index].href)
+    }
+  }
+
+  // Handle arrow key navigation
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      if (searchResults.length > 0) {
+        const nextIndex = selectedResultIndex < searchResults.length - 1 
+          ? selectedResultIndex + 1 
+          : 0
+        setSelectedResultIndex(nextIndex)
+        // Scroll selected result into view
+        const resultElement = document.querySelector(`[data-result-index="${nextIndex}"]`)
+        resultElement?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      if (searchResults.length > 0) {
+        const prevIndex = selectedResultIndex > 0 
+          ? selectedResultIndex - 1 
+          : searchResults.length - 1
+        setSelectedResultIndex(prevIndex)
+        // Scroll selected result into view
+        const resultElement = document.querySelector(`[data-result-index="${prevIndex}"]`)
+        resultElement?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      }
+    } else if (e.key === 'Enter' && selectedResultIndex >= 0 && selectedResultIndex < searchResults.length) {
+      e.preventDefault()
+      navigateToResult(selectedResultIndex)
+    } else if (e.key === 'Escape') {
+      setSearchOpen(false)
+      setSearchQuery('')
+      setSelectedResultIndex(-1)
+    }
+  }
+
+  // Clear search
+  const handleClearSearch = () => {
+    setSearchQuery('')
+    setSelectedResultIndex(-1)
+    // Highlights will be cleared by useEffect
+  }
 
   const handleSearchResultClick = (href: string) => {
     setSearchOpen(false)
     setSearchQuery('')
+    setSelectedResultIndex(-1)
     if (href.startsWith('#')) {
-      scrollToSection(href)
+      scrollToSection(href, navigate, location)
     } else if (href.startsWith('/solutions/')) {
       // For solution detail pages, use navigation
       navigate({ to: href })
@@ -365,7 +564,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
         '/library': '#library',
       }
       const sectionId = sectionMap[href] || '#home'
-      scrollToSection(sectionId)
+      scrollToSection(sectionId, navigate, location)
     }
   }
 
@@ -400,7 +599,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                   href="#home"
                   onClick={(e) => {
                     e.preventDefault()
-                    scrollToSection('#home')
+                    scrollToSection('#home', navigate, location)
                     setSideMenuOpen(true)
                   }}
                   whileHover={{ scale: 1.05 }}
@@ -420,7 +619,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                   href="#home"
                   onClick={(e) => {
                     e.preventDefault()
-                    scrollToSection('#home')
+                    scrollToSection('#home', navigate, location)
                   }}
                   className="flex items-center hover:opacity-80 transition-opacity shrink-0 overflow-visible -mt-1 sm:-mt-2 md:-mt-3 ml-6 sm:ml-8 md:ml-12 lg:ml-12"
                 >
@@ -526,18 +725,67 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                             type="text"
                             placeholder="Type to search"
                             value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter' && searchResults.length > 0) {
-                                handleSearchResultClick(searchResults[0].href)
-                              } else if (e.key === 'Escape') {
-                                setSearchOpen(false)
-                                setSearchQuery('')
-                              }
+                            onChange={(e) => {
+                              setSearchQuery(e.target.value)
+                              setSelectedResultIndex(-1)
                             }}
+                            onKeyDown={handleSearchKeyDown}
                             autoFocus
-                            className="w-full pl-12 pr-4 py-3 bg-transparent text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 outline-none focus:ring-0 border-0"
+                            className="w-full pl-12 pr-32 py-3 bg-transparent text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 outline-none focus:ring-0 border-0"
                           />
+                          {/* Action buttons */}
+                          {searchQuery && (
+                            <div className="absolute right-2 flex items-center gap-1">
+                              {/* Up Arrow */}
+                              <motion.button
+                                onClick={() => {
+                                  if (searchResults.length > 0) {
+                                    const prevIndex = selectedResultIndex > 0 
+                                      ? selectedResultIndex - 1 
+                                      : searchResults.length - 1
+                                    setSelectedResultIndex(prevIndex)
+                                    const resultElement = document.querySelector(`[data-result-index="${prevIndex}"]`)
+                                    resultElement?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+                                  }
+                                }}
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                className="p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                                title="Previous result"
+                              >
+                                <ChevronUpIcon />
+                              </motion.button>
+                              {/* Down Arrow */}
+                              <motion.button
+                                onClick={() => {
+                                  if (searchResults.length > 0) {
+                                    const nextIndex = selectedResultIndex < searchResults.length - 1 
+                                      ? selectedResultIndex + 1 
+                                      : 0
+                                    setSelectedResultIndex(nextIndex)
+                                    const resultElement = document.querySelector(`[data-result-index="${nextIndex}"]`)
+                                    resultElement?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+                                  }
+                                }}
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                className="p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                                title="Next result"
+                              >
+                                <ChevronDownIcon />
+                              </motion.button>
+                              {/* Clear Button */}
+                              <motion.button
+                                onClick={handleClearSearch}
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                className="p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                                title="Clear search"
+                              >
+                                <ClearIcon />
+                              </motion.button>
+                            </div>
+                          )}
                         </div>
                         {searchQuery && (
                           <div className="max-h-64 overflow-y-auto border-t border-gray-200 dark:border-gray-700 search-results-scrollbar pr-2">
@@ -549,11 +797,16 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                                 {searchResults.map((result, idx) => (
                                   <motion.div
                                     key={`${result.type}-${result.href}-${idx}`}
+                                    data-result-index={idx}
                                     initial={{ opacity: 0, y: -5 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: idx * 0.03 }}
-                                    onClick={() => handleSearchResultClick(result.href)}
-                                    className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-gray-100 dark:border-gray-800 last:border-b-0"
+                                    onClick={() => navigateToResult(idx)}
+                                    className={`px-4 py-3 cursor-pointer transition-colors border-b border-gray-100 dark:border-gray-800 last:border-b-0 ${
+                                      selectedResultIndex === idx
+                                        ? 'bg-emerald-100 dark:bg-emerald-900/30 border-emerald-300 dark:border-emerald-700'
+                                        : 'hover:bg-gray-100 dark:hover:bg-slate-700'
+                                    }`}
                                   >
                                     <div className="flex items-start gap-3">
                                       <div className={`mt-0.5 flex-shrink-0 w-2 h-2 rounded-full ${
@@ -624,8 +877,8 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
             >
               <div className="flex flex-col h-full">
                 {/* Menu Header */}
-                <div className="px-6 py-8 border-b border-gray-200 dark:border-white/10">
-                  <div className="flex items-center justify-between">
+                <div className="px-6 py-6 border-b border-gray-200 dark:border-white/10">
+                  <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 dark:from-emerald-600 dark:to-emerald-800 flex items-center justify-center shadow-lg">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white">
@@ -646,42 +899,91 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                       <CloseIcon />
                     </button>
                   </div>
+                  
+                  {/* Search Input */}
+                  <div className="relative">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 pointer-events-none">
+                      <SearchIcon />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Search menu items..."
+                      value={menuSearchQuery}
+                      onChange={(e) => setMenuSearchQuery(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                    />
+                    {menuSearchQuery && (
+                      <button
+                        onClick={() => setMenuSearchQuery('')}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                      >
+                        <CloseIcon />
+                      </button>
+                    )}
+                  </div>
                 </div>
 
-              {/* Menu Items */}
-              <nav className="flex-1 overflow-y-auto py-6 px-4">
-                <div className="space-y-1">
-                  {navItems.map((item, idx) => {
-                    return (
-                      <motion.div
-                        key={item.href}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.05 }}
-                      >
-                        <a
-                          href={item.href}
-                          onClick={(e) => {
-                            e.preventDefault()
-                            scrollToSection(item.href)
-                            setSideMenuOpen(false)
-                          }}
-                          className="group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden text-gray-700 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10"
+              {/* Menu Items - No scrollbar, all items visible */}
+              <nav className="flex-1 py-4 px-4 overflow-hidden">
+                <div className="space-y-1 h-full overflow-y-auto scrollbar-hide">
+                  <style>{`
+                    .scrollbar-hide {
+                      scrollbar-width: none;
+                      -ms-overflow-style: none;
+                    }
+                    .scrollbar-hide::-webkit-scrollbar {
+                      display: none;
+                    }
+                  `}</style>
+                  {filteredNavItems.length > 0 ? (
+                    filteredNavItems.map((item, idx) => {
+                      const isSelected = selectedMenuItem === item.href
+                      return (
+                        <motion.div
+                          key={item.href}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: idx * 0.03 }}
                         >
-                          <div className="relative z-10 flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 bg-gray-100 dark:bg-white/5 group-hover:bg-emerald-500/20 group-hover:scale-110">
-                            <item.icon />
-                          </div>
-                          <span className="relative z-10 font-medium">{item.label}</span>
-                          {item.badge && (
-                            <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
-                              {item.badge}
-                            </span>
-                          )}
-                          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        </a>
-                      </motion.div>
-                    )
-                  })}
+                          <a
+                            href={item.href}
+                            onClick={(e) => {
+                              e.preventDefault()
+                              setSelectedMenuItem(item.href)
+                              scrollToSection(item.href, navigate, location)
+                              setSideMenuOpen(false)
+                            }}
+                            className={`group flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-200 relative overflow-hidden ${
+                              isSelected
+                                ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 font-semibold'
+                                : 'text-gray-700 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10'
+                            }`}
+                          >
+                            <div className={`relative z-10 flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 flex-shrink-0 ${
+                              isSelected
+                                ? 'bg-emerald-500/30 group-hover:bg-emerald-500/40'
+                                : 'bg-gray-100 dark:bg-white/5 group-hover:bg-emerald-500/20'
+                            } group-hover:scale-110`}>
+                              <item.icon />
+                            </div>
+                            <span className="relative z-10 font-medium text-sm truncate">{item.label}</span>
+                            {item.badge && (
+                              <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
+                                {item.badge}
+                              </span>
+                            )}
+                            {!isSelected && (
+                              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                            )}
+                          </a>
+                        </motion.div>
+                      )
+                    })
+                  ) : (
+                    <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400 text-sm">
+                      No menu items found
+                    </div>
+                  )}
                 </div>
               </nav>
 

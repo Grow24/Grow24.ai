@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Link, useParams } from '@tanstack/react-router'
 import { useComingSoon } from '../contexts/ComingSoonContext'
+import { use3DRotation } from '../lib/use3DRotation'
 
 interface SolutionDetail {
     id: string
@@ -26,6 +27,39 @@ interface SolutionDetail {
     }[]
     ctaMessage: string
     ctaSubtext: string
+}
+
+// 3D Detail Card Component
+const DetailCard3D = ({ 
+    children, 
+    className,
+    ...motionProps 
+}: { 
+    children: React.ReactNode
+    className: string
+    initial?: any
+    animate?: any
+    transition?: any
+}) => {
+    const { cardRef, rotateX, rotateY, style } = use3DRotation({ 
+        intensity: 8, // Subtle rotation for detail cards
+        perspective: 1000 
+    })
+
+    return (
+        <motion.div
+            ref={cardRef}
+            {...motionProps}
+            style={{
+                ...style,
+                rotateX,
+                rotateY,
+            }}
+            className={className}
+        >
+            {children}
+        </motion.div>
+    )
 }
 
 // Get color scheme based on category
@@ -789,7 +823,7 @@ export default function SolutionDetailPage() {
                     <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Overview</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {solution.overviewCards.map((card, idx) => (
-                            <motion.div
+                            <DetailCard3D
                                 key={idx}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
@@ -801,7 +835,7 @@ export default function SolutionDetailPage() {
                                 </div>
                                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{card.title}</h3>
                                 <p className="text-gray-600 dark:text-gray-300">{card.description}</p>
-                            </motion.div>
+                            </DetailCard3D>
                         ))}
                     </div>
                 </div>
@@ -813,7 +847,7 @@ export default function SolutionDetailPage() {
                     <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Capabilities</h2>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                         {solution.capabilities.map((cap, idx) => (
-                            <motion.div
+                            <DetailCard3D
                                 key={cap.id}
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
@@ -823,7 +857,7 @@ export default function SolutionDetailPage() {
                             >
                                 <div className="font-bold text-sm mb-2">{cap.id}</div>
                                 <div className="text-xs">{cap.title}</div>
-                            </motion.div>
+                            </DetailCard3D>
                         ))}
                     </div>
                 </div>
@@ -836,7 +870,13 @@ export default function SolutionDetailPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2 space-y-4">
                             {solution.templates.map((template) => (
-                                <div key={template.id} className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+                                <DetailCard3D
+                                    key={template.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.1 }}
+                                    className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700"
+                                >
                                     <div className="flex items-start gap-4">
                                         <div className={`${colors.primary} text-white px-3 py-1 rounded font-bold text-sm`}>
                                             {template.id}
@@ -846,7 +886,7 @@ export default function SolutionDetailPage() {
                                             <p className="text-sm text-gray-600 dark:text-gray-300">{template.description}</p>
                                         </div>
                                     </div>
-                                </div>
+                                </DetailCard3D>
                             ))}
                         </div>
                         <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">

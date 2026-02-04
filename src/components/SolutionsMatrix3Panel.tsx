@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from '@tanstack/react-router'
 import { useComingSoon } from '../contexts/ComingSoonContext'
+import { use3DRotation } from '../lib/use3DRotation'
 
 // List of solution IDs that have detail pages
 const solutionsWithDetailPages = [
@@ -29,6 +30,67 @@ const ChevronIcon = ({ isOpen }: { isOpen: boolean }) => (
         <polyline points="9 18 15 12 9 6" />
     </svg>
 )
+
+// 3D Solution Card Component
+const SolutionCard3D = ({ 
+    solution, 
+    isSelected, 
+    onSelect 
+}: { 
+    solution: Solution
+    isSelected: boolean
+    onSelect: () => void
+}) => {
+    const { cardRef, rotateX, rotateY, style } = use3DRotation({ 
+        intensity: 8, // Subtle rotation for solution cards
+        perspective: 1000 
+    })
+
+    return (
+        <motion.button
+            ref={cardRef}
+            onClick={onSelect}
+            style={{
+                ...style,
+                rotateX,
+                rotateY,
+            }}
+            whileHover={{ scale: 1.03, y: -2 }}
+            whileTap={{ scale: 0.97 }}
+            className={`w-full p-2 sm:p-3 md:p-4 rounded-lg sm:rounded-xl border-2 transition-all duration-200 text-center overflow-hidden group ${
+                isSelected
+                    ? 'border-emerald-500 bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-900/30 dark:to-emerald-800/20 shadow-lg shadow-emerald-500/20 ring-2 ring-emerald-500/20'
+                    : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 hover:border-emerald-300 dark:hover:border-emerald-700 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 hover:shadow-md active:scale-95'
+            }`}
+        >
+            <div className="flex flex-col items-center text-center gap-2 mb-2">
+                <div className={`flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 transition-colors ${
+                    isSelected
+                        ? 'text-emerald-600 dark:text-emerald-400'
+                        : 'text-slate-600 dark:text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400'
+                }`}>
+                    {solution.icon}
+                </div>
+                <div className="flex-1 min-w-0 w-full">
+                    <h4 className={`text-[10px] xs:text-xs sm:text-sm font-bold leading-tight mb-1 line-clamp-2 break-words transition-colors ${
+                        isSelected
+                            ? 'text-slate-900 dark:text-white'
+                            : 'text-slate-800 dark:text-slate-200 group-hover:text-slate-900 dark:group-hover:text-white'
+                    }`}>
+                        {solution.title}
+                    </h4>
+                    <p className={`text-[9px] xs:text-[10px] sm:text-xs leading-tight line-clamp-2 break-words transition-colors ${
+                        isSelected
+                            ? 'text-slate-600 dark:text-slate-300'
+                            : 'text-slate-500 dark:text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300'
+                    }`}>
+                        {solution.description}
+                    </p>
+                </div>
+            </div>
+        </motion.button>
+    )
+}
 
 interface Solution {
     id: string
@@ -584,9 +646,11 @@ export default function SolutionsMatrix3Panel() {
                                             </motion.div>
                                         ) : (
                                             solutions.map((solution) => (
-                                                <motion.button
+                                                <SolutionCard3D
                                                     key={solution.id}
-                                                    onClick={() => {
+                                                    solution={solution}
+                                                    isSelected={selectedSolution?.id === solution.id}
+                                                    onSelect={() => {
                                                         setSelectedSolution(solution)
                                                         // Scroll to Solution Summary on mobile/tablet when clicking any solution
                                                         if (window.innerWidth < 1280) {
@@ -599,40 +663,7 @@ export default function SolutionsMatrix3Panel() {
                                                             }, 100)
                                                         }
                                                     }}
-                                                    whileHover={{ scale: 1.03, y: -2 }}
-                                                    whileTap={{ scale: 0.97 }}
-                                                    className={`w-full p-2 sm:p-3 md:p-4 rounded-lg sm:rounded-xl border-2 transition-all duration-200 text-center overflow-hidden group ${
-                                                        selectedSolution?.id === solution.id
-                                                            ? 'border-emerald-500 bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-900/30 dark:to-emerald-800/20 shadow-lg shadow-emerald-500/20 ring-2 ring-emerald-500/20'
-                                                            : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 hover:border-emerald-300 dark:hover:border-emerald-700 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 hover:shadow-md active:scale-95'
-                                                    }`}
-                                                >
-                                                    <div className="flex flex-col items-center text-center gap-2 mb-2">
-                                                        <div className={`flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 transition-colors ${
-                                                            selectedSolution?.id === solution.id
-                                                                ? 'text-emerald-600 dark:text-emerald-400'
-                                                                : 'text-slate-600 dark:text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400'
-                                                        }`}>
-                                                            {solution.icon}
-                                                        </div>
-                                                        <div className="flex-1 min-w-0 w-full">
-                                                            <h4 className={`text-[10px] xs:text-xs sm:text-sm font-bold leading-tight mb-1 line-clamp-2 break-words transition-colors ${
-                                                                selectedSolution?.id === solution.id
-                                                                    ? 'text-slate-900 dark:text-white'
-                                                                    : 'text-slate-800 dark:text-slate-200 group-hover:text-slate-900 dark:group-hover:text-white'
-                                                            }`}>
-                                                                {solution.title}
-                                                            </h4>
-                                                            <p className={`text-[9px] xs:text-[10px] sm:text-xs leading-tight line-clamp-2 break-words transition-colors ${
-                                                                selectedSolution?.id === solution.id
-                                                                    ? 'text-slate-600 dark:text-slate-300'
-                                                                    : 'text-slate-500 dark:text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300'
-                                                            }`}>
-                                                                {solution.description}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </motion.button>
+                                                />
                                             ))
                                         )}
                                     </div>

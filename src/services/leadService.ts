@@ -47,6 +47,8 @@ export async function submitLead(data: LeadData): Promise<{ success: boolean; me
 
     console.log('📤 Submitting lead:', { ...data, endpoint: API_ENDPOINT })
     console.log('📧 Formatted email:', formattedEmail)
+    console.log('📧 Email Subject:', formattedEmail.subject)
+    console.log('📧 Email Source:', formattedEmail.source)
 
     // Send formatted email data to backend
     const response = await fetch(API_ENDPOINT, {
@@ -57,12 +59,17 @@ export async function submitLead(data: LeadData): Promise<{ success: boolean; me
       body: JSON.stringify({
         // Include original data for backward compatibility
         ...data,
+        // Override pageTitle with formatted subject to ensure backend uses correct subject
+        pageTitle: formattedEmail.subject,
         // Include formatted email data
         emailFormat: {
           subject: formattedEmail.subject,
           body: formattedEmail.body,
           source: formattedEmail.source,
         },
+        // Also include subject at top level for backend compatibility
+        subject: formattedEmail.subject,
+        emailBody: formattedEmail.body,
         // Include metadata
         metadata: formattedEmail.metadata,
         timestamp: new Date().toISOString(),

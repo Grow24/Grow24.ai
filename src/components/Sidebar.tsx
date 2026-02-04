@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useNavigate, useLocation } from '@tanstack/react-router'
 
 // Hamburger Icon (3 lines) - BCG style
 const HamburgerIcon = ({ isHovered }: { isHovered?: boolean }) => (
@@ -183,6 +184,13 @@ const SitemapIcon = () => (
   </svg>
 )
 
+const SearchIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="11" cy="11" r="8" />
+    <path d="m21 21-4.35-4.35" />
+  </svg>
+)
+
 const PressroomIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" />
@@ -217,12 +225,27 @@ const menuItems: MenuItem[] = [
 ]
 
 // Helper function to scroll to section
-const scrollToSection = (href: string) => {
+const scrollToSection = (href: string, navigate: any, location: any) => {
   if (href.startsWith('#')) {
     const sectionId = href.substring(1)
-    const element = document.getElementById(sectionId)
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    
+    // If we're on an inner page, navigate to home first
+    if (location.pathname !== '/') {
+      navigate({ to: '/' }).then(() => {
+        // Wait for navigation and DOM update
+        setTimeout(() => {
+          const element = document.getElementById(sectionId)
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }
+        }, 100)
+      })
+    } else {
+      // We're already on home page, just scroll
+      const element = document.getElementById(sectionId)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
     }
   }
 }
@@ -230,6 +253,33 @@ const scrollToSection = (href: string) => {
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
+  const [menuSearchQuery, setMenuSearchQuery] = useState('')
+  const navigate = useNavigate()
+  const location = useLocation()
+  
+  // Track selected menu item based on current location/hash
+  const [selectedMenuItem, setSelectedMenuItem] = useState<string>('')
+  
+  useEffect(() => {
+    // Set selected menu item based on current hash or pathname
+    const hash = window.location.hash.substring(1)
+    if (hash) {
+      setSelectedMenuItem(`#${hash}`)
+    } else if (location.pathname === '/') {
+      setSelectedMenuItem('#home')
+    }
+  }, [location])
+  
+  // Filter menu items based on search query
+  const filteredMenuItems = useMemo(() => {
+    if (!menuSearchQuery.trim()) {
+      return menuItems
+    }
+    const query = menuSearchQuery.toLowerCase().trim()
+    return menuItems.filter(item => 
+      item.label.toLowerCase().includes(query)
+    )
+  }, [menuSearchQuery])
 
   return (
     <>
@@ -239,7 +289,7 @@ export default function Sidebar() {
           href="#home"
           onClick={(e) => {
             e.preventDefault()
-            scrollToSection('#home')
+            scrollToSection('#home', navigate, location)
             setIsOpen(!isOpen)
           }}
           onMouseEnter={() => setIsHovered(true)}
@@ -289,8 +339,8 @@ export default function Sidebar() {
           >
             <div className="flex flex-col h-full">
               {/* Header */}
-              <div className="px-6 py-8 border-b border-gray-200 dark:border-white/10">
-                <div className="flex items-center gap-4">
+              <div className="px-6 py-6 border-b border-gray-200 dark:border-white/10">
+                <div className="flex items-center gap-4 mb-4">
                   <motion.button
                     onClick={() => setIsOpen(false)}
                     className="w-10 h-10 flex-shrink-0 rounded-lg bg-emerald-500 hover:bg-emerald-600 flex items-center justify-center transition-colors duration-200"
@@ -305,42 +355,91 @@ export default function Sidebar() {
                     <p className="text-xs text-emerald-600 dark:text-emerald-400 whitespace-nowrap">Transform & Thrive</p>
                   </div>
                 </div>
+                
+                {/* Search Input */}
+                <div className="relative">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 pointer-events-none">
+                    <SearchIcon />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Search menu items..."
+                    value={menuSearchQuery}
+                    onChange={(e) => setMenuSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                  />
+                  {menuSearchQuery && (
+                    <button
+                      onClick={() => setMenuSearchQuery('')}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                    >
+                      <CloseIcon />
+                    </button>
+                  )}
+                </div>
               </div>
 
-              {/* Navigation */}
-              <nav className="flex-1 overflow-y-auto py-6 px-4">
-                <div className="space-y-1">
-                  {menuItems.map((item, idx) => {
-                    return (
-                      <motion.div
-                        key={item.href}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.05 }}
-                      >
-                        <a
-                          href={item.href}
-                          onClick={(e) => {
-                            e.preventDefault()
-                            scrollToSection(item.href)
-                            setIsOpen(false)
-                          }}
-                          className="group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden text-gray-700 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10"
+              {/* Navigation - No scrollbar, all items visible */}
+              <nav className="flex-1 py-4 px-4 overflow-hidden">
+                <div className="space-y-1 h-full overflow-y-auto scrollbar-hide">
+                  <style>{`
+                    .scrollbar-hide {
+                      scrollbar-width: none;
+                      -ms-overflow-style: none;
+                    }
+                    .scrollbar-hide::-webkit-scrollbar {
+                      display: none;
+                    }
+                  `}</style>
+                  {filteredMenuItems.length > 0 ? (
+                    filteredMenuItems.map((item, idx) => {
+                      const isSelected = selectedMenuItem === item.href
+                      return (
+                        <motion.div
+                          key={item.href}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: idx * 0.03 }}
                         >
-                          <div className="relative z-10 flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 bg-gray-100 dark:bg-white/5 group-hover:bg-emerald-500/20 group-hover:scale-110">
-                            <item.icon />
-                          </div>
-                          <span className="relative z-10 font-medium">{item.label}</span>
-                          {item.badge && (
-                            <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
-                              {item.badge}
-                            </span>
-                          )}
-                          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        </a>
-                      </motion.div>
-                    )
-                  })}
+                          <a
+                            href={item.href}
+                            onClick={(e) => {
+                              e.preventDefault()
+                              setSelectedMenuItem(item.href)
+                              scrollToSection(item.href, navigate, location)
+                              setIsOpen(false)
+                            }}
+                            className={`group flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-200 relative overflow-hidden ${
+                              isSelected
+                                ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 font-semibold'
+                                : 'text-gray-700 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10'
+                            }`}
+                          >
+                            <div className={`relative z-10 flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 flex-shrink-0 ${
+                              isSelected
+                                ? 'bg-emerald-500/30 group-hover:bg-emerald-500/40'
+                                : 'bg-gray-100 dark:bg-white/5 group-hover:bg-emerald-500/20'
+                            } group-hover:scale-110`}>
+                              <item.icon />
+                            </div>
+                            <span className="relative z-10 font-medium text-sm truncate">{item.label}</span>
+                            {item.badge && (
+                              <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
+                                {item.badge}
+                              </span>
+                            )}
+                            {!isSelected && (
+                              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                            )}
+                          </a>
+                        </motion.div>
+                      )
+                    })
+                  ) : (
+                    <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400 text-sm">
+                      No menu items found
+                    </div>
+                  )}
                 </div>
               </nav>
             </div>

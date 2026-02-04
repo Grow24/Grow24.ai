@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import SolutionsMatrix3Panel from '../components/SolutionsMatrix3Panel'
 import LibraryPage from '../components/Library'
 import { useComingSoon } from '../contexts/ComingSoonContext'
+import { use3DRotation } from '../lib/use3DRotation'
 
 // SVG Icons for WhatWeOffer section
 const SunIcon = () => (
@@ -43,6 +44,72 @@ const MoonIcon = () => (
     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
   </svg>
 )
+
+// 3D Hero Button Component
+const HeroButton3D = ({ 
+  children, 
+  onClick, 
+  className 
+}: { 
+  children: React.ReactNode
+  onClick: () => void
+  className: string
+}) => {
+  const { cardRef, rotateX, rotateY, style } = use3DRotation({ 
+    intensity: 5, // Subtle rotation for buttons
+    perspective: 1000 
+  })
+
+  return (
+    <motion.button
+      ref={cardRef}
+      onClick={onClick}
+      style={{
+        ...style,
+        rotateX,
+        rotateY,
+      }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className={className}
+    >
+      {children}
+    </motion.button>
+  )
+}
+
+// 3D Concept Card Component
+const ConceptCard3D = ({ 
+  children, 
+  className,
+  ...motionProps 
+}: { 
+  children: React.ReactNode
+  className: string
+  initial?: any
+  animate?: any
+  transition?: any
+}) => {
+  const { cardRef, rotateX, rotateY, style } = use3DRotation({ 
+    intensity: 12, // Moderate rotation for concept cards
+    perspective: 1000 
+  })
+
+  return (
+    <motion.div
+      ref={cardRef}
+      {...motionProps}
+      style={{
+        ...style,
+        rotateX,
+        rotateY,
+      }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  )
+}
 
 export const Route = createFileRoute('/')({  
   component: IndexPage,
@@ -140,22 +207,18 @@ function IndexPage() {
             transition={{ delay: 0.4, duration: 0.6 }}
             className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center flex-wrap px-4 mt-20 sm:mt-10 md:mt-0"
           >
-            <motion.button
+            <HeroButton3D
               onClick={() => showComingSoon('start-free-trial', 'Sign up for our Free Trial', 'Please fill in all required fields to start your free trial.')}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-xl bg-gradient-to-r from-cta-green-500 to-cta-green-600 text-white text-sm sm:text-base font-bold hover:shadow-xl transition-shadow duration-300"
             >
               Sign up for our Free Trial
-            </motion.button>
-            <motion.button
+            </HeroButton3D>
+            <HeroButton3D
               onClick={() => showComingSoon('watch-concept', 'Watch Concept', 'Watch our concept video to understand how Grow24.ai can transform your growth journey.')}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-xl border-2 border-info-gold-500 text-info-gold-600 bg-info-gold-50 dark:bg-info-gold-900/20 text-sm sm:text-base font-bold hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 transition-colors duration-300"
             >
               Watch Concept
-            </motion.button>
+            </HeroButton3D>
           </motion.div>
         </div>
       </motion.section>
@@ -241,7 +304,7 @@ function IndexPage() {
                 {/* Diagrams Container */}
                 <div className="grid md:grid-cols-2 gap-8 lg:gap-12 mb-12">
                   {/* Personal Side */}
-                  <motion.div
+                  <ConceptCard3D
                     initial={{ opacity: 0, x: -50 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, delay: 0.2 }}
@@ -278,10 +341,10 @@ function IndexPage() {
                         className="w-full h-auto max-w-md"
                       />
                     </div>
-                  </motion.div>
+                  </ConceptCard3D>
 
                   {/* Professional Side */}
-                  <motion.div
+                  <ConceptCard3D
                     initial={{ opacity: 0, x: 50 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, delay: 0.4 }}
@@ -318,7 +381,7 @@ function IndexPage() {
                         className="w-full h-auto max-w-md"
                       />
                     </div>
-                  </motion.div>
+                  </ConceptCard3D>
                 </div>
               </motion.div>
             ) : activeTab === 'why' ? (

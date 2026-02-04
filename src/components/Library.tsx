@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useComingSoon } from '../contexts/ComingSoonContext'
+import { use3DRotation } from '../lib/use3DRotation'
 
 // Icons
 const SearchIcon = () => (
@@ -247,6 +248,10 @@ interface ResourceCardProps {
 
 const ResourceCard: React.FC<ResourceCardProps> = React.memo(({ resource, type }) => {
   const { showComingSoon } = useComingSoon()
+  const { cardRef, rotateX, rotateY, style } = use3DRotation({ 
+    intensity: 10, // Moderate rotation for resource cards
+    perspective: 1000 
+  })
   const difficultyColors = {
     BEGINNER: 'from-green-400 to-green-600',
     INTERMEDIATE: 'from-blue-400 to-blue-600',
@@ -256,6 +261,12 @@ const ResourceCard: React.FC<ResourceCardProps> = React.memo(({ resource, type }
 
   return (
     <motion.div
+      ref={cardRef}
+      style={{
+        ...style,
+        rotateX,
+        rotateY,
+      }}
       whileHover={{ y: -5 }}
       className="bg-slate-800 dark:bg-slate-900 rounded-xl p-6 border border-slate-700 dark:border-slate-700 hover:border-emerald-500/50 transition-all duration-300 shadow-lg"
     >
