@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { Link, useParams } from '@tanstack/react-router'
 import { useComingSoon } from '../contexts/ComingSoonContext'
 import { use3DRotation } from '../lib/use3DRotation'
+import { isValidSolutionId } from '../constants/solutions'
 
 interface SolutionDetail {
     id: string
@@ -606,7 +607,8 @@ export default function SolutionDetailPage() {
     console.log('All params:', params)
     console.log('Found solution:', solution)
 
-    if (!solution) {
+    // Double-check: if solution ID is not valid, show not found
+    if (!solutionId || !isValidSolutionId(solutionId) || !solution) {
         return (
             <div className="min-h-screen pt-16 sm:pt-20 md:pt-24 pb-10 sm:pb-12 md:pb-16 flex items-center justify-center">
                 <div className="text-center">

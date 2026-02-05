@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate, useLocation } from '@tanstack/react-router'
 import { useComingSoon } from '../contexts/ComingSoonContext'
 import { useTheme } from '../contexts/ThemeContext'
+import { isValidSolutionId } from '../constants/solutions'
 
 // SVG Icons - Hamburger menu icon (3 horizontal lines)
 const HamburgerIcon = () => (
@@ -314,36 +315,50 @@ interface HeaderProps {
   onMegaMenuToggle?: () => void
 }
 
-// Search index data
+// Menu labels that should be excluded from search (only menu items, not page content)
+const menuOnlyLabels = new Set([
+  'Become Partner',
+  'Join Us',
+  'Privacy Policy',
+  'Terms of Use',
+  'Cookie Settings',
+  'Sitemap',
+  'Pressroom',
+])
+
+// Solution IDs are validated using isValidSolutionId from constants/solutions.ts
+
+// Search index data - only includes pages that actually exist in the DOM
 const searchIndex = [
-  // Pages
+  // Pages (only include pages that actually exist as sections on the site)
   { type: 'page', title: 'Home', description: 'Welcome to Grow24.ai', href: '#home', keywords: ['home', 'main', 'landing'] },
   { type: 'page', title: 'Concept', description: 'Learn about PBMP methodology', href: '#concept', keywords: ['concept', 'pbmp', 'methodology', 'plan', 'build', 'measure', 'progress'] },
   { type: 'page', title: 'Solutions', description: 'Explore our solutions', href: '#solutions', keywords: ['solutions', 'dashboard', 'corporate', 'sales', 'marketing'] },
   { type: 'page', title: 'Library', description: 'Access curated information and training resources', href: '#library', keywords: ['library', 'information', 'training', 'resources', 'content'] },
-  { type: 'page', title: 'Get Support', description: 'Get help and support for Grow24.ai', href: '#support', keywords: ['support', 'help', 'assistance', 'faq', 'contact'] },
-  { type: 'page', title: 'Engage', description: 'Engage with our community and platform', href: '#engage', keywords: ['engage', 'community', 'interact', 'participate'] },
-  { type: 'page', title: 'Contact Us', description: 'Get in touch with our team', href: '#contact', keywords: ['contact', 'reach', 'email', 'phone', 'get in touch'] },
-  { type: 'page', title: 'About Us', description: 'Learn more about Grow24.ai', href: '#about', keywords: ['about', 'company', 'team', 'mission', 'vision'] },
-  { type: 'page', title: 'Become Partner', description: 'Partner with Grow24.ai', href: '#partner', keywords: ['partner', 'partnership', 'collaborate', 'business'] },
-  { type: 'page', title: 'Join Us', description: 'Join the Grow24.ai team', href: '#join', keywords: ['join', 'careers', 'jobs', 'hiring', 'team'] },
-  { type: 'page', title: 'Privacy Policy', description: 'Read our privacy policy', href: '#privacy', keywords: ['privacy', 'policy', 'data', 'protection', 'gdpr'] },
-  { type: 'page', title: 'Terms of Use', description: 'Read our terms of use', href: '#terms', keywords: ['terms', 'conditions', 'legal', 'agreement'] },
-  { type: 'page', title: 'Cookie Settings', description: 'Manage your cookie preferences', href: '#cookies', keywords: ['cookies', 'settings', 'preferences', 'tracking'] },
-  { type: 'page', title: 'Sitemap', description: 'View our website sitemap', href: '#sitemap', keywords: ['sitemap', 'navigation', 'map', 'structure'] },
-  { type: 'page', title: 'Pressroom', description: 'Press releases and media resources', href: '#pressroom', keywords: ['press', 'media', 'news', 'releases', 'pressroom'] },
+  // Note: Pages like 'Get Support', 'About Us', 'Contact Us', 'Engage', etc. are excluded 
+  // because they don't exist as actual page sections - they're only menu items
   
-  // Solutions
+  // Solutions - only include solutions that actually exist
   { type: 'solution', title: 'Strategy Goalsetting', description: 'Define measurable objectives for sustained growth', href: '/solutions/corp-goal-1', keywords: ['goals', 'strategy', 'objectives', 'growth', 'corporate'] },
   { type: 'solution', title: 'Strategy Generation', description: 'Formulate where-to-play and how-to-win strategies', href: '/solutions/corp-strat-1', keywords: ['strategy', 'generation', 'swot', 'bcg', 'matrix', 'corporate'] },
   { type: 'solution', title: 'Multi-Horizon Planning', description: 'Build stepwise plans, week + quarter - year', href: '/solutions/corp-plan-1', keywords: ['planning', 'multi-horizon', 'weekly', 'quarterly', 'annual', 'corporate'] },
-  { type: 'solution', title: 'Project Portfolio', description: 'Drive strategic initiatives, programs, and projects', href: '/solutions/corp-proj-1', keywords: ['project', 'portfolio', 'initiatives', 'programs', 'corporate'] },
   { type: 'solution', title: 'KPI Monitoring', description: 'Monitor results against KPIs, targets, and activities', href: '/solutions/corp-ops-1', keywords: ['kpi', 'monitoring', 'metrics', 'performance', 'corporate'] },
   { type: 'solution', title: 'Sales Goalsetting', description: 'Align qualities, targets, and tenures for sales productivity', href: '/solutions/sales-goal-1', keywords: ['sales', 'goals', 'targets', 'quota', 'productivity'] },
   { type: 'solution', title: 'GTM Strategy', description: 'Define your go-to-market strategy with actionable tactics', href: '/solutions/sales-strat-1', keywords: ['gtm', 'go-to-market', 'sales', 'strategy', 'tactics'] },
   { type: 'solution', title: 'Marketing Goalsetting', description: 'Translate growth targets and inspirational objectives', href: '/solutions/mkt-goal-1', keywords: ['marketing', 'goals', 'growth', 'targets', 'objectives'] },
   { type: 'solution', title: 'Marketing GTM Strategy', description: 'Craft growth-oriented strategy to ignite growth', href: '/solutions/mkt-strat-1', keywords: ['marketing', 'gtm', 'strategy', 'growth'] },
-]
+].filter(item => {
+  // Filter out menu-only items
+  if (menuOnlyLabels.has(item.title)) {
+    return false
+  }
+  // For solutions, verify they exist using the shared constant
+  if (item.type === 'solution' && item.href.startsWith('/solutions/')) {
+    const solutionId = item.href.replace('/solutions/', '')
+    return isValidSolutionId(solutionId)
+  }
+  return true
+})
 
 export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
   const [searchOpen, setSearchOpen] = useState(false)
@@ -457,87 +472,151 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
     }
   }, [searchResults.length, selectedResultIndex])
 
-  // Highlight search matches on the page
+  // Highlight search matches on the page - only highlight matching text, not entire elements
+  // Re-runs when searchQuery or location changes (to re-highlight after navigation)
   useEffect(() => {
-    if (!searchQuery.trim()) {
-      // Remove all highlights
-      highlightedElements.forEach(el => {
-        el.classList.remove('search-highlight')
-        el.style.backgroundColor = ''
-        el.style.borderRadius = ''
-        el.style.padding = ''
-      })
-      setHighlightedElements([])
-      return
-    }
-
-    const query = searchQuery.toLowerCase().trim()
-    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    const regex = new RegExp(`(${escapedQuery})`, 'gi')
-    
-    // Find and highlight text nodes (excluding search box and menu)
-    const walker = document.createTreeWalker(
-      document.body,
-      NodeFilter.SHOW_TEXT,
-      {
-        acceptNode: (node) => {
-          const parent = node.parentElement
-          if (!parent) return NodeFilter.FILTER_REJECT
-          // Skip search box, menu, and other UI elements
-          if (parent.closest('[class*="search"]') || 
-              parent.closest('[class*="menu"]') ||
-              parent.closest('header') ||
-              parent.closest('nav') ||
-              parent.closest('aside')) {
-            return NodeFilter.FILTER_REJECT
+    // Use a small delay to ensure DOM is ready after navigation
+    const timeoutId = setTimeout(() => {
+      if (!searchQuery.trim()) {
+        // Remove all highlights by unwrapping highlighted spans
+        const highlightedSpans = document.querySelectorAll('.search-highlight-text')
+        highlightedSpans.forEach(span => {
+          const parent = span.parentNode
+          if (parent) {
+            parent.replaceChild(document.createTextNode(span.textContent || ''), span)
+            parent.normalize() // Merge adjacent text nodes
           }
-          return NodeFilter.FILTER_ACCEPT
+        })
+        setHighlightedElements([])
+        return
+      }
+
+      const query = searchQuery.trim()
+      if (!query) return
+
+      const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const searchRegex = new RegExp(escapedQuery, 'gi')
+      
+      // First, remove any existing highlights
+      const existingHighlights = document.querySelectorAll('.search-highlight-text')
+      existingHighlights.forEach(span => {
+        const parent = span.parentNode
+        if (parent) {
+          parent.replaceChild(document.createTextNode(span.textContent || ''), span)
+          parent.normalize()
+        }
+      })
+      
+      // Find and highlight text nodes (excluding search box and menu)
+      const walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_TEXT,
+        {
+          acceptNode: (node) => {
+            const parent = node.parentElement
+            if (!parent) return NodeFilter.FILTER_REJECT
+            
+            // Skip if already highlighted
+            if (parent.classList.contains('search-highlight-text')) {
+              return NodeFilter.FILTER_REJECT
+            }
+            
+            // Skip search box, menu, and other UI elements
+            if (parent.closest('[class*="search"]') || 
+                parent.closest('[class*="menu"]') ||
+                parent.closest('header') ||
+                parent.closest('nav') ||
+                parent.closest('aside') ||
+                parent.closest('[data-result-index]')) {
+              return NodeFilter.FILTER_REJECT
+            }
+            
+            // Skip if parent is a script, style, or other non-content element
+            const tagName = parent.tagName?.toLowerCase()
+            if (tagName === 'script' || tagName === 'style' || tagName === 'noscript') {
+              return NodeFilter.FILTER_REJECT
+            }
+            
+            return NodeFilter.FILTER_ACCEPT
+          }
+        }
+      )
+      
+      const newHighlightedElements: HTMLElement[] = []
+      const textNodes: Text[] = []
+      let node: Node | null
+      
+      // Collect all matching text nodes first (using a fresh regex for each test)
+      while (node = walker.nextNode()) {
+        const text = node.textContent || ''
+        const testRegex = new RegExp(escapedQuery, 'gi')
+        if (testRegex.test(text)) {
+          textNodes.push(node as Text)
         }
       }
-    )
-    
-    const newHighlightedElements: HTMLElement[] = []
-    let node
-    
-    while (node = walker.nextNode()) {
-      const text = node.textContent || ''
-      if (regex.test(text) && node.parentElement) {
-        const parent = node.parentElement
-        if (!parent.classList.contains('search-highlight') && 
-            !parent.closest('[class*="search"]') &&
-            !parent.closest('[class*="menu"]')) {
-          parent.classList.add('search-highlight')
-          parent.style.backgroundColor = 'rgba(16, 185, 129, 0.2)' // emerald-500 with opacity
-          parent.style.borderRadius = '2px'
-          parent.style.padding = '0 2px'
-          newHighlightedElements.push(parent)
+      
+      // Process text nodes and wrap matching text
+      textNodes.forEach(textNode => {
+        const text = textNode.textContent || ''
+        const matchRegex = new RegExp(`(${escapedQuery})`, 'gi')
+        const matches = [...text.matchAll(matchRegex)]
+        
+        if (matches.length === 0) return
+        
+        const parent = textNode.parentElement
+        if (!parent) return
+        
+        // Create document fragment with highlighted text
+        const fragment = document.createDocumentFragment()
+        let lastIndex = 0
+        
+        matches.forEach(match => {
+          if (match.index === undefined) return
+          
+          // Add text before match
+          if (match.index > lastIndex) {
+            fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)))
+          }
+          
+          // Add highlighted match
+          const highlightSpan = document.createElement('span')
+          highlightSpan.className = 'search-highlight-text'
+          highlightSpan.style.backgroundColor = 'rgba(16, 185, 129, 0.3)' // emerald-500 with opacity
+          highlightSpan.style.borderRadius = '2px'
+          highlightSpan.style.padding = '0 1px'
+          highlightSpan.style.color = 'inherit'
+          highlightSpan.textContent = match[0]
+          fragment.appendChild(highlightSpan)
+          newHighlightedElements.push(highlightSpan)
+          
+          lastIndex = match.index + match[0].length
+        })
+        
+        // Add remaining text after last match
+        if (lastIndex < text.length) {
+          fragment.appendChild(document.createTextNode(text.substring(lastIndex)))
         }
-      }
-    }
-    
-    // Cleanup previous highlights
-    highlightedElements.forEach(el => {
-      if (!newHighlightedElements.includes(el)) {
-        el.classList.remove('search-highlight')
-        el.style.backgroundColor = ''
-        el.style.borderRadius = ''
-        el.style.padding = ''
-      }
-    })
-    
-    setHighlightedElements(newHighlightedElements)
+        
+        // Replace the original text node with the fragment
+        parent.replaceChild(fragment, textNode)
+      })
+      
+      setHighlightedElements(newHighlightedElements)
+    }, 100) // Small delay to ensure DOM is ready after navigation
     
     // Cleanup function
     return () => {
-      newHighlightedElements.forEach(el => {
-        el.classList.remove('search-highlight')
-        el.style.backgroundColor = ''
-        el.style.borderRadius = ''
-        el.style.padding = ''
+      clearTimeout(timeoutId)
+      const highlightedSpans = document.querySelectorAll('.search-highlight-text')
+      highlightedSpans.forEach(span => {
+        const parent = span.parentNode
+        if (parent) {
+          parent.replaceChild(document.createTextNode(span.textContent || ''), span)
+          parent.normalize()
+        }
       })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchQuery])
+  }, [searchQuery, location.pathname, location.hash]) // Re-run when query or location changes
 
   // Navigate to selected result
   const navigateToResult = (index: number) => {
@@ -551,10 +630,10 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault()
-      if (searchResults.length > 0) {
-        const nextIndex = selectedResultIndex < searchResults.length - 1 
-          ? selectedResultIndex + 1 
-          : 0
+      if (searchResults.length > 0 && selectedResultIndex < searchResults.length - 1) {
+        // If no result is selected, start at first result (index 0)
+        // Otherwise, move to next result
+        const nextIndex = selectedResultIndex < 0 ? 0 : selectedResultIndex + 1
         setSelectedResultIndex(nextIndex)
         // Scroll selected result into view
         const resultElement = document.querySelector(`[data-result-index="${nextIndex}"]`)
@@ -562,10 +641,8 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
       }
     } else if (e.key === 'ArrowUp') {
       e.preventDefault()
-      if (searchResults.length > 0) {
-        const prevIndex = selectedResultIndex > 0 
-          ? selectedResultIndex - 1 
-          : searchResults.length - 1
+      if (searchResults.length > 0 && selectedResultIndex > 0) {
+        const prevIndex = selectedResultIndex - 1
         setSelectedResultIndex(prevIndex)
         // Scroll selected result into view
         const resultElement = document.querySelector(`[data-result-index="${prevIndex}"]`)
@@ -581,16 +658,18 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
     }
   }
 
-  // Clear search
+  // Clear search - this is the only way to clear highlights
   const handleClearSearch = () => {
     setSearchQuery('')
     setSelectedResultIndex(-1)
+    setSearchOpen(false)
     // Highlights will be cleared by useEffect
   }
 
   const handleSearchResultClick = (href: string) => {
+    // Close the search dropdown but keep the query active so highlights persist
     setSearchOpen(false)
-    setSearchQuery('')
+    // Don't clear searchQuery - keep it active so highlights remain on the page
     setSelectedResultIndex(-1)
     if (href.startsWith('#')) {
       scrollToSection(href, navigate, location)
@@ -825,40 +904,46 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                           {/* Action buttons */}
                           {searchQuery && (
                             <div className="absolute right-2 flex items-center gap-1">
-                              {/* Up Arrow */}
+                              {/* Up Arrow - Previous */}
                               <motion.button
                                 onClick={() => {
-                                  if (searchResults.length > 0) {
-                                    const prevIndex = selectedResultIndex > 0 
-                                      ? selectedResultIndex - 1 
-                                      : searchResults.length - 1
+                                  if (searchResults.length > 0 && selectedResultIndex > 0) {
+                                    const prevIndex = selectedResultIndex - 1
                                     setSelectedResultIndex(prevIndex)
                                     const resultElement = document.querySelector(`[data-result-index="${prevIndex}"]`)
                                     resultElement?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
                                   }
                                 }}
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.9 }}
-                                className="p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                                whileHover={selectedResultIndex > 0 ? { scale: 1.1 } : {}}
+                                whileTap={selectedResultIndex > 0 ? { scale: 0.9 } : {}}
+                                disabled={selectedResultIndex <= 0 || searchResults.length === 0}
+                                className={`p-1.5 rounded transition-colors ${
+                                  selectedResultIndex > 0 && searchResults.length > 0
+                                    ? 'hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer'
+                                    : 'text-gray-300 dark:text-gray-600 cursor-not-allowed opacity-50'
+                                }`}
                                 title="Previous result"
                               >
                                 <ChevronUpIcon />
                               </motion.button>
-                              {/* Down Arrow */}
+                              {/* Down Arrow - Next */}
                               <motion.button
                                 onClick={() => {
-                                  if (searchResults.length > 0) {
-                                    const nextIndex = selectedResultIndex < searchResults.length - 1 
-                                      ? selectedResultIndex + 1 
-                                      : 0
+                                  if (searchResults.length > 0 && selectedResultIndex < searchResults.length - 1) {
+                                    const nextIndex = selectedResultIndex + 1
                                     setSelectedResultIndex(nextIndex)
                                     const resultElement = document.querySelector(`[data-result-index="${nextIndex}"]`)
                                     resultElement?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
                                   }
                                 }}
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.9 }}
-                                className="p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                                whileHover={selectedResultIndex < searchResults.length - 1 ? { scale: 1.1 } : {}}
+                                whileTap={selectedResultIndex < searchResults.length - 1 ? { scale: 0.9 } : {}}
+                                disabled={selectedResultIndex >= searchResults.length - 1 || searchResults.length === 0}
+                                className={`p-1.5 rounded transition-colors ${
+                                  selectedResultIndex < searchResults.length - 1 && searchResults.length > 0
+                                    ? 'hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer'
+                                    : 'text-gray-300 dark:text-gray-600 cursor-not-allowed opacity-50'
+                                }`}
                                 title="Next result"
                               >
                                 <ChevronDownIcon />
