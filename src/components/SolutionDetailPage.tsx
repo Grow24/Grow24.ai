@@ -569,6 +569,7 @@ export default function SolutionDetailPage() {
     const { showComingSoon } = useComingSoon()
     const [scrolled, setScrolled] = useState(false)
     const [activeSection, setActiveSection] = useState('overview')
+    const [hoveredTab, setHoveredTab] = useState<string | null>(null)
 
     useEffect(() => {
         const handleScroll = () => {
@@ -607,7 +608,7 @@ export default function SolutionDetailPage() {
 
     if (!solution) {
         return (
-            <div className="min-h-screen pt-24 pb-16 flex items-center justify-center">
+            <div className="min-h-screen pt-16 sm:pt-20 md:pt-24 pb-10 sm:pb-12 md:pb-16 flex items-center justify-center">
                 <div className="text-center">
                     <h1 className="text-4xl font-bold mb-4">Solution Not Found</h1>
                     <p className="text-gray-600 mb-4">Solution ID: {solutionId}</p>
@@ -621,141 +622,60 @@ export default function SolutionDetailPage() {
 
     const colors = getCategoryColors(solution.category)
 
+    // Helper function to get tab classes based on BCG style
+    const getTabClasses = (sectionId: string) => {
+        const isActive = activeSection === sectionId
+        const isHovered = hoveredTab === sectionId
+        
+        if (isActive) {
+            // Selected: Solid light green background with white text (like BCG's "OVERVIEW")
+            return 'px-4 py-2 rounded-lg bg-emerald-500 text-white font-semibold text-sm transition-all duration-200 whitespace-nowrap'
+        } else if (isHovered) {
+            // Hovered: White background with green text and light green border (like BCG's "LATEST THINKING")
+            return 'px-4 py-2 rounded-lg bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 border-2 border-emerald-500 dark:border-emerald-400 font-medium text-sm transition-all duration-200 whitespace-nowrap'
+        } else {
+            // Default: White background with dark grey text and light grey border (like BCG's "EXPERTS")
+            return 'px-4 py-2 rounded-lg bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 border-2 border-gray-300 dark:border-gray-600 font-medium text-sm transition-all duration-200 whitespace-nowrap hover:border-emerald-400 dark:hover:border-emerald-500'
+        }
+    }
+
+    const tabs = [
+        { id: 'overview', label: 'Overview' },
+        { id: 'capabilities', label: 'Capabilities' },
+        { id: 'templates', label: 'Template & Outputs' },
+        { id: 'testimonials', label: 'Testimonials' },
+        { id: 'resources', label: 'Resources' },
+        { id: 'implementation', label: 'Implementation' },
+        { id: 'corporate-goal', label: 'Corporate Goal' }
+    ]
+
     return (
         <div className="min-h-screen bg-white dark:bg-slate-950 relative z-50">
             {/* Navigation Bar - Sticky */}
             <div className={`sticky top-[60px] sm:top-[70px] md:top-[80px] z-50 transition-all duration-300 ${
                 scrolled 
                     ? 'bg-white/95 dark:bg-slate-900/95 shadow-lg border-b border-gray-200 dark:border-slate-700' 
-                    : 'bg-slate-800 dark:bg-slate-900 shadow-sm border-b border-slate-700'
+                    : 'bg-white dark:bg-slate-900 shadow-sm border-b border-gray-200 dark:border-slate-700'
             }`}>
                 <div className="max-w-7xl mx-auto px-8 py-3">
-                    <nav className="flex items-center gap-8 overflow-x-auto">
-                        <a 
-                            href="#overview" 
-                            className={`font-medium text-sm transition-all duration-200 whitespace-nowrap relative ${
-                                scrolled
-                                    ? activeSection === 'overview'
-                                        ? 'text-cta-green-600 dark:text-cta-green-400 font-bold'
-                                        : 'text-gray-600 dark:text-gray-400 hover:text-cta-green-600 dark:hover:text-cta-green-400'
-                                    : activeSection === 'overview'
-                                        ? 'text-white font-bold'
-                                        : 'text-white/90 hover:text-white'
-                            }`}
-                        >
-                            {activeSection === 'overview' && (
-                                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-cta-green-500" />
-                            )}
-                            Overview
-                        </a>
-                        <a 
-                            href="#capabilities" 
-                            className={`text-sm transition-all duration-200 whitespace-nowrap relative ${
-                                scrolled
-                                    ? activeSection === 'capabilities'
-                                        ? 'text-cta-green-600 dark:text-cta-green-400 font-bold'
-                                        : 'text-gray-600 dark:text-gray-400 hover:text-cta-green-600 dark:hover:text-cta-green-400'
-                                    : activeSection === 'capabilities'
-                                        ? 'text-white font-bold'
-                                        : 'text-white/90 hover:text-white'
-                            }`}
-                        >
-                            {activeSection === 'capabilities' && (
-                                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-cta-green-500" />
-                            )}
-                            Capabilities
-                        </a>
-                        <a 
-                            href="#templates" 
-                            className={`text-sm transition-all duration-200 whitespace-nowrap relative ${
-                                scrolled
-                                    ? activeSection === 'templates'
-                                        ? 'text-cta-green-600 dark:text-cta-green-400 font-bold'
-                                        : 'text-gray-600 dark:text-gray-400 hover:text-cta-green-600 dark:hover:text-cta-green-400'
-                                    : activeSection === 'templates'
-                                        ? 'text-white font-bold'
-                                        : 'text-white/90 hover:text-white'
-                            }`}
-                        >
-                            {activeSection === 'templates' && (
-                                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-cta-green-500" />
-                            )}
-                            Template & Outputs
-                        </a>
-                        <a 
-                            href="#testimonials" 
-                            className={`text-sm transition-all duration-200 whitespace-nowrap relative ${
-                                scrolled
-                                    ? activeSection === 'testimonials'
-                                        ? 'text-cta-green-600 dark:text-cta-green-400 font-bold'
-                                        : 'text-gray-600 dark:text-gray-400 hover:text-cta-green-600 dark:hover:text-cta-green-400'
-                                    : activeSection === 'testimonials'
-                                        ? 'text-white font-bold'
-                                        : 'text-white/90 hover:text-white'
-                            }`}
-                        >
-                            {activeSection === 'testimonials' && (
-                                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-cta-green-500" />
-                            )}
-                            Testimonials
-                        </a>
-                        <a 
-                            href="#resources" 
-                            className={`text-sm transition-all duration-200 whitespace-nowrap relative ${
-                                scrolled
-                                    ? activeSection === 'resources'
-                                        ? 'text-cta-green-600 dark:text-cta-green-400 font-bold'
-                                        : 'text-gray-600 dark:text-gray-400 hover:text-cta-green-600 dark:hover:text-cta-green-400'
-                                    : activeSection === 'resources'
-                                        ? 'text-white font-bold'
-                                        : 'text-white/90 hover:text-white'
-                            }`}
-                        >
-                            {activeSection === 'resources' && (
-                                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-cta-green-500" />
-                            )}
-                            Resources
-                        </a>
-                        <a 
-                            href="#implementation" 
-                            className={`text-sm transition-all duration-200 whitespace-nowrap relative ${
-                                scrolled
-                                    ? activeSection === 'implementation'
-                                        ? 'text-cta-green-600 dark:text-cta-green-400 font-bold'
-                                        : 'text-gray-600 dark:text-gray-400 hover:text-cta-green-600 dark:hover:text-cta-green-400'
-                                    : activeSection === 'implementation'
-                                        ? 'text-white font-bold'
-                                        : 'text-white/90 hover:text-white'
-                            }`}
-                        >
-                            {activeSection === 'implementation' && (
-                                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-cta-green-500" />
-                            )}
-                            Implementation
-                        </a>
-                        <a 
-                            href="#corporate-goal" 
-                            className={`text-sm transition-all duration-200 whitespace-nowrap relative ${
-                                scrolled
-                                    ? activeSection === 'corporate-goal'
-                                        ? 'text-cta-green-600 dark:text-cta-green-400 font-bold'
-                                        : 'text-gray-600 dark:text-gray-400 hover:text-cta-green-600 dark:hover:text-cta-green-400'
-                                    : activeSection === 'corporate-goal'
-                                        ? 'text-white font-bold'
-                                        : 'text-white/90 hover:text-white'
-                            }`}
-                        >
-                            {activeSection === 'corporate-goal' && (
-                                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-cta-green-500" />
-                            )}
-                            Corporate Goal
-                        </a>
+                    <nav className="flex items-center gap-2 overflow-x-auto">
+                        {tabs.map((tab) => (
+                            <a 
+                                key={tab.id}
+                                href={`#${tab.id}`}
+                                className={getTabClasses(tab.id)}
+                                onMouseEnter={() => setHoveredTab(tab.id)}
+                                onMouseLeave={() => setHoveredTab(null)}
+                            >
+                                {tab.label}
+                            </a>
+                        ))}
                     </nav>
                 </div>
             </div>
 
             {/* Hero Section */}
-            <section id="overview" className="bg-gray-50 dark:bg-slate-900 py-12 px-8">
+            <section id="overview" className="bg-gray-50 dark:bg-slate-900 py-8 sm:py-10 md:py-12 px-4 sm:px-6 md:px-8">
                 <div className="max-w-7xl mx-auto">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2">
@@ -818,7 +738,7 @@ export default function SolutionDetailPage() {
 
 
             {/* Overview Section */}
-            <section id="overview" className="py-16 px-8">
+            <section id="overview" className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8">
                 <div className="max-w-7xl mx-auto">
                     <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Overview</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -842,7 +762,7 @@ export default function SolutionDetailPage() {
             </section>
 
             {/* Capabilities Section */}
-            <section id="capabilities" className="py-16 px-8 bg-white dark:bg-slate-900">
+            <section id="capabilities" className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8 bg-white dark:bg-slate-900">
                 <div className="max-w-7xl mx-auto">
                     <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Capabilities</h2>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -864,7 +784,7 @@ export default function SolutionDetailPage() {
             </section>
 
             {/* Templates & Outputs Section */}
-            <section id="templates" className="py-16 px-8 bg-gray-50">
+            <section id="templates" className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8 bg-gray-50">
                 <div className="max-w-7xl mx-auto">
                     <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Templates & Outputs</h2>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -911,7 +831,7 @@ export default function SolutionDetailPage() {
             </section>
 
             {/* CTA Section */}
-            <section className="bg-gray-50 dark:bg-slate-900 py-16 px-8">
+            <section className="bg-gray-50 dark:bg-slate-900 py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8">
                 <div className="max-w-4xl mx-auto text-center">
                     <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">{solution.ctaMessage}</h2>
                     <p className="text-gray-600 dark:text-gray-300 mb-8">{solution.ctaSubtext}</p>
@@ -937,7 +857,7 @@ export default function SolutionDetailPage() {
             </section>
 
             {/* Corporate Goal Section */}
-            <section id="corporate-goal" className="py-16 px-8 bg-white dark:bg-slate-950">
+            <section id="corporate-goal" className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8 bg-white dark:bg-slate-950">
                 <div className="max-w-7xl mx-auto">
                     {/* Solution Thumbnail Label */}
                     <div className="text-left mb-8">

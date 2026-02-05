@@ -175,7 +175,7 @@ function IndexPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="min-h-screen flex items-start sm:items-center justify-center pt-16 sm:pt-20 md:pt-24 pb-24 sm:pb-20 px-4 sm:px-6 md:px-8"
+        className="min-h-screen flex items-start sm:items-center justify-center pt-12 sm:pt-16 md:pt-20 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8"
       >
         <div className="w-full max-w-7xl mx-auto text-center mt-4 sm:mt-0">
           <motion.h1
@@ -195,7 +195,7 @@ function IndexPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-16 sm:mb-16 md:mb-18 px-4"
+            className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-8 sm:mb-10 md:mb-12 px-4"
           >
             A comprehensive Personal & Business Management Platform that guides you through the
             PBMP cycle for extraordinary growth and transformation.
@@ -205,17 +205,17 @@ function IndexPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center flex-wrap px-4 mt-20 sm:mt-10 md:mt-0"
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center flex-wrap px-4 mt-8 sm:mt-6 md:mt-4"
           >
             <HeroButton3D
               onClick={() => showComingSoon('start-free-trial', 'Sign up for our Free Trial', 'Please fill in all required fields to start your free trial.')}
-              className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-xl bg-gradient-to-r from-cta-green-500 to-cta-green-600 text-white text-sm sm:text-base font-bold hover:shadow-xl transition-shadow duration-300"
+              className="w-full sm:w-auto px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-xl bg-gradient-to-r from-cta-green-500 to-cta-green-600 text-white text-sm sm:text-base font-bold hover:shadow-xl transition-shadow duration-300"
             >
               Sign up for our Free Trial
             </HeroButton3D>
             <HeroButton3D
               onClick={() => showComingSoon('watch-concept', 'Watch Concept', 'Watch our concept video to understand how Grow24.ai can transform your growth journey.')}
-              className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-xl border-2 border-info-gold-500 text-info-gold-600 bg-info-gold-50 dark:bg-info-gold-900/20 text-sm sm:text-base font-bold hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 transition-colors duration-300"
+              className="w-full sm:w-auto px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-xl border-2 border-info-gold-500 text-info-gold-600 bg-info-gold-50 dark:bg-info-gold-900/20 text-sm sm:text-base font-bold hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 transition-colors duration-300"
             >
               Watch Concept
             </HeroButton3D>
@@ -230,7 +230,7 @@ function IndexPage() {
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true, amount: 0.3 }}
-        className="min-h-screen py-20 px-4"
+        className="min-h-screen py-12 sm:py-16 md:py-20 px-4"
       >
         <div className="max-w-7xl mx-auto">
           {/* Header */}
@@ -238,7 +238,7 @@ function IndexPage() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            className="text-center mb-8 sm:mb-12 md:mb-16"
           >
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
               Solutions to Plan & Manage both your Personal and Professional Life
@@ -249,7 +249,7 @@ function IndexPage() {
               onClick={() => setShowVideoModal(true)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center gap-2 px-6 py-3 mb-6 bg-info-gold-50 dark:bg-info-gold-900/20 hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 text-info-gold-700 dark:text-info-gold-300 font-medium rounded-full transition-all duration-300 border-2 border-info-gold-500 dark:border-info-gold-600"
+              className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 mb-4 sm:mb-6 bg-info-gold-50 dark:bg-info-gold-900/20 hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 text-info-gold-700 dark:text-info-gold-300 font-medium rounded-full transition-all duration-300 border-2 border-info-gold-500 dark:border-info-gold-600"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M8 5v14l11-7z"/>
@@ -257,10 +257,10 @@ function IndexPage() {
               See Detailed Concept
             </motion.button>
 
-            <div className="flex items-center justify-center gap-4 mt-8">
+            <div className="flex items-center justify-center gap-3 sm:gap-4 mt-6 sm:mt-8">
               <button
                 onClick={() => setActiveTab('what')}
-                className={`px-8 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
+                className={`px-5 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
                   activeTab === 'what'
                     ? 'bg-info-gold-500 text-white shadow-lg shadow-info-gold-900/30'
                     : 'bg-info-gold-50 dark:bg-info-gold-900/20 text-info-gold-700 dark:text-info-gold-300 hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 border-2 border-info-gold-500 dark:border-info-gold-600'
@@ -270,7 +270,7 @@ function IndexPage() {
               </button>
               <button
                 onClick={() => setActiveTab('why')}
-                className={`px-8 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
+                className={`px-5 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
                   activeTab === 'why'
                     ? 'bg-info-gold-500 text-white shadow-lg shadow-info-gold-900/30'
                     : 'bg-info-gold-50 dark:bg-info-gold-900/20 text-info-gold-700 dark:text-info-gold-300 hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 border-2 border-info-gold-500 dark:border-info-gold-600'
@@ -280,7 +280,7 @@ function IndexPage() {
               </button>
               <button
                 onClick={() => setActiveTab('how')}
-                className={`px-8 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
+                className={`px-5 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
                   activeTab === 'how'
                     ? 'bg-info-gold-500 text-white shadow-lg shadow-info-gold-900/30'
                     : 'bg-info-gold-50 dark:bg-info-gold-900/20 text-info-gold-700 dark:text-info-gold-300 hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 border-2 border-info-gold-500 dark:border-info-gold-600'
@@ -302,7 +302,7 @@ function IndexPage() {
                 transition={{ duration: 0.4 }}
               >
                 {/* Diagrams Container */}
-                <div className="grid md:grid-cols-2 gap-8 lg:gap-12 mb-12">
+                <div className="grid md:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 mb-8 sm:mb-10 md:mb-12">
                   {/* Personal Side */}
                   <ConceptCard3D
                     initial={{ opacity: 0, x: -50 }}

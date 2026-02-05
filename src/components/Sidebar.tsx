@@ -341,9 +341,10 @@ export default function Sidebar() {
               {/* Header */}
               <div className="px-6 py-6 border-b border-gray-200 dark:border-white/10">
                 <div className="flex items-center gap-4 mb-4">
+                  {/* Close button - Hidden on mobile, visible on desktop (md and above) */}
                   <motion.button
                     onClick={() => setIsOpen(false)}
-                    className="w-10 h-10 flex-shrink-0 rounded-lg bg-emerald-500 hover:bg-emerald-600 flex items-center justify-center transition-colors duration-200"
+                    className="hidden md:flex w-10 h-10 flex-shrink-0 rounded-lg bg-emerald-500 hover:bg-emerald-600 items-center justify-center transition-colors duration-200"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     aria-label="Close menu"

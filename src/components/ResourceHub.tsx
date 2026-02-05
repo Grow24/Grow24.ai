@@ -258,7 +258,7 @@ export const ResourceHub: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen py-20 pt-32">
+    <div className="min-h-screen py-12 sm:py-16 md:py-20 pt-20 sm:pt-24 md:pt-32">
       <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
@@ -362,7 +362,7 @@ export const ResourceHub: React.FC = () => {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-center py-12"
+              className="text-center py-6 sm:py-8 md:py-12"
             >
               <p className="text-gray-600 dark:text-slate-300 text-lg mb-4">
                 No resources found matching your filters

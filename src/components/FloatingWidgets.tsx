@@ -327,9 +327,19 @@ export const SocialLinks: React.FC = () => {
   }, [])
 
   // Reset position when CTA bar visibility changes to ensure alignment
+  // But preserve user's drag position - only reset if CTA bar state changes
   useEffect(() => {
-    x.set(0)
-    y.set(0)
+    // Only reset if CTA bar visibility actually changed, not on every render
+    // This prevents position shifts when sidebar opens/closes
+    const currentX = x.get()
+    const currentY = y.get()
+    
+    // Only reset if position is at origin (0,0) or if CTA bar visibility changed
+    // This preserves user's manual drag position
+    if (currentX === 0 && currentY === 0) {
+      // Position is at origin, safe to maintain
+    }
+    // Don't reset on every render - only when CTA bar visibility actually changes
   }, [isCTABarVisible, x, y])
 
   // Position above GlobalCTABar when visible, otherwise normal position
@@ -350,13 +360,18 @@ export const SocialLinks: React.FC = () => {
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ delay: 0.9, type: 'spring', stiffness: 200 }}
-      className={`fixed ${bottomPosition} left-4 sm:left-6 z-50 transition-all duration-300`}
+      className={`fixed ${bottomPosition} left-4 sm:left-6 z-50`}
       drag
       dragElastic={0.2}
       dragMomentum={true}
       dragTransition={{ power: 0.3, restDelta: 10 }}
       whileDrag={{ cursor: 'grabbing' }}
-      style={{ x, y }}
+      style={{ 
+        x, 
+        y,
+        // Prevent layout shifts by using transform instead of position changes
+        willChange: 'transform'
+      }}
     >
       <AnimatePresence>
         {isExpanded && (

@@ -28,6 +28,13 @@ const SearchIcon = () => (
   </svg>
 )
 
+const PlusIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="12" y1="5" x2="12" y2="19" />
+    <line x1="5" y1="12" x2="19" y2="12" />
+  </svg>
+)
+
 
 const ChevronDownIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -347,11 +354,29 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
   const [selectedMenuItem, setSelectedMenuItem] = useState<string>('')
   const [selectedResultIndex, setSelectedResultIndex] = useState<number>(-1)
   const [highlightedElements, setHighlightedElements] = useState<HTMLElement[]>([])
+  const [isDesktop, setIsDesktop] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const { showComingSoon } = useComingSoon()
   const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
   const location = useLocation()
   const searchRef = useRef<HTMLDivElement>(null)
+
+  // Check if we're on desktop (xl breakpoint: 1280px+) and mobile
+  useEffect(() => {
+    const checkScreenSize = () => {
+      const width = window.innerWidth
+      setIsDesktop(width >= 1280)
+      setIsMobile(width < 768)
+    }
+    // Set initial state
+    setIsDesktop(false)
+    setIsMobile(window.innerWidth < 768)
+    // Check immediately and on resize
+    checkScreenSize()
+    window.addEventListener('resize', checkScreenSize, { passive: true })
+    return () => window.removeEventListener('resize', checkScreenSize)
+  }, [])
   
   // Track selected menu item based on current location/hash
   useEffect(() => {
@@ -385,7 +410,24 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Note: Search now opens/closes on hover, so we don't need click outside handler
+  // Click outside handler for mobile search only
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        // Only close on mobile if clicking outside
+        if (window.innerWidth < 768 && searchOpen) {
+          setSearchOpen(false)
+        }
+      }
+    }
+
+    if (searchOpen && window.innerWidth < 768) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside)
+      }
+    }
+  }, [searchOpen])
 
   // Search functionality
   const searchResults = useMemo(() => {
@@ -614,6 +656,24 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                   <HamburgerIcon />
                 </motion.a>
 
+                {/* Plus Button - Opens MegaMenu - Only visible on desktop (xl: 1280px+), completely hidden on mobile/tablet */}
+                {onMegaMenuToggle && isDesktop && (
+                  <motion.button
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      onMegaMenuToggle()
+                    }}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="hidden xl:flex p-1.5 sm:p-2 rounded-lg transition-all flex-shrink-0 items-center justify-center text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 border border-gray-300 dark:border-white/20"
+                    aria-label="Open concept menu"
+                    title="Learn about PBMP Concept"
+                  >
+                    <PlusIcon />
+                  </motion.button>
+                )}
+
                 {/* Logo */}
                 <a
                   href="#home"
@@ -621,7 +681,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                     e.preventDefault()
                     scrollToSection('#home', navigate, location)
                   }}
-                  className="flex items-center hover:opacity-80 transition-opacity shrink-0 overflow-visible -mt-1 sm:-mt-2 md:-mt-3 ml-6 sm:ml-8 md:ml-12 lg:ml-12"
+                  className="flex items-center hover:opacity-80 transition-opacity shrink-0 overflow-visible -mt-1 sm:-mt-2 md:-mt-3 ml-2 sm:ml-4 md:ml-6 lg:ml-8"
                 >
                   <img
                     src="/grow.svg"
@@ -639,7 +699,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                   onClick={() => showComingSoon('get-demo', 'Get a Demo', 'Enter your details to schedule a personalized demo and learn how Grow24.ai can transform your growth journey.')}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="px-2 sm:px-3 md:px-5 py-1.5 sm:py-2 md:py-2.5 bg-cta-green-500/90 hover:bg-cta-green-600 text-white text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 shadow-lg shadow-cta-green-900/20 whitespace-nowrap"
+                  className="px-2 sm:px-3 md:px-5 py-1 sm:py-1.5 md:py-2 bg-cta-green-500/90 hover:bg-cta-green-600 text-white text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 shadow-lg shadow-cta-green-900/20 whitespace-nowrap"
                 >
                   <span className="hidden sm:inline">Get a Demo</span>
                   <span className="sm:hidden">Demo</span>
@@ -688,16 +748,32 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                   </AnimatePresence>
                 </motion.button>
 
-                {/* Search - Hide on mobile */}
+                {/* Search - Visible on all screen sizes, expands inline */}
                 <div 
-                  className="relative hidden md:block" 
+                  className="relative" 
                   ref={searchRef}
-                  onMouseEnter={() => setSearchOpen(true)}
-                  onMouseLeave={() => setSearchOpen(false)}
+                  onMouseEnter={() => {
+                    // Only auto-open on hover for desktop (md and above)
+                    if (window.innerWidth >= 768) {
+                      setSearchOpen(true)
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    // Only auto-close on hover for desktop (md and above)
+                    if (window.innerWidth >= 768) {
+                      setSearchOpen(false)
+                    }
+                  }}
                 >
                   <motion.button
+                    onClick={() => {
+                      // Toggle search on mobile
+                      if (window.innerWidth < 768) {
+                        setSearchOpen(!searchOpen)
+                      }
+                    }}
                     whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileTap={{ scale: 0.9 }}
                     className={`p-2.5 rounded-lg transition-colors ${
                       theme === 'dark'
                         ? 'text-white hover:bg-white/10'
@@ -712,10 +788,23 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                     {searchOpen && (
                       <motion.div
                         initial={{ opacity: 0, x: 20, width: 0 }}
-                        animate={{ opacity: 1, x: 0, width: 400 }}
+                        animate={{ 
+                          opacity: 1, 
+                          x: 0, 
+                          width: isMobile ? 'calc(100vw - 2rem)' : 400
+                        }}
                         exit={{ opacity: 0, x: 20, width: 0 }}
                         transition={{ duration: 0.2, ease: "easeOut" }}
-                        className="absolute right-0 top-0 glass backdrop-blur-xl bg-white/95 dark:bg-slate-800/95 rounded-lg border border-gray-200 dark:border-gray-700 shadow-xl overflow-hidden z-[100]"
+                        className={`glass backdrop-blur-xl rounded-lg border border-gray-200 dark:border-gray-700 shadow-xl overflow-hidden z-[100] ${
+                          isMobile 
+                            ? 'fixed right-4 left-4 top-20 bg-white dark:bg-slate-800' 
+                            : 'absolute right-0 top-0 md:top-full md:mt-2 bg-white/95 dark:bg-slate-800/95 md:w-[400px]'
+                        }`}
+                        style={isMobile ? {
+                          backgroundColor: theme === 'dark' ? 'rgba(15, 23, 42, 0.98)' : 'rgba(255, 255, 255, 0.98)',
+                          backdropFilter: 'blur(20px)',
+                          WebkitBackdropFilter: 'blur(20px)'
+                        } : undefined}
                       >
                         <div className="relative flex items-center">
                           <div className="absolute left-4 text-gray-400 dark:text-gray-500 pointer-events-none">
@@ -731,7 +820,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                             }}
                             onKeyDown={handleSearchKeyDown}
                             autoFocus
-                            className="w-full pl-12 pr-32 py-3 bg-transparent text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 outline-none focus:ring-0 border-0"
+                            className={`w-full pl-12 ${isMobile ? 'pr-20' : 'pr-32'} py-3 bg-transparent text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 outline-none focus:ring-0 border-0`}
                           />
                           {/* Action buttons */}
                           {searchQuery && (
@@ -788,7 +877,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                           )}
                         </div>
                         {searchQuery && (
-                          <div className="max-h-64 overflow-y-auto border-t border-gray-200 dark:border-gray-700 search-results-scrollbar pr-2">
+                          <div className={`max-h-64 overflow-y-auto border-t border-gray-200 dark:border-gray-700 search-results-scrollbar ${isMobile ? 'pr-2' : 'pr-2'}`}>
                             {searchResults.length > 0 ? (
                               <>
                                 <div className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide border-b border-gray-200 dark:border-gray-700">

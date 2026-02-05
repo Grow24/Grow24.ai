@@ -447,40 +447,56 @@ const categories = ['Goals', 'Strategy', 'Objective', 'Plan', 'Project', 'Operat
 export default function SolutionsMatrix3Panel() {
     const navigate = useNavigate()
     const { showComingSoon } = useComingSoon()
-    const [selectedFunction, setSelectedFunction] = useState<string>('corporate')
+    const [selectedFunctions, setSelectedFunctions] = useState<Set<string>>(new Set(['corporate']))
     const [expandedFunctions, setExpandedFunctions] = useState<Set<string>>(new Set())
     const solutionSummaryRef = useRef<HTMLDivElement>(null)
     const [selectedSolution, setSelectedSolution] = useState<Solution | null>(
         functions[0].solutions.Strategy?.[0] || null
     )
 
-    const handleFunctionClick = (functionId: string) => {
+    const handleFunctionToggle = (functionId: string) => {
+        setSelectedFunctions(prev => {
+            const next = new Set(prev)
+            if (next.has(functionId)) {
+                next.delete(functionId)
+            } else {
+                next.add(functionId)
+            }
+            // Ensure at least one function is selected
+            if (next.size === 0) {
+                next.add('corporate')
+            }
+            return next
+        })
+        
+        // Update selected solution if the toggled function was the only one selected
         const func = functions.find(f => f.id === functionId)
-        // If function has sub-items (like SSP), toggle expansion instead of selecting
-        if (func?.subItems && func.subItems.length > 0) {
-            setExpandedFunctions(prev => {
-                const next = new Set(prev)
-                if (next.has(functionId)) {
-                    next.delete(functionId)
-                } else {
-                    next.add(functionId)
-                }
-                return next
-            })
-        } else {
-            // For functions without sub-items, select them
-            setSelectedFunction(functionId)
-            // Set the first available solution from the selected function as default
-            if (func) {
-                const firstSolution = func.solutions.Goals?.[0] || 
-                                     func.solutions.Strategy?.[0] || 
-                                     func.solutions.Objective?.[0] || 
-                                     func.solutions.Plan?.[0] || 
-                                     func.solutions.Project?.[0] || 
-                                     func.solutions.Operations?.[0] || null
+        if (func && selectedFunctions.size === 1 && selectedFunctions.has(functionId)) {
+            // If we're deselecting the only selected function, select first solution from first available function
+            const firstAvailableFunc = functions.find(f => selectedFunctions.has(f.id) || f.id === 'corporate')
+            if (firstAvailableFunc) {
+                const firstSolution = firstAvailableFunc.solutions.Goals?.[0] || 
+                                     firstAvailableFunc.solutions.Strategy?.[0] || 
+                                     firstAvailableFunc.solutions.Objective?.[0] || 
+                                     firstAvailableFunc.solutions.Plan?.[0] || 
+                                     firstAvailableFunc.solutions.Project?.[0] || 
+                                     firstAvailableFunc.solutions.Operations?.[0] || null
                 setSelectedSolution(firstSolution)
             }
         }
+    }
+
+    const handleSubItemClick = (functionId: string) => {
+        // Toggle expansion for sub-items
+        setExpandedFunctions(prev => {
+            const next = new Set(prev)
+            if (next.has(functionId)) {
+                next.delete(functionId)
+            } else {
+                next.add(functionId)
+            }
+            return next
+        })
     }
 
     const handleLearnMore = () => {
@@ -509,9 +525,9 @@ export default function SolutionsMatrix3Panel() {
     }
 
     return (
-        <div className="w-full min-h-screen pt-20 sm:pt-24 pb-12 sm:pb-16 px-2 sm:px-4 md:px-6 bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+        <div className="w-full min-h-screen pt-16 sm:pt-20 md:pt-24 pb-8 sm:pb-12 md:pb-16 px-2 sm:px-4 md:px-6 bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
             <div className="max-w-[100vw] sm:max-w-[95vw] mx-auto">
-                <div className="mb-6 sm:mb-8 px-2">
+                <div className="mb-4 sm:mb-6 md:mb-8 px-2">
                     <motion.div
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -533,7 +549,7 @@ export default function SolutionsMatrix3Panel() {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5, delay: 0.1 }}
-                        className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl shadow-xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden w-full xl:w-52 flex-shrink-0"
+                        className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl shadow-xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden w-full xl:w-64 flex-shrink-0"
                     >
                         <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 dark:from-emerald-600 dark:to-emerald-700 px-4 py-3 border-b border-emerald-600/20">
                             <h3 className="font-bold text-sm text-white uppercase tracking-wider flex items-center gap-2">
@@ -543,53 +559,77 @@ export default function SolutionsMatrix3Panel() {
                                 Function
                             </h3>
                         </div>
-                        <div className="p-3 space-y-2">
-                            {functions.map((func) => {
-                                const isSelected = selectedFunction === func.id
-                                const hasSubItems = func.subItems && func.subItems.length > 0
-                                
-                                return (
-                                    <div key={func.id} className="relative">
-                                        <motion.button
-                                            onClick={() => handleFunctionClick(func.id)}
-                                            whileHover={{ scale: 1.02, x: 2 }}
-                                            whileTap={{ scale: 0.98 }}
-                                            className={`w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all text-left flex items-center justify-between ${
-                                                isSelected
-                                                    ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/30'
-                                                    : 'bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:border-emerald-300 dark:hover:border-emerald-700'
-                                            }`}
-                                        >
-                                            <span className="flex items-center gap-2">
-                                                {isSelected && (
-                                                    <motion.div
-                                                        layoutId="function-indicator"
-                                                        className="w-1.5 h-1.5 rounded-full bg-white"
-                                                    />
-                                                )}
-                                                {func.name}
-                                            </span>
-                                            {hasSubItems && (
-                                                <ChevronIcon isOpen={expandedFunctions.has(func.id)} />
-                                            )}
-                                        </motion.button>
-                                        {hasSubItems && expandedFunctions.has(func.id) && func.subItems && (
-                                            <motion.div
-                                                initial={{ opacity: 0, height: 0 }}
-                                                animate={{ opacity: 1, height: 'auto' }}
-                                                exit={{ opacity: 0, height: 0 }}
-                                                className="mt-2 ml-4 space-y-1 border-l-2 border-emerald-200 dark:border-emerald-800 pl-3"
+                        <div className="p-3">
+                            {/* Two-column grid for functions */}
+                            <div className="grid grid-cols-2 gap-2">
+                                {functions.map((func) => {
+                                    const isSelected = selectedFunctions.has(func.id)
+                                    const hasSubItems = func.subItems && func.subItems.length > 0
+                                    
+                                    return (
+                                        <div key={func.id} className="relative col-span-1">
+                                            <motion.label
+                                                whileHover={{ scale: 1.02 }}
+                                                whileTap={{ scale: 0.98 }}
+                                                className={`relative flex flex-col px-3 py-2.5 rounded-lg text-xs font-semibold transition-all cursor-pointer min-h-[60px] justify-center ${
+                                                    isSelected
+                                                        ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/30'
+                                                        : 'bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:border-emerald-300 dark:hover:border-emerald-700'
+                                                }`}
                                             >
-                                                {func.subItems.map((item, idx) => (
-                                                    <div key={idx} className="text-xs text-slate-600 dark:text-slate-400 px-3 py-1.5 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-colors cursor-pointer">
-                                                        {item}
+                                                <div className="flex items-start justify-between gap-2">
+                                                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={isSelected}
+                                                            onChange={() => handleFunctionToggle(func.id)}
+                                                            className="sr-only"
+                                                        />
+                                                        <div className={`flex-shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
+                                                            isSelected
+                                                                ? 'bg-white border-white'
+                                                                : 'border-slate-400 dark:border-slate-500 bg-transparent'
+                                                        }`}>
+                                                            {isSelected && (
+                                                                <svg className="w-3 h-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                                                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                                                </svg>
+                                                            )}
+                                                        </div>
+                                                        <span className="flex-1 min-w-0 break-words leading-tight">{func.name}</span>
                                                     </div>
-                                                ))}
-                                            </motion.div>
-                                        )}
-                                    </div>
-                                )
-                            })}
+                                                    {hasSubItems && (
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.preventDefault()
+                                                                e.stopPropagation()
+                                                                handleSubItemClick(func.id)
+                                                            }}
+                                                            className="flex-shrink-0 p-0.5 hover:bg-white/20 rounded transition-colors"
+                                                        >
+                                                            <ChevronIcon isOpen={expandedFunctions.has(func.id)} />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                                {hasSubItems && expandedFunctions.has(func.id) && func.subItems && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0, height: 0 }}
+                                                        animate={{ opacity: 1, height: 'auto' }}
+                                                        exit={{ opacity: 0, height: 0 }}
+                                                        className="mt-2 pt-2 border-t border-white/20 dark:border-slate-600 space-y-1"
+                                                    >
+                                                        {func.subItems.map((item, idx) => (
+                                                            <div key={idx} className="text-[10px] text-white/90 dark:text-slate-300 px-2 py-1 hover:bg-white/20 rounded transition-colors">
+                                                                {item}
+                                                            </div>
+                                                        ))}
+                                                    </motion.div>
+                                                )}
+                                            </motion.label>
+                                        </div>
+                                    )
+                                })}
+                            </div>
                         </div>
                     </motion.div>
 
@@ -598,77 +638,86 @@ export default function SolutionsMatrix3Panel() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.2 }}
-                        className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl shadow-xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden flex-1 min-w-0"
+                        className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl shadow-xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden flex-1 min-w-0 flex flex-col"
                     >
-                        {/* Category Headers - Horizontal Scroll on Mobile/Tablet */}
-                        <div className="border-b border-slate-200 dark:border-slate-700 overflow-x-auto bg-gradient-to-r from-slate-50 to-emerald-50/30 dark:from-slate-800 dark:to-slate-800">
-                            <div className="grid grid-cols-6 min-w-[600px] md:min-w-full">
-                                {categories.map((category, idx) => (
-                                    <motion.div
-                                        key={category}
-                                        initial={{ opacity: 0, y: -10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: 0.3 + idx * 0.05 }}
-                                        className="px-2 sm:px-3 md:px-4 py-3 sm:py-4 text-center border-r border-slate-200 dark:border-slate-700 last:border-r-0"
-                                    >
-                                        <h3 className="font-bold text-xs sm:text-sm uppercase text-slate-700 dark:text-slate-300 tracking-wider whitespace-nowrap">
-                                            {category}
-                                        </h3>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </div>
-                        {/* Solutions Grid - Horizontal Scroll on Mobile/Tablet */}
-                        <div className="overflow-x-auto">
-                            <div className="grid grid-cols-6 divide-x divide-slate-200 dark:divide-slate-700 min-w-[600px] md:min-w-full bg-gradient-to-b from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-900/50">
-                                {categories.map((category) => {
-                                    const currentFunction = functions.find(f => f.id === selectedFunction)
-                                    const solutions = currentFunction?.solutions[category] || []
-                                    return (
-                                        <div key={category} className="p-2 sm:p-3 md:p-4 space-y-2 sm:space-y-3 min-h-[200px] min-w-[100px] sm:min-w-[120px]">
-                                        {solutions.length === 0 ? (
+                        {/* Combined scroll container for headers and solutions */}
+                        <div className="overflow-x-auto flex-1" style={{ scrollbarWidth: 'thin' }}>
+                            <div className="min-w-[600px] md:min-w-full">
+                                {/* Category Headers - Sticky header */}
+                                <div className="sticky top-0 z-10 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-emerald-50/30 dark:from-slate-800 dark:to-slate-800">
+                                    <div className="grid grid-cols-6">
+                                        {categories.map((category, idx) => (
                                             <motion.div
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                className="flex flex-col items-center justify-center h-full min-h-[150px] sm:min-h-[180px] text-center py-4 sm:py-8 px-1 sm:px-2"
+                                                key={category}
+                                                initial={{ opacity: 0, y: -10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: 0.3 + idx * 0.05 }}
+                                                className="px-2 sm:px-3 md:px-4 py-3 sm:py-4 text-center border-r border-slate-200 dark:border-slate-700 last:border-r-0"
                                             >
-                                                <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-2 sm:mb-3">
-                                                    <svg className="w-4 h-4 sm:w-6 sm:h-6 text-slate-400 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                    </svg>
-                                                </div>
-                                                <p className="text-[9px] xs:text-xs text-slate-500 dark:text-slate-500 font-medium">
-                                                    No {category.toLowerCase()}
-                                                </p>
-                                                <p className="text-[8px] xs:text-[9px] text-slate-400 dark:text-slate-600 mt-0.5 sm:mt-1">
-                                                    Coming soon
-                                                </p>
+                                                <h3 className="font-bold text-xs sm:text-sm uppercase text-slate-700 dark:text-slate-300 tracking-wider whitespace-nowrap">
+                                                    {category}
+                                                </h3>
                                             </motion.div>
-                                        ) : (
-                                            solutions.map((solution) => (
-                                                <SolutionCard3D
-                                                    key={solution.id}
-                                                    solution={solution}
-                                                    isSelected={selectedSolution?.id === solution.id}
-                                                    onSelect={() => {
-                                                        setSelectedSolution(solution)
-                                                        // Scroll to Solution Summary on mobile/tablet when clicking any solution
-                                                        if (window.innerWidth < 1280) {
-                                                            setTimeout(() => {
-                                                                solutionSummaryRef.current?.scrollIntoView({ 
-                                                                    behavior: 'smooth', 
-                                                                    block: 'start',
-                                                                    inline: 'nearest'
-                                                                })
-                                                            }, 100)
-                                                        }
-                                                    }}
-                                                />
-                                            ))
-                                        )}
+                                        ))}
                                     </div>
-                                )
-                            })}
+                                </div>
+                                {/* Solutions Grid - Scrolls with headers */}
+                                <div className="grid grid-cols-6 divide-x divide-slate-200 dark:divide-slate-700 bg-gradient-to-b from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-900/50">
+                                    {categories.map((category) => {
+                                        // Get solutions from all selected functions
+                                        const selectedFuncs = functions.filter(f => selectedFunctions.has(f.id))
+                                        const allSolutions: Solution[] = []
+                                        selectedFuncs.forEach(func => {
+                                            const solutions = func.solutions[category] || []
+                                            allSolutions.push(...solutions)
+                                        })
+                                        
+                                        return (
+                                            <div key={category} className="p-2 sm:p-3 md:p-4 space-y-2 sm:space-y-3 min-h-[200px] min-w-[100px] sm:min-w-[120px]">
+                                            {allSolutions.length === 0 ? (
+                                                <motion.div
+                                                    initial={{ opacity: 0 }}
+                                                    animate={{ opacity: 1 }}
+                                                    className="flex flex-col items-center justify-center h-full min-h-[120px] sm:min-h-[150px] md:min-h-[180px] text-center py-3 sm:py-5 md:py-8 px-1 sm:px-2"
+                                                >
+                                                    <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-2 sm:mb-3">
+                                                        <svg className="w-4 h-4 sm:w-6 sm:h-6 text-slate-400 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                        </svg>
+                                                    </div>
+                                                    <p className="text-[9px] xs:text-xs text-slate-500 dark:text-slate-500 font-medium">
+                                                        No {category.toLowerCase()}
+                                                    </p>
+                                                    <p className="text-[8px] xs:text-[9px] text-slate-400 dark:text-slate-600 mt-0.5 sm:mt-1">
+                                                        Coming soon
+                                                    </p>
+                                                </motion.div>
+                                            ) : (
+                                                allSolutions.map((solution) => (
+                                                    <SolutionCard3D
+                                                        key={solution.id}
+                                                        solution={solution}
+                                                        isSelected={selectedSolution?.id === solution.id}
+                                                        onSelect={() => {
+                                                            setSelectedSolution(solution)
+                                                            // Scroll to Solution Summary on mobile/tablet when clicking any solution
+                                                            if (window.innerWidth < 1280) {
+                                                                setTimeout(() => {
+                                                                    solutionSummaryRef.current?.scrollIntoView({ 
+                                                                        behavior: 'smooth', 
+                                                                        block: 'start',
+                                                                        inline: 'nearest'
+                                                                    })
+                                                                }, 100)
+                                                            }
+                                                        }}
+                                                    />
+                                                ))
+                                            )}
+                                        </div>
+                                    )
+                                })}
+                                </div>
                             </div>
                         </div>
                     </motion.div>
@@ -740,7 +789,7 @@ export default function SolutionsMatrix3Panel() {
                                         }}
                                         whileHover={{ scale: 1.02, y: -2 }}
                                         whileTap={{ scale: 0.98 }}
-                                        className="w-full px-4 py-3 bg-gradient-to-r from-cta-green-500 to-cta-green-600 hover:from-cta-green-600 hover:to-cta-green-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-cta-green-500/30 hover:shadow-xl hover:shadow-cta-green-500/40 transition-all duration-200 cursor-pointer break-words mt-auto flex items-center justify-center gap-2"
+                                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gradient-to-r from-cta-green-500 to-cta-green-600 hover:from-cta-green-600 hover:to-cta-green-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-cta-green-500/30 hover:shadow-xl hover:shadow-cta-green-500/40 transition-all duration-200 cursor-pointer break-words mt-auto flex items-center justify-center gap-2"
                                     >
                                         <span>Explore {selectedSolution.title}</span>
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

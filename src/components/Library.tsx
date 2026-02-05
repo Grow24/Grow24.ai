@@ -640,7 +640,7 @@ export default function Library() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 py-20 pt-24 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 py-12 sm:py-16 md:py-20 pt-16 sm:pt-20 md:pt-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
@@ -872,7 +872,7 @@ export default function Library() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="text-center py-12"
+                    className="text-center py-6 sm:py-8 md:py-12"
                   >
                     <p className="text-slate-600 dark:text-slate-400 text-lg mb-4">
                       No {activeTab === 'information' ? 'information' : 'training'} resources found matching your filters
