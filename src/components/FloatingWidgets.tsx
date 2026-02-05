@@ -55,11 +55,24 @@ export const FloatingWhatsApp: React.FC<FloatingWidgetProps> = () => {
   const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '+919370239600'
 
   // Position above GlobalCTABar when visible, otherwise normal position
-  // WhatsApp is positioned BELOW Social Links, with enough space from footer
-  // Increased offset to ensure widgets are fully above the GlobalCTABar
+  // WhatsApp is positioned BELOW Social Links with proper spacing
+  // Social Links: bottom-[256px] when CTA not visible, bottom-[276px] when CTA visible
+  // Both icons are w-12 h-12 (48px) on mobile, w-14 h-14 (56px) on desktop
+  // 
+  // To position WhatsApp below Social Links:
+  // - Social Links bottom edge is at the bottom position value
+  // - Gap between icons: 20px for clear separation
+  // - WhatsApp bottom edge = Social Links bottom edge - gap - WhatsApp height
+  // 
+  // When CTA not visible: 
+  //   Social Links at 256px, WhatsApp bottom = 256px - 20px - 56px = 180px
+  // When CTA visible: 
+  //   Social Links at 276px, WhatsApp bottom = 276px - 20px - 56px = 200px
+  //
+  // This ensures WhatsApp is above GlobalCTABar (which starts at 60px and goes to ~180px)
   const bottomPosition = isCTABarVisible 
-    ? 'bottom-[240px] sm:bottom-[220px] md:bottom-28' 
-    : 'bottom-28'
+    ? 'bottom-[200px]' 
+    : 'bottom-[180px]'
 
   return (
     <motion.div
@@ -343,10 +356,14 @@ export const SocialLinks: React.FC = () => {
   }, [isCTABarVisible, x, y])
 
   // Position above GlobalCTABar when visible, otherwise normal position
-  // Social Links positioned ABOVE WhatsApp (moved further upward)
+  // Social Links positioned lower, with WhatsApp below it
+  // GlobalCTABar: positioned at bottom: 60px (CookieFooter), height ~120px, so top edge at ~180px
+  // WhatsApp should be above GlobalCTABar with gap: 180px + 20px gap = 200px
+  // Social Links should be above WhatsApp: 200px + 20px gap + 56px WhatsApp height = 276px
+  // When CTA not visible, use similar positioning but adjusted
   const bottomPosition = isCTABarVisible 
-    ? 'bottom-[320px] sm:bottom-[300px] md:bottom-56' 
-    : 'bottom-56'
+    ? 'bottom-[276px] sm:bottom-[276px] md:bottom-[276px]' 
+    : 'bottom-[256px] sm:bottom-[256px] md:bottom-[256px]'
 
   const socialLinks = [
     { id: 'linkedin', icon: LinkedInIcon, url: 'https://www.linkedin.com/company/personalandbusinessmgmtplatform/', label: 'LinkedIn', color: 'hover:bg-blue-600' },

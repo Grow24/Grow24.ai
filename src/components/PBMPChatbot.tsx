@@ -33,11 +33,16 @@ export default function PBMPChatbot({ position = 'right' }: PBMPChatbotProps) {
 
   const noMessages = messages.length === 0
 
-  // Position above GlobalCTABar when visible, otherwise normal position
-  // Increased offset to ensure widgets are fully above the GlobalCTABar
+  // Position above GlobalCTABar when visible, otherwise above CookieFooter
+  // GlobalCTABar is positioned at bottom: 60px (CookieFooter height)
+  // GlobalCTABar height: ~120px (py-3 sm:py-4 padding + content)
+  // PBMPChatbot icon height: ~64px (w-16 h-16 on desktop)
+  // Gap: ~16px
+  // When CTA visible: 60px (CookieFooter) + 120px (CTA bar) + 16px (gap) = 196px = bottom-[196px]
+  // When CTA not visible: 60px (CookieFooter) + 16px (gap) = 76px = bottom-[76px]
   const bottomPosition = isCTABarVisible 
-    ? 'bottom-[220px] sm:bottom-[200px] md:bottom-6' 
-    : 'bottom-6'
+    ? 'bottom-[196px] sm:bottom-[196px] md:bottom-[196px]' 
+    : 'bottom-[76px] sm:bottom-[76px] md:bottom-[76px]'
 
   // Auto-scroll to bottom
   useEffect(() => {
