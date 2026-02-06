@@ -191,7 +191,7 @@ const ComingSoonModal: React.FC<ComingSoonModalProps> = ({
                     className="w-full h-full"
                     poster="/video-thumbnail.jpg"
                   >
-                    <source src="/concept-video.mp4" type="video/mp4" />
+                    <source src="/WhatsApp Video 2026-02-05 at 12.42.46 PM.mp4" type="video/mp4" />
                     Your browser does not support the video tag.
                   </video>
                 </div>

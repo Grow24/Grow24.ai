@@ -46,23 +46,10 @@ interface FilterOption {
   children?: FilterOption[]
 }
 
-const industryFilters: FilterOption[] = [
-  {
-    id: 'automobile',
-    label: 'Automobile',
-  },
-  {
-    id: 'autocomponent',
-    label: 'Autocomponent',
-  },
-  {
-    id: 'consumer-products',
-    label: 'Consumer Products',
-    children: [
-      { id: 'fmcg', label: 'FMCG' },
-      { id: 'durables', label: 'Durables' },
-    ],
-  },
+// New filter structure matching requirements
+const requirementFilters: FilterOption[] = [
+  { id: 'information', label: 'Information' },
+  { id: 'training', label: 'Training' },
 ]
 
 const contentTypeFilters: FilterOption[] = [
@@ -70,37 +57,67 @@ const contentTypeFilters: FilterOption[] = [
   { id: 'case-study', label: 'Case Study' },
   { id: 'white-paper', label: 'White Paper' },
   { id: 'template', label: 'Template' },
+  { id: 'training', label: 'Training' },
 ]
 
-const deliveryTypeFilters: FilterOption[] = [
+const engagementTypeFilters: FilterOption[] = [
   { id: 'audio', label: 'Audio' },
+  { id: 'multimedia', label: 'Multimedia' },
+  { id: 'survey', label: 'Survey' },
   { id: 'video', label: 'Video' },
   { id: 'webinar', label: 'Webinar' },
-  { id: 'multimedia', label: 'Multimedia' },
 ]
 
-const roleFilters: FilterOption[] = [
-  { id: 'executive', label: 'Executive' },
-  { id: 'manager', label: 'Manager' },
-  { id: 'individual-contributor', label: 'Individual Contributor' },
-  { id: 'entrepreneur', label: 'Entrepreneur' },
+const organizationFilters: FilterOption[] = [
+  { id: 'corporate', label: 'Corporate' },
+  {
+    id: 'functional',
+    label: 'Functional',
+    children: [
+      { id: 'sales', label: 'Sales' },
+      { id: 'supply-chain', label: 'Supply Chain' },
+      { id: 'marketing', label: 'Marketing' },
+      {
+        id: 'value-chain',
+        label: 'Value Chain',
+        children: [
+          { id: 'lead-identification-to-lead-qualified', label: 'LeadIdentification → LeadQualified' },
+          { id: 'lead-qualified-to-deal-secured', label: 'LeadQualified → DealSecured' },
+          { id: 'deal-secured-to-deliver-order', label: 'DealSecured → DeliverOrder' },
+          { id: 'idea-generation-to-deliver-solution', label: 'IdeaGeneration → DeliverSolution' },
+          { id: 'order-delivered-to-cash-received', label: 'OrderDelivered → CashReceived' },
+          { id: 'hire-mandate-to-hire-employee', label: 'HireMandate → HireEmployee' },
+          { id: 'hired-employee-to-retire-employee', label: 'HiredEmployee → RetireEmployee' },
+          { id: 'demand-identification-to-demand-forecasted', label: 'DemandIdentification → DemandForecasted' },
+          { id: 'demand-forecasted-to-solution-produced', label: 'DemandForecasted → SolutionProduced' },
+          { id: 'solution-produced-to-solution-delivered', label: 'SolutionProduced → SolutionDelivered' },
+        ],
+      },
+    ],
+  },
 ]
 
-const topicFilters: FilterOption[] = [
-  { id: 'strategy', label: 'Strategy' },
-  { id: 'leadership', label: 'Leadership' },
-  { id: 'operations', label: 'Operations' },
-  { id: 'finance', label: 'Finance' },
-  { id: 'marketing', label: 'Marketing' },
-  { id: 'sales', label: 'Sales' },
+const solutionLifecycleFilters: FilterOption[] = [
+  { id: 'identify-goal', label: 'Identify Goal' },
+  { id: 'define-strategy', label: 'Define Strategy' },
+  { id: 'define-objective', label: 'Define Objective' },
+  { id: 'prepare-plan', label: 'Prepare Plan' },
+  { id: 'execute-project', label: 'Execute Project' },
+  { id: 'run-operation', label: 'Run Operation' },
 ]
 
-const trainingTypeFilters: FilterOption[] = [
-  { id: 'self-paced', label: 'Self-Paced' },
-  { id: 'instructor-led', label: 'Instructor-Led' },
-  { id: 'in-person', label: 'In-Person' },
-  { id: 'virtual', label: 'Virtual' },
-  { id: 'hybrid', label: 'Hybrid' },
+const changeManagementFilters: FilterOption[] = [
+  { id: 'change-management', label: 'Change Management' },
+]
+
+const themeFilters: FilterOption[] = [
+  { id: 'business-analysis', label: 'Business Analysis' },
+  { id: 'business-transformation', label: 'Business Transformation' },
+  { id: 'enterprise-architecture', label: 'Enterprise Architecture' },
+  { id: 'project-management', label: 'Project Management' },
+  { id: 'program-management', label: 'Program Management' },
+  { id: 'portfolio-management', label: 'Portfolio Management' },
+  { id: 'solution-management', label: 'Solution Management' },
 ]
 
 // Resource data
@@ -666,7 +683,7 @@ export default function Library() {
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            Get Information
+            Personal
             {activeTab === 'information' && (
               <motion.div
                 layoutId="activeTab"
@@ -682,7 +699,7 @@ export default function Library() {
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            Get Training
+            Professional
             {activeTab === 'training' && (
               <motion.div
                 layoutId="activeTab"
@@ -719,89 +736,89 @@ export default function Library() {
               </div>
 
               <div className="space-y-3">
-                {activeTab === 'information' ? (
-                  <div className="space-y-3">
-                    {/* Information parent group with nested filters */}
-                    <div className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden bg-white dark:bg-slate-800">
-                      <button
-                        onClick={() => toggleFilterExpanded('information-group')}
-                        className="w-full px-4 py-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-                      >
-                        <span className="font-semibold text-slate-900 dark:text-white text-sm">Information</span>
-                        <ChevronDownIcon isOpen={expandedFilters.has('information-group')} />
-                      </button>
-                      <AnimatePresence>
-                        {expandedFilters.has('information-group') && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                            className="overflow-hidden"
-                          >
-                            <div className="px-4 py-2 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 space-y-3">
-                              <FilterGroup
-                                title="Content Type"
-                                filterId="content-type"
-                                options={contentTypeFilters}
-                                filterGroup="contentType"
-                                isNested={true}
-                                isExpanded={expandedFilters.has('content-type')}
-                                onToggleExpand={toggleFilterExpanded}
-                                onToggleFilter={toggleFilterOption}
-                                isFilterSelected={isFilterSelected}
-                              />
-                              <FilterGroup
-                                title="Delivery Type"
-                                filterId="delivery-type"
-                                options={deliveryTypeFilters}
-                                filterGroup="deliveryType"
-                                isNested={true}
-                                isExpanded={expandedFilters.has('delivery-type')}
-                                onToggleExpand={toggleFilterExpanded}
-                                onToggleFilter={toggleFilterOption}
-                                isFilterSelected={isFilterSelected}
-                              />
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <FilterGroup
-                      title="Role"
-                      filterId="role"
-                      options={roleFilters}
-                      filterGroup="role"
-                      isExpanded={expandedFilters.has('role')}
-                      onToggleExpand={toggleFilterExpanded}
-                      onToggleFilter={toggleFilterOption}
-                      isFilterSelected={isFilterSelected}
-                    />
-                    <FilterGroup
-                      title="Topic"
-                      filterId="topic"
-                      options={topicFilters}
-                      filterGroup="topic"
-                      isExpanded={expandedFilters.has('topic')}
-                      onToggleExpand={toggleFilterExpanded}
-                      onToggleFilter={toggleFilterOption}
-                      isFilterSelected={isFilterSelected}
-                    />
-                    <FilterGroup
-                      title="Industry"
-                      filterId="industry"
-                      options={industryFilters}
-                      filterGroup="industry"
-                      isExpanded={expandedFilters.has('industry')}
-                      onToggleExpand={toggleFilterExpanded}
-                      onToggleFilter={toggleFilterOption}
-                      isFilterSelected={isFilterSelected}
-                    />
-                  </div>
-                )}
+                {/* Requirement */}
+                <FilterGroup
+                  title="Requirement"
+                  filterId="requirement"
+                  options={requirementFilters}
+                  filterGroup="requirement"
+                  isExpanded={expandedFilters.has('requirement')}
+                  onToggleExpand={toggleFilterExpanded}
+                  onToggleFilter={toggleFilterOption}
+                  isFilterSelected={isFilterSelected}
+                />
+
+                {/* Content Type */}
+                <FilterGroup
+                  title="Content Type"
+                  filterId="content-type"
+                  options={contentTypeFilters}
+                  filterGroup="contentType"
+                  isExpanded={expandedFilters.has('content-type')}
+                  onToggleExpand={toggleFilterExpanded}
+                  onToggleFilter={toggleFilterOption}
+                  isFilterSelected={isFilterSelected}
+                />
+
+                {/* Engagement Type */}
+                <FilterGroup
+                  title="Engagement Type"
+                  filterId="engagement-type"
+                  options={engagementTypeFilters}
+                  filterGroup="engagementType"
+                  isExpanded={expandedFilters.has('engagement-type')}
+                  onToggleExpand={toggleFilterExpanded}
+                  onToggleFilter={toggleFilterOption}
+                  isFilterSelected={isFilterSelected}
+                />
+
+                {/* Organization */}
+                <FilterGroup
+                  title="Organization"
+                  filterId="organization"
+                  options={organizationFilters}
+                  filterGroup="organization"
+                  isExpanded={expandedFilters.has('organization')}
+                  onToggleExpand={toggleFilterExpanded}
+                  onToggleFilter={toggleFilterOption}
+                  isFilterSelected={isFilterSelected}
+                />
+
+                {/* Solution Lifecycle */}
+                <FilterGroup
+                  title="Solution Lifecycle"
+                  filterId="solution-lifecycle"
+                  options={solutionLifecycleFilters}
+                  filterGroup="solutionLifecycle"
+                  isExpanded={expandedFilters.has('solution-lifecycle')}
+                  onToggleExpand={toggleFilterExpanded}
+                  onToggleFilter={toggleFilterOption}
+                  isFilterSelected={isFilterSelected}
+                />
+
+                {/* Change Management */}
+                <FilterGroup
+                  title="Change Management"
+                  filterId="change-management"
+                  options={changeManagementFilters}
+                  filterGroup="changeManagement"
+                  isExpanded={expandedFilters.has('change-management')}
+                  onToggleExpand={toggleFilterExpanded}
+                  onToggleFilter={toggleFilterOption}
+                  isFilterSelected={isFilterSelected}
+                />
+
+                {/* Theme */}
+                <FilterGroup
+                  title="Theme"
+                  filterId="theme"
+                  options={themeFilters}
+                  filterGroup="theme"
+                  isExpanded={expandedFilters.has('theme')}
+                  onToggleExpand={toggleFilterExpanded}
+                  onToggleFilter={toggleFilterOption}
+                  isFilterSelected={isFilterSelected}
+                />
               </div>
             </div>
           </motion.div>

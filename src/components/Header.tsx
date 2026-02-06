@@ -259,6 +259,12 @@ const scrollToSection = (href: string, navigate: any, location: any) => {
   if (href.startsWith('#')) {
     const sectionId = href.substring(1)
     
+    // Special case: if clicking Home from a solution page, just navigate to root without hash
+    if (sectionId === 'home' && location.pathname !== '/') {
+      navigate({ to: '/' })
+      return
+    }
+    
     // If we're on an inner page, navigate to home first
     if (location.pathname !== '/') {
       navigate({ to: '/' }).then(() => {

@@ -652,9 +652,9 @@ export default function SolutionDetailPage() {
     ]
 
     return (
-        <div className="min-h-screen bg-white dark:bg-slate-950 relative z-50">
+        <div className="min-h-screen bg-white dark:bg-slate-950 relative z-0">
             {/* Navigation Bar - Sticky */}
-            <div className={`sticky top-[60px] sm:top-[70px] md:top-[80px] z-50 transition-all duration-300 ${
+            <div className={`sticky top-[60px] sm:top-[70px] md:top-[80px] z-40 transition-all duration-300 ${
                 scrolled 
                     ? 'bg-white/95 dark:bg-slate-900/95 shadow-lg border-b border-gray-200 dark:border-slate-700' 
                     : 'bg-white dark:bg-slate-900 shadow-sm border-b border-gray-200 dark:border-slate-700'
@@ -665,6 +665,23 @@ export default function SolutionDetailPage() {
                             <a 
                                 key={tab.id}
                                 href={`#${tab.id}`}
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    const element = document.getElementById(tab.id)
+                                    if (element) {
+                                        // Use scrollIntoView with block: 'start' and account for sticky nav height
+                                        const headerHeight = 80 // Approximate header height
+                                        const navHeight = 60 // Approximate nav bar height
+                                        const offset = headerHeight + navHeight
+                                        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
+                                        const offsetPosition = elementPosition - offset
+                                        
+                                        window.scrollTo({
+                                            top: offsetPosition,
+                                            behavior: 'smooth'
+                                        })
+                                    }
+                                }}
                                 className={getTabClasses(tab.id)}
                                 onMouseEnter={() => setHoveredTab(tab.id)}
                                 onMouseLeave={() => setHoveredTab(null)}
@@ -677,7 +694,7 @@ export default function SolutionDetailPage() {
             </div>
 
             {/* Hero Section */}
-            <section id="overview" className="bg-gray-50 dark:bg-slate-900 py-8 sm:py-10 md:py-12 px-4 sm:px-6 md:px-8">
+            <section id="overview" className="bg-gray-50 dark:bg-slate-900 py-8 sm:py-10 md:py-12 px-4 sm:px-6 md:px-8 scroll-mt-[120px] sm:scroll-mt-[130px] md:scroll-mt-[140px]">
                 <div className="max-w-7xl mx-auto">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2">
@@ -740,7 +757,7 @@ export default function SolutionDetailPage() {
 
 
             {/* Overview Section */}
-            <section id="overview" className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8">
+            <section id="overview" className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8 scroll-mt-[120px] sm:scroll-mt-[130px] md:scroll-mt-[140px]">
                 <div className="max-w-7xl mx-auto">
                     <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Overview</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -764,7 +781,7 @@ export default function SolutionDetailPage() {
             </section>
 
             {/* Capabilities Section */}
-            <section id="capabilities" className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8 bg-white dark:bg-slate-900">
+            <section id="capabilities" className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8 bg-white dark:bg-slate-900 scroll-mt-[120px] sm:scroll-mt-[130px] md:scroll-mt-[140px]">
                 <div className="max-w-7xl mx-auto">
                     <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Capabilities</h2>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -786,7 +803,7 @@ export default function SolutionDetailPage() {
             </section>
 
             {/* Templates & Outputs Section */}
-            <section id="templates" className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8 bg-gray-50">
+            <section id="templates" className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8 bg-gray-50 scroll-mt-[120px] sm:scroll-mt-[130px] md:scroll-mt-[140px]">
                 <div className="max-w-7xl mx-auto">
                     <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Templates & Outputs</h2>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -859,7 +876,7 @@ export default function SolutionDetailPage() {
             </section>
 
             {/* Corporate Goal Section */}
-            <section id="corporate-goal" className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8 bg-white dark:bg-slate-950">
+            <section id="corporate-goal" className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8 bg-white dark:bg-slate-950 scroll-mt-[120px] sm:scroll-mt-[130px] md:scroll-mt-[140px]">
                 <div className="max-w-7xl mx-auto">
                     {/* Solution Thumbnail Label */}
                     <div className="text-left mb-8">

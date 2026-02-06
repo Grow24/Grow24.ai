@@ -606,7 +606,7 @@ function IndexPage() {
                     ref={videoRef}
                     className="w-full h-full"
                     controls
-                    src="/concept-video.mp4"
+                    src="/WhatsApp Video 2026-02-05 at 12.42.46 PM.mp4"
                   >
                     Your browser does not support the video tag.
                   </video>
