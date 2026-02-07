@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Link, useParams } from '@tanstack/react-router'
+import { Link, useParams, useLocation } from '@tanstack/react-router'
 import { useComingSoon } from '../contexts/ComingSoonContext'
 import { use3DRotation } from '../lib/use3DRotation'
 import { isValidSolutionId } from '../constants/solutions'
@@ -565,7 +565,9 @@ const solutionDetails: Record<string, SolutionDetail> = {
 
 export default function SolutionDetailPage() {
     const params = useParams({ strict: false })
-    const solutionId = params.solutionId as string
+    const location = useLocation()
+    // Fallback: extract solutionId from pathname if params.solutionId is undefined (e.g. TanStack Router param resolution)
+    const solutionId = (params?.solutionId || location.pathname.replace(/^\/solutions\/?/, '').split('/')[0] || '') as string
     const solution = solutionDetails[solutionId || '']
     const { showComingSoon } = useComingSoon()
     const [scrolled, setScrolled] = useState(false)
@@ -602,10 +604,6 @@ export default function SolutionDetailPage() {
         window.addEventListener('scroll', handleScroll, { passive: true })
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
-
-    console.log('SolutionDetailPage rendered with solutionId:', solutionId)
-    console.log('All params:', params)
-    console.log('Found solution:', solution)
 
     // Double-check: if solution ID is not valid, show not found
     if (!solutionId || !isValidSolutionId(solutionId) || !solution) {
