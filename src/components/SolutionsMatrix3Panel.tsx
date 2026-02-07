@@ -633,15 +633,15 @@ export default function SolutionsMatrix3Panel() {
                         </div>
                     </motion.div>
 
-                    {/* Middle Panel: Category Columns */}
+                    {/* Middle Panel: Category Columns - flex-initial on mobile to avoid empty space, flex-1 on xl for desktop layout */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.2 }}
-                        className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl shadow-xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden flex-1 min-w-0 flex flex-col"
+                        className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl shadow-xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden flex-initial xl:flex-1 min-w-0 flex flex-col"
                     >
                         {/* Combined scroll container for headers and solutions */}
-                        <div className="overflow-x-auto flex-1" style={{ scrollbarWidth: 'thin' }}>
+                        <div className="overflow-x-auto flex-initial xl:flex-1 min-h-0" style={{ scrollbarWidth: 'thin' }}>
                             <div className="min-w-[600px] md:min-w-full">
                                 {/* Category Headers - Sticky header */}
                                 <div className="sticky top-0 z-10 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-emerald-50/30 dark:from-slate-800 dark:to-slate-800">
@@ -661,8 +661,8 @@ export default function SolutionsMatrix3Panel() {
                                         ))}
                                     </div>
                                 </div>
-                                {/* Solutions Grid - Scrolls with headers */}
-                                <div className="grid grid-cols-6 divide-x divide-slate-200 dark:divide-slate-700 bg-gradient-to-b from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-900/50">
+                                {/* Solutions Grid - items-start prevents columns from stretching to match row height (removes extra space after Strategy Generation) */}
+                                <div className="grid grid-cols-6 divide-x divide-slate-200 dark:divide-slate-700 bg-gradient-to-b from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-900/50 items-start">
                                     {categories.map((category) => {
                                         // Get solutions from all selected functions
                                         const selectedFuncs = functions.filter(f => selectedFunctions.has(f.id))
@@ -673,7 +673,7 @@ export default function SolutionsMatrix3Panel() {
                                         })
                                         
                                         return (
-                                            <div key={category} className="p-2 sm:p-3 md:p-4 space-y-2 sm:space-y-3 min-h-[200px] min-w-[100px] sm:min-w-[120px]">
+                                            <div key={category} className="p-2 sm:p-3 md:p-4 space-y-2 sm:space-y-3 min-w-[100px] sm:min-w-[120px]">
                                             {allSolutions.length === 0 ? (
                                                 <motion.div
                                                     initial={{ opacity: 0 }}
@@ -746,7 +746,7 @@ export default function SolutionsMatrix3Panel() {
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -20 }}
                                     transition={{ duration: 0.3 }}
-                                    className="p-5 flex-1 flex flex-col bg-gradient-to-b from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-900/50"
+                                    className="p-5 flex flex-col bg-gradient-to-b from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-900/50"
                                 >
                                     <div className="flex items-start gap-3 mb-4">
                                         <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 dark:from-emerald-600 dark:to-emerald-700 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
@@ -761,7 +761,7 @@ export default function SolutionsMatrix3Panel() {
                                     <p className="text-sm text-slate-600 dark:text-slate-300 mb-5 leading-relaxed break-words">
                                         {selectedSolution.description}
                                     </p>
-                                    <div className="space-y-2.5 mb-5 flex-1">
+                                    <div className="space-y-2.5 mb-5">
                                         <p className="text-xs font-bold text-slate-700 dark:text-slate-300 mb-3 uppercase tracking-widest flex items-center gap-2">
                                             <span className="w-1 h-1 rounded-full bg-emerald-500"></span>
                                             Features
@@ -789,7 +789,7 @@ export default function SolutionsMatrix3Panel() {
                                         }}
                                         whileHover={{ scale: 1.02, y: -2 }}
                                         whileTap={{ scale: 0.98 }}
-                                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gradient-to-r from-cta-green-500 to-cta-green-600 hover:from-cta-green-600 hover:to-cta-green-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-cta-green-500/30 hover:shadow-xl hover:shadow-cta-green-500/40 transition-all duration-200 cursor-pointer break-words mt-auto flex items-center justify-center gap-2"
+                                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gradient-to-r from-cta-green-500 to-cta-green-600 hover:from-cta-green-600 hover:to-cta-green-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-cta-green-500/30 hover:shadow-xl hover:shadow-cta-green-500/40 transition-all duration-200 cursor-pointer break-words flex items-center justify-center gap-2"
                                     >
                                         <span>Explore {selectedSolution.title}</span>
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

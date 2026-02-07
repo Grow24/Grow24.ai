@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence, useMotionValue } from 'framer-motion'
 import { useGlobalCTABar } from '../contexts/GlobalCTABarContext'
 
+const STORAGE_KEYS = {
+  whatsApp: 'floatingWhatsAppPosition',
+  socialLinks: 'socialLinksPosition',
+} as const
+
 // WhatsApp SVG Icon
 const WhatsAppIcon = () => (
   <svg
@@ -53,23 +58,34 @@ export const FloatingWhatsApp: React.FC<FloatingWidgetProps> = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { isVisible: isCTABarVisible } = useGlobalCTABar()
   const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '+919370239600'
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+
+  // Load saved position on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.whatsApp)
+      if (saved) {
+        const { x: sx, y: sy } = JSON.parse(saved)
+        if (typeof sx === 'number' && typeof sy === 'number') {
+          x.set(sx)
+          y.set(sy)
+        }
+      }
+    } catch {
+      // Ignore invalid stored data
+    }
+  }, [x, y])
+
+  const handleDragEnd = () => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.whatsApp, JSON.stringify({ x: x.get(), y: y.get() }))
+    } catch {
+      // Ignore storage errors
+    }
+  }
 
   // Position above GlobalCTABar when visible, otherwise normal position
-  // WhatsApp is positioned BELOW Social Links with proper spacing
-  // Social Links: bottom-[256px] when CTA not visible, bottom-[276px] when CTA visible
-  // Both icons are w-12 h-12 (48px) on mobile, w-14 h-14 (56px) on desktop
-  // 
-  // To position WhatsApp below Social Links:
-  // - Social Links bottom edge is at the bottom position value
-  // - Gap between icons: 20px for clear separation
-  // - WhatsApp bottom edge = Social Links bottom edge - gap - WhatsApp height
-  // 
-  // When CTA not visible: 
-  //   Social Links at 256px, WhatsApp bottom = 256px - 20px - 56px = 180px
-  // When CTA visible: 
-  //   Social Links at 276px, WhatsApp bottom = 276px - 20px - 56px = 200px
-  //
-  // This ensures WhatsApp is above GlobalCTABar (which starts at 60px and goes to ~180px)
   const bottomPosition = isCTABarVisible 
     ? 'bottom-[200px]' 
     : 'bottom-[180px]'
@@ -80,6 +96,13 @@ export const FloatingWhatsApp: React.FC<FloatingWidgetProps> = () => {
       animate={{ scale: 1, opacity: 1 }}
       transition={{ delay: 0.5, type: 'spring', stiffness: 200 }}
       className={`fixed ${bottomPosition} left-4 sm:left-6 z-50 transition-all duration-300`}
+      drag
+      dragElastic={0.2}
+      dragMomentum={true}
+      dragTransition={{ power: 0.3, restDelta: 10 }}
+      whileDrag={{ cursor: 'grabbing' }}
+      onDragEnd={handleDragEnd}
+      style={{ x, y, willChange: 'transform' }}
     >
       <AnimatePresence>
         {isOpen && (
@@ -332,28 +355,36 @@ export const SocialLinks: React.FC = () => {
   const x = useMotionValue(0)
   const y = useMotionValue(0)
 
+  // Load saved position on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.socialLinks)
+      if (saved) {
+        const { x: sx, y: sy } = JSON.parse(saved)
+        if (typeof sx === 'number' && typeof sy === 'number') {
+          x.set(sx)
+          y.set(sy)
+        }
+      }
+    } catch {
+      // Ignore invalid stored data
+    }
+  }, [x, y])
+
+  const handleDragEnd = () => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.socialLinks, JSON.stringify({ x: x.get(), y: y.get() }))
+    } catch {
+      // Ignore storage errors
+    }
+  }
+
   // Clean up old localStorage entry if it exists (for users who had widget closed before)
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('socialWidgetClosed')
     }
   }, [])
-
-  // Reset position when CTA bar visibility changes to ensure alignment
-  // But preserve user's drag position - only reset if CTA bar state changes
-  useEffect(() => {
-    // Only reset if CTA bar visibility actually changed, not on every render
-    // This prevents position shifts when sidebar opens/closes
-    const currentX = x.get()
-    const currentY = y.get()
-    
-    // Only reset if position is at origin (0,0) or if CTA bar visibility changed
-    // This preserves user's manual drag position
-    if (currentX === 0 && currentY === 0) {
-      // Position is at origin, safe to maintain
-    }
-    // Don't reset on every render - only when CTA bar visibility actually changes
-  }, [isCTABarVisible, x, y])
 
   // Position above GlobalCTABar when visible, otherwise normal position
   // Social Links positioned lower, with WhatsApp below it
@@ -383,10 +414,10 @@ export const SocialLinks: React.FC = () => {
       dragMomentum={true}
       dragTransition={{ power: 0.3, restDelta: 10 }}
       whileDrag={{ cursor: 'grabbing' }}
+      onDragEnd={handleDragEnd}
       style={{ 
         x, 
         y,
-        // Prevent layout shifts by using transform instead of position changes
         willChange: 'transform'
       }}
     >

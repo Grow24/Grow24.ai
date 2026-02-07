@@ -7,7 +7,6 @@ import PBMPChatbot from './PBMPChatbot'
 import Sidebar from './Sidebar'
 import MegaMenu from './MegaMenu'
 import GlobalCTABar from './GlobalCTABar'
-import { CookieFooter } from './CookieFooter'
 
 export const RootLayout: React.FC = () => {
   const [megaMenuOpen, setMegaMenuOpen] = useState(false)
@@ -33,7 +32,7 @@ export const RootLayout: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Main Content - extra bottom padding so fixed cookie footer doesn't overlap */}
+      {/* Main Content */}
       <main className="pt-16 sm:pt-20 pb-10 sm:pb-14">
         <Outlet />
       </main>
@@ -45,9 +44,6 @@ export const RootLayout: React.FC = () => {
 
       {/* Global CTA Bar */}
       <GlobalCTABar />
-
-      {/* Cookie Preferences footer (BCG-style) - visible at bottom when scrolling */}
-      <CookieFooter />
     </div>
   )
 }
