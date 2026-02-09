@@ -3,28 +3,35 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 const STORAGE_KEY = 'grow24_cookie_preferences'
 
-export type CookieCategory = 'essential' | 'performance'
+export type CookieCategory = 'essential' | 'performance' | 'advertising'
 
 export interface CookiePreferences {
   essential: boolean // always true, not user-editable
   performance: boolean
+  advertising: boolean
   updatedAt: string
 }
 
-const defaultPreferences: CookiePreferences = {
+export const defaultPreferences: CookiePreferences = {
   essential: true,
   performance: true,
+  advertising: true,
   updatedAt: new Date().toISOString(),
 }
 
 export function getStoredPreferences(): CookiePreferences | null {
   try {
+    // Check if localStorage is available
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+      return null
+    }
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return null
     const parsed = JSON.parse(raw) as CookiePreferences
     return {
       essential: true,
       performance: parsed.performance ?? true,
+      advertising: parsed.advertising ?? true,
       updatedAt: parsed.updatedAt ?? new Date().toISOString(),
     }
   } catch {
@@ -33,7 +40,15 @@ export function getStoredPreferences(): CookiePreferences | null {
 }
 
 export function setStoredPreferences(prefs: CookiePreferences): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...prefs, updatedAt: new Date().toISOString() }))
+  try {
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...prefs, updatedAt: new Date().toISOString() }))
+      // Mark consent as given when preferences are set
+      localStorage.setItem('grow24_cookie_consent_given', 'true')
+    }
+  } catch (error) {
+    console.warn('Failed to save cookie preferences:', error)
+  }
 }
 
 interface CookiePreferencesModalProps {
@@ -43,24 +58,28 @@ interface CookiePreferencesModalProps {
 
 export const CookiePreferencesModal: React.FC<CookiePreferencesModalProps> = ({ isOpen, onClose }) => {
   const [performance, setPerformance] = useState(true)
+  const [advertising, setAdvertising] = useState(true)
 
   useEffect(() => {
     if (!isOpen) return
     const stored = getStoredPreferences()
     setPerformance(stored?.performance ?? true)
+    setAdvertising(stored?.advertising ?? true)
   }, [isOpen])
 
   const handleAcceptAll = () => {
-    const prefs: CookiePreferences = { ...defaultPreferences, performance: true }
+    const prefs: CookiePreferences = { ...defaultPreferences, performance: true, advertising: true }
     setStoredPreferences(prefs)
     setPerformance(true)
+    setAdvertising(true)
     onClose()
   }
 
   const handleRejectNonEssential = () => {
-    const prefs: CookiePreferences = { ...defaultPreferences, performance: false }
+    const prefs: CookiePreferences = { ...defaultPreferences, performance: false, advertising: false }
     setStoredPreferences(prefs)
     setPerformance(false)
+    setAdvertising(false)
     onClose()
   }
 
@@ -68,6 +87,7 @@ export const CookiePreferencesModal: React.FC<CookiePreferencesModalProps> = ({ 
     const prefs: CookiePreferences = {
       essential: true,
       performance,
+      advertising,
       updatedAt: new Date().toISOString(),
     }
     setStoredPreferences(prefs)
@@ -133,9 +153,9 @@ export const CookiePreferencesModal: React.FC<CookiePreferencesModalProps> = ({ 
               {/* Performance & Functionality */}
               <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4 py-3 sm:py-4 border-b border-gray-200 dark:border-slate-700">
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">Performance & Functionality</h3>
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">Performance Cookies</h3>
                   <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    Help us understand how you use the site and improve your experience.
+                    Help us understand how you use the site and improve your experience, such as by measuring interactions with particular content so we can continue to offer you more relevant articles.
                   </p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer flex-shrink-0 self-start sm:self-auto">
@@ -143,6 +163,25 @@ export const CookiePreferencesModal: React.FC<CookiePreferencesModalProps> = ({ 
                     type="checkbox"
                     checked={performance}
                     onChange={(e) => setPerformance(e.target.checked)}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-gray-200 dark:bg-slate-600 peer-focus:ring-2 peer-focus:ring-emerald-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500" />
+                </label>
+              </div>
+
+              {/* Advertising or Targeting Cookies */}
+              <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4 py-3 sm:py-4 border-b border-gray-200 dark:border-slate-700">
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">Advertising or Targeting Cookies</h3>
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    These cookies don't store any of your direct personal information but identify a unique browser or device, and are used to potentially surface relevant material from other sites, and are primarily used by select social media and other partners.
+                  </p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer flex-shrink-0 self-start sm:self-auto">
+                  <input
+                    type="checkbox"
+                    checked={advertising}
+                    onChange={(e) => setAdvertising(e.target.checked)}
                     className="sr-only peer"
                   />
                   <div className="w-11 h-6 bg-gray-200 dark:bg-slate-600 peer-focus:ring-2 peer-focus:ring-emerald-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500" />

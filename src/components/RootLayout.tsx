@@ -7,6 +7,7 @@ import PBMPChatbot from './PBMPChatbot'
 import Sidebar from './Sidebar'
 import MegaMenu from './MegaMenu'
 import GlobalCTABar from './GlobalCTABar'
+import CookieConsentBanner from './CookieConsentBanner'
 
 export const RootLayout: React.FC = () => {
   const [megaMenuOpen, setMegaMenuOpen] = useState(false)
@@ -44,6 +45,9 @@ export const RootLayout: React.FC = () => {
 
       {/* Global CTA Bar */}
       <GlobalCTABar />
+
+      {/* Cookie Consent Banner */}
+      <CookieConsentBanner />
     </div>
   )
 }
