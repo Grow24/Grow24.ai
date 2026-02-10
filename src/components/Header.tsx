@@ -244,10 +244,12 @@ const navItems: NavItem[] = [
   { label: 'Get Support', href: '#support', icon: SupportIcon },
   { label: 'Engage', href: '#engage', icon: EngageIcon },
   { label: 'Contact Us', href: '#contact', icon: ContactIcon },
-  { label: 'About Us', href: '#about', icon: AboutIcon },
+  // Dedicated About page
+  { label: 'About Us', href: '/about', icon: AboutIcon },
   { label: 'Become Partner', href: '#partner', icon: PartnerIcon },
   { label: 'Join Us', href: '#join', icon: JoinUsIcon },
-  { label: 'Privacy Policy', href: '#privacy', icon: PrivacyIcon },
+  // Use dedicated route for privacy policy
+  { label: 'Privacy Policy', href: '/privacy-policy', icon: PrivacyIcon },
   { label: 'Terms of Use', href: '#terms', icon: TermsIcon },
   { label: 'Cookie Settings', href: '#cookies', icon: CookieIcon },
   { label: 'Sitemap', href: '#sitemap', icon: SitemapIcon },
@@ -268,13 +270,14 @@ const scrollToSection = (href: string, navigate: any, location: any) => {
     // If we're on an inner page, navigate to home first
     if (location.pathname !== '/') {
       navigate({ to: '/' }).then(() => {
-        // Wait for navigation and DOM update
+        // Wait for navigation and DOM update (longer on mobile for layout to settle)
+        const delay = typeof window !== 'undefined' && window.innerWidth < 768 ? 350 : 100
         setTimeout(() => {
           const element = document.getElementById(sectionId)
           if (element) {
             element.scrollIntoView({ behavior: 'smooth', block: 'start' })
           }
-        }, 100)
+        }, delay)
       })
     } else {
       // We're already on home page, just scroll
@@ -341,7 +344,8 @@ const searchIndex = [
   { type: 'page', title: 'Concept', description: 'Learn about PBMP methodology', href: '#concept', keywords: ['concept', 'pbmp', 'methodology', 'plan', 'build', 'measure', 'progress'] },
   { type: 'page', title: 'Solutions', description: 'Explore our solutions', href: '#solutions', keywords: ['solutions', 'dashboard', 'corporate', 'sales', 'marketing'] },
   { type: 'page', title: 'Library', description: 'Access curated information and training resources', href: '#library', keywords: ['library', 'information', 'training', 'resources', 'content'] },
-  // Note: Pages like 'Get Support', 'About Us', 'Contact Us', 'Engage', etc. are excluded 
+  { type: 'page', title: 'About Us', description: 'Learn about Grow24.ai and our mission', href: '/about', keywords: ['about', 'company', 'mission', 'team'] },
+  // Note: Pages like 'Get Support', 'Contact Us', 'Engage', etc. are excluded 
   // because they don't exist as actual page sections - they're only menu items
   
   // Solutions - only include solutions that actually exist
@@ -706,10 +710,8 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
         } as React.CSSProperties}
       >
         <div 
-          className={`no-blur-header transition-all duration-300 ${
-            scrolled
-              ? 'dark:bg-slate-950/90'
-              : 'dark:bg-slate-950/90'
+          className={`no-blur-header transition-all duration-300 bg-white dark:bg-slate-950/90 ${
+            scrolled ? '' : ''
           }`}
           style={{
             backdropFilter: 'none',
@@ -759,19 +761,19 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                   </motion.button>
                 )}
 
-                {/* Logo */}
+                {/* Logo - kept snug next to hamburger to avoid overlapping content */}
                 <a
                   href="#home"
                   onClick={(e) => {
                     e.preventDefault()
                     scrollToSection('#home', navigate, location)
                   }}
-                  className="flex items-center hover:opacity-80 transition-opacity shrink-0 overflow-visible -mt-1 sm:-mt-2 md:-mt-3 ml-2 sm:ml-4 md:ml-6 lg:ml-8"
+                  className="flex items-center hover:opacity-80 transition-opacity shrink-0 overflow-visible"
                 >
                   <img
                     src="/grow.svg"
                     alt="Grow24.ai Logo"
-                    className="h-10 sm:h-14 md:h-20 lg:h-24 w-auto object-contain"
+                    className="h-8 sm:h-10 md:h-12 lg:h-12 w-auto object-contain"
                     style={{ display: 'block', maxWidth: 'none' }}
                   />
                 </a>
@@ -1119,44 +1121,53 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                     filteredNavItems.map((item, idx) => {
                       const isSelected = selectedMenuItem === item.href
                       return (
-                        <motion.div
-                          key={item.href}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: idx * 0.03 }}
-                        >
-                          <a
-                            href={item.href}
-                            onClick={(e) => {
-                              e.preventDefault()
-                              setSelectedMenuItem(item.href)
-                              scrollToSection(item.href, navigate, location)
-                              setSideMenuOpen(false)
-                            }}
-                            className={`group flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-200 relative overflow-hidden ${
-                              isSelected
-                                ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 font-semibold'
-                                : 'text-gray-700 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10'
-                            }`}
+                        <div key={item.href}>
+                          <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: idx * 0.03 }}
                           >
-                            <div className={`relative z-10 flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 flex-shrink-0 ${
-                              isSelected
-                                ? 'bg-emerald-500/30 group-hover:bg-emerald-500/40'
-                                : 'bg-gray-100 dark:bg-white/5 group-hover:bg-emerald-500/20'
-                            } group-hover:scale-110`}>
-                              <item.icon />
-                            </div>
-                            <span className="relative z-10 font-medium text-sm truncate">{item.label}</span>
-                            {item.badge && (
-                              <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
-                                {item.badge}
-                              </span>
-                            )}
-                            {!isSelected && (
-                              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                            )}
-                          </a>
-                        </motion.div>
+                            <a
+                              href={item.href}
+                              onClick={(e) => {
+                                e.preventDefault()
+                                setSelectedMenuItem(item.href)
+                                if (item.href.startsWith('#')) {
+                                  scrollToSection(item.href, navigate, location)
+                                } else if (item.href.startsWith('/')) {
+                                  navigate({ to: item.href })
+                                }
+                                setSideMenuOpen(false)
+                              }}
+                              className={`group flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-200 relative overflow-hidden ${
+                                isSelected
+                                  ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 font-semibold'
+                                  : 'text-gray-700 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10'
+                              }`}
+                            >
+                              <div className={`relative z-10 flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 flex-shrink-0 ${
+                                isSelected
+                                  ? 'bg-emerald-500/30 group-hover:bg-emerald-500/40'
+                                  : 'bg-gray-100 dark:bg-white/5 group-hover:bg-emerald-500/20'
+                              } group-hover:scale-110`}>
+                                <item.icon />
+                              </div>
+                              <span className="relative z-10 font-medium text-sm truncate">{item.label}</span>
+                              {item.badge && (
+                                <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
+                                  {item.badge}
+                                </span>
+                              )}
+                              {!isSelected && (
+                                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                              )}
+                            </a>
+                          </motion.div>
+                          {/* Visual end-of-menu cue after Sitemap */}
+                          {item.label === 'Sitemap' && !menuSearchQuery && (
+                            <div className="mt-2 mb-1 border-t border-dashed border-gray-200 dark:border-gray-700 opacity-80" />
+                          )}
+                        </div>
                       )
                     })
                   ) : (

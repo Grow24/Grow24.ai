@@ -137,6 +137,22 @@ export const CookieConsentBanner: React.FC = () => {
     }
   }, [isMounted])
 
+  // Allow other parts of the app (e.g. Privacy Policy page) to open the cookie preferences modal
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const handleOpenPreferences = () => {
+      setShowDetailsModal(true)
+      setIsVisible(true)
+    }
+
+    window.addEventListener('open-cookie-preferences', handleOpenPreferences)
+
+    return () => {
+      window.removeEventListener('open-cookie-preferences', handleOpenPreferences)
+    }
+  }, [])
+
   // Don't render until mounted (prevents SSR issues)
   if (!isMounted) {
     return null

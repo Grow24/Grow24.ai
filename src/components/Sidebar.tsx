@@ -214,10 +214,12 @@ const menuItems: MenuItem[] = [
   { label: 'Get Support', href: '#support', icon: SupportIcon },
   { label: 'Engage', href: '#engage', icon: EngageIcon },
   { label: 'Contact Us', href: '#contact', icon: ContactIcon },
-  { label: 'About Us', href: '#about', icon: AboutIcon },
+  // Dedicated About page
+  { label: 'About Us', href: '/about', icon: AboutIcon },
   { label: 'Become Partner', href: '#partner', icon: PartnerIcon },
   { label: 'Join Us', href: '#join', icon: JoinUsIcon },
-  { label: 'Privacy Policy', href: '#privacy', icon: PrivacyIcon },
+  // Use dedicated route for privacy policy
+  { label: 'Privacy Policy', href: '/privacy-policy', icon: PrivacyIcon },
   { label: 'Terms of Use', href: '#terms', icon: TermsIcon },
   { label: 'Cookie Settings', href: '#cookies', icon: CookieIcon },
   { label: 'Sitemap', href: '#sitemap', icon: SitemapIcon },
@@ -402,44 +404,53 @@ export default function Sidebar() {
                     filteredMenuItems.map((item, idx) => {
                       const isSelected = selectedMenuItem === item.href
                       return (
-                        <motion.div
-                          key={item.href}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: idx * 0.03 }}
-                        >
-                          <a
-                            href={item.href}
-                            onClick={(e) => {
-                              e.preventDefault()
-                              setSelectedMenuItem(item.href)
-                              scrollToSection(item.href, navigate, location)
-                              setIsOpen(false)
-                            }}
-                            className={`group flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-200 relative overflow-hidden ${
-                              isSelected
-                                ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 font-semibold'
-                                : 'text-gray-700 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10'
-                            }`}
+                        <div key={item.href}>
+                          <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: idx * 0.03 }}
                           >
-                            <div className={`relative z-10 flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 flex-shrink-0 ${
-                              isSelected
-                                ? 'bg-emerald-500/30 group-hover:bg-emerald-500/40'
-                                : 'bg-gray-100 dark:bg-white/5 group-hover:bg-emerald-500/20'
-                            } group-hover:scale-110`}>
-                              <item.icon />
-                            </div>
-                            <span className="relative z-10 font-medium text-sm truncate">{item.label}</span>
-                            {item.badge && (
-                              <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
-                                {item.badge}
-                              </span>
-                            )}
-                            {!isSelected && (
-                              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                            )}
-                          </a>
-                        </motion.div>
+                            <a
+                              href={item.href}
+                              onClick={(e) => {
+                                e.preventDefault()
+                                setSelectedMenuItem(item.href)
+                                if (item.href.startsWith('#')) {
+                                  scrollToSection(item.href, navigate, location)
+                                } else if (item.href.startsWith('/')) {
+                                  navigate({ to: item.href })
+                                }
+                                setIsOpen(false)
+                              }}
+                              className={`group flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-200 relative overflow-hidden ${
+                                isSelected
+                                  ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 font-semibold'
+                                  : 'text-gray-700 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10'
+                              }`}
+                            >
+                              <div className={`relative z-10 flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 flex-shrink-0 ${
+                                isSelected
+                                  ? 'bg-emerald-500/30 group-hover:bg-emerald-500/40'
+                                  : 'bg-gray-100 dark:bg-white/5 group-hover:bg-emerald-500/20'
+                              } group-hover:scale-110`}>
+                                <item.icon />
+                              </div>
+                              <span className="relative z-10 font-medium text-sm truncate">{item.label}</span>
+                              {item.badge && (
+                                <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
+                                  {item.badge}
+                                </span>
+                              )}
+                              {!isSelected && (
+                                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                              )}
+                            </a>
+                          </motion.div>
+                          {/* Visual end-of-menu cue after Sitemap */}
+                          {item.label === 'Sitemap' && !menuSearchQuery && (
+                            <div className="mt-2 mb-1 border-t border-dashed border-gray-200 dark:border-gray-700 opacity-80" />
+                          )}
+                        </div>
                       )
                     })
                   ) : (

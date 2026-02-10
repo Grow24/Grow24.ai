@@ -130,10 +130,11 @@ function IndexPage() {
       if (hash) {
         const element = document.getElementById(hash)
         if (element) {
-          // Small delay to ensure page is rendered
+          // Delay so page is rendered; use longer delay on mobile for layout to settle
+          const delay = typeof window !== 'undefined' && window.innerWidth < 768 ? 350 : 100
           setTimeout(() => {
             element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-          }, 100)
+          }, delay)
         }
       }
     }
@@ -195,11 +196,66 @@ function IndexPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-8 sm:mb-10 md:mb-12 px-4"
+            className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-6 sm:mb-8 md:mb-10 px-4"
           >
-            A comprehensive Personal & Business Management Platform that guides you through the
-            PBMP cycle for extraordinary growth and transformation.
+            Secure personal & professional growth by going through multiple iterations of the Value Cycle.
           </motion.p>
+
+          {/* Value Cycle steps under the hero subtitle */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35, duration: 0.6 }}
+            className="max-w-4xl mx-auto px-4 mb-8 sm:mb-10 md:mb-12"
+          >
+            <div className="text-center mb-4">
+              <p className="text-xs sm:text-sm font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-300">
+                Value cycle (You)
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 text-left text-sm sm:text-base">
+              <div className="rounded-xl bg-white/80 dark:bg-slate-900/40 border border-emerald-500/40 dark:border-emerald-400/50 p-4 shadow-sm">
+                <p className="text-emerald-700 dark:text-emerald-300 font-semibold mb-1">
+                  1. Identify Goals
+                </p>
+                <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
+                  Personal &amp; Professional Benefits that you aspire to, articulated as goals.
+                </p>
+              </div>
+              <div className="rounded-xl bg-white/80 dark:bg-slate-900/40 border border-emerald-500/40 dark:border-emerald-400/50 p-4 shadow-sm">
+                <p className="text-emerald-700 dark:text-emerald-300 font-semibold mb-1">
+                  2. Craft Strategy
+                </p>
+                <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
+                  Shortlist the focus areas and approach (i.e. how to deliver the focus area with excellence).
+                </p>
+              </div>
+              <div className="rounded-xl bg-white/80 dark:bg-slate-900/40 border border-emerald-500/40 dark:border-emerald-400/50 p-4 shadow-sm">
+                <p className="text-emerald-700 dark:text-emerald-300 font-semibold mb-1">
+                  3. Define Objective
+                </p>
+                <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
+                  Within the selected approach, define clear objectives and key results.
+                </p>
+              </div>
+              <div className="rounded-xl bg-white/80 dark:bg-slate-900/40 border border-teal-500/40 dark:border-teal-400/50 p-4 shadow-sm">
+                <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">
+                  4. Build Plan
+                </p>
+                <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
+                  Plan for multiple time periods so you can progress step by step.
+                </p>
+              </div>
+              <div className="rounded-xl bg-white/80 dark:bg-slate-900/40 border border-teal-500/40 dark:border-teal-400/50 p-4 shadow-sm sm:col-span-2 lg:col-span-1">
+                <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">
+                  5. Execute Plan
+                </p>
+                <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
+                  Execute the plan and assess results, feeding learning into the next cycle.
+                </p>
+              </div>
+            </div>
+          </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -629,13 +685,10 @@ function IndexPage() {
         <SolutionsMatrix3Panel />
       </motion.section>
 
-      {/* Library Section */}
+      {/* Library Section - use initial opacity 1 so content is always visible on mobile when navigating via #library */}
       <motion.section
         id="library"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        viewport={{ once: true, amount: 0.3 }}
+        initial={{ opacity: 1 }}
         className="min-h-screen"
       >
         <LibraryPage />
