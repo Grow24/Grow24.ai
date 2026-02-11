@@ -16,6 +16,7 @@ import { Route as LibraryRouteImport } from './routes/library'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SolutionsOverviewRouteImport } from './routes/solutions.overview'
 import { Route as SolutionsSolutionIdRouteImport } from './routes/solutions.$solutionId'
 
 const WhatWeOfferRoute = WhatWeOfferRouteImport.update({
@@ -53,6 +54,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SolutionsOverviewRoute = SolutionsOverviewRouteImport.update({
+  id: '/overview',
+  path: '/overview',
+  getParentRoute: () => SolutionsRoute,
+} as any)
 const SolutionsSolutionIdRoute = SolutionsSolutionIdRouteImport.update({
   id: '/$solutionId',
   path: '/$solutionId',
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/solutions': typeof SolutionsRouteWithChildren
   '/what-we-offer': typeof WhatWeOfferRoute
   '/solutions/$solutionId': typeof SolutionsSolutionIdRoute
+  '/solutions/overview': typeof SolutionsOverviewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/solutions': typeof SolutionsRouteWithChildren
   '/what-we-offer': typeof WhatWeOfferRoute
   '/solutions/$solutionId': typeof SolutionsSolutionIdRoute
+  '/solutions/overview': typeof SolutionsOverviewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/solutions': typeof SolutionsRouteWithChildren
   '/what-we-offer': typeof WhatWeOfferRoute
   '/solutions/$solutionId': typeof SolutionsSolutionIdRoute
+  '/solutions/overview': typeof SolutionsOverviewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/solutions'
     | '/what-we-offer'
     | '/solutions/$solutionId'
+    | '/solutions/overview'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/solutions'
     | '/what-we-offer'
     | '/solutions/$solutionId'
+    | '/solutions/overview'
   id:
     | '__root__'
     | '/'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/solutions'
     | '/what-we-offer'
     | '/solutions/$solutionId'
+    | '/solutions/overview'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -184,6 +196,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/solutions/overview': {
+      id: '/solutions/overview'
+      path: '/overview'
+      fullPath: '/solutions/overview'
+      preLoaderRoute: typeof SolutionsOverviewRouteImport
+      parentRoute: typeof SolutionsRoute
+    }
     '/solutions/$solutionId': {
       id: '/solutions/$solutionId'
       path: '/$solutionId'
@@ -196,10 +215,12 @@ declare module '@tanstack/react-router' {
 
 interface SolutionsRouteChildren {
   SolutionsSolutionIdRoute: typeof SolutionsSolutionIdRoute
+  SolutionsOverviewRoute: typeof SolutionsOverviewRoute
 }
 
 const SolutionsRouteChildren: SolutionsRouteChildren = {
   SolutionsSolutionIdRoute: SolutionsSolutionIdRoute,
+  SolutionsOverviewRoute: SolutionsOverviewRoute,
 }
 
 const SolutionsRouteWithChildren = SolutionsRoute._addFileChildren(

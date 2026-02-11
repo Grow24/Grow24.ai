@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, Link } from '@tanstack/react-router'
 import { useComingSoon } from '../contexts/ComingSoonContext'
 import { use3DRotation } from '../lib/use3DRotation'
 
@@ -673,12 +673,12 @@ export default function SolutionsMatrix3Panel() {
                                         })
                                         
                                         return (
-                                            <div key={category} className="p-2 sm:p-3 md:p-4 space-y-2 sm:space-y-3 min-w-[100px] sm:min-w-[120px]">
+                                            <div key={category} className="p-2 sm:p-3 md:p-4 space-y-2 sm:space-y-3 min-w-[100px] sm:min-w-[120px] flex flex-col">
                                             {allSolutions.length === 0 ? (
                                                 <motion.div
                                                     initial={{ opacity: 0 }}
                                                     animate={{ opacity: 1 }}
-                                                    className="flex flex-col items-center justify-center h-full min-h-[120px] sm:min-h-[150px] md:min-h-[180px] text-center py-3 sm:py-5 md:py-8 px-1 sm:px-2"
+                                                    className="flex flex-col items-center justify-center flex-1 min-h-[120px] sm:min-h-[150px] md:min-h-[180px] text-center py-3 sm:py-5 md:py-8 px-1 sm:px-2"
                                                 >
                                                     <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-2 sm:mb-3">
                                                         <svg className="w-4 h-4 sm:w-6 sm:h-6 text-slate-400 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -714,6 +714,17 @@ export default function SolutionsMatrix3Panel() {
                                                     />
                                                 ))
                                             )}
+                                            {/* Know More button - inside the block */}
+                                            <Link
+                                                to="/solutions/overview"
+                                                search={{ category }}
+                                                className="mt-auto flex-shrink-0 w-full px-2 py-1.5 sm:py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white text-[10px] xs:text-xs font-semibold flex items-center justify-center gap-1 transition-colors shadow-sm"
+                                            >
+                                                <span>Know More</span>
+                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                </svg>
+                                            </Link>
                                         </div>
                                     )
                                 })}
