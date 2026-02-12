@@ -45,8 +45,13 @@ export const CookieFooter: React.FC = () => {
                 Cookie Preferences
               </button>
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-500 hidden sm:block">
-              © {new Date().getFullYear()} Grow24.ai
+            <p className="text-xs text-gray-500 dark:text-gray-500 hidden sm:inline-flex items-center gap-1.5">
+              © {new Date().getFullYear()}
+              <img
+                src="/grow24_ai.jpeg"
+                alt="Grow24.ai"
+                className="h-4 w-auto align-middle"
+              />
             </p>
           </motion.div>
         </AnimatePresence>

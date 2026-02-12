@@ -733,7 +733,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                   }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`p-1.5 sm:p-2 rounded-lg transition-all flex-shrink-0 backdrop-blur-sm md:hidden shadow-md cursor-pointer ${
+                  className={`p-1.5 sm:p-2 rounded-lg transition-all flex-shrink-0 md:hidden shadow-md cursor-pointer ${
                     theme === 'dark'
                       ? 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
                       : 'bg-gray-800 text-white hover:bg-gray-700 border border-gray-900'
@@ -773,25 +773,14 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                   <img
                     src="/grow.svg"
                     alt="Grow24.ai Logo"
-                    className="h-8 sm:h-10 md:h-12 lg:h-12 w-auto object-contain"
-                    style={{ display: 'block', maxWidth: 'none' }}
+                    className="h-14 sm:h-16 md:h-[4.5rem] lg:h-20 w-auto object-contain"
+                    style={{ display: 'block', maxWidth: 'none', imageRendering: 'crisp-edges' }}
                   />
                 </a>
               </div>
 
               {/* Right Side: Search + Auth */}
               <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 flex-shrink-0">
-                {/* Get a Demo - Primary - Hide text on mobile, show icon only */}
-                <motion.button
-                  onClick={() => showComingSoon('get-demo', 'Get a Demo', 'Enter your details to schedule a personalized demo and learn how Grow24.ai can transform your growth journey.')}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="px-2 sm:px-3 md:px-5 py-1 sm:py-1.5 md:py-2 bg-cta-green-500/90 hover:bg-cta-green-600 text-white text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 shadow-lg shadow-cta-green-900/20 whitespace-nowrap"
-                >
-                  <span className="hidden sm:inline">Get a Demo</span>
-                  <span className="sm:hidden">Demo</span>
-                </motion.button>
-
                 {/* Theme Toggle */}
                 <motion.button
                   onClick={() => {

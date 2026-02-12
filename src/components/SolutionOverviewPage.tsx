@@ -36,23 +36,49 @@ const HERO_CARDS = [
   { title: 'Case Studies', icon: '📁', desc: 'Success stories and impact' },
 ]
 
+const SECTION_CTA_CLASS =
+  'inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-sm font-semibold text-white transition-colors'
+
 function SectionBlock({
   title,
   children,
   id,
   icon,
+  cta,
+  onCtaScroll,
+  onCtaModal,
 }: {
   title: string
   children: React.ReactNode
   id?: string
   icon?: string
+  cta?: { label: string; scrollToId?: string; opensModal?: boolean }
+  onCtaScroll?: (sectionId: string) => void
+  onCtaModal?: (sectionTitle: string) => void
 }) {
   return (
     <section id={id} className="bg-white dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
-      <h3 className="font-bold text-slate-800 dark:text-slate-200 mb-4 flex items-center gap-2">
-        {icon && <span className="text-lg">{icon}</span>}
-        {title}
-      </h3>
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <h3 className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+          {icon && <span className="text-lg">{icon}</span>}
+          {title}
+        </h3>
+        {cta && (
+          <button
+            type="button"
+            onClick={() => {
+              if (cta.opensModal && onCtaModal) onCtaModal(title)
+              else if (cta.scrollToId && onCtaScroll) onCtaScroll(cta.scrollToId)
+            }}
+            className={SECTION_CTA_CLASS}
+          >
+            <span>{cta.label}</span>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        )}
+      </div>
       {children}
     </section>
   )
@@ -69,6 +95,15 @@ export default function SolutionOverviewPage() {
     setActiveTab(id)
     const el = document.getElementById(id)
     el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  const handleSectionCtaModal = (sectionTitle: string) => {
+    showComingSoon(
+      'solutions-overview-section',
+      `${sectionTitle} – Get in touch`,
+      'Enter your details and we’ll reach out with next steps or a demo.',
+      { sectionTitle },
+    )
   }
 
   // On load, scroll to the section for the category passed from the dashboard
@@ -187,7 +222,13 @@ export default function SolutionOverviewPage() {
 
           {/* Content grid */}
           <div className="grid md:grid-cols-2 gap-4">
-            <SectionBlock id="overview" title="Executive Overview" icon="📋">
+            <SectionBlock
+              id="overview"
+              title="Executive Overview"
+              icon="📋"
+              cta={{ label: 'Key Outcomes', scrollToId: 'outcomes' }}
+              onCtaScroll={scrollToSection}
+            >
               <div className="space-y-3 text-sm text-slate-600 dark:text-slate-400">
                 <p><strong className="text-slate-800 dark:text-slate-200">Value Promise:</strong> Accelerate your corporate strategy development by turning core business goals into actionable plans.</p>
                 <p><strong className="text-slate-800 dark:text-slate-200">Target Audience:</strong> C-suite executives, strategy teams, business unit leaders.</p>
@@ -197,70 +238,137 @@ export default function SolutionOverviewPage() {
               </div>
             </SectionBlock>
 
-            <SectionBlock id="outcomes" title="Outcomes & KPIs" icon="📊">
+            <SectionBlock
+              id="outcomes"
+              title="Outcomes & KPIs"
+              icon="📊"
+              cta={{ label: 'Get Started', opensModal: true }}
+              onCtaModal={handleSectionCtaModal}
+            >
               <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
                 <li>• Primary Outcomes: Revenue growth, operational efficiency, cost reduction</li>
                 <li>• North-Star KPIs: Revenue Growth Rate, EBITDA Margin, Customer Retention</li>
               </ul>
             </SectionBlock>
 
-            <SectionBlock id="rtb" title="Reason To Believe Hub" icon="💡">
+            <SectionBlock
+              id="rtb"
+              title="Reason To Believe Hub"
+              icon="💡"
+              cta={{ label: 'Select Framework', opensModal: true }}
+              onCtaModal={handleSectionCtaModal}
+            >
               <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
                 <li>• Proven Frameworks: 7Ps, OKRs, SWOT Analysis</li>
                 <li>• Quality Assurance: Code priorities, case studies, content libraries</li>
               </ul>
             </SectionBlock>
 
-            <SectionBlock id="questions" title="Questions Engine" icon="❓">
+            <SectionBlock
+              id="questions"
+              title="Questions Engine"
+              icon="❓"
+              cta={{ label: 'Explore Questions', opensModal: true }}
+              onCtaModal={handleSectionCtaModal}
+            >
               <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
                 <li>• Key Strategic Questions: Exploratory, Predictive, Prescriptive</li>
                 <li>• Data & Analysis: CRM, ERP, regression, clustering, Power BI</li>
               </ul>
             </SectionBlock>
 
-            <SectionBlock id="templates" title="Templates Delivered" icon="📄">
+            <SectionBlock
+              id="templates"
+              title="Templates Delivered"
+              icon="📄"
+              cta={{ label: 'Browse Templates', opensModal: true }}
+              onCtaModal={handleSectionCtaModal}
+            >
               <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
                 <li>• Strategic Templates: OGSM, objectives, goals, strategy</li>
                 <li>• Standard Processes: Goal mapping to lifecycle stages</li>
               </ul>
             </SectionBlock>
 
-            <SectionBlock id="process" title="Process Library" icon="🔄">
+            <SectionBlock
+              id="process"
+              title="Process Library"
+              icon="🔄"
+              cta={{ label: 'View Processes', opensModal: true }}
+              onCtaModal={handleSectionCtaModal}
+            >
               <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
                 <li>• Standard Processes: Goal Setting & KPIs, Market Segmentation</li>
                 <li>• Step-by-Step Workflows: Inputs → Step 1 → Step 2 → Outputs</li>
               </ul>
             </SectionBlock>
 
-            <SectionBlock id="analytics" title="Analytics & Dashboards" icon="📈">
+            <SectionBlock
+              id="analytics"
+              title="Analytics & Dashboards"
+              icon="📈"
+              cta={{ label: 'View Dashboards', opensModal: true }}
+              onCtaModal={handleSectionCtaModal}
+            >
               <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
                 <li>• Performance Dashboards: North-Star KPI trends</li>
                 <li>• KPI Tracking: Revenue Growth, EBITDA, Retention, Churn</li>
               </ul>
             </SectionBlock>
 
-            <SectionBlock id="adoption" title="Adoption & Operating Model" icon="👥">
+            <SectionBlock
+              id="adoption"
+              title="Adoption & Operating Model"
+              icon="👥"
+              cta={{ label: 'View Playbook', opensModal: true }}
+              onCtaModal={handleSectionCtaModal}
+            >
               <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
                 <li>• Operating Cadence: Weekly teams, Bi-weekly divisions, Quarterly executives</li>
                 <li>• Roles & Rituals: Sponsor, Owners, RACI, Control Tower</li>
               </ul>
             </SectionBlock>
 
-            <SectionBlock id="training" title="Roles & Training" icon="🎓">
+            <SectionBlock
+              id="training"
+              title="Roles & Training"
+              icon="🎓"
+              cta={{ label: 'Start Training', opensModal: true }}
+              onCtaModal={handleSectionCtaModal}
+            >
               <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
                 <li>• Role-Based Training: Sponsor, Owners, Operators</li>
                 <li>• Learning Paths: Strategy Development, Data-Informed Decisions, Agile Execution</li>
               </ul>
             </SectionBlock>
 
-            <SectionBlock id="integration" title="Implementation & Integration" icon="🔗">
+            <SectionBlock
+              id="integration"
+              title="Implementation & Integration"
+              icon="🔗"
+              cta={{ label: 'See Pricing', scrollToId: 'pricing' }}
+              onCtaScroll={scrollToSection}
+            >
               <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
                 <li>• Data Synchronization, Workflow Automation, Single Sign-On</li>
                 <li>• Connected Systems: CRM, ERP, BI Tool integration</li>
               </ul>
             </SectionBlock>
 
-            <SectionBlock id="pricing" title="Pricing & Packages" icon="💰">
+            <SectionBlock
+              id="pricing"
+              title="Pricing & Packages"
+              icon="💰"
+              cta={{ label: 'Get Pricing', opensModal: true }}
+              onCtaModal={(title) => {
+                showComingSoon(
+                  'solutions-pricing',
+                  'Get Pricing & Packages',
+                  'Enter your details to receive tailored pricing options.',
+                  { sectionTitle: title },
+                )
+              }}
+            >
               <div className="text-sm text-slate-600 dark:text-slate-400 space-y-2">
                 <p><strong className="text-slate-800 dark:text-slate-200">Plans:</strong> Starter, Professional, Enterprise.</p>
                 <p><strong className="text-slate-800 dark:text-slate-200">Starter:</strong> Up to 3 teams, standard templates & KPIs, email support.</p>
@@ -270,7 +378,13 @@ export default function SolutionOverviewPage() {
               </div>
             </SectionBlock>
 
-            <SectionBlock id="change-management" title="Change Management" icon="📝">
+            <SectionBlock
+              id="change-management"
+              title="Change Management"
+              icon="📝"
+              cta={{ label: 'See Case Studies', scrollToId: 'case-studies' }}
+              onCtaScroll={scrollToSection}
+            >
               <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
                 <li>• Change Log: Track key decisions, scope changes, and approvals.</li>
                 <li>• Audit & Compliance: Capture evidence, owner, due dates, and status for each action.</li>
@@ -278,7 +392,13 @@ export default function SolutionOverviewPage() {
               </ul>
             </SectionBlock>
 
-            <SectionBlock id="case-studies" title="Case Studies" icon="📁">
+            <SectionBlock
+              id="case-studies"
+              title="Case Studies"
+              icon="📁"
+              cta={{ label: 'Read Case Studies', opensModal: true }}
+              onCtaModal={handleSectionCtaModal}
+            >
               <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
                 <li>• Success Stories: Quantified results from real businesses</li>
                 <li>• Impact Assessment: Before/after metrics</li>

@@ -198,10 +198,10 @@ function IndexPage() {
             transition={{ delay: 0.3, duration: 0.6 }}
             className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-6 sm:mb-8 md:mb-10 px-4"
           >
-            Secure personal & professional growth by going through multiple iterations of the Value Cycle.
+            Secure personal & professional growth by going through multiple iterations of the Individual Growth Cycle.
           </motion.p>
 
-          {/* Value Cycle steps under the hero subtitle */}
+          {/* Individual Growth Cycle steps under the hero subtitle */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -210,49 +210,87 @@ function IndexPage() {
           >
             <div className="text-center mb-4">
               <p className="text-xs sm:text-sm font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-300">
-                Value cycle (You)
+                Individual Growth Cycle
               </p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 text-left text-sm sm:text-base">
-              <div className="rounded-xl bg-white/80 dark:bg-slate-900/40 border border-emerald-500/40 dark:border-emerald-400/50 p-4 shadow-sm">
-                <p className="text-emerald-700 dark:text-emerald-300 font-semibold mb-1">
-                  1. Identify Goals
-                </p>
-                <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
-                  Personal &amp; Professional Benefits that you aspire to, articulated as goals.
-                </p>
-              </div>
-              <div className="rounded-xl bg-white/80 dark:bg-slate-900/40 border border-emerald-500/40 dark:border-emerald-400/50 p-4 shadow-sm">
-                <p className="text-emerald-700 dark:text-emerald-300 font-semibold mb-1">
-                  2. Craft Strategy
-                </p>
-                <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
-                  Shortlist the focus areas and approach (i.e. how to deliver the focus area with excellence).
-                </p>
-              </div>
-              <div className="rounded-xl bg-white/80 dark:bg-slate-900/40 border border-emerald-500/40 dark:border-emerald-400/50 p-4 shadow-sm">
-                <p className="text-emerald-700 dark:text-emerald-300 font-semibold mb-1">
-                  3. Define Objective
-                </p>
-                <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
-                  Within the selected approach, define clear objectives and key results.
-                </p>
-              </div>
-              <div className="rounded-xl bg-white/80 dark:bg-slate-900/40 border border-teal-500/40 dark:border-teal-400/50 p-4 shadow-sm">
-                <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">
-                  4. Build Plan
-                </p>
-                <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
-                  Plan for multiple time periods so you can progress step by step.
-                </p>
-              </div>
-              <div className="rounded-xl bg-white/80 dark:bg-slate-900/40 border border-teal-500/40 dark:border-teal-400/50 p-4 shadow-sm sm:col-span-2 lg:col-span-1">
-                <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">
-                  5. Execute Plan
-                </p>
-                <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
-                  Execute the plan and assess results, feeding learning into the next cycle.
-                </p>
+            {/* pl-12 / sm:pl-14 (4.5rem) keeps L-shaped arrow aligned left; match screenshot */}
+            <div className="relative max-w-md mx-auto text-left text-sm sm:text-base pl-12 sm:pl-14">
+              {/* L-shaped arrow: from bottom of 5. Execute Plan, up, then right to 1. Identify Goals (as in screenshot) */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none text-emerald-600 dark:text-emerald-400" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
+                {/* Vertical stem: starts at bottom of Execute Plan block, straight up, clearly to the left of blocks */}
+                <path d="M 6 97 L 6 10" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" fill="none" />
+                {/* Horizontal: sharp right turn at top, toward 1. Identify Goals */}
+                <path d="M 6 10 L 14 10" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" fill="none" />
+                {/* Arrowhead: connects to left edge of step 1 block, no overlap */}
+                <path d="M 11 7 L 14 10 L 11 13" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+              </svg>
+              {/* Steps column with down arrows between each */}
+              <div className="relative flex flex-col items-stretch min-w-0">
+                {/* Step 1: Identify Goals */}
+                <div className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-emerald-500/40 dark:border-emerald-400/50 p-4 shadow-sm">
+                  <p className="text-emerald-700 dark:text-emerald-300 font-semibold mb-1">
+                    1. Identify Goals
+                  </p>
+                  <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
+                    Personal &amp; Professional Benefits that you aspire to, articulated as goals.
+                  </p>
+                </div>
+                <div className="flex justify-center py-1" aria-hidden>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-emerald-600 dark:text-emerald-400 shrink-0">
+                    <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                {/* Step 2: Craft Strategy */}
+                <div className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-emerald-500/40 dark:border-emerald-400/50 p-4 shadow-sm">
+                  <p className="text-emerald-700 dark:text-emerald-300 font-semibold mb-1">
+                    2. Craft Strategy
+                  </p>
+                  <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
+                    Shortlist the focus areas and approach (i.e. how to deliver the focus area with excellence).
+                  </p>
+                </div>
+                <div className="flex justify-center py-1" aria-hidden>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-emerald-600 dark:text-emerald-400 shrink-0">
+                    <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                {/* Step 3: Define Objective */}
+                <div className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-emerald-500/40 dark:border-emerald-400/50 p-4 shadow-sm">
+                  <p className="text-emerald-700 dark:text-emerald-300 font-semibold mb-1">
+                    3. Define Objective
+                  </p>
+                  <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
+                    Within the selected approach, define clear objectives and key results.
+                  </p>
+                </div>
+                <div className="flex justify-center py-1" aria-hidden>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-emerald-600 dark:text-emerald-400 shrink-0">
+                    <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                {/* Step 4: Build Plan */}
+                <div className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-teal-500/40 dark:border-teal-400/50 p-4 shadow-sm">
+                  <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">
+                    4. Build Plan
+                  </p>
+                  <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
+                    Plan for multiple time periods so you can progress step by step.
+                  </p>
+                </div>
+                <div className="flex justify-center py-1" aria-hidden>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-teal-600 dark:text-teal-400 shrink-0">
+                    <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                {/* Step 5: Execute Plan */}
+                <div className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-teal-500/40 dark:border-teal-400/50 p-4 shadow-sm">
+                  <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">
+                    5. Execute Plan
+                  </p>
+                  <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
+                    Execute the plan and assess results, feeding learning into the next cycle.
+                  </p>
+                </div>
               </div>
             </div>
           </motion.div>
