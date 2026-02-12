@@ -724,13 +724,9 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
               {/* Left Side: Menu Button + Logo */}
               <div className="flex items-center gap-3 sm:gap-4 md:gap-6 flex-1 md:flex-none overflow-visible">
                 {/* Hamburger Menu Button - Only visible on mobile/tablet, hidden on laptop/desktop */}
-                <motion.a
-                  href="#home"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    scrollToSection('#home', navigate, location)
-                    setSideMenuOpen(true)
-                  }}
+                <motion.button
+                  type="button"
+                  onClick={() => setSideMenuOpen(true)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className={`p-1.5 sm:p-2 rounded-lg transition-all flex-shrink-0 md:hidden shadow-md cursor-pointer ${
@@ -738,10 +734,10 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                       ? 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
                       : 'bg-gray-800 text-white hover:bg-gray-700 border border-gray-900'
                     }`}
-                  aria-label="Go to home and open menu"
+                  aria-label="Open menu"
                 >
                   <HamburgerIcon />
-                </motion.a>
+                </motion.button>
 
                 {/* Plus Button - Opens MegaMenu - Only visible on desktop (xl: 1280px+), completely hidden on mobile/tablet */}
                 {onMegaMenuToggle && isDesktop && (

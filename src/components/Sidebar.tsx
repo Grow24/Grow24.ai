@@ -293,13 +293,9 @@ export default function Sidebar() {
     <>
       {/* Toggle Button - Fixed on left side - Hidden when sidebar is open and hidden on mobile since header has menu button */}
       {!isOpen && (
-        <motion.a
-          href="#home"
-          onClick={(e) => {
-            e.preventDefault()
-            scrollToSection('#home', navigate, location)
-            setIsOpen(!isOpen)
-          }}
+        <motion.button
+          type="button"
+          onClick={() => setIsOpen(true)}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           className={`hidden md:flex fixed top-6 left-6 z-[70] w-12 h-12 rounded-lg items-center justify-center transition-all duration-200 cursor-pointer ${
@@ -316,10 +312,10 @@ export default function Sidebar() {
           } as React.CSSProperties}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          aria-label="Go to home and toggle menu"
+          aria-label="Open menu"
         >
           <MenuIcon isOpen={isOpen} isHovered={isHovered || isOpen} />
-        </motion.a>
+        </motion.button>
       )}
 
       {/* Backdrop - No blur */}

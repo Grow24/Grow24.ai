@@ -189,7 +189,14 @@ function IndexPage() {
               Grow Your Potential
             </span>
             <br />
-            <span className="text-slate-600 dark:text-slate-400">with Grow24.ai</span>
+            <span className="text-slate-600 dark:text-slate-400 inline-flex items-center justify-center gap-2">
+              <span>with</span>
+              <img
+                src="/grow24_ai.jpeg"
+                alt="Grow24.ai"
+                className="h-[1.875rem] sm:h-[2.25rem] md:h-[3.75rem] lg:h-[4.5rem] w-auto align-middle"
+              />
+            </span>
           </motion.h1>
 
           <motion.p
