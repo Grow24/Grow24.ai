@@ -186,7 +186,7 @@ function IndexPage() {
             className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6"
           >
             <span className="text-gradient">
-              Grow Your Potential
+              Grow & Thrive to your full Potential
             </span>
             <br />
             <span className="text-slate-600 dark:text-slate-400 inline-flex items-center justify-center gap-2">
@@ -220,21 +220,23 @@ function IndexPage() {
                 Individual Growth Cycle
               </p>
             </div>
-            {/* pl-12 / sm:pl-14 (4.5rem) keeps L-shaped arrow aligned left; match screenshot */}
+            {/* pl-12 / sm:pl-14: room for L-shaped return arrow; arrow runs from step 5 up, then right into step 1 */}
             <div className="relative max-w-md mx-auto text-left text-sm sm:text-base pl-12 sm:pl-14">
-              {/* L-shaped arrow: from bottom of 5. Execute Plan, up, then right to 1. Identify Goals (as in screenshot) */}
+              {/* L-shaped return arrow: starts from center of left side of step 5 block, goes left then up, then right into step 1 */}
               <svg className="absolute inset-0 w-full h-full pointer-events-none text-emerald-600 dark:text-emerald-400" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
-                {/* Vertical stem: starts at bottom of Execute Plan block, straight up, clearly to the left of blocks */}
-                <path d="M 6 97 L 6 10" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" fill="none" />
-                {/* Horizontal: sharp right turn at top, toward 1. Identify Goals */}
-                <path d="M 6 10 L 14 10" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" fill="none" />
-                {/* Arrowhead: connects to left edge of step 1 block, no overlap */}
-                <path d="M 11 7 L 14 10 L 11 13" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                {/* From center of left side of step 5 block (x=12): short segment left to vertical stem */}
+                <path d="M 12 90 L 6 90" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+                {/* Vertical: up to top */}
+                <path d="M 6 90 L 6 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+                {/* Horizontal: right into left edge of step 1 block */}
+                <path d="M 6 8 L 12 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+                {/* Arrowhead: tip touches left edge of 1. Identify Goals block */}
+                <path d="M 9 5 L 12 8 L 9 11" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" fill="none" />
               </svg>
               {/* Steps column with down arrows between each */}
               <div className="relative flex flex-col items-stretch min-w-0">
-                {/* Step 1: Identify Goals */}
-                <div className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-emerald-500/40 dark:border-emerald-400/50 p-4 shadow-sm">
+                {/* Step 1: Identify Goals — return arrow connects to this block */}
+                <div id="growth-cycle-step-1" className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-emerald-500/40 dark:border-emerald-400/50 p-4 shadow-sm">
                   <p className="text-emerald-700 dark:text-emerald-300 font-semibold mb-1">
                     1. Identify Goals
                   </p>
@@ -289,8 +291,8 @@ function IndexPage() {
                     <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
-                {/* Step 5: Execute Plan */}
-                <div className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-teal-500/40 dark:border-teal-400/50 p-4 shadow-sm">
+                {/* Step 5: Execute Plan — return arrow starts from this block */}
+                <div id="growth-cycle-step-5" className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-teal-500/40 dark:border-teal-400/50 p-4 shadow-sm">
                   <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">
                     5. Execute Plan
                   </p>
