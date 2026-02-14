@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import SolutionsMatrix3Panel from '../components/SolutionsMatrix3Panel'
 import LibraryPage from '../components/Library'
 import { useComingSoon } from '../contexts/ComingSoonContext'
+import { useTheme } from '../contexts/ThemeContext'
 import { use3DRotation } from '../lib/use3DRotation'
 
 // SVG Icons for WhatWeOffer section
@@ -117,6 +118,7 @@ export const Route = createFileRoute('/')({
 
 function IndexPage() {
   const { showComingSoon } = useComingSoon()
+  const { theme } = useTheme()
   const [activeTab, setActiveTab] = useState<'what' | 'why' | 'how'>('what')
   const [personalBgWhite, setPersonalBgWhite] = useState(false)
   const [professionalBgWhite, setProfessionalBgWhite] = useState(false)
@@ -192,7 +194,7 @@ function IndexPage() {
             <span className="text-slate-600 dark:text-slate-400 inline-flex items-center justify-center gap-2">
               <span>with</span>
               <img
-                src="/grow24_ai.jpeg"
+                src={theme === 'dark' ? '/grow24_ai_icon_4.jpeg' : '/grow24_ai_icon_5.jpeg'}
                 alt="Grow24.ai"
                 className="h-[1.875rem] sm:h-[2.25rem] md:h-[3.75rem] lg:h-[4.5rem] w-auto align-middle"
               />

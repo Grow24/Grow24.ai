@@ -160,7 +160,7 @@ header.no-blur-header *::after {
 .about-html .wrap {
   max-width: var(--max);
   margin: 0 auto;
-  padding: 26px var(--pad) 60px;
+  padding: 80px var(--pad) 60px; /* top padding so content starts below fixed topbar */
 }
 
 .about-html .topbar {
@@ -173,9 +173,13 @@ header.no-blur-header *::after {
   backdrop-filter: blur(10px);
   border-radius: 999px;
   box-shadow: var(--shadow2);
-  position: sticky;
+  position: fixed;
   top: 14px;
-  z-index: 10;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 2 * var(--pad));
+  max-width: var(--max);
+  z-index: 50;
 }
 
 .about-html .brand {
@@ -335,6 +339,15 @@ header.no-blur-header *::after {
   font-size: clamp(14px, 1.6vw, 17px);
   line-height: 1.55;
   max-width: 76ch;
+}
+
+.about-html .value-highlight {
+  color: #b45309;
+  font-weight: 700;
+}
+
+.dark .about-html .value-highlight {
+  color: #f59e0b;
 }
 
 .about-html .lifecycle {

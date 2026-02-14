@@ -36,48 +36,31 @@ const AboutShowcase = () => {
             </div>
 
             <h1 className="headline">
-              Access tried-and-tested Knowledge &amp; Tools to make better decisions and execute with
-              confidence
+              A digital platform which helps you manage all stages of your inter-connected Personal &amp; Professional Life
             </h1>
 
             <p className="subhead">
-              <strong>
-                grow<sup>24</sup>
-              </strong>{' '}
-              (grow to the power 24) is a digital platform built under{' '}
-              <strong>Data Science Technologies (Pvt) Ltd</strong>. It integrates <strong>Personal</strong>{' '}
-              and <strong>Business</strong> management into one connected journey.
+              Provides you the confidence to define &amp; secure <span className="value-highlight">Value</span> by going through the <span className="value-highlight">Value Cycle</span>
             </p>
 
-            <div className="lifecycle" aria-label="Lifecycle">
-              <div className="step">
-                <span className="chip">V</span>Vision
-              </div>
-              <div className="step">
-                <span className="chip">M</span>Mission
-              </div>
-              <div className="step">
-                <span className="chip">G</span>Goals
-              </div>
-              <div className="step">
-                <span className="chip">S</span>Strategy
-              </div>
-              <div className="step">
-                <span className="chip">P</span>Plan
-              </div>
-              <div className="step">
-                <span className="chip">E</span>Execute
-              </div>
-              <div className="step">
-                <span className="chip">O</span>Operate
-              </div>
-            </div>
+            <p className="subhead">
+              The (<span className="value-highlight">Personal, Professional</span>) <span className="value-highlight">Value Cycle</span> is :
+            </p>
 
-            <div className="note">
-              We are <strong>privately funded</strong>—not driven by outside agendas—only by{' '}
-              <strong>client outcomes</strong>, <strong>transparency</strong>, and{' '}
-              <strong>long-term value</strong>.
-            </div>
+            <p className="subhead" style={{ fontWeight: 700 }}>
+              Goal Identification → Strategy Crafting → Objectives Definition → Plan Construction &amp; Execution
+            </p>
+
+            <ol className="subhead" style={{ listStylePosition: 'outside', paddingLeft: '1.5em', marginTop: 8 }}>
+              <li style={{ marginBottom: '0.5em' }}>Based on tried &amp; tested industry standard Knowledge (e.g BABOK for Business Analysis, PMBOK for Project Mgmt)</li>
+              <li style={{ marginBottom: '0.5em' }}>Complete ToolSet (Tools, Techniques, Templates, Case Studies, Trainings) for you to stay engaged for years</li>
+              <li style={{ marginBottom: '0.5em' }}>Has Marketplace through which accredited Solution Providers can plug into specific parts of the (Personal, Professional) Value Cycle</li>
+              <li style={{ marginBottom: '0.5em' }}>Highly Secure - run in offline mode, data transfers in encrypted manner</li>
+              <li style={{ marginBottom: '0.5em' }}>Interact with the platform through the Channel of your choosing</li>
+              <li style={{ marginBottom: '0.5em' }}>High User Engagement experience - Built using modern User Engagement principles</li>
+              <li style={{ marginBottom: '0.5em' }}>Built to live in an inter-connected ecosystem of Products &amp; Solutions</li>
+              <li style={{ marginBottom: '0.5em' }}>Built for Change - using modern, flexible architecture</li>
+            </ol>
 
             <div className="section-cta">
               <div className="tagline">
@@ -98,12 +81,23 @@ const AboutShowcase = () => {
               <span className="pill">02</span> Why
             </div>
 
-            <h2 className="headline">A unified journey for Personal &amp; Professional growth</h2>
+            <h2 className="headline">
+              Like 2 sides of a coin, each of us have a Personal Life &amp; a Professional Life
+              <br />
+              Hence, a Platform that we rely on for Identifying &amp; Executing Decision, should reflect that
+            </h2>
             <p className="subhead">
               Personal and professional growth are inextricably linked. People want a single platform with the{' '}
               <strong>spread</strong> (Vision → Mission → Goals → Strategy → Plan → Execute → Operate) and the{' '}
               <strong>depth</strong> (AI-enabled guidance and analytics) to manage both—over years of life and
               work.
+            </p>
+
+            <p className="subhead" style={{ fontWeight: 700, marginTop: 12 }}>
+              However, the current Solutions are unable to meet that need
+            </p>
+            <p className="subhead" style={{ marginTop: 4 }}>
+              The following 3 major issues exist in the Solution Landscape
             </p>
 
             <div className="grid3" role="list">
