@@ -442,9 +442,9 @@ export default function Sidebar() {
                               )}
                             </a>
                           </motion.div>
-                          {/* Visual end-of-menu cue after Sitemap */}
-                          {item.label === 'Sitemap' && !menuSearchQuery && (
-                            <div className="mt-2 mb-1 border-t border-dashed border-gray-200 dark:border-gray-700 opacity-80" />
+                          {/* Line after Pressroom so users know there is nothing below it */}
+                          {item.label === 'Pressroom' && !menuSearchQuery && (
+                            <div className="mt-4 mb-1 border-t border-gray-300 dark:border-gray-600" aria-hidden />
                           )}
                         </div>
                       )

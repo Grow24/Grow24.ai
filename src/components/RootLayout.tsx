@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Outlet } from '@tanstack/react-router'
 import { AnimatePresence } from 'framer-motion'
 import { Header } from './Header'
-import { FloatingWhatsApp, SocialLinks } from './FloatingWidgets'
+import { FloatingLeftWidgets } from './FloatingWidgets'
 import PBMPChatbot from './PBMPChatbot'
 import Sidebar from './Sidebar'
 import MegaMenu from './MegaMenu'
@@ -33,15 +33,14 @@ export const RootLayout: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Main Content */}
-      <main className="pt-16 sm:pt-20 pb-10 sm:pb-14">
+      {/* Main Content - top padding clears fixed header so content is never cut off when scrolling */}
+      <main className="pt-header pb-10 sm:pb-14">
         <Outlet />
       </main>
 
-      {/* Floating Widgets */}
-      <FloatingWhatsApp position="left" />
+      {/* Floating Widgets - WhatsApp and social icons fixed in one place, do not move */}
+      <FloatingLeftWidgets />
       <PBMPChatbot position="right" />
-      <SocialLinks />
 
       {/* Global CTA Bar */}
       <GlobalCTABar />

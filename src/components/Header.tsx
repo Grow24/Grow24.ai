@@ -710,19 +710,17 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
         } as React.CSSProperties}
       >
         <div 
-          className={`no-blur-header transition-all duration-300 bg-white dark:bg-slate-950/90 ${
-            scrolled ? '' : ''
-          }`}
+          className="no-blur-header transition-all duration-300 bg-transparent"
           style={{
             backdropFilter: 'none',
             WebkitBackdropFilter: 'none',
             filter: 'none'
           } as React.CSSProperties}
         >
-          <div className="w-full px-3 sm:px-4 md:px-8 py-2 sm:py-3">
-            <div className="flex items-center justify-between gap-1.5 sm:gap-2 md:gap-8">
-              {/* Left Side: Menu Button + Logo */}
-              <div className="flex items-center gap-3 sm:gap-4 md:gap-6 flex-1 md:flex-none overflow-visible">
+          <div className="w-full px-3 sm:px-4 md:px-8 py-1.5 sm:py-2">
+            <div className="flex items-center justify-between gap-1.5 sm:gap-2 md:gap-4">
+              {/* Left Side: Menu Button + Logo - min-w-0 so logo doesn't overlap content on mobile */}
+              <div className="flex items-center gap-2 sm:gap-3 md:gap-6 flex-1 md:flex-none min-w-0 overflow-hidden">
                 {/* Hamburger Menu Button - Only visible on mobile/tablet, hidden on laptop/desktop */}
                 <motion.button
                   type="button"
@@ -757,20 +755,20 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                   </motion.button>
                 )}
 
-                {/* Logo - kept snug next to hamburger to avoid overlapping content */}
+                {/* Logo - smaller and constrained on mobile so it stays next to hamburger without overlapping */}
                 <a
                   href="#home"
                   onClick={(e) => {
                     e.preventDefault()
                     scrollToSection('#home', navigate, location)
                   }}
-                  className="flex items-center hover:opacity-80 transition-opacity shrink-0 overflow-visible"
+                  className="flex items-center hover:opacity-80 transition-opacity min-w-0 max-w-[140px] sm:max-w-[180px] md:max-w-none"
                 >
                   <img
                     src="/grow.svg"
                     alt="Grow24.ai Logo"
-                    className="h-14 sm:h-16 md:h-[4.5rem] lg:h-20 w-auto object-contain"
-                    style={{ display: 'block', maxWidth: 'none', imageRendering: 'crisp-edges' }}
+                    className="h-10 sm:h-14 md:h-[4.5rem] lg:h-20 w-auto max-h-10 sm:max-h-14 md:max-h-none object-contain"
+                    style={{ display: 'block', imageRendering: 'crisp-edges' }}
                   />
                 </a>
               </div>
@@ -1148,8 +1146,8 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                               )}
                             </a>
                           </motion.div>
-                          {/* Line after Sitemap so users know there is nothing below it */}
-                          {item.label === 'Sitemap' && !menuSearchQuery && (
+                          {/* Line after Pressroom so users know there is nothing below it */}
+                          {item.label === 'Pressroom' && !menuSearchQuery && (
                             <div className="mt-4 mb-1 border-t border-gray-300 dark:border-gray-600" aria-hidden />
                           )}
                         </div>
@@ -1163,8 +1161,8 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                 </div>
               </nav>
 
-                {/* Mobile CTA */}
-                <div className="p-4 border-t border-gray-200 dark:border-white/10 mt-auto">
+                {/* Mobile CTA - hidden per request: not shown in mobile menu */}
+                <div className="hidden p-4 border-t border-gray-200 dark:border-white/10 mt-auto">
                   <motion.button
                     onClick={() => {
                       setSideMenuOpen(false)

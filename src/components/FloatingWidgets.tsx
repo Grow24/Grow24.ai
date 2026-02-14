@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { motion, AnimatePresence, useMotionValue } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useGlobalCTABar } from '../contexts/GlobalCTABarContext'
-
-const STORAGE_KEYS = {
-  whatsApp: 'floatingWhatsAppPosition',
-  socialLinks: 'socialLinksPosition',
-} as const
 
 // WhatsApp SVG Icon
 const WhatsAppIcon = () => (
@@ -56,53 +51,14 @@ interface FloatingWidgetProps {
 
 export const FloatingWhatsApp: React.FC<FloatingWidgetProps> = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const { isVisible: isCTABarVisible } = useGlobalCTABar()
   const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '+919370239600'
-  const x = useMotionValue(0)
-  const y = useMotionValue(0)
-
-  // Load saved position on mount
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEYS.whatsApp)
-      if (saved) {
-        const { x: sx, y: sy } = JSON.parse(saved)
-        if (typeof sx === 'number' && typeof sy === 'number') {
-          x.set(sx)
-          y.set(sy)
-        }
-      }
-    } catch {
-      // Ignore invalid stored data
-    }
-  }, [x, y])
-
-  const handleDragEnd = () => {
-    try {
-      localStorage.setItem(STORAGE_KEYS.whatsApp, JSON.stringify({ x: x.get(), y: y.get() }))
-    } catch {
-      // Ignore storage errors
-    }
-  }
-
-  // Position above GlobalCTABar when visible, otherwise normal position
-  const bottomPosition = isCTABarVisible 
-    ? 'bottom-[200px]' 
-    : 'bottom-[180px]'
 
   return (
     <motion.div
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ delay: 0.5, type: 'spring', stiffness: 200 }}
-      className={`fixed ${bottomPosition} left-4 sm:left-6 z-50 transition-all duration-300`}
-      drag
-      dragElastic={0.2}
-      dragMomentum={true}
-      dragTransition={{ power: 0.3, restDelta: 10 }}
-      whileDrag={{ cursor: 'grabbing' }}
-      onDragEnd={handleDragEnd}
-      style={{ x, y, willChange: 'transform' }}
+      className="relative transition-all duration-300 shrink-0"
     >
       <AnimatePresence>
         {isOpen && (
@@ -110,7 +66,7 @@ export const FloatingWhatsApp: React.FC<FloatingWidgetProps> = () => {
             initial={{ opacity: 0, y: 10, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.9 }}
-            className="absolute bottom-16 sm:bottom-20 left-0 glass bg-white/10 rounded-2xl p-4 w-[calc(100vw-2rem)] sm:w-80 shadow-2xl mb-4"
+            className="absolute bottom-full left-0 mb-2 glass bg-white/10 rounded-2xl p-4 w-[calc(100vw-2rem)] sm:w-80 shadow-2xl"
           >
             <h3 className="font-bold text-slate-900 dark:text-white mb-3">Chat with us!</h3>
             <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
@@ -351,50 +307,6 @@ const CloseIconWidget = () => (
 // Social Links Component
 export const SocialLinks: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false)
-  const { isVisible: isCTABarVisible } = useGlobalCTABar()
-  const x = useMotionValue(0)
-  const y = useMotionValue(0)
-
-  // Load saved position on mount
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEYS.socialLinks)
-      if (saved) {
-        const { x: sx, y: sy } = JSON.parse(saved)
-        if (typeof sx === 'number' && typeof sy === 'number') {
-          x.set(sx)
-          y.set(sy)
-        }
-      }
-    } catch {
-      // Ignore invalid stored data
-    }
-  }, [x, y])
-
-  const handleDragEnd = () => {
-    try {
-      localStorage.setItem(STORAGE_KEYS.socialLinks, JSON.stringify({ x: x.get(), y: y.get() }))
-    } catch {
-      // Ignore storage errors
-    }
-  }
-
-  // Clean up old localStorage entry if it exists (for users who had widget closed before)
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('socialWidgetClosed')
-    }
-  }, [])
-
-  // Position above GlobalCTABar when visible, otherwise normal position
-  // Social Links positioned lower, with WhatsApp below it
-  // GlobalCTABar: positioned at bottom: 60px (CookieFooter), height ~120px, so top edge at ~180px
-  // WhatsApp should be above GlobalCTABar with gap: 180px + 20px gap = 200px
-  // Social Links should be above WhatsApp: 200px + 20px gap + 56px WhatsApp height = 276px
-  // When CTA not visible, use similar positioning but adjusted
-  const bottomPosition = isCTABarVisible 
-    ? 'bottom-[276px] sm:bottom-[276px] md:bottom-[276px]' 
-    : 'bottom-[256px] sm:bottom-[256px] md:bottom-[256px]'
 
   const socialLinks = [
     { id: 'linkedin', icon: LinkedInIcon, url: 'https://www.linkedin.com/company/personalandbusinessmgmtplatform/', label: 'LinkedIn', color: 'hover:bg-blue-600' },
@@ -408,18 +320,7 @@ export const SocialLinks: React.FC = () => {
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ delay: 0.9, type: 'spring', stiffness: 200 }}
-      className={`fixed ${bottomPosition} left-4 sm:left-6 z-50`}
-      drag
-      dragElastic={0.2}
-      dragMomentum={true}
-      dragTransition={{ power: 0.3, restDelta: 10 }}
-      whileDrag={{ cursor: 'grabbing' }}
-      onDragEnd={handleDragEnd}
-      style={{ 
-        x, 
-        y,
-        willChange: 'transform'
-      }}
+      className="relative shrink-0"
     >
       <AnimatePresence>
         {isExpanded && (
@@ -428,7 +329,7 @@ export const SocialLinks: React.FC = () => {
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: -10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute bottom-16 left-12 sm:left-14 flex flex-col gap-2 mb-2 p-4 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700"
+            className="absolute bottom-full left-0 flex flex-col gap-2 mb-2 p-4 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700"
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-2">
@@ -478,4 +379,19 @@ export const SocialLinks: React.FC = () => {
   )
 }
 
-export default { FloatingWhatsApp, Chatbot, SocialLinks }
+/** Fixed container for WhatsApp + Social icons so they stay aligned and do not move */
+export const FloatingLeftWidgets: React.FC = () => {
+  const { isVisible: isCTABarVisible } = useGlobalCTABar()
+  const bottomClass = isCTABarVisible ? 'bottom-[200px]' : 'bottom-[180px]'
+  return (
+    <div
+      className={`fixed ${bottomClass} left-4 sm:left-6 z-50 flex flex-col gap-3 items-start transition-all duration-300`}
+      aria-label="Contact and social links"
+    >
+      <SocialLinks />
+      <FloatingWhatsApp position="left" />
+    </div>
+  )
+}
+
+export default { FloatingWhatsApp, Chatbot, SocialLinks, FloatingLeftWidgets }

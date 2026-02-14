@@ -178,20 +178,25 @@ function IndexPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="min-h-screen flex items-start sm:items-center justify-center pt-12 sm:pt-16 md:pt-20 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8"
+        className="min-h-screen flex items-start sm:items-center justify-center pt-12 sm:pt-16 md:pt-20 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8 scroll-mt-header"
       >
         <div className="w-full max-w-7xl mx-auto text-center mt-4 sm:mt-0">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6"
+            className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-2 sm:mb-3"
           >
-            <span className="text-gradient">
-              Grow & Thrive to your full Potential
+            <span className="text-gradient block">
+              Identify, Develop &amp; Live
             </span>
-            <br />
-            <span className="text-slate-600 dark:text-slate-400 inline-flex items-center justify-center gap-2">
+            <span className="text-gradient block">
+              to your fullest
+            </span>
+            <span className="text-gradient block">
+              Personal &amp; Professional Potential
+            </span>
+            <span className="text-slate-600 dark:text-slate-400 inline-flex items-center justify-center gap-2 mt-2">
               <span>with</span>
               <img
                 src={theme === 'dark' ? '/grow24_ai_icon_4.jpeg' : '/grow24_ai_icon_5.jpeg'}
@@ -204,11 +209,47 @@ function IndexPage() {
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-6 sm:mb-8 md:mb-10 px-4"
+            transition={{ delay: 0.25, duration: 0.6 }}
+            className="text-base sm:text-lg md:text-xl font-bold text-amber-600 dark:text-amber-400 max-w-2xl mx-auto mb-6 sm:mb-8 px-4"
           >
-            Secure personal & professional growth by going through multiple iterations of the Individual Growth Cycle.
+            Personal &amp; Business Management Platform
           </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="max-w-2xl mx-auto mb-6 sm:mb-8 md:mb-10 px-4 text-left"
+          >
+            <p className="text-emerald-700 dark:text-emerald-300 font-bold text-lg sm:text-xl mb-1">
+              The Individual Growth Cycle
+            </p>
+            <p className="text-slate-900 dark:text-white font-bold text-base sm:text-lg mb-3">
+              Why is it important
+            </p>
+            <ul className="text-slate-700 dark:text-slate-300 text-sm sm:text-base space-y-2 list-none">
+              <li className="flex gap-2">
+                <span className="text-emerald-500 dark:text-emerald-400 shrink-0">–</span>
+                <span>5 steps are needed to go from Identifying your Goal through to Enjoying the Benefits</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-emerald-500 dark:text-emerald-400 shrink-0">–</span>
+                <span>We call this the Individual Growth Cycle</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-emerald-500 dark:text-emerald-400 shrink-0">–</span>
+                <span>The same 5 Steps work in both our Personal Life &amp; Professional Life</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-emerald-500 dark:text-emerald-400 shrink-0">–</span>
+                <span>Personal Growth Cycle &amp; Professional Growth Cycle should be done in synergy with each other</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-emerald-500 dark:text-emerald-400 shrink-0">–</span>
+                <span>When done properly, it creates harmony within you, and your environment</span>
+              </li>
+            </ul>
+          </motion.div>
 
           {/* Individual Growth Cycle steps under the hero subtitle */}
           <motion.div

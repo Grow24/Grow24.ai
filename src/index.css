@@ -6,12 +6,40 @@
   @apply transition-colors duration-300;
 }
 
+:root {
+  /* Reserve space for fixed header so content is never cut off when scrolling to top */
+  --header-offset: 8rem;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --header-offset: 8.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --header-offset: 9rem;
+  }
+}
+
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: var(--header-offset);
 }
 
 body {
   @apply bg-white dark:bg-slate-950 text-slate-900 dark:text-white;
+}
+
+/* Main content starts below fixed header - prevents top content from being cut off */
+main.pt-header {
+  padding-top: var(--header-offset);
+}
+
+/* Anchor targets scroll into view below the fixed header */
+.scroll-mt-header {
+  scroll-margin-top: var(--header-offset);
 }
 
 ::-webkit-scrollbar {
