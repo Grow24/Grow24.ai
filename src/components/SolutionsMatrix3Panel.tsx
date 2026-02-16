@@ -537,7 +537,8 @@ export default function SolutionsMatrix3Panel() {
                             Map of Solutions
                         </h1>
                         <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 font-medium">
-                            Explore solutions by function and category
+                            <span className="block"><strong>For Professional Life Cycle:</strong> Explore solutions by Functions (Marketing, Sales, Corporate, etc.) / Support (Structure, System, Process), by Lifecycle Stage.</span>
+                            <span className="block mt-2"><strong>For Personal Life Cycle:</strong> Explore solutions by Lifecycle Stage.</span>
                         </p>
                     </motion.div>
                 </div>

@@ -531,6 +531,13 @@ header.no-blur-header *::after {
   opacity: 0.92;
 }
 
+.about-html .avatar.avatar-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .about-html .pf-name {
   font-weight: 900;
   font-size: 18px;

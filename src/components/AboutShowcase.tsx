@@ -1,4 +1,31 @@
+import { useState } from 'react'
+
+const FALLBACK_AVATAR_SVG = (
+  <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="64" height="64" rx="18" fill="url(#g)" />
+    <path
+      d="M32 33c6.2 0 11.2-5 11.2-11.2S38.2 10.6 32 10.6 20.8 15.6 20.8 21.8 25.8 33 32 33Z"
+      fill="rgba(255,255,255,.92)"
+    />
+    <path
+      d="M14.5 56.5c3.8-10.7 11-16 17.5-16s13.7 5.3 17.5 16"
+      stroke="rgba(255,255,255,.92)"
+      strokeWidth="5"
+      strokeLinecap="round"
+    />
+    <defs>
+      <linearGradient id="g" x1="0" y1="0" x2="64" y2="64">
+        <stop stopColor="rgba(255,255,255,.18)" />
+        <stop offset="1" stopColor="rgba(255,255,255,.02)" />
+      </linearGradient>
+    </defs>
+  </svg>
+)
+
 const AboutShowcase = () => {
+  const [sandeepImgError, setSandeepImgError] = useState(false)
+  const [rishikaImgError, setRishikaImgError] = useState(false)
+
   return (
     <section className="about-html">
       <div className="wrap">
@@ -31,9 +58,7 @@ const AboutShowcase = () => {
         {/* WHAT */}
         <section className="section" id="what">
           <div className="section-inner">
-            <div className="kicker">
-              <span className="pill">01</span> What
-            </div>
+            <div className="kicker">What</div>
 
             <h1 className="headline">
               A digital platform which helps you manage all stages of your inter-connected Personal &amp; Professional Life
@@ -66,6 +91,57 @@ const AboutShowcase = () => {
               <div className="tagline">
                 One platform. Full spread + AI-enabled depth. Built for years of growth.
               </div>
+              <a className="btn primary" href="#industries">
+                <span className="dot" aria-hidden="true" />
+                Who it serves
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* Domains & Industries (under What) */}
+        <section className="section" id="industries">
+          <div className="section-inner">
+            <div className="kicker">Domains &amp; industries</div>
+
+            <h2 className="headline">Built for SMEs and large corporates</h2>
+            <p className="subhead">
+              grow<sup>24</sup> is designed for both <strong>SMEs</strong> seeking leverage and cost-effective
+              scale, and <strong>large corporates</strong> seeking structured execution, insight-driven
+              decisions, and measurable outcomes.
+            </p>
+
+            <div className="grid3" role="list">
+              <div className="card" role="listitem">
+                <div className="num">SME</div>
+                <h3>SME ecosystems</h3>
+                <p>
+                  Practical workflows, clear structure, and cost-effective tools that reduce chaos and improve
+                  execution over time.
+                </p>
+              </div>
+
+              <div className="card" role="listitem">
+                <div className="num">ENT</div>
+                <h3>Large enterprises</h3>
+                <p>
+                  End-to-end lifecycle coverage with analytics depth—supporting decision-making and operating
+                  rhythms at scale.
+                </p>
+              </div>
+
+              <div className="card" role="listitem">
+                <div className="num">IND</div>
+                <h3>Diverse industries</h3>
+                <p>
+                  Including <strong>CPG</strong>, <strong>Retail</strong>, <strong>Pharma</strong>,{' '}
+                  <strong>Auto Components</strong>, <strong>Agri</strong>, and more.
+                </p>
+              </div>
+            </div>
+
+            <div className="section-cta">
+              <div className="tagline">Industry-agnostic thinking. Domain-aware execution.</div>
               <a className="btn primary" href="#why">
                 <span className="dot" aria-hidden="true" />
                 See Why
@@ -77,9 +153,7 @@ const AboutShowcase = () => {
         {/* WHY */}
         <section className="section" id="why">
           <div className="section-inner">
-            <div className="kicker">
-              <span className="pill">02</span> Why
-            </div>
+            <div className="kicker">Why</div>
 
             <h2 className="headline">
               Like 2 sides of a coin, each of us have a Personal Life &amp; a Professional Life
@@ -134,59 +208,6 @@ const AboutShowcase = () => {
               <div className="tagline">
                 grow<sup>24</sup> connects the journey end-to-end—without losing context.
               </div>
-              <a className="btn primary" href="#industries">
-                <span className="dot" aria-hidden="true" />
-                Who it serves
-              </a>
-            </div>
-          </div>
-        </section>
-
-        {/* Industries / Domains (after Why) */}
-        <section className="section" id="industries">
-          <div className="section-inner">
-            <div className="kicker">
-              <span className="pill">03</span> Domains &amp; industries
-            </div>
-
-            <h2 className="headline">Built for SMEs and large corporates</h2>
-            <p className="subhead">
-              grow<sup>24</sup> is designed for both <strong>SMEs</strong> seeking leverage and cost-effective
-              scale, and <strong>large corporates</strong> seeking structured execution, insight-driven
-              decisions, and measurable outcomes.
-            </p>
-
-            <div className="grid3" role="list">
-              <div className="card" role="listitem">
-                <div className="num">SME</div>
-                <h3>SME ecosystems</h3>
-                <p>
-                  Practical workflows, clear structure, and cost-effective tools that reduce chaos and improve
-                  execution over time.
-                </p>
-              </div>
-
-              <div className="card" role="listitem">
-                <div className="num">ENT</div>
-                <h3>Large enterprises</h3>
-                <p>
-                  End-to-end lifecycle coverage with analytics depth—supporting decision-making and operating
-                  rhythms at scale.
-                </p>
-              </div>
-
-              <div className="card" role="listitem">
-                <div className="num">IND</div>
-                <h3>Diverse industries</h3>
-                <p>
-                  Including <strong>CPG</strong>, <strong>Retail</strong>, <strong>Pharma</strong>,{' '}
-                  <strong>Auto Components</strong>, <strong>Agri</strong>, and more.
-                </p>
-              </div>
-            </div>
-
-            <div className="section-cta">
-              <div className="tagline">Industry-agnostic thinking. Domain-aware execution.</div>
               <a className="btn primary" href="#how">
                 <span className="dot" aria-hidden="true" />
                 How we do it
@@ -198,9 +219,7 @@ const AboutShowcase = () => {
         {/* HOW */}
         <section className="section" id="how">
           <div className="section-inner">
-            <div className="kicker">
-              <span className="pill">04</span> How
-            </div>
+            <div className="kicker">How</div>
 
             <h2 className="headline">Built by practitioners with academic rigor &amp; operating experience</h2>
             <p className="subhead">
@@ -211,26 +230,15 @@ const AboutShowcase = () => {
             <div className="founders">
               <article className="profile">
                 <div className="pf-head">
-                  <div className="avatar" aria-hidden="true">
-                    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect width="64" height="64" rx="18" fill="url(#g)" />
-                      <path
-                        d="M32 33c6.2 0 11.2-5 11.2-11.2S38.2 10.6 32 10.6 20.8 15.6 20.8 21.8 25.8 33 32 33Z"
-                        fill="rgba(255,255,255,.92)"
+                  <div className="avatar avatar-img" aria-hidden="true">
+                    {!sandeepImgError ? (
+                      <img
+                        src="/sandeep_seth.png"
+                        alt="Sandeep Seth"
+                        onError={() => setSandeepImgError(true)}
                       />
-                      <path
-                        d="M14.5 56.5c3.8-10.7 11-16 17.5-16s13.7 5.3 17.5 16"
-                        stroke="rgba(255,255,255,.92)"
-                        strokeWidth="5"
-                        strokeLinecap="round"
-                      />
-                      <defs>
-                        <linearGradient id="g" x1="0" y1="0" x2="64" y2="64">
-                          <stop stopColor="rgba(255,255,255,.18)" />
-                          <stop offset="1" stopColor="rgba(255,255,255,.02)" />
-                        </linearGradient>
-                      </defs>
-                    </svg>
+                    ) : null}
+                    {sandeepImgError ? FALLBACK_AVATAR_SVG : null}
                   </div>
                   <div>
                     <p className="pf-name">Sandeep Seth</p>
@@ -258,31 +266,42 @@ const AboutShowcase = () => {
               <article className="profile">
                 <div className="pf-head">
                   <div
-                    className="avatar"
+                    className="avatar avatar-img"
                     aria-hidden="true"
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(109,40,217,1), rgba(99,102,241,1))',
-                    }}
+                    style={
+                      rishikaImgError
+                        ? { background: 'linear-gradient(135deg, rgba(109,40,217,1), rgba(99,102,241,1))' }
+                        : undefined
+                    }
                   >
-                    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect width="64" height="64" rx="18" fill="url(#g2)" />
-                      <path
-                        d="M32 33c6.2 0 11.2-5 11.2-11.2S38.2 10.6 32 10.6 20.8 15.6 20.8 21.8 25.8 33 32 33Z"
-                        fill="rgba(255,255,255,.92)"
+                    {!rishikaImgError ? (
+                      <img
+                        src="/rishika_seth.jpg"
+                        alt="Rishika Seth"
+                        onError={() => setRishikaImgError(true)}
                       />
-                      <path
-                        d="M14.5 56.5c3.8-10.7 11-16 17.5-16s13.7 5.3 17.5 16"
-                        stroke="rgba(255,255,255,.92)"
-                        strokeWidth="5"
-                        strokeLinecap="round"
-                      />
-                      <defs>
-                        <linearGradient id="g2" x1="0" y1="0" x2="64" y2="64">
-                          <stop stopColor="rgba(255,255,255,.18)" />
-                          <stop offset="1" stopColor="rgba(255,255,255,.02)" />
-                        </linearGradient>
-                      </defs>
-                    </svg>
+                    ) : null}
+                    {rishikaImgError ? (
+                      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="64" height="64" rx="18" fill="url(#g2)" />
+                        <path
+                          d="M32 33c6.2 0 11.2-5 11.2-11.2S38.2 10.6 32 10.6 20.8 15.6 20.8 21.8 25.8 33 32 33Z"
+                          fill="rgba(255,255,255,.92)"
+                        />
+                        <path
+                          d="M14.5 56.5c3.8-10.7 11-16 17.5-16s13.7 5.3 17.5 16"
+                          stroke="rgba(255,255,255,.92)"
+                          strokeWidth="5"
+                          strokeLinecap="round"
+                        />
+                        <defs>
+                          <linearGradient id="g2" x1="0" y1="0" x2="64" y2="64">
+                            <stop stopColor="rgba(255,255,255,.18)" />
+                            <stop offset="1" stopColor="rgba(255,255,255,.02)" />
+                          </linearGradient>
+                        </defs>
+                      </svg>
+                    ) : null}
                   </div>
                   <div>
                     <p className="pf-name">Rishika Seth</p>

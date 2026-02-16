@@ -259,14 +259,14 @@ function IndexPage() {
             className="max-w-4xl mx-auto px-4 mb-8 sm:mb-10 md:mb-12"
           >
             <div className="text-center mb-4">
-              <p className="text-xs sm:text-sm font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-300">
+              <p className="text-xs sm:text-sm font-semibold uppercase tracking-wide text-teal-700 dark:text-teal-300">
                 Individual Growth Cycle
               </p>
             </div>
             {/* pl-12 / sm:pl-14: room for L-shaped return arrow; arrow runs from step 5 up, then right into step 1 */}
             <div className="relative max-w-md mx-auto text-left text-sm sm:text-base pl-12 sm:pl-14">
               {/* L-shaped return arrow: starts from center of left side of step 5 block, goes left then up, then right into step 1 */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none text-emerald-600 dark:text-emerald-400" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
+              <svg className="absolute inset-0 w-full h-full pointer-events-none text-teal-600 dark:text-teal-400" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
                 {/* From center of left side of step 5 block (x=12): short segment left to vertical stem */}
                 <path d="M 12 90 L 6 90" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
                 {/* Vertical: up to top */}
@@ -446,88 +446,51 @@ function IndexPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
+                className="about-html max-w-4xl mx-auto"
               >
-                {/* Diagrams Container */}
-                <div className="grid md:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 mb-8 sm:mb-10 md:mb-12">
-                  {/* Personal Side */}
-                  <ConceptCard3D
-                    initial={{ opacity: 0, x: -50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                    className={`rounded-2xl shadow-xl p-8 border transition-all duration-300 ${
-                      personalBgWhite
-                        ? 'bg-white dark:bg-white border-gray-300 dark:border-gray-300'
-                        : 'glass backdrop-blur-xl bg-white/10 dark:bg-slate-800/50 border-white/20 dark:border-slate-700/50'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-6">
-                      <h2 className={`text-2xl font-bold mb-2 ${
-                        personalBgWhite
-                          ? 'text-gray-900'
-                          : 'text-gray-900 dark:text-white'
-                      }`}>
-                        Individual (Personal side)
-                      </h2>
-                      <button
-                        onClick={() => setPersonalBgWhite(!personalBgWhite)}
-                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                          personalBgWhite
-                            ? 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                            : 'bg-white/20 dark:bg-slate-700/50 hover:bg-white/30 dark:hover:bg-slate-600/50 text-white border border-white/30 dark:border-slate-600'
-                        }`}
-                        title={personalBgWhite ? 'Switch to dark background' : 'Switch to white background'}
-                      >
-                        {personalBgWhite ? <MoonIcon /> : <SunIcon />}
-                      </button>
-                    </div>
-                    <div className="flex justify-center items-center">
-                      <img
-                        src="/PerSide.png"
-                        alt="Personal Side - PBMP Cycle"
-                        className="w-full h-auto max-w-md"
-                      />
-                    </div>
-                  </ConceptCard3D>
+                <div className="section-inner">
+                  <div className="kicker">What</div>
 
-                  {/* Professional Side */}
-                  <ConceptCard3D
-                    initial={{ opacity: 0, x: 50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
-                    className={`rounded-2xl shadow-xl p-8 border transition-all duration-300 ${
-                      professionalBgWhite
-                        ? 'bg-white dark:bg-white border-gray-300 dark:border-gray-300'
-                        : 'glass backdrop-blur-xl bg-white/10 dark:bg-slate-800/50 border-white/20 dark:border-slate-700/50'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-6">
-                      <h2 className={`text-2xl font-bold mb-2 ${
-                        professionalBgWhite
-                          ? 'text-gray-900'
-                          : 'text-gray-900 dark:text-white'
-                      }`}>
-                        Individual (Professional side)
-                      </h2>
-                      <button
-                        onClick={() => setProfessionalBgWhite(!professionalBgWhite)}
-                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                          professionalBgWhite
-                            ? 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                            : 'bg-white/20 dark:bg-slate-700/50 hover:bg-white/30 dark:hover:bg-slate-600/50 text-white border border-white/30 dark:border-slate-600'
-                        }`}
-                        title={professionalBgWhite ? 'Switch to dark background' : 'Switch to white background'}
-                      >
-                        {professionalBgWhite ? <MoonIcon /> : <SunIcon />}
-                      </button>
+                  <h1 className="headline">
+                    A digital platform which helps you manage all stages of your inter-connected Personal &amp; Professional Life
+                  </h1>
+
+                  <p className="subhead">
+                    Provides you the confidence to define &amp; secure <span className="value-highlight">Value</span> by going through the <span className="value-highlight">Value Cycle</span>
+                  </p>
+
+                  <p className="subhead">
+                    The (<span className="value-highlight">Personal, Professional</span>) <span className="value-highlight">Value Cycle</span> is :
+                  </p>
+
+                  <p className="subhead" style={{ fontWeight: 700 }}>
+                    Goal Identification → Strategy Crafting → Objectives Definition → Plan Construction &amp; Execution
+                  </p>
+
+                  <ol className="subhead" style={{ listStylePosition: 'outside', paddingLeft: '1.5em', marginTop: 8 }}>
+                    <li style={{ marginBottom: '0.5em' }}>Based on tried &amp; tested industry standard Knowledge (e.g BABOK for Business Analysis, PMBOK for Project Mgmt)</li>
+                    <li style={{ marginBottom: '0.5em' }}>Complete ToolSet (Tools, Techniques, Templates, Case Studies, Trainings) for you to stay engaged for years</li>
+                    <li style={{ marginBottom: '0.5em' }}>Has Marketplace through which accredited Solution Providers can plug into specific parts of the (Personal, Professional) Value Cycle</li>
+                    <li style={{ marginBottom: '0.5em' }}>Highly Secure - run in offline mode, data transfers in encrypted manner</li>
+                    <li style={{ marginBottom: '0.5em' }}>Interact with the platform through the Channel of your choosing</li>
+                    <li style={{ marginBottom: '0.5em' }}>High User Engagement experience - Built using modern User Engagement principles</li>
+                    <li style={{ marginBottom: '0.5em' }}>Built to live in an inter-connected ecosystem of Products &amp; Solutions</li>
+                    <li style={{ marginBottom: '0.5em' }}>Built for Change - using modern, flexible architecture</li>
+                  </ol>
+
+                  <div className="section-cta">
+                    <div className="tagline">
+                      One platform. Full spread + AI-enabled depth. Built for years of growth.
                     </div>
-                    <div className="flex justify-center items-center">
-                      <img
-                        src="/ProSide.png"
-                        alt="Professional Side - PBMP Cycle"
-                        className="w-full h-auto max-w-md"
-                      />
-                    </div>
-                  </ConceptCard3D>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('why')}
+                      className="btn primary"
+                    >
+                      <span className="dot" aria-hidden="true" />
+                      See Why
+                    </button>
+                  </div>
                 </div>
               </motion.div>
             ) : activeTab === 'why' ? (
@@ -537,65 +500,74 @@ function IndexPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
+                className="about-html max-w-4xl mx-auto"
               >
-                {/* Why Section Content */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  className="glass backdrop-blur-xl bg-white/10 dark:bg-slate-800/50 rounded-2xl shadow-xl p-8 max-w-5xl mx-auto border border-white/20 dark:border-slate-700/50"
-                >
-                  <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-6 text-center">
-                    Why This Approach?
-                  </h3>
-                  
-                  <div className="space-y-6 text-gray-700 dark:text-gray-300">
-                    <div className="bg-white/50 dark:bg-slate-700/50 rounded-xl p-6">
-                      <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                        🎯 Holistic Integration
-                      </h4>
-                      <p className="text-sm leading-relaxed">
-                        Most tools focus on either personal OR professional management, creating silos. Our PBMP (Plan-Build-Measure-Progress) cycle integrates both dimensions, recognizing that your personal goals and professional objectives are interconnected and influence each other.
+                <div className="section-inner">
+                  <div className="kicker">Why</div>
+
+                  <h2 className="headline">
+                    Like 2 sides of a coin, each of us have a Personal Life &amp; a Professional Life
+                    <br />
+                    Hence, a Platform that we rely on for Identifying &amp; Executing Decision, should reflect that
+                  </h2>
+                  <p className="subhead">
+                    Personal and professional growth are inextricably linked. People want a single platform with the{' '}
+                    <strong>spread</strong> (Vision → Mission → Goals → Strategy → Plan → Execute → Operate) and the{' '}
+                    <strong>depth</strong> (AI-enabled guidance and analytics) to manage both—over years of life and
+                    work.
+                  </p>
+
+                  <p className="subhead" style={{ fontWeight: 700, marginTop: 12 }}>
+                    However, the current Solutions are unable to meet that need
+                  </p>
+                  <p className="subhead" style={{ marginTop: 4 }}>
+                    The following 3 major issues exist in the Solution Landscape
+                  </p>
+
+                  <div className="grid3" role="list">
+                    <div className="card" role="listitem">
+                      <div className="num">01</div>
+                      <h3>Separate platforms</h3>
+                      <p>
+                        Different platforms for Personal Management vs Professional/Business Management—forcing context
+                        switching for problems that span both.
                       </p>
                     </div>
 
-                    <div className="bg-white/50 dark:bg-slate-700/50 rounded-xl p-6">
-                      <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                        🔄 Continuous Improvement Loop
-                      </h4>
-                      <p className="text-sm leading-relaxed">
-                        The PBMP cycle isn't linear—it's iterative. Each cycle informs the next, building wisdom from data through measurable progress. This approach ensures you're not just setting goals, but systematically achieving them and learning from every outcome.
+                    <div className="card" role="listitem">
+                      <div className="num">02</div>
+                      <h3>Fragmentation within each</h3>
+                      <p>
+                        Different tools for <strong>Goals</strong>, <strong>Strategy</strong>, <strong>Planning</strong>
+                        , <strong>Execution</strong>, <strong>Tracking</strong>, and{' '}
+                        <strong>Learning/Personal Growth</strong>.
                       </p>
                     </div>
 
-                    <div className="bg-white/50 dark:bg-slate-700/50 rounded-xl p-6">
-                      <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                        📊 Data-Driven Decision Making
-                      </h4>
-                      <p className="text-sm leading-relaxed">
-                        By transforming raw data into information, knowledge, and ultimately wisdom (WiKID framework), you make informed decisions based on evidence rather than intuition alone. This scientific approach increases success rates and reduces wasted effort.
-                      </p>
-                    </div>
-
-                    <div className="bg-white/50 dark:bg-slate-700/50 rounded-xl p-6">
-                      <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                        🚀 Scalable & Adaptable
-                      </h4>
-                      <p className="text-sm leading-relaxed">
-                        Whether you're an individual managing personal goals or an organization coordinating teams, the same fundamental principles apply. The framework scales from personal productivity to enterprise strategy, maintaining consistency while adapting to complexity.
-                      </p>
-                    </div>
-
-                    <div className="bg-white/50 dark:bg-slate-700/50 rounded-xl p-6">
-                      <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                        ⚡ Actionable Frameworks
-                      </h4>
-                      <p className="text-sm leading-relaxed">
-                        We don't just provide theory—we offer proven frameworks, templates, and best practices from established bodies of knowledge (PMBOK, BABOK, etc.) combined with real-world organizational learning. This gives you ready-to-use tools that have been validated through practice.
+                    <div className="card" role="listitem">
+                      <div className="num">03</div>
+                      <h3>Inconsistent granularity + limited transparency</h3>
+                      <p>
+                        Tools vary in depth and rarely reveal the body of knowledge behind their workflows. We provide
+                        full transparency on how our solutions are developed.
                       </p>
                     </div>
                   </div>
-                </motion.div>
+
+                  <div className="section-cta">
+                    <div className="tagline">
+                      grow<sup>24</sup> connects the journey end-to-end—without losing context.
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('how')}
+                      className="btn primary"
+                    >
+                      <span className="dot" aria-hidden="true" />
+                      Who it serves
+                    </button>
+                  </div>
+                </div>
               </motion.div>
             ) : (
               <motion.div
@@ -604,7 +576,61 @@ function IndexPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
+                className="space-y-8 md:space-y-10"
               >
+                {/* Map of Solutions + Solution Approaches - matches What/Why design */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                  className="about-html max-w-4xl mx-auto"
+                >
+                  <div className="section-inner">
+                    <div className="kicker">How</div>
+
+                    <h2 className="headline">Map of Solutions</h2>
+                    <p className="subhead">
+                      Conform to the <span className="value-highlight">grow<sup>24</sup></span> Decision Framework.
+                    </p>
+
+                    <ol className="subhead" style={{ listStylePosition: 'outside', paddingLeft: '1.5em', marginTop: 8 }}>
+                      <li style={{ marginBottom: '0.5em' }}>Unified Data and MetaData layer</li>
+                      <li style={{ marginBottom: '0.5em' }}>Tried and tested industry-standard <span className="value-highlight">Functional</span> Body Of Knowledge embedded (e.g. Sales, Marketing, HR)</li>
+                      <li style={{ marginBottom: '0.5em' }}>Tried &amp; tested <span className="value-highlight">Supporting</span> industry-standard Body of Knowledge (e.g BABOK for Business Analysis, PMBOK for Project Mgmt, PrMBOK for Portfolio Mgmt)</li>
+                      <li style={{ marginBottom: '0.5em' }}>Tried &amp; tested <span className="value-highlight">Enabling</span> solutions (e.g Collaboration through Office, Email, Whatsapp etc; Notifications through Email, Whatsapp etc)</li>
+                      <li style={{ marginBottom: '0.5em' }}>Engage through our <span className="value-highlight">ChatBot</span> (through desktop, laptop, Whatsapp)</li>
+                      <li style={{ marginBottom: '0.5em' }}>Growing set of Solutions for you to stay engaged, both on Personal &amp; Professional front, for years</li>
+                    </ol>
+
+                    <p className="subhead" style={{ fontWeight: 700, marginTop: 18, marginBottom: 4 }}>
+                      Solution approaches
+                    </p>
+                    <div className="grid3" role="list">
+                      <div className="card" role="listitem">
+                        <div className="num">01</div>
+                        <h3>Use Our Solutions</h3>
+                        <p>
+                          Corporate Goal, Corporate Strategy, Marketing Goal, Marketing Strategy.
+                        </p>
+                      </div>
+                      <div className="card" role="listitem">
+                        <div className="num">02</div>
+                        <h3>Use Our Partners&apos; Solutions</h3>
+                        <p>
+                          Leverage solutions from our accredited partners within the ecosystem.
+                        </p>
+                      </div>
+                      <div className="card" role="listitem">
+                        <div className="num">03</div>
+                        <h3>Build your Own Solutions</h3>
+                        <p>
+                          Extend and customize with your own solutions on the platform.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+
                 {/* Decision Science Framework Section */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
