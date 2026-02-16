@@ -578,6 +578,152 @@ function IndexPage() {
                 transition={{ duration: 0.4 }}
                 className="space-y-8 md:space-y-10"
               >
+                {/* Solutions cover Personal & Professional Needs - Core & Support (from image) */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.05 }}
+                  className="about-html max-w-4xl mx-auto"
+                >
+                  <div className="section-inner">
+                    <div className="kicker">How</div>
+
+                    <h2 className="headline">Solutions cover various Personal &amp; Professional Needs</h2>
+                    <p className="subhead">
+                      Core Solutions &amp; Support Solutions that span the <span className="value-highlight">Growth Cycle</span>.
+                    </p>
+
+                    <div className="mt-6 overflow-x-auto rounded-xl border border-gray-200 dark:border-slate-600">
+                      <table className="w-full min-w-[500px] border-collapse text-left">
+                        <thead>
+                          <tr className="border-b border-gray-200 dark:border-slate-600">
+                            <th className="bg-gray-50 dark:bg-slate-700/50 px-4 py-3 text-base font-bold text-indigo-700 dark:text-indigo-400 w-1/2">
+                              Core Solutions
+                            </th>
+                            <th className="bg-gray-50 dark:bg-slate-700/50 px-4 py-3 text-base font-bold text-indigo-700 dark:text-indigo-400 w-1/2 border-l border-gray-200 dark:border-slate-600">
+                              Support Solutions
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white/50 dark:bg-slate-800/30">
+                          <tr className="border-b border-gray-200 dark:border-slate-600">
+                            <td className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 align-top">
+                              Directly impact Company financials.
+                            </td>
+                            <td className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 align-top border-l border-gray-200 dark:border-slate-600">
+                              Drive effectiveness &amp; efficiency.
+                            </td>
+                          </tr>
+                          <tr className="border-b border-gray-200 dark:border-slate-600">
+                            <td className="px-4 py-3 align-top">
+                              <p className="font-semibold text-indigo-700 dark:text-indigo-400 text-sm mb-1">Functional Solutions</p>
+                              <p className="text-gray-700 dark:text-gray-300 text-sm">E.g. Marketing Goals, Marketing Strategy, Marketing Objectives, Marketing Plan, Marketing Projects, Marketing Operation; Sales Goals, Sales Strategy, Sales Plan, Sales Operation.</p>
+                            </td>
+                            <td className="px-4 py-3 align-top border-l border-gray-200 dark:border-slate-600">
+                              <p className="font-semibold text-indigo-700 dark:text-indigo-400 text-sm mb-1">Structure</p>
+                              <p className="text-gray-700 dark:text-gray-300 text-sm">E.g. Organization Structure.</p>
+                            </td>
+                          </tr>
+                          <tr className="border-b border-gray-200 dark:border-slate-600">
+                            <td className="px-4 py-3 align-top">
+                              <p className="font-semibold text-indigo-700 dark:text-indigo-400 text-sm mb-1">Program Solutions</p>
+                              <p className="text-gray-700 dark:text-gray-300 text-sm">E.g. ESG, Business Transformation.</p>
+                            </td>
+                            <td className="px-4 py-3 align-top border-l border-gray-200 dark:border-slate-600">
+                              <p className="font-semibold text-indigo-700 dark:text-indigo-400 text-sm mb-1">System</p>
+                              <p className="text-gray-700 dark:text-gray-300 text-sm mb-0.5"><strong>Collaboration</strong> — E.g. Office</p>
+                              <p className="text-gray-700 dark:text-gray-300 text-sm mb-0.5"><strong>Trigger &amp; Notification</strong> — E.g. Event Manager</p>
+                              <p className="text-gray-700 dark:text-gray-300 text-sm"><strong>Build Solutions</strong> — E.g. Solution Manager</p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-4 py-3 align-top">&nbsp;</td>
+                            <td className="px-4 py-3 align-top border-l border-gray-200 dark:border-slate-600">
+                              <p className="font-semibold text-indigo-700 dark:text-indigo-400 text-sm mb-1">Processes</p>
+                              <p className="text-gray-700 dark:text-gray-300 text-sm">E.g. Process Manager, Analysis Manager.</p>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Solutions conform to Grow24 Value Framework - Constituents (from image) */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.08 }}
+                  className="about-html max-w-4xl mx-auto"
+                >
+                  <div className="section-inner">
+                    <h2 className="headline">
+                      Solutions conform to <span className="value-highlight">grow<sup>24</sup></span> Value Framework
+                    </h2>
+                    <p className="subhead">
+                      Constituents of the <span className="value-highlight">grow</span> Value Framework.
+                    </p>
+                    <p className="subhead" style={{ marginTop: 4 }}>
+                      Body of Knowledge, Tools, Templates, Techniques, Competencies Trainings, Case Studies applied to
+                    </p>
+
+                    <div className="mt-6 overflow-x-auto rounded-xl border border-gray-200 dark:border-slate-600">
+                      <table className="w-full min-w-[500px] border-collapse text-left">
+                        <thead>
+                          <tr className="border-b border-gray-200 dark:border-slate-600">
+                            <th className="bg-gray-50 dark:bg-slate-700/50 px-4 py-3 text-base font-bold text-indigo-700 dark:text-indigo-400 w-1/2">
+                              Core Solutions
+                            </th>
+                            <th className="bg-gray-50 dark:bg-slate-700/50 px-4 py-3 text-base font-bold text-indigo-700 dark:text-indigo-400 w-1/2 border-l border-gray-200 dark:border-slate-600">
+                              Support Solutions
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white/50 dark:bg-slate-800/30">
+                          <tr className="border-b border-gray-200 dark:border-slate-600">
+                            <td className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 align-top">
+                              Directly impact Company financials.
+                            </td>
+                            <td className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 align-top border-l border-gray-200 dark:border-slate-600">
+                              Drive effectiveness &amp; efficiency.
+                            </td>
+                          </tr>
+                          <tr className="border-b border-gray-200 dark:border-slate-600">
+                            <td className="px-4 py-3 align-top border-l-0">
+                              <p className="font-semibold text-indigo-700 dark:text-indigo-400 text-sm mb-1">Functional Solutions</p>
+                              <p className="text-gray-700 dark:text-gray-300 text-sm">Corporate, Marketing, Sales, HR.</p>
+                            </td>
+                            <td className="px-4 py-3 align-top border-l border-gray-200 dark:border-slate-600">
+                              <p className="font-semibold text-indigo-700 dark:text-indigo-400 text-sm mb-1">Structure</p>
+                              <p className="text-gray-700 dark:text-gray-300 text-sm">E.g. Organization Structure.</p>
+                            </td>
+                          </tr>
+                          <tr className="border-b border-gray-200 dark:border-slate-600">
+                            <td className="px-4 py-3 align-top">
+                              <p className="font-semibold text-indigo-700 dark:text-indigo-400 text-sm mb-1">Program Solutions</p>
+                              <p className="text-gray-700 dark:text-gray-300 text-sm">Environmental, Social &amp; Governance; Business Transformation.</p>
+                            </td>
+                            <td className="px-4 py-3 align-top border-l border-gray-200 dark:border-slate-600">
+                              <p className="font-semibold text-indigo-700 dark:text-indigo-400 text-sm mb-1">System</p>
+                              <p className="text-gray-700 dark:text-gray-300 text-sm mb-0.5">Collaboration — Office</p>
+                              <p className="text-gray-700 dark:text-gray-300 text-sm mb-0.5">Trigger &amp; Notification — Event Manager</p>
+                              <p className="text-gray-700 dark:text-gray-300 text-sm">Build &amp; Deploy Solutions — Solution Manager</p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-4 py-3 align-top">&nbsp;</td>
+                            <td className="px-4 py-3 align-top border-l border-gray-200 dark:border-slate-600">
+                              <p className="font-semibold text-indigo-700 dark:text-indigo-400 text-sm mb-1">Processes</p>
+                              <p className="text-gray-700 dark:text-gray-300 text-sm">Process Manager — Build &amp; Manage Processes</p>
+                              <p className="text-gray-700 dark:text-gray-300 text-sm">Analysis Manager — using BABOK.</p>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </motion.div>
+
                 {/* Map of Solutions + Solution Approaches - matches What/Why design */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -626,6 +772,83 @@ function IndexPage() {
                         <p>
                           Extend and customize with your own solutions on the platform.
                         </p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Grow24 Value Framework - Application of the Framework (11 steps) */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.12 }}
+                  className="about-html max-w-4xl mx-auto"
+                >
+                  <div className="section-inner">
+                    <h2 className="headline">
+                      Solutions conform to <span className="value-highlight">grow<sup>24</sup></span> Value Framework
+                    </h2>
+                    <p className="subhead" style={{ fontWeight: 600, marginTop: 4 }}>
+                      Application of the Framework
+                    </p>
+
+                    <div className="mt-6">
+                      {/* Same layout as Individual Growth Cycle: L-shaped arrow from Intent (1) to Deploy (7), from the left */}
+                      <div className="relative max-w-2xl pl-12 sm:pl-14">
+                        <svg className="absolute inset-0 w-full h-full pointer-events-none text-teal-600 dark:text-teal-400" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
+                          <path d="M 6 8 L 12 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+                          <path d="M 9 5 L 12 8 L 9 11" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                          <path d="M 6 8 L 6 88" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+                          <path d="M 6 88 L 12 88" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+                          <path d="M 9 85 L 12 88 L 9 91" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                        </svg>
+                        <div className="relative flex flex-col min-w-0">
+                          {[
+                            { num: 1, title: 'Intent', desc: 'Capture what the user wants to achieve and define success criteria. If the solution already exists, route directly down to Use (bypass build lifecycle).' },
+                            { num: 2, title: 'Business Case', desc: 'Articulate value: baseline, benefits, costs, risks, KPIs/targets, and time horizon.' },
+                            { num: 3, title: 'Requirements', desc: 'Collect detailed requirements, including acceptance criteria and non-functional requirements tied to business KPIs.' },
+                            { num: 4, title: 'Plan', desc: 'Prepare the project plan: milestones, owners, budget, dependencies, rollout, and benefit-realization plan.' },
+                            { num: 5, title: 'Architect', desc: 'Design the solution: architecture, data flows, integrations, security/privacy, and measurement/telemetry approach.' },
+                            { num: 6, title: 'Build', desc: 'Construct and test the solution; ensure quality gates and observability are in place.' },
+                            { num: 7, title: 'Deploy', desc: 'Release to users/environments; monitor initial usage; be ready to rollback quickly if issues arise.' },
+                          ].map((step, i) => (
+                            <div key={step.num} className="flex flex-col">
+                              <div className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-teal-500/40 dark:border-teal-400/50 p-4 shadow-sm">
+                                <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">{step.num}. {step.title}</p>
+                                <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">{step.desc}</p>
+                              </div>
+                              {i < 6 && (
+                                <div className="flex justify-center py-1" aria-hidden>
+                                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-teal-600 dark:text-teal-400 shrink-0">
+                                    <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                  </svg>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="relative max-w-2xl mt-6">
+                        {[
+                          { num: 8, title: 'Use', desc: 'Ensure correct adoption and usage as intended—this is where value starts getting generated.' },
+                          { num: 9, title: 'Insight', desc: 'Convert observations into evidence-backed conclusions (trends, anomalies, opportunities) linked to KPIs.' },
+                          { num: 10, title: 'Action', desc: 'Generate and track action items driven by insights (owners, due dates, expected KPI impact).' },
+                          { num: 11, title: 'Result', desc: 'Measure outcomes versus Business Case targets; capture learnings and decide scale, refine, or retire.' },
+                        ].map((step, i) => (
+                          <div key={step.num} className="flex flex-col">
+                            <div className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-teal-500/40 dark:border-teal-400/50 p-4 shadow-sm">
+                              <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">{step.num}. {step.title}</p>
+                              <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">{step.desc}</p>
+                            </div>
+                            {i < 3 && (
+                              <div className="flex justify-center py-1" aria-hidden>
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-teal-600 dark:text-teal-400 shrink-0">
+                                  <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
