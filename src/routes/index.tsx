@@ -279,8 +279,8 @@ function IndexPage() {
               {/* Steps column with down arrows between each */}
               <div className="relative flex flex-col items-stretch min-w-0">
                 {/* Step 1: Identify Goals — return arrow connects to this block */}
-                <div id="growth-cycle-step-1" className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-emerald-500/40 dark:border-emerald-400/50 p-4 shadow-sm">
-                  <p className="text-emerald-700 dark:text-emerald-300 font-semibold mb-1">
+                <div id="growth-cycle-step-1" className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-teal-500/40 dark:border-teal-400/50 p-4 shadow-sm">
+                  <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">
                     1. Identify Goals
                   </p>
                   <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
@@ -288,13 +288,13 @@ function IndexPage() {
                   </p>
                 </div>
                 <div className="flex justify-center py-1" aria-hidden>
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-emerald-600 dark:text-emerald-400 shrink-0">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-teal-600 dark:text-teal-400 shrink-0">
                     <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
                 {/* Step 2: Craft Strategy */}
-                <div className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-emerald-500/40 dark:border-emerald-400/50 p-4 shadow-sm">
-                  <p className="text-emerald-700 dark:text-emerald-300 font-semibold mb-1">
+                <div className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-teal-500/40 dark:border-teal-400/50 p-4 shadow-sm">
+                  <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">
                     2. Craft Strategy
                   </p>
                   <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
@@ -302,13 +302,13 @@ function IndexPage() {
                   </p>
                 </div>
                 <div className="flex justify-center py-1" aria-hidden>
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-emerald-600 dark:text-emerald-400 shrink-0">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-teal-600 dark:text-teal-400 shrink-0">
                     <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
                 {/* Step 3: Define Objective */}
-                <div className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-emerald-500/40 dark:border-emerald-400/50 p-4 shadow-sm">
-                  <p className="text-emerald-700 dark:text-emerald-300 font-semibold mb-1">
+                <div className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-teal-500/40 dark:border-teal-400/50 p-4 shadow-sm">
+                  <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">
                     3. Define Objective
                   </p>
                   <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
@@ -316,7 +316,7 @@ function IndexPage() {
                   </p>
                 </div>
                 <div className="flex justify-center py-1" aria-hidden>
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-emerald-600 dark:text-emerald-400 shrink-0">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-teal-600 dark:text-teal-400 shrink-0">
                     <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>

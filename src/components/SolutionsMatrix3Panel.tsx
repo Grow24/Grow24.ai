@@ -534,7 +534,7 @@ export default function SolutionsMatrix3Panel() {
                         transition={{ duration: 0.5 }}
                     >
                         <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-900 via-emerald-700 to-slate-900 dark:from-white dark:via-emerald-400 dark:to-white bg-clip-text text-transparent mb-2">
-                            Solution Dashboard
+                            Map of Solutions
                         </h1>
                         <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 font-medium">
                             Explore solutions by function and category
