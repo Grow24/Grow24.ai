@@ -263,26 +263,19 @@ function IndexPage() {
                 Individual Growth Cycle
               </p>
             </div>
-            {/* pl-12 / sm:pl-14: room for L-shaped return arrow; arrow runs from step 5 up, then right into step 1 */}
-            <div className="relative max-w-md mx-auto text-left text-sm sm:text-base pl-12 sm:pl-14">
+
+            {/* Mobile view: stacked layout with L-shaped arrow (same as before) */}
+            <div className="lg:hidden relative max-w-md mx-auto text-left text-sm sm:text-base pl-12 sm:pl-14">
               {/* L-shaped return arrow: starts from center of left side of step 5 block, goes left then up, then right into step 1 */}
               <svg className="absolute inset-0 w-full h-full pointer-events-none text-teal-600 dark:text-teal-400" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
-                {/* From center of left side of step 5 block (x=12): short segment left to vertical stem */}
                 <path d="M 12 90 L 6 90" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
-                {/* Vertical: up to top */}
                 <path d="M 6 90 L 6 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
-                {/* Horizontal: right into left edge of step 1 block */}
                 <path d="M 6 8 L 12 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
-                {/* Arrowhead: tip touches left edge of 1. Identify Goals block */}
                 <path d="M 9 5 L 12 8 L 9 11" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" fill="none" />
               </svg>
-              {/* Steps column with down arrows between each */}
               <div className="relative flex flex-col items-stretch min-w-0">
-                {/* Step 1: Identify Goals — return arrow connects to this block */}
                 <div id="growth-cycle-step-1" className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-teal-500/40 dark:border-teal-400/50 p-4 shadow-sm">
-                  <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">
-                    1. Identify Goals
-                  </p>
+                  <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">1. Identify Goals</p>
                   <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
                     Personal &amp; Professional Benefits that you aspire to, articulated as goals.
                   </p>
@@ -292,11 +285,8 @@ function IndexPage() {
                     <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
-                {/* Step 2: Craft Strategy */}
                 <div className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-teal-500/40 dark:border-teal-400/50 p-4 shadow-sm">
-                  <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">
-                    2. Craft Strategy
-                  </p>
+                  <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">2. Craft Strategy</p>
                   <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
                     Shortlist the focus areas and approach (i.e. how to deliver the focus area with excellence).
                   </p>
@@ -306,11 +296,8 @@ function IndexPage() {
                     <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
-                {/* Step 3: Define Objective */}
                 <div className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-teal-500/40 dark:border-teal-400/50 p-4 shadow-sm">
-                  <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">
-                    3. Define Objective
-                  </p>
+                  <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">3. Define Objective</p>
                   <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
                     Within the selected approach, define clear objectives and key results.
                   </p>
@@ -320,11 +307,8 @@ function IndexPage() {
                     <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
-                {/* Step 4: Build Plan */}
                 <div className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-teal-500/40 dark:border-teal-400/50 p-4 shadow-sm">
-                  <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">
-                    4. Build Plan
-                  </p>
+                  <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">4. Build Plan</p>
                   <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
                     Plan for multiple time periods so you can progress step by step.
                   </p>
@@ -334,16 +318,53 @@ function IndexPage() {
                     <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
-                {/* Step 5: Execute Plan — return arrow starts from this block */}
                 <div id="growth-cycle-step-5" className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-teal-500/40 dark:border-teal-400/50 p-4 shadow-sm">
-                  <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">
-                    5. Execute Plan
-                  </p>
+                  <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">5. Execute Plan</p>
                   <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
                     Execute the plan and assess results, feeding learning into the next cycle.
                   </p>
                 </div>
               </div>
+            </div>
+
+            {/* Laptop view: table layout */}
+            <div className="hidden lg:block overflow-x-auto rounded-xl border border-teal-500/40 dark:border-teal-400/50 overflow-hidden shadow-sm">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-300">
+                    <th className="px-4 py-3 text-left font-semibold w-20">Step</th>
+                    <th className="px-4 py-3 text-left font-semibold">Title</th>
+                    <th className="px-4 py-3 text-left font-semibold">Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr id="growth-cycle-step-1" className="bg-white/80 dark:bg-slate-900/40 border-t border-teal-500/30 dark:border-teal-400/30">
+                    <td className="px-4 py-3 text-teal-700 dark:text-teal-300 font-semibold">1</td>
+                    <td className="px-4 py-3 text-teal-700 dark:text-teal-300 font-semibold">Identify Goals</td>
+                    <td className="px-4 py-3 text-slate-700 dark:text-slate-200">Personal &amp; Professional Benefits that you aspire to, articulated as goals.</td>
+                  </tr>
+                  <tr className="bg-white/80 dark:bg-slate-900/40 border-t border-teal-500/30 dark:border-teal-400/30">
+                    <td className="px-4 py-3 text-teal-700 dark:text-teal-300 font-semibold">2</td>
+                    <td className="px-4 py-3 text-teal-700 dark:text-teal-300 font-semibold">Craft Strategy</td>
+                    <td className="px-4 py-3 text-slate-700 dark:text-slate-200">Shortlist the focus areas and approach (i.e. how to deliver the focus area with excellence).</td>
+                  </tr>
+                  <tr className="bg-white/80 dark:bg-slate-900/40 border-t border-teal-500/30 dark:border-teal-400/30">
+                    <td className="px-4 py-3 text-teal-700 dark:text-teal-300 font-semibold">3</td>
+                    <td className="px-4 py-3 text-teal-700 dark:text-teal-300 font-semibold">Define Objective</td>
+                    <td className="px-4 py-3 text-slate-700 dark:text-slate-200">Within the selected approach, define clear objectives and key results.</td>
+                  </tr>
+                  <tr className="bg-white/80 dark:bg-slate-900/40 border-t border-teal-500/30 dark:border-teal-400/30">
+                    <td className="px-4 py-3 text-teal-700 dark:text-teal-300 font-semibold">4</td>
+                    <td className="px-4 py-3 text-teal-700 dark:text-teal-300 font-semibold">Build Plan</td>
+                    <td className="px-4 py-3 text-slate-700 dark:text-slate-200">Plan for multiple time periods so you can progress step by step.</td>
+                  </tr>
+                  <tr id="growth-cycle-step-5" className="bg-white/80 dark:bg-slate-900/40 border-t border-teal-500/30 dark:border-teal-400/30">
+                    <td className="px-4 py-3 text-teal-700 dark:text-teal-300 font-semibold">5</td>
+                    <td className="px-4 py-3 text-teal-700 dark:text-teal-300 font-semibold">Execute Plan</td>
+                    <td className="px-4 py-3 text-slate-700 dark:text-slate-200">Execute the plan and assess results, feeding learning into the next cycle.</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </motion.div>
 
@@ -793,17 +814,17 @@ function IndexPage() {
                     </p>
 
                     <div className="mt-6">
-                      {/* Same layout as Individual Growth Cycle: L-shaped arrow from Intent (1) to Deploy (7), from the left */}
-                      <div className="relative max-w-2xl pl-12 sm:pl-14">
+                      {/* L-shaped arrow exactly like Individual Growth Cycle: starts at left side of Intent (1), goes left, down, right into Deploy (7). Thick teal, sharp 90° corners. */}
+                      <div className="relative max-w-md mx-auto text-left pl-12 sm:pl-14">
                         <svg className="absolute inset-0 w-full h-full pointer-events-none text-teal-600 dark:text-teal-400" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
-                          {/* Start from center of left side of Intent (step 1): segment left to vertical stem (same as Growth Cycle: from block, not into it) */}
-                          <path d="M 12 8 L 6 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
-                          {/* Vertical: down to Deploy level */}
-                          <path d="M 6 8 L 6 88" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
-                          {/* Horizontal: from stem into left side of Deploy (step 7) */}
-                          <path d="M 6 88 L 12 88" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
-                          {/* Arrowhead at Deploy (destination only, like Growth Cycle has arrowhead only at step 1) */}
-                          <path d="M 9 85 L 12 88 L 9 91" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                          {/* From center of left side of Intent block (x=12): horizontal segment left to vertical stem */}
+                          <path d="M 12 8 L 6 8" stroke="currentColor" strokeWidth="2" strokeLinecap="butt" strokeLinejoin="miter" fill="none" />
+                          {/* Vertical segment: down to level of Deploy block */}
+                          <path d="M 6 8 L 6 90" stroke="currentColor" strokeWidth="2" strokeLinecap="butt" strokeLinejoin="miter" fill="none" />
+                          {/* Horizontal: from stem into center of left side of Deploy block */}
+                          <path d="M 6 90 L 12 90" stroke="currentColor" strokeWidth="2" strokeLinecap="butt" strokeLinejoin="miter" fill="none" />
+                          {/* Arrowhead at Deploy (destination), tip at left edge of block */}
+                          <path d="M 9 87 L 12 90 L 9 93" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
                         </svg>
                         <div className="relative flex flex-col min-w-0">
                           {[
@@ -831,7 +852,7 @@ function IndexPage() {
                           ))}
                         </div>
                       </div>
-                      <div className="relative max-w-2xl mt-6">
+                      <div className="relative max-w-md mx-auto mt-6">
                         {[
                           { num: 8, title: 'Use', desc: 'Ensure correct adoption and usage as intended—this is where value starts getting generated.' },
                           { num: 9, title: 'Insight', desc: 'Convert observations into evidence-backed conclusions (trends, anomalies, opportunities) linked to KPIs.' },
