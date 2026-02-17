@@ -152,7 +152,7 @@ function IndexPage() {
     }
   }, [])
 
-  // Cleanup video when modal closes or component unmounts
+  // Cleanup video when modal closes
   useEffect(() => {
     if (!showVideoModal && videoRef.current) {
       videoRef.current.pause()
@@ -381,7 +381,7 @@ function IndexPage() {
               Sign up for our Free Trial
             </HeroButton3D>
             <HeroButton3D
-              onClick={() => showComingSoon('watch-concept', 'Watch Concept', 'Watch our concept video to understand how Grow24.ai can transform your growth journey.')}
+              onClick={() => setShowVideoModal(true)}
               className="w-full sm:w-auto px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-xl border-2 border-info-gold-500 text-info-gold-600 bg-info-gold-50 dark:bg-info-gold-900/20 text-sm sm:text-base font-bold hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 transition-colors duration-300"
             >
               Watch Concept
@@ -814,17 +814,17 @@ function IndexPage() {
                     </p>
 
                     <div className="mt-6">
-                      {/* L-shaped arrow exactly like Individual Growth Cycle: starts at left side of Intent (1), goes left, down, right into Deploy (7). Thick teal, sharp 90° corners. */}
-                      <div className="relative max-w-md mx-auto text-left pl-12 sm:pl-14">
+                      {/* L-shaped arrow: same design as Individual Growth Cycle — starts at left of 1. Intent, goes left, down, right into left side of 7. Deploy */}
+                      <div className="relative max-w-md mx-auto text-left text-sm sm:text-base pl-12 sm:pl-14">
                         <svg className="absolute inset-0 w-full h-full pointer-events-none text-teal-600 dark:text-teal-400" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
-                          {/* From center of left side of Intent block (x=12): horizontal segment left to vertical stem */}
-                          <path d="M 12 8 L 6 8" stroke="currentColor" strokeWidth="2" strokeLinecap="butt" strokeLinejoin="miter" fill="none" />
-                          {/* Vertical segment: down to level of Deploy block */}
-                          <path d="M 6 8 L 6 90" stroke="currentColor" strokeWidth="2" strokeLinecap="butt" strokeLinejoin="miter" fill="none" />
-                          {/* Horizontal: from stem into center of left side of Deploy block */}
-                          <path d="M 6 90 L 12 90" stroke="currentColor" strokeWidth="2" strokeLinecap="butt" strokeLinejoin="miter" fill="none" />
+                          {/* From center of left side of Intent (1): horizontal segment left to vertical stem */}
+                          <path d="M 12 4 L 6 4" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round" fill="none" />
+                          {/* Vertical segment: down to level of Deploy (7) block */}
+                          <path d="M 6 4 L 6 60" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round" fill="none" />
+                          {/* Horizontal: from stem into left side of Deploy block */}
+                          <path d="M 6 60 L 12 60" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round" fill="none" />
                           {/* Arrowhead at Deploy (destination), tip at left edge of block */}
-                          <path d="M 9 87 L 12 90 L 9 93" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                          <path d="M 9.5 58.5 L 12 60 L 9.5 61.5" stroke="currentColor" strokeWidth="0.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
                         </svg>
                         <div className="relative flex flex-col min-w-0">
                           {[
@@ -835,44 +835,26 @@ function IndexPage() {
                             { num: 5, title: 'Architect', desc: 'Design the solution: architecture, data flows, integrations, security/privacy, and measurement/telemetry approach.' },
                             { num: 6, title: 'Build', desc: 'Construct and test the solution; ensure quality gates and observability are in place.' },
                             { num: 7, title: 'Deploy', desc: 'Release to users/environments; monitor initial usage; be ready to rollback quickly if issues arise.' },
+                            { num: 8, title: 'Use', desc: 'Ensure correct adoption and usage as intended—this is where value starts getting generated.' },
+                            { num: 9, title: 'Insight', desc: 'Convert observations into evidence-backed conclusions (trends, anomalies, opportunities) linked to KPIs.' },
+                            { num: 10, title: 'Action', desc: 'Generate and track action items driven by insights (owners, due dates, expected KPI impact).' },
+                            { num: 11, title: 'Result', desc: 'Measure outcomes versus Business Case targets; capture learnings and decide scale, refine, or retire.' },
                           ].map((step, i) => (
                             <div key={step.num} className="flex flex-col">
-                              <div className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-teal-500/40 dark:border-teal-400/50 p-4 shadow-sm">
+                              <div className="w-full rounded-2xl bg-teal-50/80 dark:bg-teal-900/20 border-2 border-teal-500/50 dark:border-teal-400/40 p-4 shadow-md">
                                 <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">{step.num}. {step.title}</p>
                                 <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">{step.desc}</p>
                               </div>
-                              {i < 6 && (
-                                <div className="flex justify-center py-1" aria-hidden>
-                                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-teal-600 dark:text-teal-400 shrink-0">
-                                    <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                              {i < 10 && (
+                                <div className="flex justify-center py-1.5" aria-hidden>
+                                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="text-teal-600 dark:text-teal-400 shrink-0" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" />
                                   </svg>
                                 </div>
                               )}
                             </div>
                           ))}
                         </div>
-                      </div>
-                      <div className="relative max-w-md mx-auto mt-6">
-                        {[
-                          { num: 8, title: 'Use', desc: 'Ensure correct adoption and usage as intended—this is where value starts getting generated.' },
-                          { num: 9, title: 'Insight', desc: 'Convert observations into evidence-backed conclusions (trends, anomalies, opportunities) linked to KPIs.' },
-                          { num: 10, title: 'Action', desc: 'Generate and track action items driven by insights (owners, due dates, expected KPI impact).' },
-                          { num: 11, title: 'Result', desc: 'Measure outcomes versus Business Case targets; capture learnings and decide scale, refine, or retire.' },
-                        ].map((step, i) => (
-                          <div key={step.num} className="flex flex-col">
-                            <div className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-teal-500/40 dark:border-teal-400/50 p-4 shadow-sm">
-                              <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">{step.num}. {step.title}</p>
-                              <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">{step.desc}</p>
-                            </div>
-                            {i < 3 && (
-                              <div className="flex justify-center py-1" aria-hidden>
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-teal-600 dark:text-teal-400 shrink-0">
-                                  <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                              </div>
-                            )}
-                          </div>
-                        ))}
                       </div>
                     </div>
                   </div>
@@ -979,61 +961,6 @@ function IndexPage() {
             )}
           </AnimatePresence>
         </div>
-
-        {/* Video Modal */}
-        <AnimatePresence>
-          {showVideoModal && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
-              onClick={() => {
-                if (videoRef.current) {
-                  videoRef.current.pause()
-                  videoRef.current.currentTime = 0
-                }
-                setShowVideoModal(false)
-              }}
-            >
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                className="relative w-full max-w-5xl bg-slate-900 rounded-2xl overflow-hidden shadow-2xl"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Close Button */}
-                <button
-                  onClick={() => {
-                    if (videoRef.current) {
-                      videoRef.current.pause()
-                      videoRef.current.currentTime = 0
-                    }
-                    setShowVideoModal(false)
-                  }}
-                  className="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-
-                {/* Video Player */}
-                <div className="relative aspect-video">
-                  <video
-                    ref={videoRef}
-                    className="w-full h-full"
-                    controls
-                    src="/WhatsApp Video 2026-02-05 at 12.42.46 PM.mp4"
-                  >
-                    Your browser does not support the video tag.
-                  </video>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </motion.section>
 
       {/* Solutions Section */}
@@ -1082,6 +1009,58 @@ function IndexPage() {
           </motion.button>
         </div>
       </motion.section>
+
+      {/* Video Modal - at root so it overlays the full viewport when open */}
+      <AnimatePresence>
+        {showVideoModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+            onClick={() => {
+              if (videoRef.current) {
+                videoRef.current.pause()
+                videoRef.current.currentTime = 0
+              }
+              setShowVideoModal(false)
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative w-full max-w-5xl bg-slate-900 rounded-2xl overflow-hidden shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => {
+                  if (videoRef.current) {
+                    videoRef.current.pause()
+                    videoRef.current.currentTime = 0
+                  }
+                  setShowVideoModal(false)
+                }}
+                className="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              <div className="relative aspect-video">
+                <video
+                  ref={videoRef}
+                  className="w-full h-full"
+                  controls
+                  src="/WhatsApp Video 2026-02-17 at 3.25.00 PM.mp4"
+                >
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
