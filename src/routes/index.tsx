@@ -796,10 +796,13 @@ function IndexPage() {
                       {/* Same layout as Individual Growth Cycle: L-shaped arrow from Intent (1) to Deploy (7), from the left */}
                       <div className="relative max-w-2xl pl-12 sm:pl-14">
                         <svg className="absolute inset-0 w-full h-full pointer-events-none text-teal-600 dark:text-teal-400" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
-                          <path d="M 6 8 L 12 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
-                          <path d="M 9 5 L 12 8 L 9 11" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                          {/* Start from center of left side of Intent (step 1): segment left to vertical stem (same as Growth Cycle: from block, not into it) */}
+                          <path d="M 12 8 L 6 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+                          {/* Vertical: down to Deploy level */}
                           <path d="M 6 8 L 6 88" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+                          {/* Horizontal: from stem into left side of Deploy (step 7) */}
                           <path d="M 6 88 L 12 88" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+                          {/* Arrowhead at Deploy (destination only, like Growth Cycle has arrowhead only at step 1) */}
                           <path d="M 9 85 L 12 88 L 9 91" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" fill="none" />
                         </svg>
                         <div className="relative flex flex-col min-w-0">
