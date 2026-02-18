@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useRef, useEffect } from 'react'
 import SolutionsMatrix3Panel from '../components/SolutionsMatrix3Panel'
 import LibraryPage from '../components/Library'
+import EmailTemplateBuilder from '../components/EmailTemplateBuilder'
 import { useComingSoon } from '../contexts/ComingSoonContext'
 import { useTheme } from '../contexts/ThemeContext'
 import { use3DRotation } from '../lib/use3DRotation'
@@ -123,6 +124,7 @@ function IndexPage() {
   const [personalBgWhite, setPersonalBgWhite] = useState(false)
   const [professionalBgWhite, setProfessionalBgWhite] = useState(false)
   const [showVideoModal, setShowVideoModal] = useState(false)
+  const [showEmailTemplateBuilder, setShowEmailTemplateBuilder] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
 
   // Handle hash navigation on mount and when hash changes
@@ -984,6 +986,36 @@ function IndexPage() {
         <LibraryPage />
       </motion.section>
 
+      {/* Contact Us Section - Email template builder */}
+      <motion.section
+        id="contact"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true, amount: 0.3 }}
+        className="py-20 px-4 sm:px-6 md:px-8 bg-slate-50 dark:bg-slate-900/50 border-t border-gray-200 dark:border-slate-800 scroll-mt-header"
+      >
+        <div className="w-full max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900 dark:text-white">
+            Contact Us
+          </h2>
+          <p className="text-lg mb-8 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            Create and send rich emails with subject, HTML body, attachments, audio, video, and buttons—all from here.
+          </p>
+          <motion.button
+            onClick={() => setShowEmailTemplateBuilder(true)}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.98 }}
+            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-teal-500 hover:bg-teal-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            Create email template
+          </motion.button>
+        </div>
+      </motion.section>
+
       {/* CTA Section */}
       <motion.section
         initial={{ opacity: 0 }}
@@ -1061,6 +1093,8 @@ function IndexPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <EmailTemplateBuilder isOpen={showEmailTemplateBuilder} onClose={() => setShowEmailTemplateBuilder(false)} />
     </div>
   )
 }
