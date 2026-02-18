@@ -183,22 +183,18 @@ function IndexPage() {
         className="min-h-screen flex items-start sm:items-center justify-center pt-12 sm:pt-16 md:pt-20 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8 scroll-mt-header"
       >
         <div className="w-full max-w-7xl mx-auto text-center mt-4 sm:mt-0">
-          <motion.h1
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-2 sm:mb-3"
+            className="mb-2 sm:mb-3"
           >
-            <span className="text-gradient block">
-              Identify, Develop &amp; Live
-            </span>
-            <span className="text-gradient block">
-              to your fullest
-            </span>
-            <span className="text-gradient block">
-              Personal &amp; Professional Potential
-            </span>
-            <span className="text-slate-600 dark:text-slate-400 inline-flex items-center justify-center gap-2 mt-2">
+            <img
+              src="/2b167222-df12-4512-b5df-e1148c057b02.jpeg"
+              alt="Identify, Develop & Live to your fullest Personal & Professional Potential with Grow24.ai"
+              className="w-full max-w-4xl mx-auto h-auto object-contain rounded-lg shadow-lg"
+            />
+            <span className="text-slate-600 dark:text-slate-400 inline-flex items-center justify-center gap-2 mt-3 sm:mt-4">
               <span>with</span>
               <img
                 src={theme === 'dark' ? '/grow24_ai_icon_4.jpeg' : '/grow24_ai_icon_5.jpeg'}
@@ -206,7 +202,7 @@ function IndexPage() {
                 className="h-[1.875rem] sm:h-[2.25rem] md:h-[3.75rem] lg:h-[4.5rem] w-auto align-middle"
               />
             </span>
-          </motion.h1>
+          </motion.div>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}

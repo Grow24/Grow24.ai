@@ -246,8 +246,12 @@ const navItems: NavItem[] = [
   { label: 'Contact Us', href: '#contact', icon: ContactIcon },
   // Dedicated About page
   { label: 'About Us', href: '/about', icon: AboutIcon },
-  { label: 'Become Partner', href: '#partner', icon: PartnerIcon },
-  { label: 'Join Us', href: '#join', icon: JoinUsIcon },
+  { label: 'Partner with Us', href: '/become-partner', icon: PartnerIcon },
+  {
+    label: 'Join Us',
+    href: 'https://internshala.com/internship/detail/full-stack-development-internship-in-multiple-locations-at-intelligent-salesman1766045732',
+    icon: JoinUsIcon,
+  },
   // Use dedicated route for privacy policy
   { label: 'Privacy Policy', href: '/privacy-policy', icon: PrivacyIcon },
   { label: 'Terms of Use', href: '#terms', icon: TermsIcon },
@@ -326,7 +330,7 @@ interface HeaderProps {
 
 // Menu labels that should be excluded from search (only menu items, not page content)
 const menuOnlyLabels = new Set([
-  'Become Partner',
+  'Partner with Us',
   'Join Us',
   'Privacy Policy',
   'Terms of Use',
@@ -1119,6 +1123,8 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                                   scrollToSection(item.href, navigate, location)
                                 } else if (item.href.startsWith('/')) {
                                   navigate({ to: item.href })
+                                } else if (item.href.startsWith('http://') || item.href.startsWith('https://')) {
+                                  window.open(item.href, '_blank', 'noopener,noreferrer')
                                 }
                                 setSideMenuOpen(false)
                               }}

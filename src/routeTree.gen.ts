@@ -14,6 +14,7 @@ import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as LibraryRouteImport } from './routes/library'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as BecomePartnerRouteImport } from './routes/become-partner'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SolutionsOverviewRouteImport } from './routes/solutions.overview'
@@ -44,6 +45,11 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BecomePartnerRoute = BecomePartnerRouteImport.update({
+  id: '/become-partner',
+  path: '/become-partner',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -68,6 +74,7 @@ const SolutionsSolutionIdRoute = SolutionsSolutionIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/become-partner': typeof BecomePartnerRoute
   '/dashboard': typeof DashboardRoute
   '/library': typeof LibraryRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
@@ -79,6 +86,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/become-partner': typeof BecomePartnerRoute
   '/dashboard': typeof DashboardRoute
   '/library': typeof LibraryRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
@@ -91,6 +99,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/become-partner': typeof BecomePartnerRoute
   '/dashboard': typeof DashboardRoute
   '/library': typeof LibraryRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
@@ -104,6 +113,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/become-partner'
     | '/dashboard'
     | '/library'
     | '/privacy-policy'
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/become-partner'
     | '/dashboard'
     | '/library'
     | '/privacy-policy'
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/become-partner'
     | '/dashboard'
     | '/library'
     | '/privacy-policy'
@@ -138,6 +150,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  BecomePartnerRoute: typeof BecomePartnerRoute
   DashboardRoute: typeof DashboardRoute
   LibraryRoute: typeof LibraryRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
@@ -180,6 +193,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/become-partner': {
+      id: '/become-partner'
+      path: '/become-partner'
+      fullPath: '/become-partner'
+      preLoaderRoute: typeof BecomePartnerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -230,6 +250,7 @@ const SolutionsRouteWithChildren = SolutionsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  BecomePartnerRoute: BecomePartnerRoute,
   DashboardRoute: DashboardRoute,
   LibraryRoute: LibraryRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
