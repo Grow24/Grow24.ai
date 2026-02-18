@@ -32,12 +32,41 @@ function getSendEmailEndpoint(): string {
 
 export async function sendEmail(payload: SendEmailPayload): Promise<{ success: boolean; message: string }> {
   const endpoint = getSendEmailEndpoint()
-  const res = await fetch(endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  })
-  const data = await res.json().catch(() => ({ message: 'Invalid response' }))
+  let res: Response
+  try {
+    res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Network error'
+    return {
+      success: false,
+      message: `Cannot reach the send-email server. Start it with: npm run server:email. (${msg})`,
+    }
+  }
+
+  const contentType = res.headers.get('content-type') || ''
+  const isJson = contentType.includes('application/json')
+  let data: { message?: string } = {}
+
+  if (isJson) {
+    data = await res.json().catch(() => ({}))
+  } else {
+    const text = await res.text().catch(() => '')
+    if (res.status === 502 || res.status === 503 || res.status === 504 || res.status === 0) {
+      return {
+        success: false,
+        message: 'Send-email server is not running. Start it in a separate terminal: npm run server:email',
+      }
+    }
+    return {
+      success: false,
+      message: data.message || `Server returned ${res.status} ${res.statusText}. ${text ? 'Response was not JSON.' : ''}`.trim() || 'Invalid response from server.',
+    }
+  }
+
   if (!res.ok) {
     return { success: false, message: data.message || 'Failed to send email' }
   }
