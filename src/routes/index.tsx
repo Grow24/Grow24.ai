@@ -266,8 +266,8 @@ function IndexPage() {
               </p>
             </div>
 
-            {/* Mobile view: stacked layout with L-shaped arrow (same as before) */}
-            <div className="lg:hidden relative max-w-md mx-auto text-left text-sm sm:text-base pl-12 sm:pl-14">
+            {/* Stacked layout with L-shaped arrow (same on all screen sizes) */}
+            <div className="relative max-w-md mx-auto text-left text-sm sm:text-base pl-12 sm:pl-14">
               {/* L-shaped return arrow: starts from center of left side of step 5 block, goes left then up, then right into step 1 */}
               <svg className="absolute inset-0 w-full h-full pointer-events-none text-teal-600 dark:text-teal-400" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
                 <path d="M 12 90 L 6 90" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
@@ -327,46 +327,6 @@ function IndexPage() {
                   </p>
                 </div>
               </div>
-            </div>
-
-            {/* Laptop view: table layout */}
-            <div className="hidden lg:block overflow-x-auto rounded-xl border border-teal-500/40 dark:border-teal-400/50 overflow-hidden shadow-sm">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-300">
-                    <th className="px-4 py-3 text-left font-semibold w-20">Step</th>
-                    <th className="px-4 py-3 text-left font-semibold">Title</th>
-                    <th className="px-4 py-3 text-left font-semibold">Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr id="growth-cycle-step-1" className="bg-white/80 dark:bg-slate-900/40 border-t border-teal-500/30 dark:border-teal-400/30">
-                    <td className="px-4 py-3 text-teal-700 dark:text-teal-300 font-semibold">1</td>
-                    <td className="px-4 py-3 text-teal-700 dark:text-teal-300 font-semibold">Identify Goals</td>
-                    <td className="px-4 py-3 text-slate-700 dark:text-slate-200">Personal &amp; Professional Benefits that you aspire to, articulated as goals.</td>
-                  </tr>
-                  <tr className="bg-white/80 dark:bg-slate-900/40 border-t border-teal-500/30 dark:border-teal-400/30">
-                    <td className="px-4 py-3 text-teal-700 dark:text-teal-300 font-semibold">2</td>
-                    <td className="px-4 py-3 text-teal-700 dark:text-teal-300 font-semibold">Craft Strategy</td>
-                    <td className="px-4 py-3 text-slate-700 dark:text-slate-200">Shortlist the focus areas and approach (i.e. how to deliver the focus area with excellence).</td>
-                  </tr>
-                  <tr className="bg-white/80 dark:bg-slate-900/40 border-t border-teal-500/30 dark:border-teal-400/30">
-                    <td className="px-4 py-3 text-teal-700 dark:text-teal-300 font-semibold">3</td>
-                    <td className="px-4 py-3 text-teal-700 dark:text-teal-300 font-semibold">Define Objective</td>
-                    <td className="px-4 py-3 text-slate-700 dark:text-slate-200">Within the selected approach, define clear objectives and key results.</td>
-                  </tr>
-                  <tr className="bg-white/80 dark:bg-slate-900/40 border-t border-teal-500/30 dark:border-teal-400/30">
-                    <td className="px-4 py-3 text-teal-700 dark:text-teal-300 font-semibold">4</td>
-                    <td className="px-4 py-3 text-teal-700 dark:text-teal-300 font-semibold">Build Plan</td>
-                    <td className="px-4 py-3 text-slate-700 dark:text-slate-200">Plan for multiple time periods so you can progress step by step.</td>
-                  </tr>
-                  <tr id="growth-cycle-step-5" className="bg-white/80 dark:bg-slate-900/40 border-t border-teal-500/30 dark:border-teal-400/30">
-                    <td className="px-4 py-3 text-teal-700 dark:text-teal-300 font-semibold">5</td>
-                    <td className="px-4 py-3 text-teal-700 dark:text-teal-300 font-semibold">Execute Plan</td>
-                    <td className="px-4 py-3 text-slate-700 dark:text-slate-200">Execute the plan and assess results, feeding learning into the next cycle.</td>
-                  </tr>
-                </tbody>
-              </table>
             </div>
           </motion.div>
 
