@@ -120,6 +120,168 @@ const themeFilters: FilterOption[] = [
   { id: 'solution-management', label: 'Solution Management' },
 ]
 
+// Professional tab filters (exact sequence and options per requirements)
+const professionalDateFilters: FilterOption[] = [
+  { id: 'all', label: 'All' },
+  {
+    id: 'completed',
+    label: 'Completed',
+    children: [
+      { id: 'completed-less-than-3-months', label: 'less than 3 months' },
+      { id: 'completed-less-than-1-month', label: 'less than 1 month' },
+      { id: 'completed-less-than-1-week', label: 'less than a week' },
+    ],
+  },
+  { id: 'ongoing', label: 'Ongoing' },
+  { id: 'upcoming', label: 'Upcoming' },
+]
+
+const professionalIndustryFilters: FilterOption[] = [
+  { id: 'all', label: 'All' },
+  { id: 'agri', label: 'Agri' },
+  { id: 'automobile', label: 'Automobile' },
+  { id: 'auto-components', label: 'Auto Components' },
+  {
+    id: 'consumer-products',
+    label: 'Consumer Products',
+    children: [
+      { id: 'fmcg', label: 'FMCG' },
+      { id: 'consumer-durables', label: 'Consumer Durables' },
+    ],
+  },
+  { id: 'pharma', label: 'Pharma' },
+  { id: 'sports', label: 'Sports' },
+]
+
+const professionalOrganizationFilters: FilterOption[] = [
+  { id: 'corporate', label: 'Corporate' },
+  {
+    id: 'functional',
+    label: 'Functional',
+    children: [
+      { id: 'finance', label: 'Finance' },
+      { id: 'human-resources', label: 'Human Resources' },
+      { id: 'information-technology', label: 'Information Technology' },
+      { id: 'marketing', label: 'Marketing' },
+      { id: 'market-research', label: 'Market Research' },
+      { id: 'sales', label: 'Sales' },
+      { id: 'supply-chain', label: 'Supply Chain' },
+    ],
+  },
+  {
+    id: 'program',
+    label: 'Program',
+    children: [
+      { id: 'esg', label: 'ESG' },
+      { id: 'business-transformation', label: 'Business Transformation' },
+    ],
+  },
+]
+
+const professionalContentTypeFilters: FilterOption[] = [
+  { id: 'case-study', label: 'Case Study' },
+  { id: 'summary', label: 'Summary' },
+  { id: 'perspective', label: 'Perspective' },
+  { id: 'white-paper', label: 'White Paper' },
+  { id: 'template', label: 'Template' },
+  { id: 'training', label: 'Training' },
+]
+
+const professionalEngagementTypeFilters: FilterOption[] = [
+  { id: 'podcast', label: 'Podcast' },
+  { id: 'article', label: 'Article' },
+  { id: 'survey', label: 'Survey' },
+  { id: 'video', label: 'Video' },
+  { id: 'webinar', label: 'Webinar' },
+]
+
+const professionalThemeFilters: FilterOption[] = [
+  { id: 'all', label: 'All' },
+  {
+    id: 'business-analysis',
+    label: 'Business Analysis',
+    children: [
+      {
+        id: 'applied-business-analysis',
+        label: 'Applied Business Analysis',
+        children: [
+          { id: 'develop-a-business-case', label: 'Develop a Business Case' },
+          { id: 'case-studies', label: 'Case studies' },
+        ],
+      },
+      {
+        id: 'body-of-knowledge',
+        label: 'Body of Knowledge',
+        children: [
+          { id: 'knowledge-areas', label: 'Knowledge Areas' },
+          { id: 'core-concept-model', label: 'Core Concept Model' },
+          { id: 'competencies', label: 'Competencies' },
+          { id: 'techniques', label: 'Techniques' },
+          { id: 'perspectives', label: 'Perspectives' },
+        ],
+      },
+    ],
+  },
+  { id: 'business-transformation', label: 'Business Transformation' },
+  { id: 'change-mgmt', label: 'Change Mgmt' },
+  { id: 'collaboration', label: 'Collaboration' },
+  { id: 'communication', label: 'Communication' },
+  {
+    id: 'delivering-results',
+    label: 'Delivering Results',
+    children: [{ id: 'delivering-value', label: 'Delivering Value' }],
+  },
+  {
+    id: 'enterprise-architecture',
+    label: 'Enterprise Architecture',
+    children: [
+      {
+        id: 'business-architecture',
+        label: 'Business Architecture',
+        children: [
+          { id: 'values-in-business-networks', label: 'Values in Business Networks' },
+          { id: 'business-growth-cycle', label: 'Business Growth Cycle' },
+        ],
+      },
+      { id: 'solution-architecture', label: 'Solution Architecture' },
+    ],
+  },
+  { id: 'environment', label: 'Environment' },
+  {
+    id: 'growth-cycle',
+    label: 'Growth Cycle',
+    children: [
+      { id: 'personal-growth-cycle', label: 'Personal Growth Cycle' },
+      { id: 'professional-growth-cycle', label: 'Professional Growth Cycle' },
+    ],
+  },
+  { id: 'innovation', label: 'Innovation' },
+  { id: 'leadership', label: 'Leadership' },
+  { id: 'project-mgmt', label: 'Project Mgmt' },
+  { id: 'program-mgmt', label: 'Program Mgmt' },
+  { id: 'portfolio-mgmt', label: 'Portfolio Mgmt' },
+  { id: 'process-mgmt', label: 'Process Mgmt' },
+  { id: 'research', label: 'Research' },
+  { id: 'results-framework', label: 'Results Framework' },
+  { id: 'service-operations', label: 'Service Operations' },
+  {
+    id: 'solution-mgmt',
+    label: 'Solution Mgmt',
+    children: [
+      { id: 'delivering-solutions', label: 'Delivering Solutions' },
+      { id: 'using-solutions', label: 'Using Solutions' },
+    ],
+  },
+]
+
+const professionalGrowthCycleFilters: FilterOption[] = [
+  { id: 'identify-goals', label: 'Identify Goals' },
+  { id: 'craft-strategy', label: 'Craft Strategy' },
+  { id: 'define-objective', label: 'Define Objective' },
+  { id: 'build-plan', label: 'Build Plan' },
+  { id: 'execute-plan', label: 'Execute Plan' },
+]
+
 // Resource data
 interface Resource {
   id: string
@@ -375,6 +537,7 @@ interface FilterGroupProps {
   onToggleExpand: (filterId: string) => void
   onToggleFilter: (filterGroup: string, optionId: string, parentId?: string) => void
   isFilterSelected: (filterGroup: string, optionId: string, parentId?: string) => boolean
+  singleSelect?: boolean
 }
 
 const FilterGroup: React.FC<FilterGroupProps> = React.memo(({ 
@@ -386,8 +549,63 @@ const FilterGroup: React.FC<FilterGroupProps> = React.memo(({
   isExpanded,
   onToggleExpand,
   onToggleFilter,
-  isFilterSelected
+  isFilterSelected,
+  singleSelect = false,
 }) => {
+  const renderOption = (option: FilterOption, depth = 0, parentId?: string): React.ReactNode => {
+    const effectiveSelected = isFilterSelected(filterGroup, option.id, singleSelect ? undefined : parentId)
+    const toggle = () => onToggleFilter(filterGroup, option.id, singleSelect ? undefined : parentId)
+    return (
+      <div key={option.id}>
+        <FilterCheckbox
+          option={option}
+          filterGroup={filterGroup}
+          isSelected={effectiveSelected}
+          onToggle={toggle}
+          isChild={depth > 0}
+        />
+        {option.children && option.children.length > 0 && (
+          <div className={depth === 0 ? 'ml-7 mt-1 space-y-1' : 'ml-5 mt-1 space-y-1'}>
+            {option.children.map((child) =>
+              child.children && child.children.length > 0 ? (
+                <div key={child.id}>
+                  <FilterCheckbox
+                    option={child}
+                    filterGroup={filterGroup}
+                    isSelected={isFilterSelected(filterGroup, child.id, singleSelect ? undefined : option.id)}
+                    onToggle={() => onToggleFilter(filterGroup, child.id, singleSelect ? undefined : option.id)}
+                    isChild={true}
+                  />
+                  <div className="ml-5 mt-1 space-y-1">
+                    {child.children.map((grandchild) => (
+                      <FilterCheckbox
+                        key={grandchild.id}
+                        option={grandchild}
+                        filterGroup={filterGroup}
+                        isSelected={isFilterSelected(filterGroup, grandchild.id, singleSelect ? undefined : child.id)}
+                        onToggle={() => onToggleFilter(filterGroup, grandchild.id, singleSelect ? undefined : child.id)}
+                        isChild={true}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <FilterCheckbox
+                  key={child.id}
+                  option={child}
+                  filterGroup={filterGroup}
+                  isSelected={isFilterSelected(filterGroup, child.id, singleSelect ? undefined : option.id)}
+                  onToggle={() => onToggleFilter(filterGroup, child.id, singleSelect ? undefined : option.id)}
+                  isChild={true}
+                />
+              )
+            )}
+          </div>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div className={isNested ? "rounded-md overflow-hidden" : "border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden bg-white dark:bg-slate-800"}>
       <button
@@ -407,39 +625,7 @@ const FilterGroup: React.FC<FilterGroupProps> = React.memo(({
             className="overflow-hidden"
           >
             <div className={`${isNested ? 'px-3 py-2' : 'px-4 py-2'} ${isNested ? '' : 'border-t border-slate-200 dark:border-slate-700'} bg-slate-50 dark:bg-slate-900/50 space-y-1`}>
-              {options.map((option) => {
-                const isSelected = isFilterSelected(filterGroup, option.id)
-                
-                return (
-                  <div key={option.id}>
-                    <FilterCheckbox
-                      option={option}
-                      filterGroup={filterGroup}
-                      isSelected={isSelected}
-                      onToggle={() => onToggleFilter(filterGroup, option.id)}
-                    />
-                    {option.children && (
-                      <div className="ml-7 mt-1 space-y-1">
-                        {option.children.map((child) => {
-                          const isChildSelected = isFilterSelected(filterGroup, child.id, option.id)
-                          
-                          return (
-                            <FilterCheckbox
-                              key={child.id}
-                              option={child}
-                              filterGroup={filterGroup}
-                              isSelected={isChildSelected}
-                              onToggle={() => onToggleFilter(filterGroup, child.id, option.id)}
-                              isChild={true}
-                              parentId={option.id}
-                            />
-                          )
-                        })}
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
+              {options.map((option) => renderOption(option))}
             </div>
           </motion.div>
         )}
@@ -448,12 +634,12 @@ const FilterGroup: React.FC<FilterGroupProps> = React.memo(({
   )
 }, (prevProps, nextProps) => {
   // Re-render if structural props change OR if filter selection callback changes
-  // This ensures checkboxes update when selections change, but prevents unnecessary re-renders
   const structuralPropsEqual = (
     prevProps.title === nextProps.title &&
     prevProps.filterId === nextProps.filterId &&
     prevProps.filterGroup === nextProps.filterGroup &&
     prevProps.isNested === nextProps.isNested &&
+    prevProps.singleSelect === nextProps.singleSelect &&
     prevProps.isExpanded === nextProps.isExpanded &&
     prevProps.options === nextProps.options &&
     prevProps.onToggleExpand === nextProps.onToggleExpand &&
@@ -534,6 +720,9 @@ export default function Library() {
 
   const toggleFilterOption = useCallback((filterGroup: string, optionId: string, parentId?: string) => {
     setCurrentFilters((prev) => {
+      if (filterGroup === 'date') {
+        return { ...prev, date: new Set([optionId]) }
+      }
       const key = parentId ? `${filterGroup}-${parentId}` : filterGroup
       const current = prev[key] || new Set<string>()
       const next = new Set(current)
@@ -602,52 +791,64 @@ export default function Library() {
           }
         }
       } else {
-        // Role filter
-        const roleFilter = currentFilters['role']
-        if (roleFilter && roleFilter.size > 0) {
-          if (!resource.role || !roleFilter.has(resource.role)) {
-            return false
-          }
+        // Professional tab: date, industry, organization, contentType, engagementType, theme, growthCycle
+        const dateFilter = currentFilters['date']
+        if (dateFilter && dateFilter.size > 0 && !dateFilter.has('all')) {
+          // Apply date filter when resource has date-related field (if we add it to Resource later)
+          const resourceDate = (resource as Record<string, unknown>).dateStatus as string | undefined
+          if (resourceDate && !dateFilter.has(resourceDate)) return false
         }
 
-        // Topic filter
-        const topicFilter = currentFilters['topic']
-        if (topicFilter && topicFilter.size > 0) {
-          if (!resource.topic || !topicFilter.has(resource.topic)) {
-            return false
-          }
-        }
-
-        // Industry filter (including nested)
         const industryFilter = currentFilters['industry']
-        const consumerProductsFilter = currentFilters['industry-consumer-products']
-        
-        if (industryFilter && industryFilter.size > 0) {
-          let matchesIndustry = false
-          
-          // Check direct industry match
-          if (resource.industry && industryFilter.has(resource.industry)) {
-            matchesIndustry = true
+        const industryConsumerFilter = currentFilters['industry-consumer-products']
+        if (industryFilter && industryFilter.size > 0 && !industryFilter.has('all')) {
+          const ind = resource.industry
+          if (!ind) return false
+          let ok = industryFilter.has(ind)
+          if (!ok && (ind === 'fmcg' || ind === 'consumer-durables')) {
+            ok = industryFilter.has('consumer-products') && (!industryConsumerFilter?.size || industryConsumerFilter.has(ind))
           }
-          
-          // Check nested consumer products
-          if (resource.industry === 'fmcg' || resource.industry === 'durables') {
-            if (industryFilter.has('consumer-products')) {
-              matchesIndustry = true
-            }
-            // Check nested filters
-            if (consumerProductsFilter && consumerProductsFilter.size > 0) {
-              if (consumerProductsFilter.has(resource.industry)) {
-                matchesIndustry = true
-              } else {
-                matchesIndustry = false
-              }
-            }
+          if (!ok) return false
+        }
+
+        const orgFilter = currentFilters['organization']
+        const orgFunctionalFilter = currentFilters['organization-functional']
+        const orgProgramFilter = currentFilters['organization-program']
+        if (orgFilter && orgFilter.size > 0) {
+          const org = (resource as Record<string, unknown>).organization as string | undefined
+          const orgSub = (resource as Record<string, unknown>).organizationSub as string | undefined
+          if (org && !orgFilter.has(org)) return false
+          if (org === 'functional' && orgSub && orgFunctionalFilter?.size && !orgFunctionalFilter.has(orgSub)) return false
+          if (org === 'program' && orgSub && orgProgramFilter?.size && !orgProgramFilter.has(orgSub)) return false
+        }
+
+        const contentTypeFilter = currentFilters['contentType']
+        if (contentTypeFilter && contentTypeFilter.size > 0) {
+          if (!resource.contentType || !contentTypeFilter.has(resource.contentType)) return false
+        }
+
+        const engagementFilter = currentFilters['engagementType']
+        if (engagementFilter && engagementFilter.size > 0) {
+          const delivery = resource.deliveryType
+          if (!delivery || !engagementFilter.has(delivery)) return false
+        }
+
+        const themeFilter = currentFilters['theme']
+        if (themeFilter && themeFilter.size > 0 && !themeFilter.has('all')) {
+          const theme = (resource as Record<string, unknown>).theme as string | undefined
+          if (theme && !themeFilter.has(theme)) return false
+        }
+        Object.keys(currentFilters).forEach((key) => {
+          if (key.startsWith('theme-') && currentFilters[key]?.size) {
+            const themeSub = (resource as Record<string, unknown>).themeSub as string | undefined
+            if (themeSub && !currentFilters[key]?.has(themeSub)) return false
           }
-          
-          if (!matchesIndustry) {
-            return false
-          }
+        })
+
+        const growthCycleFilter = currentFilters['growthCycle']
+        if (growthCycleFilter && growthCycleFilter.size > 0) {
+          const gc = (resource as Record<string, unknown>).growthCycle as string | undefined
+          if (gc && !growthCycleFilter.has(gc)) return false
         }
       }
 
@@ -736,89 +937,156 @@ export default function Library() {
               </div>
 
               <div className="space-y-3">
-                {/* Requirement */}
-                <FilterGroup
-                  title="Requirement"
-                  filterId="requirement"
-                  options={requirementFilters}
-                  filterGroup="requirement"
-                  isExpanded={expandedFilters.has('requirement')}
-                  onToggleExpand={toggleFilterExpanded}
-                  onToggleFilter={toggleFilterOption}
-                  isFilterSelected={isFilterSelected}
-                />
-
-                {/* Content Type */}
-                <FilterGroup
-                  title="Content Type"
-                  filterId="content-type"
-                  options={contentTypeFilters}
-                  filterGroup="contentType"
-                  isExpanded={expandedFilters.has('content-type')}
-                  onToggleExpand={toggleFilterExpanded}
-                  onToggleFilter={toggleFilterOption}
-                  isFilterSelected={isFilterSelected}
-                />
-
-                {/* Engagement Type */}
-                <FilterGroup
-                  title="Engagement Type"
-                  filterId="engagement-type"
-                  options={engagementTypeFilters}
-                  filterGroup="engagementType"
-                  isExpanded={expandedFilters.has('engagement-type')}
-                  onToggleExpand={toggleFilterExpanded}
-                  onToggleFilter={toggleFilterOption}
-                  isFilterSelected={isFilterSelected}
-                />
-
-                {/* Organization */}
-                <FilterGroup
-                  title="Organization"
-                  filterId="organization"
-                  options={organizationFilters}
-                  filterGroup="organization"
-                  isExpanded={expandedFilters.has('organization')}
-                  onToggleExpand={toggleFilterExpanded}
-                  onToggleFilter={toggleFilterOption}
-                  isFilterSelected={isFilterSelected}
-                />
-
-                {/* Solution Lifecycle */}
-                <FilterGroup
-                  title="Solution Lifecycle"
-                  filterId="solution-lifecycle"
-                  options={solutionLifecycleFilters}
-                  filterGroup="solutionLifecycle"
-                  isExpanded={expandedFilters.has('solution-lifecycle')}
-                  onToggleExpand={toggleFilterExpanded}
-                  onToggleFilter={toggleFilterOption}
-                  isFilterSelected={isFilterSelected}
-                />
-
-                {/* Change Management */}
-                <FilterGroup
-                  title="Change Management"
-                  filterId="change-management"
-                  options={changeManagementFilters}
-                  filterGroup="changeManagement"
-                  isExpanded={expandedFilters.has('change-management')}
-                  onToggleExpand={toggleFilterExpanded}
-                  onToggleFilter={toggleFilterOption}
-                  isFilterSelected={isFilterSelected}
-                />
-
-                {/* Theme */}
-                <FilterGroup
-                  title="Theme"
-                  filterId="theme"
-                  options={themeFilters}
-                  filterGroup="theme"
-                  isExpanded={expandedFilters.has('theme')}
-                  onToggleExpand={toggleFilterExpanded}
-                  onToggleFilter={toggleFilterOption}
-                  isFilterSelected={isFilterSelected}
-                />
+                {activeTab === 'training' ? (
+                  <>
+                    {/* Professional tab: Date, Industry, Organization, Content Type, Engagement Type, Theme, Growth Cycle */}
+                    <FilterGroup
+                      title="Date"
+                      filterId="date"
+                      options={professionalDateFilters}
+                      filterGroup="date"
+                      isExpanded={expandedFilters.has('date')}
+                      onToggleExpand={toggleFilterExpanded}
+                      onToggleFilter={toggleFilterOption}
+                      isFilterSelected={isFilterSelected}
+                      singleSelect
+                    />
+                    <FilterGroup
+                      title="Industry"
+                      filterId="industry"
+                      options={professionalIndustryFilters}
+                      filterGroup="industry"
+                      isExpanded={expandedFilters.has('industry')}
+                      onToggleExpand={toggleFilterExpanded}
+                      onToggleFilter={toggleFilterOption}
+                      isFilterSelected={isFilterSelected}
+                    />
+                    <FilterGroup
+                      title="Organization"
+                      filterId="organization"
+                      options={professionalOrganizationFilters}
+                      filterGroup="organization"
+                      isExpanded={expandedFilters.has('organization')}
+                      onToggleExpand={toggleFilterExpanded}
+                      onToggleFilter={toggleFilterOption}
+                      isFilterSelected={isFilterSelected}
+                    />
+                    <FilterGroup
+                      title="Content Type"
+                      filterId="content-type"
+                      options={professionalContentTypeFilters}
+                      filterGroup="contentType"
+                      isExpanded={expandedFilters.has('content-type')}
+                      onToggleExpand={toggleFilterExpanded}
+                      onToggleFilter={toggleFilterOption}
+                      isFilterSelected={isFilterSelected}
+                    />
+                    <FilterGroup
+                      title="Engagement Type"
+                      filterId="engagement-type"
+                      options={professionalEngagementTypeFilters}
+                      filterGroup="engagementType"
+                      isExpanded={expandedFilters.has('engagement-type')}
+                      onToggleExpand={toggleFilterExpanded}
+                      onToggleFilter={toggleFilterOption}
+                      isFilterSelected={isFilterSelected}
+                    />
+                    <FilterGroup
+                      title="Theme"
+                      filterId="theme"
+                      options={professionalThemeFilters}
+                      filterGroup="theme"
+                      isExpanded={expandedFilters.has('theme')}
+                      onToggleExpand={toggleFilterExpanded}
+                      onToggleFilter={toggleFilterOption}
+                      isFilterSelected={isFilterSelected}
+                    />
+                    <FilterGroup
+                      title="Growth Cycle"
+                      filterId="growth-cycle"
+                      options={professionalGrowthCycleFilters}
+                      filterGroup="growthCycle"
+                      isExpanded={expandedFilters.has('growth-cycle')}
+                      onToggleExpand={toggleFilterExpanded}
+                      onToggleFilter={toggleFilterOption}
+                      isFilterSelected={isFilterSelected}
+                    />
+                  </>
+                ) : (
+                  <>
+                    {/* Personal tab: existing filters */}
+                    <FilterGroup
+                      title="Requirement"
+                      filterId="requirement"
+                      options={requirementFilters}
+                      filterGroup="requirement"
+                      isExpanded={expandedFilters.has('requirement')}
+                      onToggleExpand={toggleFilterExpanded}
+                      onToggleFilter={toggleFilterOption}
+                      isFilterSelected={isFilterSelected}
+                    />
+                    <FilterGroup
+                      title="Content Type"
+                      filterId="content-type"
+                      options={contentTypeFilters}
+                      filterGroup="contentType"
+                      isExpanded={expandedFilters.has('content-type')}
+                      onToggleExpand={toggleFilterExpanded}
+                      onToggleFilter={toggleFilterOption}
+                      isFilterSelected={isFilterSelected}
+                    />
+                    <FilterGroup
+                      title="Engagement Type"
+                      filterId="engagement-type"
+                      options={engagementTypeFilters}
+                      filterGroup="engagementType"
+                      isExpanded={expandedFilters.has('engagement-type')}
+                      onToggleExpand={toggleFilterExpanded}
+                      onToggleFilter={toggleFilterOption}
+                      isFilterSelected={isFilterSelected}
+                    />
+                    <FilterGroup
+                      title="Organization"
+                      filterId="organization"
+                      options={organizationFilters}
+                      filterGroup="organization"
+                      isExpanded={expandedFilters.has('organization')}
+                      onToggleExpand={toggleFilterExpanded}
+                      onToggleFilter={toggleFilterOption}
+                      isFilterSelected={isFilterSelected}
+                    />
+                    <FilterGroup
+                      title="Solution Lifecycle"
+                      filterId="solution-lifecycle"
+                      options={solutionLifecycleFilters}
+                      filterGroup="solutionLifecycle"
+                      isExpanded={expandedFilters.has('solution-lifecycle')}
+                      onToggleExpand={toggleFilterExpanded}
+                      onToggleFilter={toggleFilterOption}
+                      isFilterSelected={isFilterSelected}
+                    />
+                    <FilterGroup
+                      title="Change Management"
+                      filterId="change-management"
+                      options={changeManagementFilters}
+                      filterGroup="changeManagement"
+                      isExpanded={expandedFilters.has('change-management')}
+                      onToggleExpand={toggleFilterExpanded}
+                      onToggleFilter={toggleFilterOption}
+                      isFilterSelected={isFilterSelected}
+                    />
+                    <FilterGroup
+                      title="Theme"
+                      filterId="theme"
+                      options={themeFilters}
+                      filterGroup="theme"
+                      isExpanded={expandedFilters.has('theme')}
+                      onToggleExpand={toggleFilterExpanded}
+                      onToggleFilter={toggleFilterOption}
+                      isFilterSelected={isFilterSelected}
+                    />
+                  </>
+                )}
               </div>
             </div>
           </motion.div>
