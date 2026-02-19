@@ -49,26 +49,40 @@ export async function sendEmail(payload: SendEmailPayload): Promise<{ success: b
 
   const contentType = res.headers.get('content-type') || ''
   const isJson = contentType.includes('application/json')
-  let data: { message?: string } = {}
+  const text = await res.text().catch(() => '')
+  let data: { success?: boolean; message?: string } = {}
 
-  if (isJson) {
-    data = await res.json().catch(() => ({}))
-  } else {
-    const text = await res.text().catch(() => '')
-    if (res.status === 502 || res.status === 503 || res.status === 504 || res.status === 0) {
-      return {
-        success: false,
-        message: 'Send-email server is not running. Start it in a separate terminal: npm run server:email',
-      }
+  if (isJson && text) {
+    try {
+      data = JSON.parse(text) as { success?: boolean; message?: string }
+    } catch {
+      data = {}
     }
+  }
+  if (!isJson && text) {
+    try {
+      data = JSON.parse(text) as { success?: boolean; message?: string }
+    } catch {
+      data = {}
+    }
+  }
+
+  if (res.status === 502 || res.status === 503 || res.status === 504 || res.status === 0) {
     return {
       success: false,
-      message: data.message || `Server returned ${res.status} ${res.statusText}. ${text ? 'Response was not JSON.' : ''}`.trim() || 'Invalid response from server.',
+      message: 'Send-email server is not running. Start it in a separate terminal: npm run server:email',
     }
   }
 
   if (!res.ok) {
-    return { success: false, message: data.message || 'Failed to send email' }
+    const serverMessage = data.message?.trim()
+    return {
+      success: false,
+      message:
+        serverMessage ||
+        (text && text.length < 200 ? text : `Server returned ${res.status} ${res.statusText}.`) ||
+        'Failed to send email',
+    }
   }
   return { success: true, message: data.message || 'Email sent successfully' }
 }

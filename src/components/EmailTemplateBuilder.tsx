@@ -209,6 +209,8 @@ export default function EmailTemplateBuilder({
         text: template.bodyPlain || stripHtml(template.bodyHtml),
         attachments: attachments.length ? attachments : undefined,
       })
+      console.log('result');
+      console.log(result);
       if (result.success) {
         setSendStatus({ type: 'success', message: result.message })
       } else {
