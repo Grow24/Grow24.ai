@@ -42,10 +42,14 @@ npm run build
 
 ```env
 VITE_API_ENDPOINT=https://your-backend.zeabur.app/api/chat
+# Optional: set explicitly for Contact Us → Send Email (defaults to same host as above)
+# VITE_SEND_EMAIL_ENDPOINT=https://your-backend.zeabur.app/api/send-email
 VITE_WHATSAPP_NUMBER=+91 9370239600
 ```
 
 **Backend** (Deployed separately - configure these in your backend deployment):
+
+Your backend **must** expose `POST /api/send-email` for the Contact Us "Send Email" feature. If you see "Cannot POST /api/send-email", redeploy the backend from the codebase that includes this route (e.g. PBMP backend with the send-email endpoint).
 
 ```env
 PORT=3000
@@ -53,6 +57,8 @@ GEMINI_API_KEY=your_gemini_api_key
 ASTRA_DB_API_ENDPOINT=your_astra_db_endpoint
 ASTRA_DB_APPLICATION_TOKEN=your_astra_db_token
 WAPI_API_KEY=your_wapi_api_key
+SENDGRID_API_KEY=your_sendgrid_api_key
+FROM_EMAIL=noreply@grow24.ai
 NODE_ENV=production
 ```
 
