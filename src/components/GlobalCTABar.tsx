@@ -60,19 +60,36 @@ export default function GlobalCTABar() {
         exit={{ y: 100, opacity: 0 }}
         className="fixed left-0 right-0 bottom-0 z-30 bg-gradient-to-r from-cta-green-500 via-cta-green-600 to-cta-green-700 shadow-2xl"
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-5 md:py-6 relative">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 md:gap-8">
-            {/* Message */}
-            <div className="min-w-0 flex-1 pr-2 sm:pr-0">
-              <h3 className="text-white font-bold text-lg sm:text-xl md:text-2xl leading-tight mb-1 sm:mb-1.5">Harness the Power of AI</h3>
-              <p className="text-white/90 text-sm sm:text-base md:text-lg leading-snug">
-                in your journey of Personal & Business Transformation.
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pt-4 sm:pt-5 md:pt-6 pb-4 sm:pb-5 md:pb-6 relative">
+          {/* X button - top-right corner of the rectangle */}
+          <button
+            onClick={() => setIsVisible(false)}
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors text-white"
+            aria-label="Close"
+            disabled={isSubmitting}
+          >
+            <CloseIcon />
+          </button>
+
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6 md:gap-8 pr-10 sm:pr-12">
+            {/* Left: bullet points */}
+            <ul className="text-white text-xs sm:text-sm leading-relaxed space-y-1 min-w-0 flex-shrink-0 lg:max-w-[280px]">
+              <li>-the AI &amp; Digitalization wave is here &amp; is impacting my area</li>
+              <li>-a place where the latest tested concepts are embedded</li>
+              <li>-I can Apply ready-made Templates for my Areas, on my Data</li>
+            </ul>
+
+            {/* Middle: heading + subtext */}
+            <div className="min-w-0 flex-1">
+              <h3 className="text-white font-bold text-lg sm:text-xl md:text-2xl leading-tight mb-0.5 sm:mb-1">Harness the Power of AI</h3>
+              <p className="text-white/95 text-sm sm:text-base md:text-lg leading-snug">
+                in your journey of Personal &amp; Business Transformation.
               </p>
             </div>
 
-            {/* Email Input + Subscribe + Close Button - always in one row */}
-            <div className="flex flex-row flex-nowrap items-center gap-2 sm:gap-3 w-full sm:w-auto flex-shrink-0 min-w-0">
-              <form onSubmit={handleSubscribe} className="flex flex-row flex-nowrap items-center gap-2 sm:gap-3 flex-1 sm:flex-initial min-w-0">
+            {/* Right: email + Subscribe Free */}
+            <div className="w-full lg:w-auto flex-shrink-0 min-w-0">
+              <form onSubmit={handleSubscribe} className="flex flex-row flex-nowrap items-center gap-2 sm:gap-3 w-full sm:w-auto min-w-0">
                 <input
                   type="email"
                   value={email}
@@ -80,25 +97,16 @@ export default function GlobalCTABar() {
                   placeholder="Enter your email"
                   required
                   disabled={isSubmitting}
-                  className="min-w-0 flex-1 sm:flex-none sm:w-56 md:w-64 max-w-[140px] sm:max-w-none px-4 py-2.5 sm:py-3 rounded-lg bg-white/10 backdrop-blur-sm border border-white/30 text-white placeholder-white/60 outline-none focus:ring-2 focus:ring-white/50 transition-all disabled:opacity-50 text-sm sm:text-base"
+                  className="min-w-0 flex-1 sm:flex-none sm:w-52 md:w-60 max-w-[140px] sm:max-w-none px-4 py-2.5 sm:py-3 rounded-lg bg-cta-green-400/80 dark:bg-cta-green-500/80 border border-white/20 text-white placeholder-white/70 outline-none focus:ring-2 focus:ring-white/40 transition-all disabled:opacity-50 text-sm sm:text-base"
                 />
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-shrink-0 px-4 sm:px-6 py-2.5 sm:py-3 bg-white text-cta-green-600 font-semibold rounded-lg hover:bg-cta-green-50 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+                  className="flex-shrink-0 px-4 sm:px-6 py-2.5 sm:py-3 bg-cta-green-400/90 hover:bg-cta-green-400 text-white font-semibold rounded-lg transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base border border-white/20"
                 >
                   {isSubmitting ? '...' : isSuccess ? '✓ Subscribed!' : 'Subscribe Free'}
                 </button>
               </form>
-              {/* Close Button - aligned in row with form */}
-              <button
-                onClick={() => setIsVisible(false)}
-                className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors text-white self-center"
-                aria-label="Close"
-                disabled={isSubmitting}
-              >
-                <CloseIcon />
-              </button>
             </div>
           </div>
 

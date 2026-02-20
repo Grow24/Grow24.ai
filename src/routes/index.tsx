@@ -373,9 +373,9 @@ function IndexPage() {
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true, amount: 0.3 }}
-        className="min-h-screen py-12 sm:py-16 md:py-20 px-4"
+        className="min-h-screen py-12 sm:py-16 md:py-20 px-4 pb-20 sm:pb-24 overflow-visible"
       >
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto min-w-0 overflow-visible">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -596,7 +596,7 @@ function IndexPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
-                className="space-y-8 md:space-y-10"
+                className="space-y-8 md:space-y-10 min-w-0 w-full overflow-visible"
               >
                 <div className="max-w-4xl mx-auto">
                   <img
@@ -610,9 +610,9 @@ function IndexPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.05 }}
-                  className="about-html max-w-4xl mx-auto"
+                  className="about-html max-w-4xl mx-auto min-w-0 w-full overflow-visible"
                 >
-                  <div className="section-inner">
+                  <div className="section-inner min-w-0 overflow-visible">
                     <div className="kicker">How</div>
 
                     <h2 className="headline">Solutions cover various Personal &amp; Professional Needs</h2>
@@ -620,8 +620,8 @@ function IndexPage() {
                       Core Solutions &amp; Support Solutions that span the <span className="value-highlight">Growth Cycle</span>.
                     </p>
 
-                    <div className="mt-6 overflow-x-auto rounded-xl border border-gray-200 dark:border-slate-600">
-                      <table className="w-full min-w-[500px] border-collapse text-left">
+                    <div className="mt-6 how-tab-table-wrap w-full min-w-0 overflow-x-auto overflow-y-visible rounded-xl border border-gray-200 dark:border-slate-600">
+                      <table className="w-full min-w-[500px] border-collapse text-left text-sm sm:text-base">
                         <thead>
                           <tr className="border-b border-gray-200 dark:border-slate-600">
                             <th className="bg-gray-50 dark:bg-slate-700/50 px-4 py-3 text-base font-bold text-indigo-700 dark:text-indigo-400 w-1/2">
@@ -694,8 +694,8 @@ function IndexPage() {
                       Body of Knowledge, Tools, Templates, Techniques, Competencies Trainings, Case Studies applied to
                     </p>
 
-                    <div className="mt-6 overflow-x-auto rounded-xl border border-gray-200 dark:border-slate-600">
-                      <table className="w-full min-w-[500px] border-collapse text-left">
+                    <div className="mt-6 how-tab-table-wrap w-full min-w-0 overflow-x-auto overflow-y-visible rounded-xl border border-gray-200 dark:border-slate-600">
+                      <table className="w-full min-w-[500px] border-collapse text-left text-sm sm:text-base">
                         <thead>
                           <tr className="border-b border-gray-200 dark:border-slate-600">
                             <th className="bg-gray-50 dark:bg-slate-700/50 px-4 py-3 text-base font-bold text-indigo-700 dark:text-indigo-400 w-1/2">
