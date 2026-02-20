@@ -121,6 +121,7 @@ function IndexPage() {
   const { showComingSoon } = useComingSoon()
   const { theme } = useTheme()
   const [activeTab, setActiveTab] = useState<'what' | 'why' | 'how'>('what')
+  const [sectionScrollLocked, setSectionScrollLocked] = useState(true)
   const [personalBgWhite, setPersonalBgWhite] = useState(false)
   const [professionalBgWhite, setProfessionalBgWhite] = useState(false)
   const [showVideoModal, setShowVideoModal] = useState(false)
@@ -399,7 +400,9 @@ function IndexPage() {
               See Detailed Concept
             </motion.button>
 
-            <div className="flex items-center justify-center gap-3 sm:gap-4 mt-6 sm:mt-8">
+            <div
+              className={`flex items-center justify-center gap-3 sm:gap-4 mt-6 sm:mt-8 ${sectionScrollLocked ? 'sticky top-0 z-20 py-3 -mx-2 px-2 rounded-xl bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-b border-gray-200/50 dark:border-slate-700/50' : ''}`}
+            >
               <button
                 onClick={() => setActiveTab('what')}
                 className={`px-5 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
@@ -430,6 +433,17 @@ function IndexPage() {
               >
                 How
               </button>
+              <button
+                type="button"
+                onClick={() => setSectionScrollLocked((prev) => !prev)}
+                className="p-2 rounded-full bg-info-gold-50 dark:bg-info-gold-900/20 text-info-gold-700 dark:text-info-gold-300 hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 border-2 border-info-gold-500 dark:border-info-gold-600 transition-colors"
+                aria-label={sectionScrollLocked ? 'Unlock scroll (tabs will scroll with page)' : 'Lock scroll (tabs will stick when in view)'}
+                title={sectionScrollLocked ? 'Unlock scroll' : 'Lock scroll'}
+              >
+                <span className="text-base leading-none" aria-hidden="true">
+                  {sectionScrollLocked ? '🔐' : '🔓'}
+                </span>
+              </button>
             </div>
           </motion.div>
 
@@ -444,6 +458,11 @@ function IndexPage() {
                 transition={{ duration: 0.4 }}
                 className="about-html max-w-4xl mx-auto"
               >
+                <img
+                  src="/what_tab.jpg"
+                  alt="A digital platform to manage your interconnected Personal & Professional life—PBMP overview"
+                  className="w-full rounded-xl mb-8 sm:mb-10"
+                />
                 <div className="section-inner">
                   <div className="kicker">What</div>
 
@@ -498,6 +517,11 @@ function IndexPage() {
                 transition={{ duration: 0.4 }}
                 className="about-html max-w-4xl mx-auto"
               >
+                <img
+                  src="/why_tab.jpg"
+                  alt="Why PBMP—Personal and Professional life, one platform"
+                  className="w-full rounded-xl mb-8 sm:mb-10"
+                />
                 <div className="section-inner">
                   <div className="kicker">Why</div>
 
@@ -574,6 +598,13 @@ function IndexPage() {
                 transition={{ duration: 0.4 }}
                 className="space-y-8 md:space-y-10"
               >
+                <div className="max-w-4xl mx-auto">
+                  <img
+                    src="/how_tab.jpg"
+                    alt="How PBMP—Solutions cover Personal & Professional needs"
+                    className="w-full rounded-xl mb-8 sm:mb-10"
+                  />
+                </div>
                 {/* Solutions cover Personal & Professional Needs - Core & Support (from image) */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
