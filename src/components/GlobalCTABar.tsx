@@ -58,31 +58,31 @@ export default function GlobalCTABar() {
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 100, opacity: 0 }}
-        className="fixed left-0 right-0 bottom-0 z-30 bg-gradient-to-r from-cta-green-500 via-cta-green-600 to-cta-green-700 shadow-2xl"
+        className="fixed left-0 right-0 bottom-0 z-30 bg-gradient-to-r from-cta-green-500 via-cta-green-600 to-cta-green-700 shadow-2xl border-t border-white/10 relative"
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pt-4 sm:pt-5 md:pt-6 pb-4 sm:pb-5 md:pb-6 relative">
-          {/* X button - top-right corner of the rectangle */}
-          <button
-            onClick={() => setIsVisible(false)}
-            className="absolute top-3 right-3 sm:top-4 sm:right-4 w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors text-white"
-            aria-label="Close"
-            disabled={isSubmitting}
-          >
-            <CloseIcon />
-          </button>
+        {/* X button - top-right corner of the bar (positioned relative to full bar for correct laptop alignment) */}
+        <button
+          onClick={() => setIsVisible(false)}
+          className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 md:top-3 md:right-4 w-8 h-8 flex items-center justify-center hover:bg-white/15 rounded-lg transition-colors text-white/95 hover:text-white z-10"
+          aria-label="Close"
+          disabled={isSubmitting}
+        >
+          <CloseIcon />
+        </button>
 
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6 md:gap-8 pr-10 sm:pr-12">
-            {/* Left: bullet points */}
-            <ul className="text-white text-xs sm:text-sm leading-relaxed space-y-1 min-w-0 flex-shrink-0 lg:max-w-[280px]">
-              <li>-the AI &amp; Digitalization wave is here &amp; is impacting my area</li>
-              <li>-a place where the latest tested concepts are embedded</li>
-              <li>-I can Apply ready-made Templates for my Areas, on my Data</li>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-3 sm:py-3.5">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 sm:gap-4 md:gap-6 pr-10 sm:pr-11">
+            {/* Left: three points, one per line */}
+            <ul className="text-white text-xs sm:text-sm leading-snug space-y-0.5 min-w-0 flex-shrink-0 list-none">
+              <li className="block whitespace-nowrap">the AI &amp; Digitalization wave is here &amp; is impacting my area</li>
+              <li className="block whitespace-nowrap">a place where the latest tested concepts are embedded</li>
+              <li className="block whitespace-nowrap">I can apply ready-made templates for my areas, on my data</li>
             </ul>
 
             {/* Middle: heading + subtext */}
             <div className="min-w-0 flex-1">
-              <h3 className="text-white font-bold text-lg sm:text-xl md:text-2xl leading-tight mb-0.5 sm:mb-1">Harness the Power of AI</h3>
-              <p className="text-white/95 text-sm sm:text-base md:text-lg leading-snug">
+              <h3 className="text-white font-bold text-base sm:text-lg md:text-xl leading-tight mb-0.5">Harness the Power of AI</h3>
+              <p className="text-white/95 text-xs sm:text-sm md:text-base leading-snug">
                 in your journey of Personal &amp; Business Transformation.
               </p>
             </div>
@@ -97,12 +97,12 @@ export default function GlobalCTABar() {
                   placeholder="Enter your email"
                   required
                   disabled={isSubmitting}
-                  className="min-w-0 flex-1 sm:flex-none sm:w-52 md:w-60 max-w-[140px] sm:max-w-none px-4 py-2.5 sm:py-3 rounded-lg bg-cta-green-400/80 dark:bg-cta-green-500/80 border border-white/20 text-white placeholder-white/70 outline-none focus:ring-2 focus:ring-white/40 transition-all disabled:opacity-50 text-sm sm:text-base"
+                  className="min-w-0 flex-1 sm:flex-none sm:w-48 md:w-56 max-w-[140px] sm:max-w-none px-3 py-2 sm:py-2.5 rounded-lg bg-white/15 border border-white/25 text-white placeholder-white/70 outline-none focus:ring-2 focus:ring-white/40 focus:border-white/40 transition-all disabled:opacity-50 text-sm"
                 />
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-shrink-0 px-4 sm:px-6 py-2.5 sm:py-3 bg-cta-green-400/90 hover:bg-cta-green-400 text-white font-semibold rounded-lg transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base border border-white/20"
+                  className="flex-shrink-0 px-4 sm:px-5 py-2 sm:py-2.5 bg-white/20 hover:bg-white/25 text-white font-semibold rounded-lg border border-white/30 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                 >
                   {isSubmitting ? '...' : isSuccess ? '✓ Subscribed!' : 'Subscribe Free'}
                 </button>

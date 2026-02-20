@@ -225,7 +225,7 @@ function IndexPage() {
             className="max-w-4xl mx-auto mb-6 sm:mb-8 px-4"
           >
             <img
-              src="/fde6cb34-2c95-4556-a51d-9d651e00d435.jpeg"
+              src={theme === 'dark' ? '/dark_mode.jpeg' : '/white_mode.jpeg'}
               alt="Personal & Business Management Platform"
               className="w-full h-auto object-contain rounded-lg shadow-md"
             />
