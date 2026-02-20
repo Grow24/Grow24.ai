@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import { resolve } from 'path'
+import { vite404Plugin } from './vite-404-plugin'
 
 export default defineConfig({
   server: {
@@ -13,6 +14,7 @@ export default defineConfig({
     },
   },
   plugins: [
+    vite404Plugin(),
     TanStackRouterVite(),
     react({
       // Ensure React is properly handled

@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from '@tanstack/react-router'
 import { useComingSoon } from '../contexts/ComingSoonContext'
 import { useTheme } from '../contexts/ThemeContext'
 import { isValidSolutionId } from '../constants/solutions'
+import LoginModal from './LoginModal'
 
 // SVG Icons - Hamburger menu icon (3 horizontal lines)
 const HamburgerIcon = () => (
@@ -385,6 +386,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
   const [highlightedElements, setHighlightedElements] = useState<HTMLElement[]>([])
   const [isDesktop, setIsDesktop] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [loginModalOpen, setLoginModalOpen] = useState(false)
   const { showComingSoon } = useComingSoon()
   const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
@@ -777,8 +779,22 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                 </a>
               </div>
 
-              {/* Right Side: Search + Auth */}
+              {/* Right Side: Login, Theme, Search */}
               <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 flex-shrink-0">
+                {/* Login */}
+                <motion.button
+                  onClick={() => setLoginModalOpen(true)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-sm font-semibold transition-colors ${
+                    theme === 'dark'
+                      ? 'text-white hover:bg-white/10 border border-white/20'
+                      : 'text-gray-900 hover:bg-gray-100 border border-gray-300'
+                  }`}
+                  aria-label="Open login"
+                >
+                  Login
+                </motion.button>
                 {/* Theme Toggle */}
                 <motion.button
                   onClick={() => {
@@ -1186,6 +1202,8 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
           </>
         )}
       </AnimatePresence>
+
+      <LoginModal isOpen={loginModalOpen} onClose={() => setLoginModalOpen(false)} />
     </>
   )
 }
