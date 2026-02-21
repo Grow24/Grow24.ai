@@ -1,7 +1,7 @@
 /**
  * Send email via the site's API (POST /api/send-email).
- * Uses VITE_SEND_EMAIL_ENDPOINT if set, otherwise same-origin /api/send-email
- * (proxied in dev to the send-email server).
+ * Uses the same backend as chat/leads so Contact Us → Create Email Template → Send email works.
+ * Override with VITE_SEND_EMAIL_ENDPOINT if you use a separate send-email server.
  */
 
 export interface SendEmailAttachment {
@@ -25,8 +25,13 @@ function getSendEmailEndpoint(): string {
   }
   const env = import.meta.env.VITE_SEND_EMAIL_ENDPOINT
   if (env) return env
-  const api = import.meta.env.VITE_API_ENDPOINT || ''
-  const base = api.replace(/\/api\/chat\/?$/, '').replace(/\/$/, '') || (typeof window !== 'undefined' ? window.location.origin : '')
+  // Use same backend as chat/leads (PBMP_CHAT_API_ENDPOINT or VITE_API_ENDPOINT)
+  const chatEndpoint =
+    typeof window !== 'undefined' && (window as any).PBMP_CHAT_API_ENDPOINT
+      ? (window as any).PBMP_CHAT_API_ENDPOINT
+      : import.meta.env.VITE_API_ENDPOINT || 'http://localhost:3000/api/chat'
+  const base = chatEndpoint.replace(/\/api\/chat\/?$/, '').replace(/\/$/, '') ||
+    (typeof window !== 'undefined' ? window.location.origin : '')
   return `${base}/api/send-email`
 }
 
@@ -43,7 +48,7 @@ export async function sendEmail(payload: SendEmailPayload): Promise<{ success: b
     const msg = err instanceof Error ? err.message : 'Network error'
     return {
       success: false,
-      message: `Cannot reach the send-email server. Start it with: npm run server:email. (${msg})`,
+      message: `Cannot reach the backend. (${msg})`,
     }
   }
 
@@ -70,7 +75,15 @@ export async function sendEmail(payload: SendEmailPayload): Promise<{ success: b
   if (res.status === 502 || res.status === 503 || res.status === 504 || res.status === 0) {
     return {
       success: false,
-      message: 'Send-email server is not running. Start it in a separate terminal: npm run server:email',
+      message: 'Cannot reach the backend. Check that your API server is running and CORS allows this origin.',
+    }
+  }
+
+  if (res.status === 404) {
+    return {
+      success: false,
+      message:
+        'Send-email is not enabled on this server. Add POST /api/send-email to your backend (see server/ADD_SEND_EMAIL_TO_BACKEND.js).',
     }
   }
 

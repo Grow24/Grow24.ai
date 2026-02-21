@@ -219,7 +219,7 @@ export default function EmailTemplateBuilder({
     } catch (err) {
       setSendStatus({
         type: 'error',
-        message: err instanceof Error ? err.message : 'Failed to send email. Is the send-email server running?',
+        message: err instanceof Error ? err.message : 'Failed to send email. Ensure your backend has POST /api/send-email.',
       })
     } finally {
       setIsSending(false)

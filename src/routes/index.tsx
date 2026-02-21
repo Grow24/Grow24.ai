@@ -202,7 +202,7 @@ function IndexPage() {
             <span className="text-slate-600 dark:text-slate-400 inline-flex items-center justify-center gap-2 mt-2">
               <span>with</span>
               <img
-                src={theme === 'dark' ? '/grow24_ai_icon_4.jpeg' : '/grow24_ai_icon_5.jpeg'}
+                src={theme === 'dark' ? '/grow_icon_dark.jpeg' : '/grow24_ai_icon_5.jpeg'}
                 alt="Grow24.ai"
                 className="h-[1.875rem] sm:h-[2.25rem] md:h-[3.75rem] lg:h-[4.5rem] w-auto align-middle"
               />
@@ -225,9 +225,9 @@ function IndexPage() {
             className="max-w-4xl mx-auto mb-6 sm:mb-8 px-4"
           >
             <img
-              src={theme === 'dark' ? '/dark_mode.jpeg' : '/white_mode.jpeg'}
+              src={theme === 'dark' ? '/dark_theme.jpeg' : '/white_mode.jpeg'}
               alt="Personal & Business Management Platform"
-              className="w-full h-auto object-contain rounded-lg shadow-md"
+              className={`w-full h-auto object-contain rounded-lg ${theme === 'dark' ? 'shadow-md' : ''}`}
             />
           </motion.div>
 

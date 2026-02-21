@@ -70,13 +70,13 @@ export default function GlobalCTABar() {
           <CloseIcon />
         </button>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-3 sm:py-3.5">
+        <div className="max-w-7xl mx-auto pl-0 pr-4 sm:pl-1 sm:pr-6 md:pl-2 md:pr-8 py-3 sm:py-3.5">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 sm:gap-4 md:gap-6 pr-10 sm:pr-11">
-            {/* Left: three points, one per line */}
-            <ul className="text-white text-xs sm:text-sm leading-snug space-y-0.5 min-w-0 flex-shrink-0 list-none">
-              <li className="block whitespace-nowrap">the AI &amp; Digitalization wave is here &amp; is impacting my area</li>
-              <li className="block whitespace-nowrap">a place where the latest tested concepts are embedded</li>
-              <li className="block whitespace-nowrap">I can apply ready-made templates for my areas, on my data</li>
+            {/* Left: three points with bullet points, one per line */}
+            <ul className="text-white text-xs sm:text-sm leading-snug space-y-0.5 min-w-0 flex-shrink-0 list-disc list-inside -ml-0.5 pl-0.5">
+              <li className="whitespace-nowrap">the AI &amp; Digitalization wave is here &amp; is impacting my area</li>
+              <li className="whitespace-nowrap">a place where the latest tested concepts are embedded</li>
+              <li className="whitespace-nowrap">I can apply ready-made templates for my areas, on my data</li>
             </ul>
 
             {/* Middle: heading + subtext */}
