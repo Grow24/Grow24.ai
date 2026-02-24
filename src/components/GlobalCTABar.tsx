@@ -58,22 +58,22 @@ export default function GlobalCTABar() {
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 100, opacity: 0 }}
-        className="fixed left-0 right-0 bottom-0 z-30 bg-gradient-to-r from-cta-green-500 via-cta-green-600 to-cta-green-700 shadow-2xl border-t border-white/10 relative"
+        className="fixed inset-x-0 bottom-0 z-30 bg-gradient-to-r from-cta-green-500 via-cta-green-600 to-cta-green-700 shadow-2xl border-t border-white/10"
       >
-        {/* X button - top-right corner of the bar (positioned relative to full bar for correct laptop alignment) */}
+        {/* X button - top-right corner of the section */}
         <button
           onClick={() => setIsVisible(false)}
-          className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 md:top-3 md:right-4 w-8 h-8 flex items-center justify-center hover:bg-white/15 rounded-lg transition-colors text-white/95 hover:text-white z-10"
+          className="absolute top-0 right-0 w-8 h-8 flex items-center justify-center hover:bg-white/15 rounded-bl-lg transition-colors text-white/95 hover:text-white z-10"
           aria-label="Close"
           disabled={isSubmitting}
         >
           <CloseIcon />
         </button>
 
-        <div className="max-w-7xl mx-auto pl-0 pr-4 sm:pl-1 sm:pr-6 md:pl-2 md:pr-8 py-3 sm:py-3.5">
+        <div className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-3 sm:py-3.5">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 sm:gap-4 md:gap-6 pr-10 sm:pr-11">
-            {/* Left: three points with bullet points, one per line */}
-            <ul className="text-white text-xs sm:text-sm leading-snug space-y-0.5 min-w-0 flex-shrink-0 list-disc list-inside -ml-0.5 pl-0.5">
+            {/* Left: three points with bullet points, aligned to the left */}
+            <ul className="text-white text-xs sm:text-sm leading-snug space-y-0.5 min-w-0 flex-shrink-0 list-disc list-inside pl-0 ml-0 text-left">
               <li className="whitespace-nowrap">the AI &amp; Digitalization wave is here &amp; is impacting my area</li>
               <li className="whitespace-nowrap">a place where the latest tested concepts are embedded</li>
               <li className="whitespace-nowrap">I can apply ready-made templates for my areas, on my data</li>

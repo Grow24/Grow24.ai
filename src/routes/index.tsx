@@ -218,6 +218,21 @@ function IndexPage() {
             Personal &amp; Business Management Platform
           </motion.p>
 
+          {/* Original two large images (dark_theme / white_mode) */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.26, duration: 0.5 }}
+            className="max-w-4xl mx-auto mb-4 sm:mb-6 px-4"
+          >
+            <img
+              src={theme === 'dark' ? '/dark_theme.jpeg' : '/white_mode.jpeg'}
+              alt="Personal & Business Management Platform"
+              className={`w-full h-auto object-contain rounded-lg ${theme === 'dark' ? 'shadow-md' : ''}`}
+            />
+          </motion.div>
+
+          {/* slide_2 images (dark / light mode) */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -225,7 +240,7 @@ function IndexPage() {
             className="max-w-4xl mx-auto mb-6 sm:mb-8 px-4"
           >
             <img
-              src={theme === 'dark' ? '/dark_theme.jpeg' : '/white_mode.jpeg'}
+              src={theme === 'dark' ? '/slide_2_dark.jpeg' : '/slide_2_white.jpeg'}
               alt="Personal & Business Management Platform"
               className={`w-full h-auto object-contain rounded-lg ${theme === 'dark' ? 'shadow-md' : ''}`}
             />
@@ -399,9 +414,13 @@ function IndexPage() {
               </svg>
               See Detailed Concept
             </motion.button>
+          </motion.div>
 
+          {/* Wrapper so sticky tabs stick until user scrolls past entire What/Why/How content */}
+          <div className="relative">
             <div
-              className={`flex items-center justify-center gap-3 sm:gap-4 mt-6 sm:mt-8 ${sectionScrollLocked ? 'sticky top-0 z-20 py-3 -mx-2 px-2 rounded-xl bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-b border-gray-200/50 dark:border-slate-700/50' : ''}`}
+              className={`flex items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8 ${!sectionScrollLocked ? 'sticky z-20 py-3 -mx-2 px-2 rounded-xl bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-b border-gray-200/50 dark:border-slate-700/50 shadow-sm' : ''}`}
+              style={!sectionScrollLocked ? { top: 'var(--header-offset, 0)' } : undefined}
             >
               <button
                 onClick={() => setActiveTab('what')}
@@ -437,15 +456,14 @@ function IndexPage() {
                 type="button"
                 onClick={() => setSectionScrollLocked((prev) => !prev)}
                 className="p-2 rounded-full bg-info-gold-50 dark:bg-info-gold-900/20 text-info-gold-700 dark:text-info-gold-300 hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 border-2 border-info-gold-500 dark:border-info-gold-600 transition-colors"
-                aria-label={sectionScrollLocked ? 'Unlock scroll (tabs will scroll with page)' : 'Lock scroll (tabs will stick when in view)'}
+                aria-label={sectionScrollLocked ? 'Unlock scroll (tabs will stay fixed while you scroll)' : 'Lock scroll (tabs will scroll with page)'}
                 title={sectionScrollLocked ? 'Unlock scroll' : 'Lock scroll'}
               >
                 <span className="text-base leading-none" aria-hidden="true">
-                  {sectionScrollLocked ? '🔐' : '🔓'}
+                  {sectionScrollLocked ? '🔓' : '🔐'}
                 </span>
               </button>
             </div>
-          </motion.div>
 
           {/* Content based on active tab */}
           <AnimatePresence mode="wait">
@@ -966,6 +984,7 @@ function IndexPage() {
               </motion.div>
             )}
           </AnimatePresence>
+          </div>
         </div>
       </motion.section>
 
