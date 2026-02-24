@@ -128,6 +128,45 @@ function IndexPage() {
   const [showVideoModal, setShowVideoModal] = useState(false)
   const [showEmailTemplateBuilder, setShowEmailTemplateBuilder] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const conceptTabsSentinelRef = useRef<HTMLDivElement>(null)
+  const conceptTabsBarRef = useRef<HTMLDivElement>(null)
+  const [tabsStuck, setTabsStuck] = useState(false)
+  const [tabsBarHeight, setTabsBarHeight] = useState(0)
+
+  // When Unlock Scroll: tab bar moves with page then sticks to top (scroll-based, so it works with Framer Motion)
+  useEffect(() => {
+    if (sectionScrollLocked) {
+      setTabsStuck(false)
+      return
+    }
+    const sentinel = conceptTabsSentinelRef.current
+    const bar = conceptTabsBarRef.current
+    if (!sentinel || !bar) return
+
+    const getHeaderOffsetPx = () => {
+      const val = getComputedStyle(document.documentElement).getPropertyValue('--header-offset').trim()
+      const num = parseFloat(val) || 0
+      return val.endsWith('rem') ? num * 16 : num
+    }
+
+    const updateStuck = () => {
+      const top = sentinel.getBoundingClientRect().top
+      const offset = getHeaderOffsetPx()
+      setTabsStuck(top <= offset)
+      if (bar) {
+        const h = bar.getBoundingClientRect().height
+        if (h > 0) setTabsBarHeight(h)
+      }
+    }
+
+    updateStuck()
+    window.addEventListener('scroll', updateStuck, { passive: true })
+    window.addEventListener('resize', updateStuck)
+    return () => {
+      window.removeEventListener('scroll', updateStuck)
+      window.removeEventListener('resize', updateStuck)
+    }
+  }, [sectionScrollLocked, tabsBarHeight])
 
   // Handle hash navigation on mount and when hash changes
   useEffect(() => {
@@ -242,7 +281,7 @@ function IndexPage() {
             className="max-w-4xl mx-auto mb-6 sm:mb-8 px-4"
           >
             <img
-              src={theme === 'dark' ? '/slide_2_dark.jpeg' : '/slide_2_white.jpeg'}
+              src={theme === 'dark' ? '/valu_cycle_dark.jpeg' : '/valu_cycle_white.jpeg'}
               alt="Personal & Business Management Platform"
               className={`w-full h-auto object-contain rounded-lg ${theme === 'dark' ? 'shadow-md' : ''}`}
             />
@@ -418,11 +457,22 @@ function IndexPage() {
             </motion.button>
           </motion.div>
 
-          {/* Wrapper so sticky tabs stick until user scrolls past entire What/Why/How content */}
+          {/* Wrapper: when Unlock Scroll, tab bar moves with page then sticks to top (scroll-based) */}
           <div className="relative">
+            {/* Sentinel: in-flow marker for where the tab bar starts; when its top hits header offset we stick */}
+            {!sectionScrollLocked && <div ref={conceptTabsSentinelRef} className="w-full pointer-events-none" style={{ height: 0 }} aria-hidden />}
+            {/* Spacer when stuck so layout doesn't jump */}
+            {!sectionScrollLocked && tabsStuck && tabsBarHeight > 0 && (
+              <div style={{ height: tabsBarHeight }} className="mb-6 sm:mb-8" aria-hidden />
+            )}
             <div
-              className={`flex items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8 ${!sectionScrollLocked ? 'sticky z-20 py-3 -mx-2 px-2 rounded-xl bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-b border-gray-200/50 dark:border-slate-700/50 shadow-sm' : ''}`}
-              style={!sectionScrollLocked ? { top: 'var(--header-offset, 0)' } : undefined}
+              ref={conceptTabsBarRef}
+              className={`flex items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8 ${!sectionScrollLocked ? 'z-20 py-3 -mx-2 px-2 rounded-xl bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-b border-gray-200/50 dark:border-slate-700/50 shadow-sm' : ''}`}
+              style={
+                !sectionScrollLocked && tabsStuck
+                  ? { position: 'fixed', top: 'var(--header-offset)', left: 0, right: 0, margin: 0 }
+                  : undefined
+              }
             >
               <button
                 onClick={() => setActiveTab('what')}
