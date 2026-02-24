@@ -7,6 +7,7 @@ import EmailTemplateBuilder from '../components/EmailTemplateBuilder'
 import { useComingSoon } from '../contexts/ComingSoonContext'
 import { useTheme } from '../contexts/ThemeContext'
 import { use3DRotation } from '../lib/use3DRotation'
+import HeroCarousel from '../components/HeroCarousel'
 
 // SVG Icons for WhatWeOffer section
 const SunIcon = () => (
@@ -184,6 +185,7 @@ function IndexPage() {
         className="min-h-screen flex items-start sm:items-center justify-center pt-12 sm:pt-16 md:pt-20 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8 scroll-mt-header"
       >
         <div className="w-full max-w-7xl mx-auto text-center mt-4 sm:mt-0">
+          <HeroCarousel />
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
