@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useRef, useEffect } from 'react'
 import SolutionsMatrix3Panel from '../components/SolutionsMatrix3Panel'
@@ -114,6 +115,64 @@ const ConceptCard3D = ({
   )
 }
 
+function ConceptTabButtons({
+  activeTab,
+  setActiveTab,
+  sectionScrollLocked,
+  setSectionScrollLocked,
+}: {
+  activeTab: 'what' | 'why' | 'how'
+  setActiveTab: (t: 'what' | 'why' | 'how') => void
+  sectionScrollLocked: boolean
+  setSectionScrollLocked: (v: boolean | ((prev: boolean) => boolean)) => void
+}) {
+  return (
+    <>
+      <button
+        onClick={() => setActiveTab('what')}
+        className={`px-5 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
+          activeTab === 'what'
+            ? 'bg-info-gold-500 text-white shadow-lg shadow-info-gold-900/30'
+            : 'bg-info-gold-50 dark:bg-info-gold-900/20 text-info-gold-700 dark:text-info-gold-300 hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 border-2 border-info-gold-500 dark:border-info-gold-600'
+        }`}
+      >
+        What
+      </button>
+      <button
+        onClick={() => setActiveTab('why')}
+        className={`px-5 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
+          activeTab === 'why'
+            ? 'bg-info-gold-500 text-white shadow-lg shadow-info-gold-900/30'
+            : 'bg-info-gold-50 dark:bg-info-gold-900/20 text-info-gold-700 dark:text-info-gold-300 hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 border-2 border-info-gold-500 dark:border-info-gold-600'
+        }`}
+      >
+        Why
+      </button>
+      <button
+        onClick={() => setActiveTab('how')}
+        className={`px-5 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
+          activeTab === 'how'
+            ? 'bg-info-gold-500 text-white shadow-lg shadow-info-gold-900/30'
+            : 'bg-info-gold-50 dark:bg-info-gold-900/20 text-info-gold-700 dark:text-info-gold-300 hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 border-2 border-info-gold-500 dark:border-info-gold-600'
+        }`}
+      >
+        How
+      </button>
+      <button
+        type="button"
+        onClick={() => setSectionScrollLocked((prev) => !prev)}
+        className="p-2 rounded-full bg-info-gold-50 dark:bg-info-gold-900/20 text-info-gold-700 dark:text-info-gold-300 hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 border-2 border-info-gold-500 dark:border-info-gold-600 transition-colors"
+        aria-label={sectionScrollLocked ? 'Unlock scroll (tabs will stay fixed while you scroll)' : 'Lock scroll (tabs will scroll with page)'}
+        title={sectionScrollLocked ? 'Unlock scroll' : 'Lock scroll'}
+      >
+        <span className="text-base leading-none" aria-hidden="true">
+          {sectionScrollLocked ? '🔓' : '🔐'}
+        </span>
+      </button>
+    </>
+  )
+}
+
 export const Route = createFileRoute('/')({  
   component: IndexPage,
 })
@@ -128,45 +187,49 @@ function IndexPage() {
   const [showVideoModal, setShowVideoModal] = useState(false)
   const [showEmailTemplateBuilder, setShowEmailTemplateBuilder] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
-  const conceptTabsSentinelRef = useRef<HTMLDivElement>(null)
   const conceptTabsBarRef = useRef<HTMLDivElement>(null)
-  const [tabsStuck, setTabsStuck] = useState(false)
-  const [tabsBarHeight, setTabsBarHeight] = useState(0)
+  const conceptSectionRef = useRef<HTMLElement>(null)
+  const [tabsBarHeight, setTabsBarHeight] = useState(56)
+  const [conceptSectionInView, setConceptSectionInView] = useState(true)
 
-  // When Unlock Scroll: tab bar moves with page then sticks to top (scroll-based, so it works with Framer Motion)
+  // Measure tab bar height when in flow (Lock Scroll) for spacer when Unlock is on
   useEffect(() => {
-    if (sectionScrollLocked) {
-      setTabsStuck(false)
-      return
+    if (!sectionScrollLocked || !conceptTabsBarRef.current) return
+    const el = conceptTabsBarRef.current
+    const measure = () => {
+      const h = el.getBoundingClientRect().height
+      if (h > 0) setTabsBarHeight(h)
     }
-    const sentinel = conceptTabsSentinelRef.current
-    const bar = conceptTabsBarRef.current
-    if (!sentinel || !bar) return
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [sectionScrollLocked])
 
-    const getHeaderOffsetPx = () => {
-      const val = getComputedStyle(document.documentElement).getPropertyValue('--header-offset').trim()
-      const num = parseFloat(val) || 0
-      return val.endsWith('rem') ? num * 16 : num
-    }
+  // Only show fixed tab bar while the What/Why/How section is in view (scroll-bounded)
+  useEffect(() => {
+    const el = conceptSectionRef.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) setConceptSectionInView(entry.isIntersecting)
+      },
+      { root: null, rootMargin: '0px', threshold: 0 }
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
 
-    const updateStuck = () => {
-      const top = sentinel.getBoundingClientRect().top
-      const offset = getHeaderOffsetPx()
-      setTabsStuck(top <= offset)
-      if (bar) {
-        const h = bar.getBoundingClientRect().height
-        if (h > 0) setTabsBarHeight(h)
-      }
-    }
-
-    updateStuck()
-    window.addEventListener('scroll', updateStuck, { passive: true })
-    window.addEventListener('resize', updateStuck)
-    return () => {
-      window.removeEventListener('scroll', updateStuck)
-      window.removeEventListener('resize', updateStuck)
-    }
-  }, [sectionScrollLocked, tabsBarHeight])
+  // When unlocking scroll, move section upward once so the fixed bar sits under the header (as in design)
+  const prevLockedRef = useRef(sectionScrollLocked)
+  useEffect(() => {
+    const justUnlocked = prevLockedRef.current && !sectionScrollLocked
+    prevLockedRef.current = sectionScrollLocked
+    if (!justUnlocked) return
+    const el = document.getElementById('concept')
+    if (!el) return
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [sectionScrollLocked])
 
   // Handle hash navigation on mount and when hash changes
   useEffect(() => {
@@ -224,40 +287,33 @@ function IndexPage() {
         className="min-h-screen flex items-start sm:items-center justify-center pt-12 sm:pt-16 md:pt-20 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8 scroll-mt-header"
       >
         <div className="w-full max-w-7xl mx-auto text-center mt-4 sm:mt-0">
-          <HeroCarousel />
+          {/* Hero heading – at the very top, above the slider */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
+            transition={{ delay: 0.1, duration: 0.6 }}
             className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-2 sm:mb-3"
           >
-            <span className="text-gradient block">
-              Identify, Develop &amp; Live
-            </span>
-            <span className="text-gradient block">
-              to your fullest
-            </span>
-            <span className="text-gradient block">
-              Personal &amp; Professional Potential
-            </span>
-            <span className="text-slate-600 dark:text-slate-400 inline-flex items-center justify-center gap-2 mt-2">
-              <span>with</span>
+            <span className="text-slate-700 dark:text-slate-200 inline-flex items-center justify-center gap-2 flex-wrap">
+              Welcome to
               <img
                 src={theme === 'dark' ? '/grow_icon_dark.jpeg' : '/grow24_ai_icon_5.jpeg'}
-                alt="Grow24.ai"
+                alt="Grow24"
                 className="h-[1.875rem] sm:h-[2.25rem] md:h-[3.75rem] lg:h-[4.5rem] w-auto align-middle"
               />
             </span>
+            <span className="text-amber-600 dark:text-amber-400 block text-2xl sm:text-3xl md:text-4xl lg:text-5xl mt-2">
+              Personal &amp; Business Management Platform
+            </span>
+            <span className="text-gradient block mt-2">
+              Identify, Develop &amp; Live Life
+            </span>
+            <span className="text-gradient block">
+              to your fullest Personal &amp; Professional Potential
+            </span>
           </motion.h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25, duration: 0.6 }}
-            className="text-base sm:text-lg md:text-xl font-bold text-amber-600 dark:text-amber-400 max-w-2xl mx-auto mb-6 sm:mb-8 px-4"
-          >
-            Personal &amp; Business Management Platform
-          </motion.p>
+          <HeroCarousel />
 
           {/* Original two large images (dark_theme / white_mode) */}
           <motion.div
@@ -435,6 +491,7 @@ function IndexPage() {
 
       {/* The Concept Section */}
       <motion.section
+        ref={conceptSectionRef}
         id="concept"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -468,65 +525,30 @@ function IndexPage() {
             </motion.button>
           </motion.div>
 
-          {/* Wrapper: when Unlock Scroll, tab bar moves with page then sticks to top (scroll-based) */}
+          {/* Wrapper: when Unlock Scroll, bar is portaled to body so it fixes to viewport top; when Lock, bar scrolls with page */}
           <div className="relative">
-            {/* Sentinel: in-flow marker for where the tab bar starts; when its top hits header offset we stick */}
-            {!sectionScrollLocked && <div ref={conceptTabsSentinelRef} className="w-full pointer-events-none" style={{ height: 0 }} aria-hidden />}
-            {/* Spacer when stuck so layout doesn't jump */}
-            {!sectionScrollLocked && tabsStuck && tabsBarHeight > 0 && (
+            {!sectionScrollLocked && (
               <div style={{ height: tabsBarHeight }} className="mb-6 sm:mb-8" aria-hidden />
             )}
-            <div
-              ref={conceptTabsBarRef}
-              className={`flex items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8 ${!sectionScrollLocked ? 'z-20 py-3 -mx-2 px-2 rounded-xl bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-b border-gray-200/50 dark:border-slate-700/50 shadow-sm' : ''}`}
-              style={
-                !sectionScrollLocked && tabsStuck
-                  ? { position: 'fixed', top: 'var(--header-offset)', left: 0, right: 0, margin: 0 }
-                  : undefined
-              }
-            >
-              <button
-                onClick={() => setActiveTab('what')}
-                className={`px-5 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
-                  activeTab === 'what'
-                    ? 'bg-info-gold-500 text-white shadow-lg shadow-info-gold-900/30'
-                    : 'bg-info-gold-50 dark:bg-info-gold-900/20 text-info-gold-700 dark:text-info-gold-300 hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 border-2 border-info-gold-500 dark:border-info-gold-600'
-                }`}
+            {sectionScrollLocked ? (
+              <div
+                ref={conceptTabsBarRef}
+                className="flex items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8"
               >
-                What
-              </button>
-              <button
-                onClick={() => setActiveTab('why')}
-                className={`px-5 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
-                  activeTab === 'why'
-                    ? 'bg-info-gold-500 text-white shadow-lg shadow-info-gold-900/30'
-                    : 'bg-info-gold-50 dark:bg-info-gold-900/20 text-info-gold-700 dark:text-info-gold-300 hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 border-2 border-info-gold-500 dark:border-info-gold-600'
-                }`}
+                <ConceptTabButtons activeTab={activeTab} setActiveTab={setActiveTab} sectionScrollLocked={sectionScrollLocked} setSectionScrollLocked={setSectionScrollLocked} />
+              </div>
+            ) : null}
+            {!sectionScrollLocked && conceptSectionInView && typeof document !== 'undefined' && createPortal(
+              <div
+                className="flex items-center justify-center gap-3 sm:gap-4 z-[51] py-3 px-2 rounded-b-xl bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-b border-gray-200/50 dark:border-slate-700/50 shadow-md"
+                style={{ position: 'fixed', top: 0, left: 0, right: 0, margin: 0 }}
               >
-                Why
-              </button>
-              <button
-                onClick={() => setActiveTab('how')}
-                className={`px-5 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
-                  activeTab === 'how'
-                    ? 'bg-info-gold-500 text-white shadow-lg shadow-info-gold-900/30'
-                    : 'bg-info-gold-50 dark:bg-info-gold-900/20 text-info-gold-700 dark:text-info-gold-300 hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 border-2 border-info-gold-500 dark:border-info-gold-600'
-                }`}
-              >
-                How
-              </button>
-              <button
-                type="button"
-                onClick={() => setSectionScrollLocked((prev) => !prev)}
-                className="p-2 rounded-full bg-info-gold-50 dark:bg-info-gold-900/20 text-info-gold-700 dark:text-info-gold-300 hover:bg-info-gold-100 dark:hover:bg-info-gold-900/30 border-2 border-info-gold-500 dark:border-info-gold-600 transition-colors"
-                aria-label={sectionScrollLocked ? 'Unlock scroll (tabs will stay fixed while you scroll)' : 'Lock scroll (tabs will scroll with page)'}
-                title={sectionScrollLocked ? 'Unlock scroll' : 'Lock scroll'}
-              >
-                <span className="text-base leading-none" aria-hidden="true">
-                  {sectionScrollLocked ? '🔓' : '🔐'}
-                </span>
-              </button>
-            </div>
+                <div className="w-full max-w-7xl mx-auto flex items-center justify-center gap-3 sm:gap-4 flex-wrap">
+                  <ConceptTabButtons activeTab={activeTab} setActiveTab={setActiveTab} sectionScrollLocked={sectionScrollLocked} setSectionScrollLocked={setSectionScrollLocked} />
+                </div>
+              </div>,
+              document.body
+            )}
 
           {/* Content based on active tab */}
           <AnimatePresence mode="wait">

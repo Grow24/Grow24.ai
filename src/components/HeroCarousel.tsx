@@ -2,6 +2,23 @@ import { useCallback, useEffect, useState } from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
 import { motion } from 'framer-motion'
 
+const MOBILE_BREAKPOINT = 640
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined'
+      ? window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`).matches
+      : false
+  )
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`)
+    const update = () => setIsMobile(mq.matches)
+    mq.addEventListener('change', update)
+    return () => mq.removeEventListener('change', update)
+  }, [])
+  return isMobile
+}
+
 // 10 slides total; 5 visible at a time (BCG-style). Replace with your Library assets later.
 const SAMPLE_SLIDES = [
   { image: 'https://picsum.photos/seed/hero1/800/500', title: 'Business Analysis' },
@@ -18,19 +35,30 @@ const SAMPLE_SLIDES = [
 
 const SLIDE_COUNT = SAMPLE_SLIDES.length
 
-// BCG-style scale: among 5 visible – center largest, adjacent smaller, outer medium (slightly reduced to match BCG size)
-function getScaleForPosition(index: number, selectedIndex: number): number {
+// visibleCount: 3 on mobile, 5 on laptop
+function getScaleForPosition(index: number, selectedIndex: number, visibleCount: number): number {
   let offset = (index - selectedIndex) % SLIDE_COUNT
   if (offset > SLIDE_COUNT / 2) offset -= SLIDE_COUNT
   if (offset < -SLIDE_COUNT / 2) offset += SLIDE_COUNT
   const absOffset = Math.abs(offset)
-  if (absOffset === 0) return 1.12  // center – largest
-  if (absOffset === 1) return 0.86  // adjacent (2nd, 4th) – smaller
-  if (absOffset === 2) return 0.94  // outer (1st, 5th) – medium
-  return 0.8                        // off-screen (peek) – smaller
+  if (visibleCount === 3) {
+    if (absOffset === 0) return 1.15  // center – largest
+    if (absOffset === 1) return 0.88   // left/right – slightly smaller
+    return 0.78                        // off-screen
+  }
+  // 5 visible: center largest, adjacent smaller, extreme left/right larger again
+  if (absOffset === 0) return 1.2   // center – largest
+  if (absOffset === 1) return 0.82  // left/right of center – slightly smaller
+  if (absOffset === 2) return 0.98  // extreme left/right – larger again
+  return 0.78                       // off-screen (peek) – smaller
 }
 
 function HeroCarousel() {
+  const isMobile = useIsMobile()
+  const visibleCount = isMobile ? 3 : 5
+  const slideBasis = isMobile ? '32%' : '18%'
+  const slideGap = isMobile ? '2%' : '2.5%'
+
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     align: 'center',
@@ -64,6 +92,11 @@ function HeroCarousel() {
     }
   }, [emblaApi, onSelect])
 
+  // Reinit carousel when switching mobile ↔ desktop so slide sizes and snaps update
+  useEffect(() => {
+    emblaApi?.reInit()
+  }, [emblaApi, visibleCount])
+
   // Auto-slide every 5s; pause on hover, resume 5s after mouse leave
   useEffect(() => {
     if (!emblaApi || isHovered) return
@@ -86,15 +119,15 @@ function HeroCarousel() {
       className="w-full max-w-6xl mx-auto mb-6 sm:mb-8"
     >
       <div className="relative">
-        {/* Subtle prev/next – BCG-style edge arrows */}
+        {/* Prev/next arrows – smaller on mobile to save space */}
         <button
           type="button"
           onClick={scrollPrev}
           disabled={!canScrollPrev}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 shadow-md border border-slate-200/80 dark:border-slate-600/50 hover:bg-white dark:hover:bg-slate-700/90 disabled:opacity-40 disabled:pointer-events-none transition-all"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 shadow-md border border-slate-200/80 dark:border-slate-600/50 hover:bg-white dark:hover:bg-slate-700/90 disabled:opacity-40 disabled:pointer-events-none transition-all"
           aria-label="Previous"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
@@ -102,32 +135,32 @@ function HeroCarousel() {
           type="button"
           onClick={scrollNext}
           disabled={!canScrollNext}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 shadow-md border border-slate-200/80 dark:border-slate-600/50 hover:bg-white dark:hover:bg-slate-700/90 disabled:opacity-40 disabled:pointer-events-none transition-all"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 shadow-md border border-slate-200/80 dark:border-slate-600/50 hover:bg-white dark:hover:bg-slate-700/90 disabled:opacity-40 disabled:pointer-events-none transition-all"
           aria-label="Next"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M9 18l6-6-6-6" />
           </svg>
         </button>
 
-        {/* 10 slides total; 5 visible at a time (container query so width is relative to carousel). BCG-style size. */}
+        {/* 10 slides; 3 visible on mobile, 5 on laptop. Responsive padding. */}
         <div
-          className="overflow-hidden w-full px-12 sm:px-14 @container"
+          className="overflow-hidden w-full px-6 sm:px-12 md:px-14 @container"
           ref={emblaRef}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
           <div
             className="flex touch-pan-y"
-            style={{ gap: '1cqi' }}
+            style={{ gap: slideGap }}
           >
             {SAMPLE_SLIDES.map((slide, index) => {
-              const scale = getScaleForPosition(index, selectedIndex)
+              const scale = getScaleForPosition(index, selectedIndex, visibleCount)
               return (
                 <div
                   key={index}
                   className="min-w-0 flex items-center justify-center shrink-0"
-                  style={{ flexBasis: '19.2cqi' }}
+                  style={{ flexBasis: slideBasis, minWidth: '0' }}
                 >
                   <button
                     type="button"
