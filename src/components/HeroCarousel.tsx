@@ -18,16 +18,16 @@ const SAMPLE_SLIDES = [
 
 const SLIDE_COUNT = SAMPLE_SLIDES.length
 
-// BCG-style scale: among 5 visible – center largest, adjacent smaller, outer medium
+// BCG-style scale: among 5 visible – center largest, adjacent smaller, outer medium (slightly reduced to match BCG size)
 function getScaleForPosition(index: number, selectedIndex: number): number {
   let offset = (index - selectedIndex) % SLIDE_COUNT
   if (offset > SLIDE_COUNT / 2) offset -= SLIDE_COUNT
   if (offset < -SLIDE_COUNT / 2) offset += SLIDE_COUNT
   const absOffset = Math.abs(offset)
-  if (absOffset === 0) return 1.2   // center – largest
-  if (absOffset === 1) return 0.88  // adjacent (2nd, 4th) – smaller
-  if (absOffset === 2) return 0.96  // outer (1st, 5th) – medium
-  return 0.82                       // off-screen (peek) – smaller
+  if (absOffset === 0) return 1.12  // center – largest
+  if (absOffset === 1) return 0.86  // adjacent (2nd, 4th) – smaller
+  if (absOffset === 2) return 0.94  // outer (1st, 5th) – medium
+  return 0.8                        // off-screen (peek) – smaller
 }
 
 function HeroCarousel() {
@@ -83,7 +83,7 @@ function HeroCarousel() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15, duration: 0.5 }}
-      className="w-full mx-auto mb-6 sm:mb-8"
+      className="w-full max-w-6xl mx-auto mb-6 sm:mb-8"
     >
       <div className="relative">
         {/* Subtle prev/next – BCG-style edge arrows */}
@@ -110,16 +110,16 @@ function HeroCarousel() {
           </svg>
         </button>
 
-        {/* 10 slides total; 5 visible at a time. Center largest, adjacent smaller, outer medium (BCG). */}
+        {/* 10 slides total; 5 visible at a time (container query so width is relative to carousel). BCG-style size. */}
         <div
-          className="overflow-hidden w-full px-12 sm:px-14"
+          className="overflow-hidden w-full px-12 sm:px-14 @container"
           ref={emblaRef}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
           <div
             className="flex touch-pan-y"
-            style={{ gap: '1.25vw' }}
+            style={{ gap: '1cqi' }}
           >
             {SAMPLE_SLIDES.map((slide, index) => {
               const scale = getScaleForPosition(index, selectedIndex)
@@ -127,7 +127,7 @@ function HeroCarousel() {
                 <div
                   key={index}
                   className="min-w-0 flex items-center justify-center shrink-0"
-                  style={{ flexBasis: '19vw' }}
+                  style={{ flexBasis: '19.2cqi' }}
                 >
                   <button
                     type="button"
@@ -137,7 +137,7 @@ function HeroCarousel() {
                       transform: `scale(${scale})`,
                     }}
                   >
-                    <div className="relative aspect-[16/10] w-full bg-slate-200 dark:bg-slate-700">
+                    <div className="relative aspect-[2/3] w-full bg-slate-200 dark:bg-slate-700">
                       <img
                         src={slide.image}
                         alt={slide.title}

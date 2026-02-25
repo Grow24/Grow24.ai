@@ -302,7 +302,7 @@ function IndexPage() {
             <ul className="text-slate-700 dark:text-slate-300 text-sm sm:text-base space-y-2 list-none">
               <li className="flex gap-2">
                 <span className="text-emerald-500 dark:text-emerald-400 shrink-0">–</span>
-                <span>5 steps are needed to go from Identifying your Goal through to Enjoying the Benefits</span>
+                <span>6 steps are needed to go from Identifying your Goal through to Enjoying the Benefits</span>
               </li>
               <li className="flex gap-2">
                 <span className="text-emerald-500 dark:text-emerald-400 shrink-0">–</span>
@@ -310,7 +310,7 @@ function IndexPage() {
               </li>
               <li className="flex gap-2">
                 <span className="text-emerald-500 dark:text-emerald-400 shrink-0">–</span>
-                <span>The same 5 Steps work in both our Personal Life &amp; Professional Life</span>
+                <span>The same 6 Steps work in both our Personal Life &amp; Professional Life</span>
               </li>
               <li className="flex gap-2">
                 <span className="text-emerald-500 dark:text-emerald-400 shrink-0">–</span>
@@ -338,10 +338,10 @@ function IndexPage() {
 
             {/* Stacked layout with L-shaped arrow (same on all screen sizes) */}
             <div className="relative max-w-md mx-auto text-left text-sm sm:text-base pl-12 sm:pl-14">
-              {/* L-shaped return arrow: starts from center of left side of step 5 block, goes left then up, then right into step 1 */}
+              {/* L-shaped return arrow: starts from center of left side of step 6 block, goes left then up, then right into step 1 */}
               <svg className="absolute inset-0 w-full h-full pointer-events-none text-teal-600 dark:text-teal-400" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
-                <path d="M 12 90 L 6 90" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
-                <path d="M 6 90 L 6 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+                <path d="M 12 92 L 6 92" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+                <path d="M 6 92 L 6 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
                 <path d="M 6 8 L 12 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
                 <path d="M 9 5 L 12 8 L 9 11" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" fill="none" />
               </svg>
@@ -391,9 +391,20 @@ function IndexPage() {
                   </svg>
                 </div>
                 <div id="growth-cycle-step-5" className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-teal-500/40 dark:border-teal-400/50 p-4 shadow-sm">
-                  <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">5. Execute Plan</p>
+                  <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">5. Execute Project</p>
                   <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
-                    Execute the plan and assess results, feeding learning into the next cycle.
+                    Build and/or upgrade capabilities, and achieve a new steady state.
+                  </p>
+                </div>
+                <div className="flex justify-center py-1" aria-hidden>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-teal-600 dark:text-teal-400 shrink-0">
+                    <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                <div id="growth-cycle-step-6" className="w-full rounded-xl bg-white/80 dark:bg-slate-900/40 border border-teal-500/40 dark:border-teal-400/50 p-4 shadow-sm">
+                  <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">6. Run Operations</p>
+                  <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">
+                    Enjoy value as was envisioned at the Goal stage, capture learnings, and move to the next iteration.
                   </p>
                 </div>
               </div>
