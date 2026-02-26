@@ -284,34 +284,52 @@ function IndexPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="min-h-screen flex items-start sm:items-center justify-center pt-12 sm:pt-16 md:pt-20 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8 scroll-mt-header"
+        className="min-h-screen flex items-start sm:items-center justify-center pt-6 sm:pt-8 md:pt-10 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8 scroll-mt-header"
       >
-        <div className="w-full max-w-7xl mx-auto text-center mt-4 sm:mt-0">
-          {/* Hero heading – at the very top, above the slider */}
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
+        <div className="w-full max-w-7xl mx-auto text-center mt-0">
+          {/* Grow24 hero block – above Welcome to (design from reference) */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.6 }}
-            className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-2 sm:mb-3"
+            transition={{ delay: 0.05, duration: 0.5 }}
+            className="font-jakarta mb-10 sm:mb-12 md:mb-14"
           >
-            <span className="text-slate-700 dark:text-slate-200 inline-flex items-center justify-center gap-2 flex-wrap">
-              Welcome to
+            <div className="flex items-center justify-center mb-1">
               <img
                 src={theme === 'dark' ? '/grow_icon_dark.jpeg' : '/grow24_ai_icon_5.jpeg'}
                 alt="Grow24"
-                className="h-[1.875rem] sm:h-[2.25rem] md:h-[3.75rem] lg:h-[4.5rem] w-auto align-middle"
+                className="h-12 sm:h-14 md:h-16 lg:h-20 w-auto"
               />
-            </span>
-            <span className="text-amber-600 dark:text-amber-400 block text-2xl sm:text-3xl md:text-4xl lg:text-5xl mt-2">
+            </div>
+            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-4 sm:mb-5">
               Personal &amp; Business Management Platform
-            </span>
-            <span className="text-gradient block mt-2">
-              Identify, Develop &amp; Live Life
-            </span>
-            <span className="text-gradient block">
-              to your fullest Personal &amp; Professional Potential
-            </span>
-          </motion.h1>
+            </p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-800 dark:text-slate-100 mb-4 sm:mb-5 max-w-4xl mx-auto leading-tight">
+              Unlocking Potential in Business and Life.
+            </h2>
+            <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base max-w-2xl mx-auto mb-8 sm:mb-10">
+              A unified system to identify strategic goals, develop actionable plans, and execute your vision with precision across personal and professional domains.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+              <motion.button
+                type="button"
+                onClick={() => document.getElementById('library')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                className="px-6 py-3 rounded-lg font-semibold text-white bg-violet-600 hover:bg-violet-700 dark:bg-violet-500 dark:hover:bg-violet-600 transition-colors shadow-md"
+              >
+                Start Your Transformation
+              </motion.button>
+              <motion.button
+                type="button"
+                onClick={() => document.getElementById('library')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 transition-colors"
+              >
+                Explore the Growth Lifecycle
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </motion.button>
+            </div>
+          </motion.div>
 
           <HeroCarousel />
 

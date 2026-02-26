@@ -7,6 +7,8 @@ export default {
     extend: {
       fontFamily: {
         serif: ['"Libre Baskerville"', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif'],
+        // Modern sans for Grow24 hero block (matches reference image)
+        jakarta: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       colors: {
         emerald: {
