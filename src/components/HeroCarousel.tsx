@@ -35,16 +35,16 @@ const SAMPLE_SLIDES = [
 
 const SLIDE_COUNT = SAMPLE_SLIDES.length
 
-// visibleCount: 3 on mobile, 5 on laptop
+// visibleCount: 1 on mobile (BCG-style), 5 on laptop
 function getScaleForPosition(index: number, selectedIndex: number, visibleCount: number): number {
   let offset = (index - selectedIndex) % SLIDE_COUNT
   if (offset > SLIDE_COUNT / 2) offset -= SLIDE_COUNT
   if (offset < -SLIDE_COUNT / 2) offset += SLIDE_COUNT
   const absOffset = Math.abs(offset)
-  if (visibleCount === 3) {
-    if (absOffset === 0) return 1.15  // center – largest
-    if (absOffset === 1) return 0.88   // left/right – slightly smaller
-    return 0.78                        // off-screen
+  if (visibleCount === 1) {
+    // Mobile: only center slide visible at full size
+    if (absOffset === 0) return 1
+    return 0.78
   }
   // 5 visible: center largest, adjacent smaller, extreme left/right larger again
   if (absOffset === 0) return 1.2   // center – largest
@@ -55,9 +55,9 @@ function getScaleForPosition(index: number, selectedIndex: number, visibleCount:
 
 function HeroCarousel() {
   const isMobile = useIsMobile()
-  const visibleCount = isMobile ? 3 : 5
-  const slideBasis = isMobile ? '32%' : '18%'
-  const slideGap = isMobile ? '2%' : '2.5%'
+  const visibleCount = isMobile ? 1 : 5
+  const slideBasis = isMobile ? '100%' : '18%'
+  const slideGap = isMobile ? '0%' : '2.5%'
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
