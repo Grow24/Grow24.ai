@@ -284,7 +284,7 @@ function IndexPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="min-h-screen flex items-start sm:items-center justify-center pt-6 sm:pt-8 md:pt-10 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8 scroll-mt-header"
+        className="min-h-screen flex items-start justify-center -mt-20 sm:-mt-24 md:-mt-28 pt-0 sm:pt-1 md:pt-2 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8 scroll-mt-header"
       >
         <div className="w-full max-w-7xl mx-auto text-center mt-0">
           {/* Grow24 hero block – above Welcome to (design from reference) */}
@@ -310,24 +310,26 @@ function IndexPage() {
             <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base max-w-2xl mx-auto mb-8 sm:mb-10">
               A unified system to identify strategic goals, develop actionable plans, and execute your vision with precision across personal and professional domains.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-              <motion.button
-                type="button"
-                onClick={() => document.getElementById('library')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                className="px-6 py-3 rounded-lg font-semibold text-white bg-violet-600 hover:bg-violet-700 dark:bg-violet-500 dark:hover:bg-violet-600 transition-colors shadow-md"
-              >
-                Start Your Transformation
-              </motion.button>
-              <motion.button
-                type="button"
-                onClick={() => document.getElementById('library')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 transition-colors"
-              >
-                Explore the Growth Lifecycle
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </motion.button>
+            <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+              <div className="flex flex-row flex-nowrap items-center justify-center gap-2 sm:gap-4 w-max min-w-full sm:min-w-0">
+                <motion.button
+                  type="button"
+                  onClick={() => document.getElementById('library')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                  className="shrink-0 px-4 sm:px-6 py-3 rounded-lg font-semibold text-sm sm:text-base text-white bg-violet-600 hover:bg-violet-700 dark:bg-violet-500 dark:hover:bg-violet-600 transition-colors shadow-md whitespace-nowrap"
+                >
+                  Start Your Transformation
+                </motion.button>
+                <motion.button
+                  type="button"
+                  onClick={() => document.getElementById('library')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                  className="shrink-0 inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 rounded-lg font-semibold text-sm sm:text-base text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 transition-colors whitespace-nowrap"
+                >
+                  Explore the Growth Lifecycle
+                  <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </motion.button>
+              </div>
             </div>
           </motion.div>
 

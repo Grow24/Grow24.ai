@@ -46,18 +46,19 @@ function getScaleForPosition(index: number, selectedIndex: number, visibleCount:
     if (absOffset === 0) return 1
     return 0.78
   }
-  // 5 visible: center largest, adjacent smaller, extreme left/right larger again
-  if (absOffset === 0) return 1.2   // center – largest
-  if (absOffset === 1) return 0.82  // left/right of center – slightly smaller
-  if (absOffset === 2) return 0.98  // extreme left/right – larger again
-  return 0.78                       // off-screen (peek) – smaller
+  // Desktop: subtle scale differences, but avoid heavy zoom so edge slides aren't clipped
+  if (absOffset === 0) return 1.05  // center – slightly larger
+  if (absOffset === 1) return 0.95  // left/right of center
+  if (absOffset === 2) return 0.9   // extreme left/right
+  return 0.8                        // off-screen (peek)
 }
 
 function HeroCarousel() {
   const isMobile = useIsMobile()
   const visibleCount = isMobile ? 1 : 5
-  const slideBasis = isMobile ? '100%' : '18%'
-  const slideGap = isMobile ? '0%' : '2.5%'
+  // Desktop: tune card width + gap so 5 slides fit cleanly within the viewport without clipping edge slides
+  const slideBasis = isMobile ? '100%' : '19%'
+  const slideGap = isMobile ? '0%' : '0.75%'
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
@@ -117,7 +118,7 @@ function HeroCarousel() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15, duration: 0.5 }}
-      className="w-full max-w-6xl mx-auto mb-6 sm:mb-8"
+      className="w-full max-w-7xl mx-auto mb-6 sm:mb-8"
     >
       <div className="relative">
         {/* Prev/next arrows – smaller on mobile to save space */}
@@ -144,9 +145,9 @@ function HeroCarousel() {
           </svg>
         </button>
 
-        {/* 10 slides; 3 visible on mobile, 5 on laptop. Responsive padding. */}
+        {/* 10 slides; 1 visible on mobile, 5 on laptop. Responsive padding. */}
         <div
-          className="overflow-hidden w-full px-6 sm:px-12 md:px-14 @container"
+          className="overflow-hidden w-full px-0 sm:px-0 md:px-0 @container"
           ref={emblaRef}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
