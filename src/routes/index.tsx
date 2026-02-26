@@ -311,7 +311,7 @@ function IndexPage() {
               A unified system to identify strategic goals, develop actionable plans, and execute your vision with precision across personal and professional domains.
             </p>
             <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-              <div className="flex flex-row flex-nowrap items-center justify-center gap-2 sm:gap-4 w-max min-w-full sm:min-w-0">
+              <div className="flex flex-row flex-nowrap items-center justify-center gap-2 sm:gap-4 w-max min-w-full sm:w-full">
                 <motion.button
                   type="button"
                   onClick={() => document.getElementById('library')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
