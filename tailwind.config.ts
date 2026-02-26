@@ -5,6 +5,9 @@ export default {
   content: ['./src/**/*.{js,ts,jsx,tsx}', './index.html'],
   theme: {
     extend: {
+      fontFamily: {
+        serif: ['"Libre Baskerville"', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif'],
+      },
       colors: {
         emerald: {
           50: '#f0fdf4',

@@ -21,16 +21,16 @@ function useIsMobile() {
 
 // 10 slides total; 5 visible at a time (BCG-style). Replace with your Library assets later.
 const SAMPLE_SLIDES = [
-  { image: 'https://picsum.photos/seed/hero1/800/500', title: 'Business Analysis' },
-  { image: 'https://picsum.photos/seed/hero2/800/500', title: 'Project Management' },
-  { image: 'https://picsum.photos/seed/hero3/800/500', title: 'Value Cycle' },
-  { image: 'https://picsum.photos/seed/hero4/800/500', title: 'Lead-to-Cash' },
-  { image: 'https://picsum.photos/seed/hero5/800/500', title: 'Change Management' },
-  { image: 'https://picsum.photos/seed/hero6/800/500', title: 'Solutions' },
-  { image: 'https://picsum.photos/seed/hero7/800/500', title: 'Strategy & Objectives' },
-  { image: 'https://picsum.photos/seed/hero8/800/500', title: 'Execution & Operations' },
-  { image: 'https://picsum.photos/seed/hero9/800/500', title: 'Transformation' },
-  { image: 'https://picsum.photos/seed/hero10/800/500', title: 'Value Framework' },
+  { image: 'https://picsum.photos/seed/hero1/800/500', title: 'Business Analysis', description: 'Analyze and optimize your business processes and outcomes.' },
+  { image: 'https://picsum.photos/seed/hero2/800/500', title: 'Project Management', description: 'Plan, execute, and deliver projects effectively.' },
+  { image: 'https://picsum.photos/seed/hero3/800/500', title: 'Value Cycle', description: 'Understand and maximize your personal and professional value.' },
+  { image: 'https://picsum.photos/seed/hero4/800/500', title: 'Lead-to-Cash', description: 'Streamline your pipeline from lead generation to revenue.' },
+  { image: 'https://picsum.photos/seed/hero5/800/500', title: 'Change Management', description: 'Navigate and lead organizational transformation.' },
+  { image: 'https://picsum.photos/seed/hero6/800/500', title: 'Solutions', description: 'Discover solutions tailored to your goals and context.' },
+  { image: 'https://picsum.photos/seed/hero7/800/500', title: 'Strategy & Objectives', description: 'Define and align strategy with clear objectives.' },
+  { image: 'https://picsum.photos/seed/hero8/800/500', title: 'Execution & Operations', description: 'Turn plans into results with effective execution.' },
+  { image: 'https://picsum.photos/seed/hero9/800/500', title: 'Transformation', description: 'Drive sustainable change and growth.' },
+  { image: 'https://picsum.photos/seed/hero10/800/500', title: 'Value Framework', description: 'A structured approach to creating and capturing value.' },
 ]
 
 const SLIDE_COUNT = SAMPLE_SLIDES.length
@@ -69,6 +69,7 @@ function HeroCarousel() {
   const [canScrollNext, setCanScrollNext] = useState(true)
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
+  const [hoveredSlideIndex, setHoveredSlideIndex] = useState<number | null>(null)
 
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi])
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi])
@@ -156,16 +157,26 @@ function HeroCarousel() {
           >
             {SAMPLE_SLIDES.map((slide, index) => {
               const scale = getScaleForPosition(index, selectedIndex, visibleCount)
+              const isSlideHovered = hoveredSlideIndex === index
               return (
                 <div
                   key={index}
                   className="min-w-0 flex items-center justify-center shrink-0"
                   style={{ flexBasis: slideBasis, minWidth: '0' }}
                 >
-                  <button
-                    type="button"
+                  <div
+                    role="button"
+                    tabIndex={0}
                     onClick={handleLibraryClick}
-                    className="w-full block rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-600/50 bg-slate-100 dark:bg-slate-800 shadow-sm hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-600/50 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 dark:focus:ring-offset-slate-900 origin-center transition-transform duration-300 ease-out"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        handleLibraryClick()
+                      }
+                    }}
+                    onMouseEnter={() => setHoveredSlideIndex(index)}
+                    onMouseLeave={() => setHoveredSlideIndex(null)}
+                    className="w-full block rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-600/50 bg-slate-100 dark:bg-slate-800 shadow-sm hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-600/50 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 dark:focus:ring-offset-slate-900 origin-center transition-transform duration-300 ease-out text-left cursor-pointer"
                     style={{
                       transform: `scale(${scale})`,
                     }}
@@ -181,11 +192,35 @@ function HeroCarousel() {
                       <span className="absolute bottom-3 left-3 right-3 text-left text-sm font-semibold text-white drop-shadow-sm">
                         {slide.title}
                       </span>
+                      {/* Hover overlay: slides up from bottom and covers entire image (BCG-style) */}
+                      <motion.div
+                        className="absolute inset-0 z-10 bg-black/80 text-white p-4 flex flex-col justify-end"
+                        initial={false}
+                        animate={{
+                          y: isSlideHovered ? 0 : '100%',
+                        }}
+                        transition={{ type: 'tween', duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                        style={{ originY: 1 }}
+                      >
+                        <h3 className="text-sm font-semibold mb-1 line-clamp-2">{slide.title}</h3>
+                        <p className="text-xs text-white/90 mb-3 line-clamp-2">{slide.description}</p>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            handleLibraryClick()
+                          }}
+                          className="inline-flex items-center justify-center w-full py-2 px-3 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-medium transition-colors cursor-pointer"
+                        >
+                          Learn More
+                        </button>
+                      </motion.div>
                     </div>
                     <span className="block py-2.5 px-3 text-xs font-medium text-emerald-600 dark:text-emerald-400 text-center">
                       Explore Library →
                     </span>
-                  </button>
+                  </div>
                 </div>
               )
             })}
