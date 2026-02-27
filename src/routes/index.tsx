@@ -284,7 +284,7 @@ function IndexPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="min-h-screen flex items-start justify-center -mt-20 sm:-mt-24 md:-mt-28 pt-0 sm:pt-1 md:pt-2 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8 scroll-mt-header"
+        className="min-h-screen flex items-start justify-center -mt-16 sm:-mt-20 md:-mt-24 pt-0 sm:pt-1 md:pt-2 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8 scroll-mt-header"
       >
         <div className="w-full max-w-7xl mx-auto text-center mt-0">
           {/* Grow24 hero block – above Welcome to (design from reference) */}
@@ -292,7 +292,7 @@ function IndexPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05, duration: 0.5 }}
-            className="font-jakarta mb-10 sm:mb-12 md:mb-14"
+            className="font-jakarta -mt-2 sm:mt-2 md:mt-3 mb-9 sm:mb-12 md:mb-14"
           >
             <div className="flex items-center justify-center mb-1">
               <img
@@ -307,8 +307,8 @@ function IndexPage() {
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-800 dark:text-slate-100 mb-4 sm:mb-5 max-w-4xl mx-auto leading-tight">
               Unlocking Potential in Business and Life.
             </h2>
-            <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base max-w-2xl mx-auto mb-8 sm:mb-10">
-              A unified system to identify strategic goals, develop actionable plans, and execute your vision with precision across personal and professional domains.
+            <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm md:text-base max-w-2xl mx-auto mb-8 sm:mb-10">
+              A unified system to identify goals, craft plans, and execute with precision across personal and professional domains.
             </p>
             <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
               <div className="flex flex-row flex-nowrap items-center justify-center gap-2 sm:gap-4 w-max min-w-full sm:w-full">
@@ -324,7 +324,7 @@ function IndexPage() {
                   onClick={() => document.getElementById('library')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
                   className="shrink-0 inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 rounded-lg font-semibold text-sm sm:text-base text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 transition-colors whitespace-nowrap"
                 >
-                  Explore the Growth Lifecycle
+                  Explore the Grow24 Cycle
                   <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
