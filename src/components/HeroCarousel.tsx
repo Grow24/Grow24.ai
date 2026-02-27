@@ -19,9 +19,8 @@ function useIsMobile() {
   return isMobile
 }
 
-// 10 slides total; 5 visible at a time (BCG-style). Replace with your Library assets later.
 const SAMPLE_SLIDES = [
-  { image: 'https://picsum.photos/seed/hero1/800/500', title: 'Business Analysis', description: 'Analyze and optimize your business processes and outcomes.' },
+  { image: '/white_mode.jpeg', title: 'Grow24 Overview', description: 'Personal & Professional management in one unified platform.' },
   { image: 'https://picsum.photos/seed/hero2/800/500', title: 'Project Management', description: 'Plan, execute, and deliver projects effectively.' },
   { image: 'https://picsum.photos/seed/hero3/800/500', title: 'Value Cycle', description: 'Understand and maximize your personal and professional value.' },
   { image: 'https://picsum.photos/seed/hero4/800/500', title: 'Lead-to-Cash', description: 'Streamline your pipeline from lead generation to revenue.' },
