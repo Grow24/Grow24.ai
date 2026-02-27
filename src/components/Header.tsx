@@ -729,7 +729,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
             }`}
           >
             <div className="flex items-center justify-between gap-1.5 sm:gap-2 md:gap-4">
-              {/* Left Side: Menu Button + Logo - min-w-0 so logo doesn't overlap content on mobile */}
+              {/* Left Side: Menu Button only (no visible background) */}
               <div className="flex items-center gap-2 sm:gap-3 md:gap-6 flex-1 md:flex-none min-w-0 overflow-hidden">
                 {/* Hamburger Menu Button - Only visible on mobile/tablet, hidden on laptop/desktop */}
                 <motion.button
@@ -737,47 +737,29 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                   onClick={() => setSideMenuOpen(true)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`p-1.5 sm:p-2 rounded-lg transition-all flex-shrink-0 md:hidden shadow-md cursor-pointer ${
-                    theme === 'dark'
-                      ? 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
-                      : 'bg-gray-800 text-white hover:bg-gray-700 border border-gray-900'
-                    }`}
+                  className={`inline-flex items-center justify-center p-0 bg-transparent hover:bg-transparent border-0 shadow-none outline-none focus:outline-none focus:ring-0 md:hidden cursor-pointer ${
+                    theme === 'dark' ? 'text-white' : 'text-gray-800'
+                  }`}
                   aria-label="Open menu"
                 >
                   <HamburgerIcon />
                 </motion.button>
 
-                {/* Plus Button - Opens MegaMenu - Only visible on desktop (xl: 1280px+), completely hidden on mobile/tablet */}
-                {onMegaMenuToggle && isDesktop && (
-                  <motion.button
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      onMegaMenuToggle()
-                    }}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    className="hidden xl:flex p-1.5 sm:p-2 rounded-lg transition-all flex-shrink-0 items-center justify-center text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 border border-gray-300 dark:border-white/20"
-                    aria-label="Open concept menu"
-                    title="Learn about PBMP Concept"
-                  >
-                    <PlusIcon />
-                  </motion.button>
-                )}
+                {/* MegaMenu trigger removed per design request */}
 
-                {/* Logo - smaller and constrained on mobile so it stays next to hamburger without overlapping */}
+                {/* Logo - use Grow24 icon (light/dark) and keep size consistent across header */}
                 <a
                   href="#home"
                   onClick={(e) => {
                     e.preventDefault()
                     scrollToSection('#home', navigate, location)
                   }}
-                  className="flex items-center hover:opacity-80 transition-opacity min-w-0 max-w-[140px] sm:max-w-[180px] md:max-w-none"
+                  className="hidden"
                 >
                   <img
-                    src="/grow.svg"
-                    alt="Grow24.ai Logo"
-                    className="h-10 sm:h-14 md:h-[4.5rem] lg:h-20 w-auto max-h-10 sm:max-h-14 md:max-h-none object-contain"
+                    src={theme === 'dark' ? '/grow_icon_dark.jpeg' : '/grow24_ai_icon_5.jpeg'}
+                    alt="Grow24.ai - Personal & Business Management Platform"
+                    className="h-8 sm:h-10 md:h-12 lg:h-14 w-auto object-contain"
                     style={{ display: 'block', imageRendering: 'crisp-edges' }}
                   />
                 </a>

@@ -34,9 +34,9 @@ function PrivacyPolicyPage() {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-6 sm:px-8 py-4 sm:py-5 border-b border-emerald-100/70 dark:border-slate-800 bg-emerald-50/80 dark:bg-slate-900">
             <div className="flex items-center gap-3">
               <img
-                src="/grow.svg"
+                src="/grow24_ai_icon_5.jpeg"
                 alt="Grow24.ai"
-                className="h-8 w-auto object-contain"
+                className="h-8 w-auto object-contain rounded-md"
               />
               <div>
                 <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">

@@ -117,7 +117,7 @@ function HeroCarousel() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15, duration: 0.5 }}
-      className="w-full max-w-7xl mx-auto mb-6 sm:mb-8"
+      className="w-full max-w-7xl mx-auto mb-4 sm:mb-8"
     >
       <div className="relative">
         {/* Prev/next arrows – smaller on mobile to save space */}
@@ -181,7 +181,7 @@ function HeroCarousel() {
                       transform: `scale(${scale})`,
                     }}
                   >
-                    <div className="relative aspect-[2/3] w-full bg-slate-200 dark:bg-slate-700">
+                    <div className="relative aspect-[16/9] sm:aspect-[2/3] w-full bg-slate-200 dark:bg-slate-700">
                       <img
                         src={slide.image}
                         alt={slide.title}
@@ -228,7 +228,7 @@ function HeroCarousel() {
         </div>
 
         {/* Dots and nav below slider – active dot green, inactive light grey */}
-        <div className="flex items-center justify-center gap-3 sm:gap-4 mt-4">
+        <div className="flex items-center justify-center gap-3 sm:gap-4 mt-2 sm:mt-4">
           <button
             type="button"
             onClick={scrollPrev}

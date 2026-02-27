@@ -292,42 +292,39 @@ function IndexPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05, duration: 0.5 }}
-            className="font-jakarta -mt-4 sm:-mt-2 md:-mt-1 mb-6 sm:mb-8 md:mb-10"
+            className="font-jakarta -mt-1 sm:-mt-2 md:-mt-1 mb-6 sm:mb-8 md:mb-10"
           >
-            <div className="flex items-center justify-center mb-1">
+            <div className="flex items-center justify-center mb-0 -ml-4 sm:ml-0">
               <img
                 src={theme === 'dark' ? '/grow_icon_dark.jpeg' : '/grow24_ai_icon_5.jpeg'}
                 alt="Grow24"
                 className="h-12 sm:h-14 md:h-16 lg:h-20 w-auto"
               />
             </div>
-            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-4 sm:mb-5">
+            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-1 sm:mb-2">
               Personal &amp; Business Management Platform
             </p>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-800 dark:text-slate-100 mb-4 sm:mb-5 max-w-4xl mx-auto leading-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-800 dark:text-slate-100 mb-3 sm:mb-4 max-w-4xl mx-auto leading-tight">
               Unlocking Potential in Business and Life.
             </h2>
-            <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm md:text-base max-w-2xl mx-auto mb-8 sm:mb-10">
+            <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm md:text-base max-w-2xl mx-auto mb-3 sm:mb-4">
               A unified system to identify goals, craft plans, and execute with precision across personal and professional domains.
             </p>
-            <div className="w-full flex items-center justify-center">
+            <div className="w-full flex items-center justify-center mt-1">
               <div className="flex flex-row items-center justify-center gap-2 sm:gap-4">
                 <motion.button
                   type="button"
                   onClick={() => document.getElementById('library')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                  className="px-3 sm:px-4 py-2 sm:py-3 rounded-lg font-semibold text-xs sm:text-sm md:text-base text-white bg-violet-600 hover:bg-violet-700 dark:bg-violet-500 dark:hover:bg-violet-600 transition-colors shadow-md text-center whitespace-nowrap"
+                  className="px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold text-xs sm:text-sm md:text-base text-white bg-gradient-to-r from-cta-green-500 to-cta-green-600 hover:from-cta-green-600 hover:to-cta-green-700 transition-colors shadow-md sm:shadow-lg text-center whitespace-nowrap"
                 >
                   Start Your Transformation
                 </motion.button>
                 <motion.button
                   type="button"
                   onClick={() => document.getElementById('library')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                  className="inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-lg font-semibold text-xs sm:text-sm md:text-base text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 transition-colors text-center whitespace-nowrap"
+                  className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold text-xs sm:text-sm md:text-base text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 transition-colors shadow-sm sm:shadow-md text-center whitespace-nowrap"
                 >
                   Explore the Grow24 Cycle
-                  <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
                 </motion.button>
               </div>
             </div>
