@@ -34,7 +34,7 @@ const SAMPLE_SLIDES = [
 
 const SLIDE_COUNT = SAMPLE_SLIDES.length
 
-// BCG-style three sizes: center largest, adjacent medium, outer smallest
+// BCG-style: center largest, adjacent narrower, outer substantial (match BCG screenshot proportions)
 function getScaleForPosition(index: number, selectedIndex: number, visibleCount: number): number {
   let offset = (index - selectedIndex) % SLIDE_COUNT
   if (offset > SLIDE_COUNT / 2) offset -= SLIDE_COUNT
@@ -44,10 +44,10 @@ function getScaleForPosition(index: number, selectedIndex: number, visibleCount:
     if (absOffset === 0) return 1
     return 0.72
   }
-  if (absOffset === 0) return 1
-  if (absOffset === 1) return 0.88
-  if (absOffset === 2) return 0.76
-  return 0.68
+  if (absOffset === 0) return 1.26   // center: most prominent
+  if (absOffset === 1) return 0.82   // adjacent: narrower
+  if (absOffset === 2) return 0.92   // outer: substantial, similar height to center
+  return 0.88
 }
 
 // BCG-like opacity: center full, sides slightly dimmed
@@ -211,7 +211,7 @@ function HeroCarousel() {
                       opacity,
                     }}
                   >
-                    <div className="relative aspect-[16/9] w-full bg-slate-200 dark:bg-slate-700">
+                    <div className="relative aspect-[3/4] w-full min-h-[38vh] md:min-h-[42vh] bg-slate-200 dark:bg-slate-700">
                       <img
                         src={slide.image}
                         alt={slide.title}
