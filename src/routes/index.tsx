@@ -184,17 +184,17 @@ function ConceptUnlockStack() {
   return (
     <>
       <section id="concept-what" className="scroll-mt-24">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="max-w-4xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="max-w-6xl lg:max-w-7xl mx-auto">
           <img src={theme === 'dark' ? '/what_tab_dark_theme.jpeg' : '/what_tab_white_theme.jpeg'} alt="A digital platform to manage your interconnected Personal & Professional life—PBMP overview" className="w-full rounded-xl" />
         </motion.div>
       </section>
       <section id="concept-why" className="scroll-mt-24">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="max-w-4xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="max-w-6xl lg:max-w-7xl mx-auto">
           <img src={theme === 'dark' ? '/why_tab_dark_theme.jpeg' : '/why_tab_white_theme.jpeg'} alt="Why PBMP—Personal and Professional life, one platform" className="w-full rounded-xl" />
         </motion.div>
       </section>
       <section id="concept-how" className="scroll-mt-24">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="max-w-4xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="max-w-6xl lg:max-w-7xl mx-auto">
           <img src="/how_tab.jpg" alt="How PBMP—Solutions cover Personal & Professional needs" className="w-full rounded-xl" />
         </motion.div>
       </section>
@@ -358,9 +358,9 @@ function IndexPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="min-h-screen flex items-start justify-center -mt-24 sm:-mt-20 md:-mt-24 pt-0 sm:pt-1 md:pt-2 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8 scroll-mt-header"
+        className="min-h-screen flex items-start justify-center -mt-24 sm:-mt-20 md:-mt-24 pt-0 sm:pt-1 md:pt-2 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8 scroll-mt-header lg:overflow-x-visible"
       >
-        <div className="w-full max-w-7xl mx-auto text-center mt-0">
+        <div className="w-full max-w-7xl mx-auto text-center mt-0 lg:overflow-x-visible">
           {/* Grow24 hero block – above Welcome to (design from reference) */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -368,7 +368,7 @@ function IndexPage() {
             transition={{ delay: 0.05, duration: 0.5 }}
             className="font-jakarta -mt-1 sm:-mt-2 md:-mt-1 mb-6 sm:mb-8 md:mb-10"
           >
-            <div className="flex items-center justify-center mb-0 -ml-4 sm:ml-0">
+            <div className="flex items-center justify-center mb-0 -ml-4 sm:ml-0 mt-4 sm:mt-0">
               <img
                 src={theme === 'dark' ? '/grow_icon_dark.jpeg' : '/grow24_ai_icon_5.jpeg'}
                 alt="Grow24"
@@ -404,8 +404,8 @@ function IndexPage() {
             </div>
           </motion.div>
 
-          {/* Slider full-bleed so it can use max width and match BCG prominence */}
-          <div className="w-full -mx-4 sm:-mx-6 md:-mx-8 px-0">
+          {/* Slider full-bleed so it can use max width and match BCG prominence; laptop: +1in each side */}
+          <div className="w-full -mx-4 sm:-mx-6 md:-mx-8 px-0 lg:overflow-x-visible">
             <HeroCarousel />
           </div>
 
@@ -645,7 +645,7 @@ function IndexPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
-                className="max-w-4xl mx-auto"
+                className="max-w-6xl lg:max-w-7xl mx-auto"
               >
                 <img
                   src={theme === 'dark' ? '/what_tab_dark_theme.jpeg' : '/what_tab_white_theme.jpeg'}
@@ -660,7 +660,7 @@ function IndexPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
-                className="max-w-4xl mx-auto"
+                className="max-w-6xl lg:max-w-7xl mx-auto"
               >
                 <img
                   src={theme === 'dark' ? '/why_tab_dark_theme.jpeg' : '/why_tab_white_theme.jpeg'}
@@ -675,7 +675,7 @@ function IndexPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
-                className="max-w-4xl mx-auto"
+                className="max-w-6xl lg:max-w-7xl mx-auto"
               >
                 <img
                   src="/how_tab.jpg"

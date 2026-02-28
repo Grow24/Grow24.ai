@@ -146,7 +146,7 @@ function HeroCarousel() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15, duration: 0.5 }}
-      className="w-full mx-auto px-3 sm:px-4 md:px-5 mb-10 sm:mb-14"
+      className="w-full mx-auto lg:w-[calc(100%+4in)] lg:max-w-none lg:-ml-[2in] lg:mx-0 px-3 sm:px-4 md:px-5 mb-10 sm:mb-14"
     >
       <div className="relative">
         {/* BCG-style nav: circular buttons, minimal, at sides */}
@@ -174,7 +174,7 @@ function HeroCarousel() {
         </button>
 
         <div
-          className="overflow-hidden w-full"
+          className="overflow-hidden w-full lg:w-[calc(100%-4in)] lg:mx-auto"
           ref={emblaRef}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
