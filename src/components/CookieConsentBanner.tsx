@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getStoredPreferences, setStoredPreferences, CookiePreferences, defaultPreferences } from './CookiePreferencesModal'
 import { CookiePreferencesModal } from './CookiePreferencesModal'
@@ -9,6 +9,7 @@ export const CookieConsentBanner: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false)
   const [showDetailsModal, setShowDetailsModal] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
+  const openedViaMenuRef = useRef(false)
 
   useEffect(() => {
     // Ensure we're on the client side
@@ -48,6 +49,11 @@ export const CookieConsentBanner: React.FC = () => {
     return () => clearTimeout(timer)
   }, [isMounted])
 
+  const handleClose = () => {
+    openedViaMenuRef.current = false
+    setIsVisible(false)
+  }
+
   const handleAcceptAll = () => {
     try {
       const prefs: CookiePreferences = {
@@ -59,10 +65,10 @@ export const CookieConsentBanner: React.FC = () => {
       if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
         localStorage.setItem(CONSENT_STORAGE_KEY, 'true')
       }
-      setIsVisible(false)
+      handleClose()
     } catch (error) {
       console.warn('Error saving cookie consent:', error)
-      setIsVisible(false)
+      handleClose()
     }
   }
 
@@ -77,10 +83,10 @@ export const CookieConsentBanner: React.FC = () => {
       if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
         localStorage.setItem(CONSENT_STORAGE_KEY, 'true')
       }
-      setIsVisible(false)
+      handleClose()
     } catch (error) {
       console.warn('Error saving cookie consent:', error)
-      setIsVisible(false)
+      handleClose()
     }
   }
 
@@ -97,7 +103,7 @@ export const CookieConsentBanner: React.FC = () => {
         if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
           const consentGiven = localStorage.getItem(CONSENT_STORAGE_KEY)
           const hasPreferences = getStoredPreferences() !== null
-          if (consentGiven || hasPreferences) {
+          if ((consentGiven || hasPreferences) && !openedViaMenuRef.current) {
             setIsVisible(false)
           }
         }
@@ -108,10 +114,12 @@ export const CookieConsentBanner: React.FC = () => {
   }
 
   // Listen for storage changes to hide banner when consent is given from other components
+  // Do not auto-close when the user opened the modal via Cookie Settings menu
   useEffect(() => {
     if (!isMounted) return
 
     const handleStorageChange = () => {
+      if (openedViaMenuRef.current) return
       try {
         if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
           const consentGiven = localStorage.getItem(CONSENT_STORAGE_KEY)
@@ -137,13 +145,14 @@ export const CookieConsentBanner: React.FC = () => {
     }
   }, [isMounted])
 
-  // Allow other parts of the app (e.g. Privacy Policy page) to open the cookie preferences modal
+  // Allow other parts of the app (e.g. Cookie Settings menu) to open the cookie consent modal ("We value your privacy")
   useEffect(() => {
     if (typeof window === 'undefined') return
 
     const handleOpenPreferences = () => {
-      setShowDetailsModal(true)
+      openedViaMenuRef.current = true
       setIsVisible(true)
+      setShowDetailsModal(false)
     }
 
     window.addEventListener('open-cookie-preferences', handleOpenPreferences)
@@ -171,7 +180,7 @@ export const CookieConsentBanner: React.FC = () => {
               transition={{ duration: 0.3 }}
               className="fixed inset-0 bg-black/60 z-[90] backdrop-blur-sm"
               aria-hidden="true"
-              onClick={() => setIsVisible(false)}
+              onClick={handleClose}
             />
             
             {/* Cookie Consent Modal - Clean Professional Design */}

@@ -1127,6 +1127,11 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                               onClick={(e) => {
                                 e.preventDefault()
                                 setSelectedMenuItem(item.href)
+                                if (item.href === '#cookies') {
+                                  window.dispatchEvent(new CustomEvent('open-cookie-preferences'))
+                                  setSideMenuOpen(false)
+                                  return
+                                }
                                 if (item.href.startsWith('#')) {
                                   scrollToSection(item.href, navigate, location)
                                 } else if (item.href.startsWith('/')) {

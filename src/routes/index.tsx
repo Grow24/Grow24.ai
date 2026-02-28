@@ -120,16 +120,22 @@ function ConceptTabButtons({
   setActiveTab,
   sectionScrollLocked,
   setSectionScrollLocked,
+  scrollToSection,
 }: {
   activeTab: 'what' | 'why' | 'how'
   setActiveTab: (t: 'what' | 'why' | 'how') => void
   sectionScrollLocked: boolean
   setSectionScrollLocked: (v: boolean | ((prev: boolean) => boolean)) => void
+  scrollToSection?: (tab: 'what' | 'why' | 'how') => void
 }) {
+  const onTabClick = (tab: 'what' | 'why' | 'how') => {
+    if (scrollToSection) scrollToSection(tab)
+    else setActiveTab(tab)
+  }
   return (
     <>
       <button
-        onClick={() => setActiveTab('what')}
+        onClick={() => onTabClick('what')}
         className={`px-5 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
           activeTab === 'what'
             ? 'bg-info-gold-500 text-white shadow-lg shadow-info-gold-900/30'
@@ -139,7 +145,7 @@ function ConceptTabButtons({
         What
       </button>
       <button
-        onClick={() => setActiveTab('why')}
+        onClick={() => onTabClick('why')}
         className={`px-5 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
           activeTab === 'why'
             ? 'bg-info-gold-500 text-white shadow-lg shadow-info-gold-900/30'
@@ -149,7 +155,7 @@ function ConceptTabButtons({
         Why
       </button>
       <button
-        onClick={() => setActiveTab('how')}
+        onClick={() => onTabClick('how')}
         className={`px-5 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
           activeTab === 'how'
             ? 'bg-info-gold-500 text-white shadow-lg shadow-info-gold-900/30'
@@ -173,6 +179,29 @@ function ConceptTabButtons({
   )
 }
 
+function ConceptUnlockStack() {
+  const { theme } = useTheme()
+  return (
+    <>
+      <section id="concept-what" className="scroll-mt-24">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="max-w-4xl mx-auto">
+          <img src={theme === 'dark' ? '/what_tab_dark_theme.jpeg' : '/what_tab_white_theme.jpeg'} alt="A digital platform to manage your interconnected Personal & Professional life—PBMP overview" className="w-full rounded-xl" />
+        </motion.div>
+      </section>
+      <section id="concept-why" className="scroll-mt-24">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="max-w-4xl mx-auto">
+          <img src={theme === 'dark' ? '/why_tab_dark_theme.jpeg' : '/why_tab_white_theme.jpeg'} alt="Why PBMP—Personal and Professional life, one platform" className="w-full rounded-xl" />
+        </motion.div>
+      </section>
+      <section id="concept-how" className="scroll-mt-24">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="max-w-4xl mx-auto">
+          <img src="/how_tab.jpg" alt="How PBMP—Solutions cover Personal & Professional needs" className="w-full rounded-xl" />
+        </motion.div>
+      </section>
+    </>
+  )
+}
+
 export const Route = createFileRoute('/')({  
   component: IndexPage,
 })
@@ -189,47 +218,15 @@ function IndexPage() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const conceptTabsBarRef = useRef<HTMLDivElement>(null)
   const conceptSectionRef = useRef<HTMLElement>(null)
-  const [tabsBarHeight, setTabsBarHeight] = useState(56)
-  const [conceptSectionInView, setConceptSectionInView] = useState(true)
+  // Tab bar is always in the document flow so it never moves upward when Unlock/Lock is clicked
 
-  // Measure tab bar height when in flow (Lock Scroll) for spacer when Unlock is on
-  useEffect(() => {
-    if (!sectionScrollLocked || !conceptTabsBarRef.current) return
-    const el = conceptTabsBarRef.current
-    const measure = () => {
-      const h = el.getBoundingClientRect().height
-      if (h > 0) setTabsBarHeight(h)
+  const scrollToConceptSection = (tab: 'what' | 'why' | 'how') => {
+    const el = document.getElementById(`concept-${tab}`)
+    if (el) {
+      setActiveTab(tab)
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
-    measure()
-    const ro = new ResizeObserver(measure)
-    ro.observe(el)
-    return () => ro.disconnect()
-  }, [sectionScrollLocked])
-
-  // Only show fixed tab bar while the What/Why/How section is in view (scroll-bounded)
-  useEffect(() => {
-    const el = conceptSectionRef.current
-    if (!el) return
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) setConceptSectionInView(entry.isIntersecting)
-      },
-      { root: null, rootMargin: '0px', threshold: 0 }
-    )
-    io.observe(el)
-    return () => io.disconnect()
-  }, [])
-
-  // When unlocking scroll, move section upward once so the fixed bar sits under the header (as in design)
-  const prevLockedRef = useRef(sectionScrollLocked)
-  useEffect(() => {
-    const justUnlocked = prevLockedRef.current && !sectionScrollLocked
-    prevLockedRef.current = sectionScrollLocked
-    if (!justUnlocked) return
-    const el = document.getElementById('concept')
-    if (!el) return
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }, [sectionScrollLocked])
+  }
 
   // Handle hash navigation on mount and when hash changes
   useEffect(() => {
@@ -332,6 +329,18 @@ function IndexPage() {
 
           <HeroCarousel />
 
+          {/* Individual Growth Cycle line - above valu_cycle image */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.28, duration: 0.5 }}
+            className="max-w-4xl mx-auto px-4 mb-4 text-center"
+          >
+            <p className="text-xs sm:text-sm font-semibold uppercase tracking-wide text-teal-700 dark:text-teal-300">
+              Individual Growth Cycle
+            </p>
+          </motion.div>
+
           {/* slide_2 images (dark / light mode) */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -389,12 +398,6 @@ function IndexPage() {
             transition={{ delay: 0.35, duration: 0.6 }}
             className="max-w-4xl mx-auto px-4 mb-8 sm:mb-10 md:mb-12"
           >
-            <div className="text-center mb-4">
-              <p className="text-xs sm:text-sm font-semibold uppercase tracking-wide text-teal-700 dark:text-teal-300">
-                Individual Growth Cycle
-              </p>
-            </div>
-
             {/* Stacked layout with L-shaped arrow (same on all screen sizes) */}
             <div className="relative max-w-md mx-auto text-left text-sm sm:text-base pl-12 sm:pl-14">
               {/* L-shaped return arrow: starts from center of left side of step 6 block, goes left then up, then right into step 1 */}
@@ -528,32 +531,17 @@ function IndexPage() {
             </motion.button>
           </motion.div>
 
-          {/* Wrapper: when Unlock Scroll, bar is portaled to body so it fixes to viewport top; when Lock, bar scrolls with page */}
+          {/* Tab bar always in flow – never moves upward when Unlock/Lock is clicked */}
           <div className="relative">
-            {!sectionScrollLocked && (
-              <div style={{ height: tabsBarHeight }} className="mb-6 sm:mb-8" aria-hidden />
-            )}
-            {sectionScrollLocked ? (
-              <div
-                ref={conceptTabsBarRef}
-                className="flex items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8"
-              >
-                <ConceptTabButtons activeTab={activeTab} setActiveTab={setActiveTab} sectionScrollLocked={sectionScrollLocked} setSectionScrollLocked={setSectionScrollLocked} />
-              </div>
-            ) : null}
-            {!sectionScrollLocked && conceptSectionInView && typeof document !== 'undefined' && createPortal(
-              <div
-                className="flex items-center justify-center gap-3 sm:gap-4 z-[51] py-3 px-2 rounded-b-xl bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-b border-gray-200/50 dark:border-slate-700/50 shadow-md"
-                style={{ position: 'fixed', top: 0, left: 0, right: 0, margin: 0 }}
-              >
-                <div className="w-full max-w-7xl mx-auto flex items-center justify-center gap-3 sm:gap-4 flex-wrap">
-                  <ConceptTabButtons activeTab={activeTab} setActiveTab={setActiveTab} sectionScrollLocked={sectionScrollLocked} setSectionScrollLocked={setSectionScrollLocked} />
-                </div>
-              </div>,
-              document.body
-            )}
+            <div
+              ref={conceptTabsBarRef}
+              className="flex items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8"
+            >
+              <ConceptTabButtons activeTab={activeTab} setActiveTab={setActiveTab} sectionScrollLocked={sectionScrollLocked} setSectionScrollLocked={setSectionScrollLocked} scrollToSection={!sectionScrollLocked ? scrollToConceptSection : undefined} />
+            </div>
 
-          {/* Content based on active tab */}
+          {/* Lock = single tab; Unlock = What, Why, How stacked one below the other */}
+          {sectionScrollLocked ? (
           <AnimatePresence mode="wait">
             {activeTab === 'what' ? (
               <motion.div
@@ -562,57 +550,13 @@ function IndexPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
-                className="about-html max-w-4xl mx-auto"
+                className="max-w-4xl mx-auto"
               >
                 <img
-                  src="/what_tab.jpg"
+                  src={theme === 'dark' ? '/what_tab_dark_theme.jpeg' : '/what_tab_white_theme.jpeg'}
                   alt="A digital platform to manage your interconnected Personal & Professional life—PBMP overview"
-                  className="w-full rounded-xl mb-8 sm:mb-10"
+                  className="w-full rounded-xl"
                 />
-                <div className="section-inner">
-                  <div className="kicker">What</div>
-
-                  <h1 className="headline">
-                    A digital platform which helps you manage all stages of your inter-connected Personal &amp; Professional Life
-                  </h1>
-
-                  <p className="subhead">
-                    Provides you the confidence to define &amp; secure <span className="value-highlight">Value</span> by going through the <span className="value-highlight">Value Cycle</span>
-                  </p>
-
-                  <p className="subhead">
-                    The (<span className="value-highlight">Personal, Professional</span>) <span className="value-highlight">Value Cycle</span> is :
-                  </p>
-
-                  <p className="subhead" style={{ fontWeight: 700 }}>
-                    Goal Identification → Strategy Crafting → Objectives Definition → Plan Construction &amp; Execution
-                  </p>
-
-                  <ol className="subhead" style={{ listStylePosition: 'outside', paddingLeft: '1.5em', marginTop: 8 }}>
-                    <li style={{ marginBottom: '0.5em' }}>Based on tried &amp; tested industry standard Knowledge (e.g BABOK for Business Analysis, PMBOK for Project Mgmt)</li>
-                    <li style={{ marginBottom: '0.5em' }}>Complete ToolSet (Tools, Techniques, Templates, Case Studies, Trainings) for you to stay engaged for years</li>
-                    <li style={{ marginBottom: '0.5em' }}>Has Marketplace through which accredited Solution Providers can plug into specific parts of the (Personal, Professional) Value Cycle</li>
-                    <li style={{ marginBottom: '0.5em' }}>Highly Secure - run in offline mode, data transfers in encrypted manner</li>
-                    <li style={{ marginBottom: '0.5em' }}>Interact with the platform through the Channel of your choosing</li>
-                    <li style={{ marginBottom: '0.5em' }}>High User Engagement experience - Built using modern User Engagement principles</li>
-                    <li style={{ marginBottom: '0.5em' }}>Built to live in an inter-connected ecosystem of Products &amp; Solutions</li>
-                    <li style={{ marginBottom: '0.5em' }}>Built for Change - using modern, flexible architecture</li>
-                  </ol>
-
-                  <div className="section-cta">
-                    <div className="tagline">
-                      One platform. Full spread + AI-enabled depth. Built for years of growth.
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab('why')}
-                      className="btn primary"
-                    >
-                      <span className="dot" aria-hidden="true" />
-                      See Why
-                    </button>
-                  </div>
-                </div>
               </motion.div>
             ) : activeTab === 'why' ? (
               <motion.div
@@ -621,79 +565,13 @@ function IndexPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
-                className="about-html max-w-4xl mx-auto"
+                className="max-w-4xl mx-auto"
               >
                 <img
-                  src="/why_tab.jpg"
+                  src={theme === 'dark' ? '/why_tab_dark_theme.jpeg' : '/why_tab_white_theme.jpeg'}
                   alt="Why PBMP—Personal and Professional life, one platform"
-                  className="w-full rounded-xl mb-8 sm:mb-10"
+                  className="w-full rounded-xl"
                 />
-                <div className="section-inner">
-                  <div className="kicker">Why</div>
-
-                  <h2 className="headline">
-                    Like 2 sides of a coin, each of us have a Personal Life &amp; a Professional Life
-                    <br />
-                    Hence, a Platform that we rely on for Identifying &amp; Executing Decision, should reflect that
-                  </h2>
-                  <p className="subhead">
-                    Personal and professional growth are inextricably linked. People want a single platform with the{' '}
-                    <strong>spread</strong> (Vision → Mission → Goals → Strategy → Plan → Execute → Operate) and the{' '}
-                    <strong>depth</strong> (AI-enabled guidance and analytics) to manage both—over years of life and
-                    work.
-                  </p>
-
-                  <p className="subhead" style={{ fontWeight: 700, marginTop: 12 }}>
-                    However, the current Solutions are unable to meet that need
-                  </p>
-                  <p className="subhead" style={{ marginTop: 4 }}>
-                    The following 3 major issues exist in the Solution Landscape
-                  </p>
-
-                  <div className="grid3" role="list">
-                    <div className="card" role="listitem">
-                      <div className="num">01</div>
-                      <h3>Separate platforms</h3>
-                      <p>
-                        Different platforms for Personal Management vs Professional/Business Management—forcing context
-                        switching for problems that span both.
-                      </p>
-                    </div>
-
-                    <div className="card" role="listitem">
-                      <div className="num">02</div>
-                      <h3>Fragmentation within each</h3>
-                      <p>
-                        Different tools for <strong>Goals</strong>, <strong>Strategy</strong>, <strong>Planning</strong>
-                        , <strong>Execution</strong>, <strong>Tracking</strong>, and{' '}
-                        <strong>Learning/Personal Growth</strong>.
-                      </p>
-                    </div>
-
-                    <div className="card" role="listitem">
-                      <div className="num">03</div>
-                      <h3>Inconsistent granularity + limited transparency</h3>
-                      <p>
-                        Tools vary in depth and rarely reveal the body of knowledge behind their workflows. We provide
-                        full transparency on how our solutions are developed.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="section-cta">
-                    <div className="tagline">
-                      grow<sup>24</sup> connects the journey end-to-end—without losing context.
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab('how')}
-                      className="btn primary"
-                    >
-                      <span className="dot" aria-hidden="true" />
-                      Who it serves
-                    </button>
-                  </div>
-                </div>
               </motion.div>
             ) : (
               <motion.div
@@ -702,376 +580,19 @@ function IndexPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
-                className="space-y-8 md:space-y-10 min-w-0 w-full overflow-visible"
+                className="max-w-4xl mx-auto"
               >
-                <div className="max-w-4xl mx-auto">
-                  <img
-                    src="/how_tab.jpg"
-                    alt="How PBMP—Solutions cover Personal & Professional needs"
-                    className="w-full rounded-xl mb-8 sm:mb-10"
-                  />
-                </div>
-                {/* Solutions cover Personal & Professional Needs - Core & Support (from image) */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.05 }}
-                  className="about-html max-w-4xl mx-auto min-w-0 w-full overflow-visible"
-                >
-                  <div className="section-inner min-w-0 overflow-visible">
-                    <div className="kicker">How</div>
-
-                    <h2 className="headline">Solutions cover various Personal &amp; Professional Needs</h2>
-                    <p className="subhead">
-                      Core Solutions &amp; Support Solutions that span the <span className="value-highlight">Growth Cycle</span>.
-                    </p>
-
-                    <div className="mt-6 how-tab-table-wrap w-full min-w-0 overflow-x-auto overflow-y-visible rounded-xl border border-gray-200 dark:border-slate-600">
-                      <table className="w-full min-w-[500px] border-collapse text-left text-sm sm:text-base">
-                        <thead>
-                          <tr className="border-b border-gray-200 dark:border-slate-600">
-                            <th className="bg-gray-50 dark:bg-slate-700/50 px-4 py-3 text-base font-bold text-indigo-700 dark:text-indigo-400 w-1/2">
-                              Core Solutions
-                            </th>
-                            <th className="bg-gray-50 dark:bg-slate-700/50 px-4 py-3 text-base font-bold text-indigo-700 dark:text-indigo-400 w-1/2 border-l border-gray-200 dark:border-slate-600">
-                              Support Solutions
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="bg-white/50 dark:bg-slate-800/30">
-                          <tr className="border-b border-gray-200 dark:border-slate-600">
-                            <td className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 align-top">
-                              Directly impact Company financials.
-                            </td>
-                            <td className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 align-top border-l border-gray-200 dark:border-slate-600">
-                              Drive effectiveness &amp; efficiency.
-                            </td>
-                          </tr>
-                          <tr className="border-b border-gray-200 dark:border-slate-600">
-                            <td className="px-4 py-3 align-top">
-                              <p className="font-semibold text-indigo-700 dark:text-indigo-400 text-sm mb-1">Functional Solutions</p>
-                              <p className="text-gray-700 dark:text-gray-300 text-sm">E.g. Marketing Goals, Marketing Strategy, Marketing Objectives, Marketing Plan, Marketing Projects, Marketing Operation; Sales Goals, Sales Strategy, Sales Plan, Sales Operation.</p>
-                            </td>
-                            <td className="px-4 py-3 align-top border-l border-gray-200 dark:border-slate-600">
-                              <p className="font-semibold text-indigo-700 dark:text-indigo-400 text-sm mb-1">Structure</p>
-                              <p className="text-gray-700 dark:text-gray-300 text-sm">E.g. Organization Structure.</p>
-                            </td>
-                          </tr>
-                          <tr className="border-b border-gray-200 dark:border-slate-600">
-                            <td className="px-4 py-3 align-top">
-                              <p className="font-semibold text-indigo-700 dark:text-indigo-400 text-sm mb-1">Program Solutions</p>
-                              <p className="text-gray-700 dark:text-gray-300 text-sm">E.g. ESG, Business Transformation.</p>
-                            </td>
-                            <td className="px-4 py-3 align-top border-l border-gray-200 dark:border-slate-600">
-                              <p className="font-semibold text-indigo-700 dark:text-indigo-400 text-sm mb-1">System</p>
-                              <p className="text-gray-700 dark:text-gray-300 text-sm mb-0.5"><strong>Collaboration</strong> — E.g. Office</p>
-                              <p className="text-gray-700 dark:text-gray-300 text-sm mb-0.5"><strong>Trigger &amp; Notification</strong> — E.g. Event Manager</p>
-                              <p className="text-gray-700 dark:text-gray-300 text-sm"><strong>Build Solutions</strong> — E.g. Solution Manager</p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="px-4 py-3 align-top">&nbsp;</td>
-                            <td className="px-4 py-3 align-top border-l border-gray-200 dark:border-slate-600">
-                              <p className="font-semibold text-indigo-700 dark:text-indigo-400 text-sm mb-1">Processes</p>
-                              <p className="text-gray-700 dark:text-gray-300 text-sm">E.g. Process Manager, Analysis Manager.</p>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Solutions conform to Grow24 Value Framework - Constituents (from image) */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.08 }}
-                  className="about-html max-w-4xl mx-auto"
-                >
-                  <div className="section-inner">
-                    <h2 className="headline">
-                      Solutions conform to <span className="value-highlight">grow<sup>24</sup></span> Value Framework
-                    </h2>
-                    <p className="subhead">
-                      Constituents of the <span className="value-highlight">grow</span> Value Framework.
-                    </p>
-                    <p className="subhead" style={{ marginTop: 4 }}>
-                      Body of Knowledge, Tools, Templates, Techniques, Competencies Trainings, Case Studies applied to
-                    </p>
-
-                    <div className="mt-6 how-tab-table-wrap w-full min-w-0 overflow-x-auto overflow-y-visible rounded-xl border border-gray-200 dark:border-slate-600">
-                      <table className="w-full min-w-[500px] border-collapse text-left text-sm sm:text-base">
-                        <thead>
-                          <tr className="border-b border-gray-200 dark:border-slate-600">
-                            <th className="bg-gray-50 dark:bg-slate-700/50 px-4 py-3 text-base font-bold text-indigo-700 dark:text-indigo-400 w-1/2">
-                              Core Solutions
-                            </th>
-                            <th className="bg-gray-50 dark:bg-slate-700/50 px-4 py-3 text-base font-bold text-indigo-700 dark:text-indigo-400 w-1/2 border-l border-gray-200 dark:border-slate-600">
-                              Support Solutions
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="bg-white/50 dark:bg-slate-800/30">
-                          <tr className="border-b border-gray-200 dark:border-slate-600">
-                            <td className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 align-top">
-                              Directly impact Company financials.
-                            </td>
-                            <td className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 align-top border-l border-gray-200 dark:border-slate-600">
-                              Drive effectiveness &amp; efficiency.
-                            </td>
-                          </tr>
-                          <tr className="border-b border-gray-200 dark:border-slate-600">
-                            <td className="px-4 py-3 align-top border-l-0">
-                              <p className="font-semibold text-indigo-700 dark:text-indigo-400 text-sm mb-1">Functional Solutions</p>
-                              <p className="text-gray-700 dark:text-gray-300 text-sm">Corporate, Marketing, Sales, HR.</p>
-                            </td>
-                            <td className="px-4 py-3 align-top border-l border-gray-200 dark:border-slate-600">
-                              <p className="font-semibold text-indigo-700 dark:text-indigo-400 text-sm mb-1">Structure</p>
-                              <p className="text-gray-700 dark:text-gray-300 text-sm">E.g. Organization Structure.</p>
-                            </td>
-                          </tr>
-                          <tr className="border-b border-gray-200 dark:border-slate-600">
-                            <td className="px-4 py-3 align-top">
-                              <p className="font-semibold text-indigo-700 dark:text-indigo-400 text-sm mb-1">Program Solutions</p>
-                              <p className="text-gray-700 dark:text-gray-300 text-sm">Environmental, Social &amp; Governance; Business Transformation.</p>
-                            </td>
-                            <td className="px-4 py-3 align-top border-l border-gray-200 dark:border-slate-600">
-                              <p className="font-semibold text-indigo-700 dark:text-indigo-400 text-sm mb-1">System</p>
-                              <p className="text-gray-700 dark:text-gray-300 text-sm mb-0.5">Collaboration — Office</p>
-                              <p className="text-gray-700 dark:text-gray-300 text-sm mb-0.5">Trigger &amp; Notification — Event Manager</p>
-                              <p className="text-gray-700 dark:text-gray-300 text-sm">Build &amp; Deploy Solutions — Solution Manager</p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="px-4 py-3 align-top">&nbsp;</td>
-                            <td className="px-4 py-3 align-top border-l border-gray-200 dark:border-slate-600">
-                              <p className="font-semibold text-indigo-700 dark:text-indigo-400 text-sm mb-1">Processes</p>
-                              <p className="text-gray-700 dark:text-gray-300 text-sm">Process Manager — Build &amp; Manage Processes</p>
-                              <p className="text-gray-700 dark:text-gray-300 text-sm">Analysis Manager — using BABOK.</p>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Map of Solutions + Solution Approaches - matches What/Why design */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 }}
-                  className="about-html max-w-4xl mx-auto"
-                >
-                  <div className="section-inner">
-                    <div className="kicker">How</div>
-
-                    <h2 className="headline">Map of Solutions</h2>
-                    <p className="subhead">
-                      Conform to the <span className="value-highlight">grow<sup>24</sup></span> Decision Framework.
-                    </p>
-
-                    <ol className="subhead" style={{ listStylePosition: 'outside', paddingLeft: '1.5em', marginTop: 8 }}>
-                      <li style={{ marginBottom: '0.5em' }}>Unified Data and MetaData layer</li>
-                      <li style={{ marginBottom: '0.5em' }}>Tried and tested industry-standard <span className="value-highlight">Functional</span> Body Of Knowledge embedded (e.g. Sales, Marketing, HR)</li>
-                      <li style={{ marginBottom: '0.5em' }}>Tried &amp; tested <span className="value-highlight">Supporting</span> industry-standard Body of Knowledge (e.g BABOK for Business Analysis, PMBOK for Project Mgmt, PrMBOK for Portfolio Mgmt)</li>
-                      <li style={{ marginBottom: '0.5em' }}>Tried &amp; tested <span className="value-highlight">Enabling</span> solutions (e.g Collaboration through Office, Email, Whatsapp etc; Notifications through Email, Whatsapp etc)</li>
-                      <li style={{ marginBottom: '0.5em' }}>Engage through our <span className="value-highlight">ChatBot</span> (through desktop, laptop, Whatsapp)</li>
-                      <li style={{ marginBottom: '0.5em' }}>Growing set of Solutions for you to stay engaged, both on Personal &amp; Professional front, for years</li>
-                    </ol>
-
-                    <p className="subhead" style={{ fontWeight: 700, marginTop: 18, marginBottom: 4 }}>
-                      Solution approaches
-                    </p>
-                    <div className="grid3" role="list">
-                      <div className="card" role="listitem">
-                        <div className="num">01</div>
-                        <h3>Use Our Solutions</h3>
-                        <p>
-                          Corporate Goal, Corporate Strategy, Marketing Goal, Marketing Strategy.
-                        </p>
-                      </div>
-                      <div className="card" role="listitem">
-                        <div className="num">02</div>
-                        <h3>Use Our Partners&apos; Solutions</h3>
-                        <p>
-                          Leverage solutions from our accredited partners within the ecosystem.
-                        </p>
-                      </div>
-                      <div className="card" role="listitem">
-                        <div className="num">03</div>
-                        <h3>Build your Own Solutions</h3>
-                        <p>
-                          Extend and customize with your own solutions on the platform.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Grow24 Value Framework - Application of the Framework (11 steps) */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.12 }}
-                  className="about-html max-w-4xl mx-auto"
-                >
-                  <div className="section-inner">
-                    <h2 className="headline">
-                      Solutions conform to <span className="value-highlight">grow<sup>24</sup></span> Value Framework
-                    </h2>
-                    <p className="subhead" style={{ fontWeight: 600, marginTop: 4 }}>
-                      Application of the Framework
-                    </p>
-
-                    <div className="mt-6">
-                      {/* L-shaped arrow: same design as Individual Growth Cycle — starts at left of 1. Intent, goes left, down, right into left side of 7. Deploy */}
-                      <div className="relative max-w-md mx-auto text-left text-sm sm:text-base pl-12 sm:pl-14">
-                        <svg className="absolute inset-0 w-full h-full pointer-events-none text-teal-600 dark:text-teal-400" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
-                          {/* From center of left side of Intent (1): horizontal segment left to vertical stem */}
-                          <path d="M 12 4 L 6 4" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round" fill="none" />
-                          {/* Vertical segment: down to level of Deploy (7) block */}
-                          <path d="M 6 4 L 6 60" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round" fill="none" />
-                          {/* Horizontal: from stem into left side of Deploy block */}
-                          <path d="M 6 60 L 12 60" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round" fill="none" />
-                          {/* Arrowhead at Deploy (destination), tip at left edge of block */}
-                          <path d="M 9.5 58.5 L 12 60 L 9.5 61.5" stroke="currentColor" strokeWidth="0.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-                        </svg>
-                        <div className="relative flex flex-col min-w-0">
-                          {[
-                            { num: 1, title: 'Intent', desc: 'Capture what the user wants to achieve and define success criteria. If the solution already exists, route directly down to Use (bypass build lifecycle).' },
-                            { num: 2, title: 'Business Case', desc: 'Articulate value: baseline, benefits, costs, risks, KPIs/targets, and time horizon.' },
-                            { num: 3, title: 'Requirements', desc: 'Collect detailed requirements, including acceptance criteria and non-functional requirements tied to business KPIs.' },
-                            { num: 4, title: 'Plan', desc: 'Prepare the project plan: milestones, owners, budget, dependencies, rollout, and benefit-realization plan.' },
-                            { num: 5, title: 'Architect', desc: 'Design the solution: architecture, data flows, integrations, security/privacy, and measurement/telemetry approach.' },
-                            { num: 6, title: 'Build', desc: 'Construct and test the solution; ensure quality gates and observability are in place.' },
-                            { num: 7, title: 'Deploy', desc: 'Release to users/environments; monitor initial usage; be ready to rollback quickly if issues arise.' },
-                            { num: 8, title: 'Use', desc: 'Ensure correct adoption and usage as intended—this is where value starts getting generated.' },
-                            { num: 9, title: 'Insight', desc: 'Convert observations into evidence-backed conclusions (trends, anomalies, opportunities) linked to KPIs.' },
-                            { num: 10, title: 'Action', desc: 'Generate and track action items driven by insights (owners, due dates, expected KPI impact).' },
-                            { num: 11, title: 'Result', desc: 'Measure outcomes versus Business Case targets; capture learnings and decide scale, refine, or retire.' },
-                          ].map((step, i) => (
-                            <div key={step.num} className="flex flex-col">
-                              <div className="w-full rounded-2xl bg-teal-50/80 dark:bg-teal-900/20 border-2 border-teal-500/50 dark:border-teal-400/40 p-4 shadow-md">
-                                <p className="text-teal-700 dark:text-teal-300 font-semibold mb-1">{step.num}. {step.title}</p>
-                                <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-sm">{step.desc}</p>
-                              </div>
-                              {i < 10 && (
-                                <div className="flex justify-center py-1.5" aria-hidden>
-                                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="text-teal-600 dark:text-teal-400 shrink-0" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" />
-                                  </svg>
-                                </div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Decision Science Framework Section */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  className="glass backdrop-blur-xl bg-white/10 dark:bg-slate-800/50 rounded-2xl shadow-xl p-4 sm:p-6 md:p-8 max-w-5xl mx-auto border border-white/20 dark:border-slate-700/50"
-                >
-                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2 text-center">
-                    Decision Science Framework
-                  </h3>
-                  <p className="text-center text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4 sm:mb-6 md:mb-8 px-2">
-                    Direction of value: From raw data to applied wisdom
-                  </p>
-                  
-                  <div className="relative flex flex-col md:flex-row gap-4 md:gap-6">
-                    {/* Arrow on the left - Hide on mobile, show on desktop */}
-                    <div className="hidden md:flex flex-shrink-0 flex-col items-center relative" style={{ width: '120px' }}>
-                      {/* Direction of Value Label above arrow */}
-                      <div className="mb-2">
-                        <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                          Direction of value
-                        </span>
-                      </div>
-                      
-                      {/* Thick Black Arrow Line */}
-                      <div className="relative flex-1 flex items-center justify-center" style={{ minHeight: '400px' }}>
-                        <div className="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-2 bg-black dark:bg-white"></div>
-                        
-                        {/* Simple Black Arrow Head at Top */}
-                        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2 z-10">
-                          <svg className="w-6 h-6 text-black dark:text-white" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2L2 12h6v8h8v-8h6L12 2z" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Table Container - Make scrollable on mobile */}
-                    <div className="flex-1 border-2 border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden bg-white dark:bg-slate-800">
-                      <div className="overflow-x-auto">
-                        <table className="w-full border-collapse min-w-[600px]">
-                          <thead>
-                            <tr className="bg-gray-50 dark:bg-slate-700/50">
-                              <th className="border-b-2 border-gray-300 dark:border-gray-600 px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-amber-700 dark:text-amber-400 text-xs sm:text-sm" style={{ width: '25%' }}>
-                                WiKID Layer
-                              </th>
-                              <th className="border-b-2 border-gray-300 dark:border-gray-600 px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-amber-700 dark:text-amber-400 text-xs sm:text-sm">
-                                Description
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {/* Wisdom Row */}
-                            <tr className="border-b border-gray-200 dark:border-gray-700">
-                              <td className="px-3 sm:px-4 py-3 sm:py-4 align-top">
-                                <span className="font-bold text-gray-900 dark:text-white text-sm">Wisdom</span>
-                              </td>
-                              <td className="px-3 sm:px-4 py-3 sm:py-4 align-top text-gray-700 dark:text-gray-300 text-xs sm:text-sm">
-                                We start with <strong>Wisdom</strong> because it is <strong>Knowledge applied over time</strong>—the accumulated learnings from past decisions, outcomes, and calibrations. It tells us <strong>what's working, what's not, why</strong>, and guides <strong>better choices going forward</strong> (e.g., which goals are realistic, which strategies succeed, which execution patterns fail).
-                              </td>
-                            </tr>
-                            
-                            {/* Knowledge Row */}
-                            <tr className="border-b border-gray-200 dark:border-gray-700">
-                              <td className="px-3 sm:px-4 py-3 sm:py-4 align-top">
-                                <span className="font-bold text-gray-900 dark:text-white text-sm">Knowledge</span>
-                              </td>
-                              <td className="px-3 sm:px-4 py-3 sm:py-4 align-top text-gray-700 dark:text-gray-300 text-xs sm:text-sm">
-                                <strong>Knowledge</strong> is the foundation for creating Wisdom. It includes <strong>best practices, tools, techniques, frameworks, templates, skills, and competencies</strong>, coming from: (i) standard <strong>Bodies of Knowledge</strong> (e.g., PMBOK, BABOK, etc.), and (ii) <strong>organization-embedded knowledge</strong>—patterns learned through experience, case histories, playbooks, and domain expertise built while operating in that area.
-                              </td>
-                            </tr>
-                            
-                            {/* Information Row */}
-                            <tr className="border-b border-gray-200 dark:border-gray-700">
-                              <td className="px-3 sm:px-4 py-3 sm:py-4 align-top">
-                                <span className="font-bold text-gray-900 dark:text-white text-sm">Information</span>
-                              </td>
-                              <td className="px-3 sm:px-4 py-3 sm:py-4 align-top text-gray-700 dark:text-gray-300 text-xs sm:text-sm">
-                                <strong>Information</strong> is sanitized, structured, and consumable data (cleaned, standardized, contextualized) that can be reliably used to form <strong>insights, comparisons, and learning</strong>—so it becomes input for building Knowledge (e.g., curated KPI definitions, validated reports, standardized dashboards).
-                              </td>
-                            </tr>
-                            
-                            {/* Data Row */}
-                            <tr>
-                              <td className="px-3 sm:px-4 py-3 sm:py-4 align-top">
-                                <span className="font-bold text-gray-900 dark:text-white text-sm">Data</span>
-                              </td>
-                              <td className="px-3 sm:px-4 py-3 sm:py-4 align-top text-gray-700 dark:text-gray-300 text-xs sm:text-sm">
-                                <strong>Data</strong> is the raw signals collected from systems, markets, and people (transactions, logs, events, surveys, metrics, observations). It is unprocessed and noisy on its own, but it should ultimately be transformed into <strong>Information → Knowledge → Wisdom</strong>.
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
+                <img
+                  src="/how_tab.jpg"
+                  alt="How PBMP—Solutions cover Personal & Professional needs"
+                  className="w-full rounded-xl"
+                />
               </motion.div>
             )}
           </AnimatePresence>
+          ) : (
+          <ConceptUnlockStack />
+          )}
           </div>
         </div>
       </motion.section>
