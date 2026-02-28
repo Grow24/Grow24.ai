@@ -218,6 +218,10 @@ function IndexPage() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const conceptTabsBarRef = useRef<HTMLDivElement>(null)
   const conceptSectionRef = useRef<HTMLElement>(null)
+  const conceptBarTopRef = useRef<number>(0)
+  const conceptBarHeightRef = useRef<number>(56)
+  const isConceptTabBarStickyRef = useRef(false)
+  const [isConceptTabBarSticky, setIsConceptTabBarSticky] = useState(false)
   // Tab bar is always in the document flow so it never moves upward when Unlock/Lock is clicked
 
   const scrollToConceptSection = (tab: 'what' | 'why' | 'how') => {
@@ -272,7 +276,80 @@ function IndexPage() {
       }
     }
   }, [])
-  
+
+  // When user clicks lock, reset active tab to What.
+  useEffect(() => {
+    if (sectionScrollLocked) setActiveTab('what')
+  }, [sectionScrollLocked])
+
+  // When user clicks lock while tab bar was sticky, scroll so the three tabs are back in view (cursor/view returns to tab bar position). On mobile, delay scroll so layout has settled.
+  useEffect(() => {
+    if (!sectionScrollLocked) return
+    if (!isConceptTabBarStickyRef.current) return
+    const getHeaderOffsetPx = () => {
+      const val = typeof document !== 'undefined' && getComputedStyle(document.documentElement).getPropertyValue('--header-offset').trim()
+      if (!val) return 128
+      const rem = parseFloat(val)
+      return Number.isNaN(rem) ? 128 : rem * 16
+    }
+    const barTop = conceptBarTopRef.current
+    const headerOffsetPx = getHeaderOffsetPx()
+    const scrollTo = Math.max(0, barTop - headerOffsetPx)
+    const run = () => window.scrollTo({ top: scrollTo, behavior: 'smooth' })
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+    if (isMobile) setTimeout(run, 150)
+    else run()
+  }, [sectionScrollLocked])
+
+  // When unlocked: tab bar moves up to very top on scroll, stays fixed until all tab content is past, then returns when scrolling back up. Reset sticky when toggling unlock so we re-measure.
+  useEffect(() => {
+    if (sectionScrollLocked) {
+      isConceptTabBarStickyRef.current = false
+      setIsConceptTabBarSticky(false)
+      return
+    }
+    const getHeaderOffsetPx = () => {
+      const val = typeof document !== 'undefined' && getComputedStyle(document.documentElement).getPropertyValue('--header-offset').trim()
+      if (!val) return 128
+      const rem = parseFloat(val)
+      return Number.isNaN(rem) ? 128 : rem * 16
+    }
+    const onScroll = () => {
+      const section = conceptSectionRef.current
+      const bar = conceptTabsBarRef.current
+      if (!section || !bar) return
+      const headerOffsetPx = getHeaderOffsetPx()
+      const sectionBottom = section.offsetTop + section.offsetHeight
+      const scrollY = window.scrollY ?? window.pageYOffset
+      if (!isConceptTabBarStickyRef.current) {
+        const rect = bar.getBoundingClientRect()
+        conceptBarTopRef.current = rect.top + scrollY
+        conceptBarHeightRef.current = rect.height
+      }
+      const barTop = conceptBarTopRef.current
+      const shouldStick = scrollY >= barTop - headerOffsetPx && scrollY < sectionBottom - headerOffsetPx
+      if (isConceptTabBarStickyRef.current !== shouldStick) {
+        isConceptTabBarStickyRef.current = shouldStick
+        setIsConceptTabBarSticky(shouldStick)
+      }
+      // Scroll-spy: update active tab based on which section is in view (trigger point just below header)
+      const whatEl = document.getElementById('concept-what')
+      const whyEl = document.getElementById('concept-why')
+      const howEl = document.getElementById('concept-how')
+      if (whatEl && whyEl && howEl) {
+        const trigger = scrollY + headerOffsetPx + 80
+        const whatTop = whatEl.getBoundingClientRect().top + scrollY
+        const whyTop = whyEl.getBoundingClientRect().top + scrollY
+        const howTop = howEl.getBoundingClientRect().top + scrollY
+        const newTab: 'what' | 'why' | 'how' = trigger >= howTop ? 'how' : trigger >= whyTop ? 'why' : 'what'
+        setActiveTab((prev) => (prev === newTab ? prev : newTab))
+      }
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [sectionScrollLocked])
+
   return (
     <div className="min-h-screen">
       {/* Hero Section - Home */}
@@ -327,7 +404,10 @@ function IndexPage() {
             </div>
           </motion.div>
 
-          <HeroCarousel />
+          {/* Slider full-bleed so it can use max width and match BCG prominence */}
+          <div className="w-full -mx-4 sm:-mx-6 md:-mx-8 px-0">
+            <HeroCarousel />
+          </div>
 
           {/* Individual Growth Cycle line - above valu_cycle image */}
           <motion.div
@@ -531,11 +611,26 @@ function IndexPage() {
             </motion.button>
           </motion.div>
 
-          {/* Tab bar always in flow – never moves upward when Unlock/Lock is clicked */}
+          {/* Tab bar: in flow normally. When unlocked and scrolling, it moves to the very top via portal (so no parent transform keeps it in the middle) and returns when scrolling back up. */}
           <div className="relative">
+            {!sectionScrollLocked && isConceptTabBarSticky && (
+              <div aria-hidden className="flex items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8" style={{ height: conceptBarHeightRef.current }} />
+            )}
+            {!sectionScrollLocked && isConceptTabBarSticky && typeof document !== 'undefined' && createPortal(
+              <div
+                className="fixed left-0 right-0 top-0 z-[60] bg-white dark:bg-slate-950 py-3 border-b border-gray-200 dark:border-slate-800 flex items-center justify-center"
+                role="banner"
+                aria-label="What, Why, How navigation"
+              >
+                <div className="max-w-7xl mx-auto w-full px-4 flex items-center justify-center gap-3 sm:gap-4">
+                  <ConceptTabButtons activeTab={activeTab} setActiveTab={setActiveTab} sectionScrollLocked={sectionScrollLocked} setSectionScrollLocked={setSectionScrollLocked} scrollToSection={scrollToConceptSection} />
+                </div>
+              </div>,
+              document.body
+            )}
             <div
               ref={conceptTabsBarRef}
-              className="flex items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8"
+              className={`flex items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8 ${!sectionScrollLocked && isConceptTabBarSticky ? 'absolute opacity-0 pointer-events-none h-0 overflow-hidden' : ''}`}
             >
               <ConceptTabButtons activeTab={activeTab} setActiveTab={setActiveTab} sectionScrollLocked={sectionScrollLocked} setSectionScrollLocked={setSectionScrollLocked} scrollToSection={!sectionScrollLocked ? scrollToConceptSection : undefined} />
             </div>

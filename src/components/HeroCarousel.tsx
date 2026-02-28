@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
 import { motion } from 'framer-motion'
 
-const MOBILE_BREAKPOINT = 640
+const MOBILE_BREAKPOINT = 768
 
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(() =>
@@ -34,30 +34,40 @@ const SAMPLE_SLIDES = [
 
 const SLIDE_COUNT = SAMPLE_SLIDES.length
 
-// visibleCount: 1 on mobile (BCG-style), 5 on laptop
+// BCG-style three sizes: center largest, adjacent medium, outer smallest
 function getScaleForPosition(index: number, selectedIndex: number, visibleCount: number): number {
   let offset = (index - selectedIndex) % SLIDE_COUNT
   if (offset > SLIDE_COUNT / 2) offset -= SLIDE_COUNT
   if (offset < -SLIDE_COUNT / 2) offset += SLIDE_COUNT
   const absOffset = Math.abs(offset)
   if (visibleCount === 1) {
-    // Mobile: only center slide visible at full size
     if (absOffset === 0) return 1
-    return 0.78
+    return 0.72
   }
-  // Desktop: subtle scale differences, but avoid heavy zoom so edge slides aren't clipped
-  if (absOffset === 0) return 1.05  // center – slightly larger
-  if (absOffset === 1) return 0.95  // left/right of center
-  if (absOffset === 2) return 0.9   // extreme left/right
-  return 0.8                        // off-screen (peek)
+  if (absOffset === 0) return 1
+  if (absOffset === 1) return 0.88
+  if (absOffset === 2) return 0.76
+  return 0.68
+}
+
+// BCG-like opacity: center full, sides slightly dimmed
+function getOpacityForPosition(index: number, selectedIndex: number, visibleCount: number): number {
+  if (visibleCount === 1) return index === selectedIndex ? 1 : 0.6
+  let offset = (index - selectedIndex) % SLIDE_COUNT
+  if (offset > SLIDE_COUNT / 2) offset -= SLIDE_COUNT
+  if (offset < -SLIDE_COUNT / 2) offset += SLIDE_COUNT
+  const absOffset = Math.abs(offset)
+  if (absOffset === 0) return 1
+  if (absOffset === 1) return 0.92
+  if (absOffset === 2) return 0.82
+  return 0.7
 }
 
 function HeroCarousel() {
   const isMobile = useIsMobile()
   const visibleCount = isMobile ? 1 : 5
-  // Desktop: tune card width + gap so 5 slides fit cleanly within the viewport without clipping edge slides
-  const slideBasis = isMobile ? '100%' : '19%'
-  const slideGap = isMobile ? '0%' : '0.75%'
+  const slideGapPx = isMobile ? 0 : 24
+  const slideBasis = isMobile ? '100%' : `calc((100% - ${4 * slideGapPx}px) / 5)` // 5 slides, 4 gaps
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
@@ -70,6 +80,7 @@ function HeroCarousel() {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
   const [hoveredSlideIndex, setHoveredSlideIndex] = useState<number | null>(null)
+  const [tappedSlideIndex, setTappedSlideIndex] = useState<number | null>(null)
 
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi])
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi])
@@ -93,17 +104,17 @@ function HeroCarousel() {
     }
   }, [emblaApi, onSelect])
 
-  // Reinit carousel when switching mobile ↔ desktop so slide sizes and snaps update
   useEffect(() => {
     emblaApi?.reInit()
   }, [emblaApi, visibleCount])
 
-  // Auto-slide every 5s; pause on hover, resume 5s after mouse leave
+  useEffect(() => {
+    if (isMobile) setTappedSlideIndex(null)
+  }, [isMobile, selectedIndex])
+
   useEffect(() => {
     if (!emblaApi || isHovered) return
-    const interval = setInterval(() => {
-      scrollNext()
-    }, 5000)
+    const interval = setInterval(() => scrollNext(), 5000)
     return () => clearInterval(interval)
   }, [emblaApi, isHovered, scrollNext])
 
@@ -112,23 +123,41 @@ function HeroCarousel() {
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
+  const showOverlay = (index: number) => {
+    if (isMobile) return tappedSlideIndex === index
+    return hoveredSlideIndex === index
+  }
+
+  const handleSlideClick = (index: number) => {
+    if (isMobile) {
+      if (index !== selectedIndex) {
+        scrollTo(index)
+        setTappedSlideIndex(null)
+        return
+      }
+      setTappedSlideIndex((prev) => (prev === index ? null : index))
+      return
+    }
+    handleLibraryClick()
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15, duration: 0.5 }}
-      className="w-full max-w-7xl mx-auto mb-4 sm:mb-8"
+      className="w-full mx-auto px-3 sm:px-4 md:px-5 mb-10 sm:mb-14"
     >
       <div className="relative">
-        {/* Prev/next arrows – smaller on mobile to save space */}
+        {/* BCG-style nav: circular buttons, minimal, at sides */}
         <button
           type="button"
           onClick={scrollPrev}
           disabled={!canScrollPrev}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 shadow-md border border-slate-200/80 dark:border-slate-600/50 hover:bg-white dark:hover:bg-slate-700/90 disabled:opacity-40 disabled:pointer-events-none transition-all"
-          aria-label="Previous"
+          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-[0_2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] border border-slate-200/60 dark:border-slate-600/50 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all duration-200"
+          aria-label="Previous slide"
         >
-          <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
@@ -136,90 +165,106 @@ function HeroCarousel() {
           type="button"
           onClick={scrollNext}
           disabled={!canScrollNext}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 shadow-md border border-slate-200/80 dark:border-slate-600/50 hover:bg-white dark:hover:bg-slate-700/90 disabled:opacity-40 disabled:pointer-events-none transition-all"
-          aria-label="Next"
+          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-[0_2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] border border-slate-200/60 dark:border-slate-600/50 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all duration-200"
+          aria-label="Next slide"
         >
-          <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M9 18l6-6-6-6" />
           </svg>
         </button>
 
-        {/* 10 slides; 1 visible on mobile, 5 on laptop. Responsive padding. */}
         <div
-          className="overflow-hidden w-full px-0 sm:px-0 md:px-0 @container"
+          className="overflow-hidden w-full"
           ref={emblaRef}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
           <div
-            className="flex touch-pan-y"
-            style={{ gap: slideGap }}
+            className="flex touch-pan-y select-none"
+            style={{ gap: slideGapPx, marginLeft: isMobile ? 0 : undefined }}
           >
             {SAMPLE_SLIDES.map((slide, index) => {
               const scale = getScaleForPosition(index, selectedIndex, visibleCount)
-              const isSlideHovered = hoveredSlideIndex === index
+              const opacity = getOpacityForPosition(index, selectedIndex, visibleCount)
+              const isOverlayVisible = showOverlay(index)
               return (
                 <div
                   key={index}
                   className="min-w-0 flex items-center justify-center shrink-0"
-                  style={{ flexBasis: slideBasis, minWidth: '0' }}
+                  style={{ flexBasis: slideBasis, minWidth: 0 }}
                 >
                   <div
                     role="button"
                     tabIndex={0}
-                    onClick={handleLibraryClick}
+                    onClick={() => handleSlideClick(index)}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault()
-                        handleLibraryClick()
+                        handleSlideClick(index)
                       }
                     }}
                     onMouseEnter={() => setHoveredSlideIndex(index)}
                     onMouseLeave={() => setHoveredSlideIndex(null)}
-                    className="w-full block rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-600/50 bg-slate-100 dark:bg-slate-800 shadow-sm hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-600/50 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 dark:focus:ring-offset-slate-900 origin-center transition-transform duration-300 ease-out text-left cursor-pointer"
+                    className="w-full block rounded-lg overflow-hidden border border-slate-200/70 dark:border-slate-600/50 bg-slate-100 dark:bg-slate-800 shadow-sm hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 dark:focus:ring-offset-slate-900 origin-center transition-all duration-300 ease-out text-left cursor-pointer"
                     style={{
                       transform: `scale(${scale})`,
+                      opacity,
                     }}
                   >
-                    <div className="relative aspect-[16/9] sm:aspect-[2/3] w-full bg-slate-200 dark:bg-slate-700">
+                    <div className="relative aspect-[16/9] w-full bg-slate-200 dark:bg-slate-700">
                       <img
                         src={slide.image}
                         alt={slide.title}
                         className="absolute inset-0 w-full h-full object-cover"
                         loading="lazy"
+                        draggable={false}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                      <span className="absolute bottom-3 left-3 right-3 text-left text-sm font-semibold text-white drop-shadow-sm">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                      <span className="absolute bottom-3 left-3 right-3 text-left text-sm sm:text-base font-semibold text-white drop-shadow-md">
                         {slide.title}
                       </span>
-                      {/* Hover overlay: slides up from bottom and covers entire image (BCG-style) */}
                       <motion.div
-                        className="absolute inset-0 z-10 bg-black/80 text-white p-4 flex flex-col justify-end"
+                        className="absolute inset-0 z-10 bg-slate-900/95 text-white p-4 sm:p-5 flex flex-col justify-end"
                         initial={false}
                         animate={{
-                          y: isSlideHovered ? 0 : '100%',
+                          y: isOverlayVisible ? 0 : '100%',
                         }}
-                        transition={{ type: 'tween', duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                        transition={{ type: 'tween', duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
                         style={{ originY: 1 }}
                       >
-                        <h3 className="text-sm font-semibold mb-1 line-clamp-2">{slide.title}</h3>
-                        <p className="text-xs text-white/90 mb-3 line-clamp-2">{slide.description}</p>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            handleLibraryClick()
-                          }}
-                          className="inline-flex items-center justify-center w-full py-2 px-3 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-medium transition-colors cursor-pointer"
-                        >
-                          Learn More
-                        </button>
+                        <h3 className="text-sm sm:text-base font-semibold mb-1.5 line-clamp-2">{slide.title}</h3>
+                        <p className="text-xs sm:text-sm text-white/90 mb-4 line-clamp-2">{slide.description}</p>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              handleLibraryClick()
+                            }}
+                            className="inline-flex items-center justify-center flex-1 sm:flex-none w-full sm:w-auto py-2.5 px-4 rounded-md bg-white text-slate-900 text-sm font-medium hover:bg-slate-100 transition-colors cursor-pointer"
+                          >
+                            Know More
+                          </button>
+                          {isMobile && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                setTappedSlideIndex(null)
+                              }}
+                              className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-md bg-white/20 hover:bg-white/30 text-white transition-colors cursor-pointer touch-manipulation"
+                              aria-label="Close"
+                            >
+                              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                                <path d="M18 6L6 18M6 6l12 12" />
+                              </svg>
+                            </button>
+                          )}
+                        </div>
                       </motion.div>
                     </div>
-                    <span className="block py-2.5 px-3 text-xs font-medium text-emerald-600 dark:text-emerald-400 text-center">
-                      Explore Library →
-                    </span>
                   </div>
                 </div>
               )
@@ -227,20 +272,20 @@ function HeroCarousel() {
           </div>
         </div>
 
-        {/* Dots and nav below slider – active dot green, inactive light grey */}
-        <div className="flex items-center justify-center gap-3 sm:gap-4 mt-2 sm:mt-4">
+        {/* BCG-style dots + nav below: prev/next squares, dots in middle */}
+        <div className="flex items-center justify-center gap-4 sm:gap-6 mt-5 sm:mt-6">
           <button
             type="button"
             onClick={scrollPrev}
             disabled={!canScrollPrev}
-            className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg bg-slate-200/90 dark:bg-slate-600/80 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-500/80 disabled:opacity-40 disabled:pointer-events-none transition-colors shadow-sm"
+            className="flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 disabled:opacity-40 disabled:pointer-events-none transition-colors border border-slate-200/60 dark:border-slate-600/50"
             aria-label="Previous slide"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M15 18l-6-6 6-6" />
             </svg>
           </button>
-          <div className="flex items-center gap-2" role="tablist" aria-label="Slider position">
+          <div className="flex items-center gap-1.5 sm:gap-2" role="tablist" aria-label="Slider position">
             {SAMPLE_SLIDES.map((_, index) => (
               <button
                 key={index}
@@ -249,10 +294,10 @@ function HeroCarousel() {
                 role="tab"
                 aria-selected={index === selectedIndex}
                 aria-label={`Slide ${index + 1} of ${SAMPLE_SLIDES.length}`}
-                className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                className={`rounded-full transition-all duration-200 ${
                   index === selectedIndex
-                    ? 'bg-emerald-500 dark:bg-emerald-400'
-                    : 'bg-slate-300 dark:bg-slate-500 hover:bg-slate-400 dark:hover:bg-slate-400'
+                    ? 'w-2.5 h-2.5 sm:w-3 sm:h-3 bg-slate-800 dark:bg-slate-200'
+                    : 'w-2 h-2 sm:w-2.5 sm:h-2.5 bg-slate-300 dark:bg-slate-500 hover:bg-slate-400 dark:hover:bg-slate-400'
                 }`}
               />
             ))}
@@ -261,10 +306,10 @@ function HeroCarousel() {
             type="button"
             onClick={scrollNext}
             disabled={!canScrollNext}
-            className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg bg-slate-200/90 dark:bg-slate-600/80 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-500/80 disabled:opacity-40 disabled:pointer-events-none transition-colors shadow-sm"
+            className="flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 disabled:opacity-40 disabled:pointer-events-none transition-colors border border-slate-200/60 dark:border-slate-600/50"
             aria-label="Next slide"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 18l6-6-6-6" />
             </svg>
           </button>
