@@ -34,7 +34,8 @@ const SAMPLE_SLIDES = [
 
 const SLIDE_COUNT = SAMPLE_SLIDES.length
 
-// BCG-style: center largest, adjacent narrower, outer substantial (match BCG screenshot proportions)
+// Design intent (BCG-style): (1) Spacing and visual balance — generous, consistent gaps and margins so each block has presence. (2) Image sizes are intentionally uneven — center largest, adjacent shorter, outer in between; do not flatten to equal sizes.
+// BCG-style: center tallest/most prominent, adjacent shorter, outer in between (staggered heights, uniform gaps)
 function getScaleForPosition(index: number, selectedIndex: number, visibleCount: number): number {
   let offset = (index - selectedIndex) % SLIDE_COUNT
   if (offset > SLIDE_COUNT / 2) offset -= SLIDE_COUNT
@@ -44,9 +45,9 @@ function getScaleForPosition(index: number, selectedIndex: number, visibleCount:
     if (absOffset === 0) return 1
     return 0.72
   }
-  if (absOffset === 0) return 1.26   // center: most prominent
-  if (absOffset === 1) return 0.82   // adjacent: narrower
-  if (absOffset === 2) return 0.92   // outer: substantial, similar height to center
+  if (absOffset === 0) return 1.28   // center: tallest, most prominent
+  if (absOffset === 1) return 0.8    // adjacent: shorter, clear step down
+  if (absOffset === 2) return 0.9    // outer: in between
   return 0.88
 }
 
@@ -66,8 +67,8 @@ function getOpacityForPosition(index: number, selectedIndex: number, visibleCoun
 function HeroCarousel() {
   const isMobile = useIsMobile()
   const visibleCount = isMobile ? 1 : 5
-  const slideGapPx = isMobile ? 0 : 24
-  const slideBasis = isMobile ? '100%' : `calc((100% - ${4 * slideGapPx}px) / 5)` // 5 slides, 4 gaps
+  const slideGapPx = isMobile ? 0 : 36
+  const slideBasis = isMobile ? '100%' : `calc((100% - ${4 * slideGapPx}px) / 5)` // 5 slides, 4 gaps; generous spacing between blocks (BCG-style)
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
@@ -146,7 +147,7 @@ function HeroCarousel() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15, duration: 0.5 }}
-      className="w-full mx-auto lg:w-[calc(100%+4in)] lg:max-w-none lg:-ml-[2in] lg:mx-0 px-3 sm:px-4 md:px-5 mb-10 sm:mb-14"
+      className="w-full mx-auto lg:w-[calc(100%+4in)] lg:max-w-none lg:-ml-[2in] lg:mx-0 px-4 sm:px-4 md:px-5 mb-20 sm:mb-24 md:mb-28"
     >
       <div className="relative">
         {/* BCG-style nav: circular buttons, minimal, at sides */}
@@ -154,7 +155,7 @@ function HeroCarousel() {
           type="button"
           onClick={scrollPrev}
           disabled={!canScrollPrev}
-          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-[0_2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] border border-slate-200/60 dark:border-slate-600/50 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all duration-200"
+          className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-[0_2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] border border-slate-200/60 dark:border-slate-600/50 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all duration-200"
           aria-label="Previous slide"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -165,7 +166,7 @@ function HeroCarousel() {
           type="button"
           onClick={scrollNext}
           disabled={!canScrollNext}
-          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-[0_2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] border border-slate-200/60 dark:border-slate-600/50 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all duration-200"
+          className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-[0_2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] border border-slate-200/60 dark:border-slate-600/50 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all duration-200"
           aria-label="Next slide"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -190,8 +191,12 @@ function HeroCarousel() {
               return (
                 <div
                   key={index}
-                  className="min-w-0 flex items-center justify-center shrink-0"
-                  style={{ flexBasis: slideBasis, minWidth: 0 }}
+                  className="flex items-center justify-center flex-shrink-0 flex-grow-0"
+                  style={{
+                    width: slideBasis,
+                    minWidth: slideBasis,
+                    maxWidth: slideBasis,
+                  }}
                 >
                   <div
                     role="button"
@@ -211,7 +216,7 @@ function HeroCarousel() {
                       opacity,
                     }}
                   >
-                    <div className="relative aspect-[3/4] w-full min-h-[38vh] md:min-h-[42vh] bg-slate-200 dark:bg-slate-700">
+                    <div className="relative aspect-[4/5] w-full min-h-[40vh] md:min-h-[44vh] bg-slate-200 dark:bg-slate-700">
                       <img
                         src={slide.image}
                         alt={slide.title}

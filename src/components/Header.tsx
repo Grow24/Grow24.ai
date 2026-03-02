@@ -724,11 +724,11 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
           } as React.CSSProperties}
         >
           <div
-            className={`w-full px-3 sm:px-4 md:px-8 ${
+            className={`w-full px-4 sm:px-4 md:px-8 ${
               scrolled ? 'py-1 sm:py-1.5' : 'py-1.5 sm:py-2'
             }`}
           >
-            <div className="flex items-center justify-between gap-1.5 sm:gap-2 md:gap-4">
+            <div className="flex items-center justify-between gap-2 sm:gap-2 md:gap-4">
               {/* Left Side: Menu Button only (no visible background) */}
               <div className="flex items-center gap-2 sm:gap-3 md:gap-6 flex-1 md:flex-none min-w-0 overflow-hidden">
                 {/* Hamburger Menu Button - Only visible on mobile/tablet, hidden on laptop/desktop */}
@@ -768,7 +768,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
               {/* Right Side: Login, Theme, Search */}
               <div className="flex items-center flex-shrink-0">
                 <div
-                  className={`flex items-center gap-1.5 sm:gap-2 md:gap-3 rounded-full border border-gray-200 dark:border-gray-700 shadow-sm px-1.5 sm:px-2 bg-white/95 dark:bg-slate-950/95 transition-all duration-200 ${
+                  className={`flex items-center gap-2 sm:gap-2 md:gap-3 rounded-full border border-gray-200 dark:border-gray-700 shadow-sm px-2 sm:px-2 bg-white/95 dark:bg-slate-950/95 transition-all duration-200 ${
                     scrolled ? '' : 'bg-white/90 dark:bg-slate-950/90'
                   }`}
                 >

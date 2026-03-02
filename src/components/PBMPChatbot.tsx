@@ -40,9 +40,10 @@ export default function PBMPChatbot({ position = 'right' }: PBMPChatbotProps) {
   // Gap: ~16px
   // When CTA visible: 60px (CookieFooter) + 120px (CTA bar) + 16px (gap) = 196px = bottom-[196px]
   // When CTA not visible: 60px (CookieFooter) + 16px (gap) = 76px = bottom-[76px]
+  // On mobile use larger bottom so chat FAB clears device nav bar and doesn't feel constrained
   const bottomPosition = isCTABarVisible 
-    ? 'bottom-[196px] sm:bottom-[196px] md:bottom-[196px]' 
-    : 'bottom-[76px] sm:bottom-[76px] md:bottom-[76px]'
+    ? 'bottom-[220px] sm:bottom-[196px] md:bottom-[196px]' 
+    : 'bottom-[100px] sm:bottom-[76px] md:bottom-[76px]'
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -201,7 +202,7 @@ export default function PBMPChatbot({ position = 'right' }: PBMPChatbotProps) {
     ))
   }
 
-  const positionClass = position === 'left' ? 'left-4 sm:left-6' : 'right-4 sm:right-6'
+  const positionClass = position === 'left' ? 'left-4 sm:left-6' : 'right-5 sm:right-6'
   const bottomClass = `${bottomPosition} transition-all duration-300`
 
   return (
