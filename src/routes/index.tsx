@@ -634,11 +634,11 @@ function IndexPage() {
             )}
             {!sectionScrollLocked && isConceptTabBarSticky && typeof document !== 'undefined' && createPortal(
               <div
-                className="fixed left-0 right-0 top-0 z-[60] bg-white dark:bg-slate-950 py-3 border-b border-gray-200 dark:border-slate-800 flex items-center justify-center"
+                className="fixed left-0 right-0 top-0 z-[60] py-3 flex items-center justify-center bg-transparent pointer-events-none"
                 role="banner"
                 aria-label="What, Why, How navigation"
               >
-                <div className="max-w-7xl mx-auto w-full px-4 flex items-center justify-center gap-3 sm:gap-4">
+                <div className="max-w-7xl mx-auto w-full px-4 flex items-center justify-center gap-3 sm:gap-4 pointer-events-auto">
                   <ConceptTabButtons activeTab={activeTab} setActiveTab={setActiveTab} sectionScrollLocked={sectionScrollLocked} setSectionScrollLocked={setSectionScrollLocked} scrollToSection={scrollToConceptSection} />
                 </div>
               </div>,
