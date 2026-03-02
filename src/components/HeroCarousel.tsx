@@ -174,7 +174,7 @@ function HeroCarousel() {
         </button>
 
         <div
-          className="overflow-hidden w-full lg:w-[calc(100%-4in)] lg:mx-auto"
+          className="overflow-hidden w-full"
           ref={emblaRef}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}

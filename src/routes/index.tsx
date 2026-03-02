@@ -172,7 +172,7 @@ function ConceptTabButtons({
         title={sectionScrollLocked ? 'Unlock scroll' : 'Lock scroll'}
       >
         <span className="text-base leading-none" aria-hidden="true">
-          {sectionScrollLocked ? '🔓' : '🔐'}
+          {sectionScrollLocked ? '🔐' : '🔓'}
         </span>
       </button>
     </>
@@ -184,17 +184,17 @@ function ConceptUnlockStack() {
   return (
     <>
       <section id="concept-what" className="scroll-mt-24">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="max-w-6xl lg:max-w-7xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="max-w-6xl lg:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
           <img src={theme === 'dark' ? '/what_tab_dark_theme.jpeg' : '/what_tab_white_theme.jpeg'} alt="A digital platform to manage your interconnected Personal & Professional life—PBMP overview" className="w-full rounded-xl" />
         </motion.div>
       </section>
       <section id="concept-why" className="scroll-mt-24">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="max-w-6xl lg:max-w-7xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="max-w-6xl lg:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
           <img src={theme === 'dark' ? '/why_tab_dark_theme.jpeg' : '/why_tab_white_theme.jpeg'} alt="Why PBMP—Personal and Professional life, one platform" className="w-full rounded-xl" />
         </motion.div>
       </section>
       <section id="concept-how" className="scroll-mt-24">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="max-w-6xl lg:max-w-7xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="max-w-6xl lg:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
           <img src="/how_tab.jpg" alt="How PBMP—Solutions cover Personal & Professional needs" className="w-full rounded-xl" />
         </motion.div>
       </section>
@@ -280,6 +280,22 @@ function IndexPage() {
   // When user clicks lock, reset active tab to What.
   useEffect(() => {
     if (sectionScrollLocked) setActiveTab('what')
+  }, [sectionScrollLocked])
+
+  // When user clicks Unlock: redirect to What tab section (scroll so tab content sits just below fixed tabs; active tab = What).
+  useEffect(() => {
+    if (sectionScrollLocked) return
+    const whatEl = document.getElementById('concept-what')
+    if (!whatEl) return
+    setActiveTab('what')
+    const barHeight = Math.min(conceptBarHeightRef.current, 72)
+    const gapBelowTabs = 32
+    const scrollY = window.scrollY ?? window.pageYOffset
+    const whatTop = whatEl.getBoundingClientRect().top + scrollY
+    const scrollTop = Math.max(0, whatTop - barHeight - gapBelowTabs)
+    if (Math.abs(scrollY - scrollTop) > 20) {
+      window.scrollTo({ top: scrollTop, behavior: 'smooth' })
+    }
   }, [sectionScrollLocked])
 
   // When user clicks lock while tab bar was sticky, scroll so the three tabs are back in view (cursor/view returns to tab bar position). On mobile, delay scroll so layout has settled.
@@ -583,7 +599,7 @@ function IndexPage() {
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true, amount: 0.3 }}
-        className="min-h-screen py-12 sm:py-16 md:py-20 px-4 pb-20 sm:pb-24 overflow-visible"
+        className="py-12 sm:py-16 md:py-20 px-4 pb-20 sm:pb-24 overflow-visible"
       >
         <div className="max-w-7xl mx-auto min-w-0 overflow-visible">
           {/* Header */}
@@ -614,7 +630,7 @@ function IndexPage() {
           {/* Tab bar: in flow normally. When unlocked and scrolling, it moves to the very top via portal (so no parent transform keeps it in the middle) and returns when scrolling back up. */}
           <div className="relative">
             {!sectionScrollLocked && isConceptTabBarSticky && (
-              <div aria-hidden className="flex items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8" style={{ height: conceptBarHeightRef.current }} />
+              <div aria-hidden className="flex items-center justify-center gap-3 sm:gap-4 mb-0" style={{ height: Math.min(conceptBarHeightRef.current, 72), minHeight: 0 }} />
             )}
             {!sectionScrollLocked && isConceptTabBarSticky && typeof document !== 'undefined' && createPortal(
               <div
@@ -630,7 +646,7 @@ function IndexPage() {
             )}
             <div
               ref={conceptTabsBarRef}
-              className={`flex items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8 ${!sectionScrollLocked && isConceptTabBarSticky ? 'absolute opacity-0 pointer-events-none h-0 overflow-hidden' : ''}`}
+              className={`flex items-center justify-center gap-3 sm:gap-4 ${!sectionScrollLocked && isConceptTabBarSticky ? 'absolute opacity-0 pointer-events-none h-0 overflow-hidden mb-0' : 'mb-3 sm:mb-4'}`}
             >
               <ConceptTabButtons activeTab={activeTab} setActiveTab={setActiveTab} sectionScrollLocked={sectionScrollLocked} setSectionScrollLocked={setSectionScrollLocked} scrollToSection={!sectionScrollLocked ? scrollToConceptSection : undefined} />
             </div>
@@ -645,7 +661,7 @@ function IndexPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
-                className="max-w-6xl lg:max-w-7xl mx-auto"
+                className="max-w-6xl lg:max-w-[1400px] 2xl:max-w-[1600px] mx-auto"
               >
                 <img
                   src={theme === 'dark' ? '/what_tab_dark_theme.jpeg' : '/what_tab_white_theme.jpeg'}
@@ -660,7 +676,7 @@ function IndexPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
-                className="max-w-6xl lg:max-w-7xl mx-auto"
+                className="max-w-6xl lg:max-w-[1400px] 2xl:max-w-[1600px] mx-auto"
               >
                 <img
                   src={theme === 'dark' ? '/why_tab_dark_theme.jpeg' : '/why_tab_white_theme.jpeg'}
@@ -675,7 +691,7 @@ function IndexPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
-                className="max-w-6xl lg:max-w-7xl mx-auto"
+                className="max-w-6xl lg:max-w-[1400px] 2xl:max-w-[1600px] mx-auto"
               >
                 <img
                   src="/how_tab.jpg"
