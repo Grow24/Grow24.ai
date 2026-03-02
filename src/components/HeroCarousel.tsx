@@ -68,7 +68,8 @@ function HeroCarousel() {
   const isMobile = useIsMobile()
   const visibleCount = isMobile ? 1 : 5
   const slideGapPx = isMobile ? 0 : 36
-  const slideBasis = isMobile ? '100%' : `calc((100% - ${4 * slideGapPx}px) / 5)` // 5 slides, 4 gaps; generous spacing between blocks (BCG-style)
+  // Laptop: equal spacing between all 5 visible slides — one source of truth for gap, 4 gaps between 5 slides
+  const slideBasis = isMobile ? '100%' : `calc((100% - 4 * ${slideGapPx}px) / 5)`
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
@@ -182,7 +183,12 @@ function HeroCarousel() {
         >
           <div
             className="flex touch-pan-y select-none"
-            style={{ gap: slideGapPx, marginLeft: isMobile ? 0 : undefined }}
+            style={{
+              // Laptop: single source of truth for equal spacing between all 5 visible slides
+              ['--carousel-gap' as string]: isMobile ? undefined : `${slideGapPx}px`,
+              gap: isMobile ? 0 : 'var(--carousel-gap)',
+              marginLeft: isMobile ? 0 : undefined,
+            }}
           >
             {SAMPLE_SLIDES.map((slide, index) => {
               const scale = getScaleForPosition(index, selectedIndex, visibleCount)
@@ -191,11 +197,12 @@ function HeroCarousel() {
               return (
                 <div
                   key={index}
-                  className="flex items-center justify-center flex-shrink-0 flex-grow-0"
+                  className="flex items-center justify-center flex-shrink-0 flex-grow-0 box-border overflow-hidden"
                   style={{
                     width: slideBasis,
                     minWidth: slideBasis,
                     maxWidth: slideBasis,
+                    flexBasis: slideBasis,
                   }}
                 >
                   <div
