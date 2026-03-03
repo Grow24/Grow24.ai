@@ -638,8 +638,16 @@ function IndexPage() {
                 role="banner"
                 aria-label="What, Why, How navigation"
               >
-                <div className="max-w-7xl mx-auto w-full px-4 flex items-center justify-center gap-3 sm:gap-4 pointer-events-auto">
-                  <ConceptTabButtons activeTab={activeTab} setActiveTab={setActiveTab} sectionScrollLocked={sectionScrollLocked} setSectionScrollLocked={setSectionScrollLocked} scrollToSection={scrollToConceptSection} />
+                <div className="max-w-7xl mx-auto w-full px-4 flex items-center justify-center pointer-events-auto">
+                  <div className="inline-flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-2 rounded-full bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 shadow-md">
+                    <ConceptTabButtons
+                      activeTab={activeTab}
+                      setActiveTab={setActiveTab}
+                      sectionScrollLocked={sectionScrollLocked}
+                      setSectionScrollLocked={setSectionScrollLocked}
+                      scrollToSection={scrollToConceptSection}
+                    />
+                  </div>
                 </div>
               </div>,
               document.body

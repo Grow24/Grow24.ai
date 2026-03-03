@@ -138,11 +138,11 @@ function BecomePartnerPage() {
   const [scrollSpyTab, setScrollSpyTab] = useState<SectionId | null>(null)
   const { showComingSoon } = useComingSoon()
 
-  // Scroll-spy: when viewing "All", highlight the tab for the section currently in view
+  // Scroll-spy: when viewing "All", highlight the tab for the section currently in view (only on scroll so "All" stays selected on first visit)
   useEffect(() => {
     if (activeTab !== 'all') return
 
-    const HEADER_OFFSET = 280
+    const TRIGGER_OFFSET = 200
     const handleScroll = () => {
       const sections = SECTION_IDS.map((id) => ({
         id,
@@ -152,13 +152,12 @@ function BecomePartnerPage() {
       let current: SectionId | null = null
       for (const { id, el } of sections) {
         const top = el.getBoundingClientRect().top
-        if (top <= HEADER_OFFSET) current = id
+        if (top <= TRIGGER_OFFSET) current = id
       }
       setScrollSpyTab((prev) => (current !== prev ? current : prev))
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll()
     return () => window.removeEventListener('scroll', handleScroll)
   }, [activeTab])
 
@@ -167,15 +166,15 @@ function BecomePartnerPage() {
   return (
     <main className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pb-8 sm:pb-12">
-        {/* Header section: title + tab bar at top; sticky when scrolling */}
+        {/* Header section: title + tab bar at top; remains fixed when scrolling */}
         <header
-          className="sticky z-40 -mx-4 sm:-mx-6 px-4 sm:px-6 pt-0 pb-0 -mt-[4.5rem] sm:-mt-[4.75rem] md:-mt-[5rem] bg-white dark:bg-slate-950 border-b-0 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.3)]"
+          className="sticky top-0 z-40 -mx-4 sm:-mx-6 px-4 sm:px-6 pt-0 pb-0 -mt-[4.5rem] sm:-mt-[4.75rem] md:-mt-[5rem] bg-white dark:bg-slate-950 border-b-0 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.3)]"
         >
           <h1 className="text-3xl sm:text-4xl font-bold text-center text-slate-900 dark:text-white mb-0 pt-2">
             Partner With Us
           </h1>
           <nav
-            className="flex flex-wrap justify-center gap-2 sm:gap-4 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 mt-4 bg-slate-100 dark:bg-slate-800/60 border-t border-b border-slate-200 dark:border-slate-700"
+            className="flex flex-nowrap overflow-x-auto justify-start sm:justify-center gap-2 sm:gap-4 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 mt-4 bg-slate-100 dark:bg-slate-800/60 border-t border-b border-slate-200 dark:border-slate-700"
             aria-label="Partner sections"
           >
             {TABS.map((tab) => (
@@ -183,7 +182,7 @@ function BecomePartnerPage() {
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${
+                className={`px-3 sm:px-4 py-2 rounded-t-lg text-xs sm:text-sm font-medium whitespace-nowrap transition-colors ${
                   highlightedTab === tab.id
                     ? 'text-amber-600 dark:text-amber-400 border-b-2 border-amber-500 dark:border-amber-400 bg-amber-50/50 dark:bg-amber-900/20 -mb-px'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
@@ -195,8 +194,8 @@ function BecomePartnerPage() {
           </nav>
         </header>
 
-        {/* Spacer so content always starts below sticky heading+tabs; avoids content behind or above tab bar when scrolling */}
-        <div className="pt-[14rem] sm:pt-[15rem]">
+        {/* Content directly below tab names */}
+        <div className="pt-4 sm:pt-6">
         {activeTab === 'all' && (
           <div className="space-y-12">
             <section id="identify" className="scroll-mt-header space-y-10">
