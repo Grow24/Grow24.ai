@@ -11,6 +11,7 @@ const VALID_PATHS = [
   '/dashboard',
   '/library',
   '/privacy-policy',
+  '/value-definition',
   '/what-we-offer',
 ]
 const VALID_PREFIX = '/solutions/' // /solutions/overview, /solutions/anything
