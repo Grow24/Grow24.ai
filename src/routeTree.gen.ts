@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WhatWeOfferRouteImport } from './routes/what-we-offer'
+import { Route as ValueDefinitionRouteImport } from './routes/value-definition'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as LibraryRouteImport } from './routes/library'
@@ -23,6 +24,11 @@ import { Route as SolutionsSolutionIdRouteImport } from './routes/solutions.$sol
 const WhatWeOfferRoute = WhatWeOfferRouteImport.update({
   id: '/what-we-offer',
   path: '/what-we-offer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ValueDefinitionRoute = ValueDefinitionRouteImport.update({
+  id: '/value-definition',
+  path: '/value-definition',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SolutionsRoute = SolutionsRouteImport.update({
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/library': typeof LibraryRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/solutions': typeof SolutionsRouteWithChildren
+  '/value-definition': typeof ValueDefinitionRoute
   '/what-we-offer': typeof WhatWeOfferRoute
   '/solutions/$solutionId': typeof SolutionsSolutionIdRoute
   '/solutions/overview': typeof SolutionsOverviewRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/library': typeof LibraryRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/solutions': typeof SolutionsRouteWithChildren
+  '/value-definition': typeof ValueDefinitionRoute
   '/what-we-offer': typeof WhatWeOfferRoute
   '/solutions/$solutionId': typeof SolutionsSolutionIdRoute
   '/solutions/overview': typeof SolutionsOverviewRoute
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/library': typeof LibraryRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/solutions': typeof SolutionsRouteWithChildren
+  '/value-definition': typeof ValueDefinitionRoute
   '/what-we-offer': typeof WhatWeOfferRoute
   '/solutions/$solutionId': typeof SolutionsSolutionIdRoute
   '/solutions/overview': typeof SolutionsOverviewRoute
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
     | '/library'
     | '/privacy-policy'
     | '/solutions'
+    | '/value-definition'
     | '/what-we-offer'
     | '/solutions/$solutionId'
     | '/solutions/overview'
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/library'
     | '/privacy-policy'
     | '/solutions'
+    | '/value-definition'
     | '/what-we-offer'
     | '/solutions/$solutionId'
     | '/solutions/overview'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/library'
     | '/privacy-policy'
     | '/solutions'
+    | '/value-definition'
     | '/what-we-offer'
     | '/solutions/$solutionId'
     | '/solutions/overview'
@@ -155,6 +167,7 @@ export interface RootRouteChildren {
   LibraryRoute: typeof LibraryRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   SolutionsRoute: typeof SolutionsRouteWithChildren
+  ValueDefinitionRoute: typeof ValueDefinitionRoute
   WhatWeOfferRoute: typeof WhatWeOfferRoute
 }
 
@@ -165,6 +178,13 @@ declare module '@tanstack/react-router' {
       path: '/what-we-offer'
       fullPath: '/what-we-offer'
       preLoaderRoute: typeof WhatWeOfferRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/value-definition': {
+      id: '/value-definition'
+      path: '/value-definition'
+      fullPath: '/value-definition'
+      preLoaderRoute: typeof ValueDefinitionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/solutions': {
@@ -255,6 +275,7 @@ const rootRouteChildren: RootRouteChildren = {
   LibraryRoute: LibraryRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   SolutionsRoute: SolutionsRouteWithChildren,
+  ValueDefinitionRoute: ValueDefinitionRoute,
   WhatWeOfferRoute: WhatWeOfferRoute,
 }
 export const routeTree = rootRouteImport

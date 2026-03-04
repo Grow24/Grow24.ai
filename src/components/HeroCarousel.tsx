@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
 import { motion } from 'framer-motion'
+import { useNavigate } from '@tanstack/react-router'
 
 const MOBILE_BREAKPOINT = 768
 
@@ -34,21 +35,27 @@ const SAMPLE_SLIDES = [
 
 const SLIDE_COUNT = SAMPLE_SLIDES.length
 
-// Design intent (BCG-style): (1) Spacing and visual balance — generous, consistent gaps and margins so each block has presence. (2) Image sizes are intentionally uneven — center largest, adjacent shorter, outer in between; do not flatten to equal sizes.
-// BCG-style: center tallest/most prominent, adjacent shorter, outer in between (staggered heights, uniform gaps)
+// Design intent (BCG-style): (1) Spacing and visual balance — generous, consistent gaps and margins so each block has presence. (2) Image sizes are intentionally uneven — center visually most prominent via relative scaling. To keep the center overlay and actions fully visible, the center slide is not scaled above 1; instead, surrounding slides are scaled down slightly.
+// BCG-style: center visually most prominent, adjacent shorter, outer in between (staggered heights, uniform gaps)
 function getScaleForPosition(index: number, selectedIndex: number, visibleCount: number): number {
   let offset = (index - selectedIndex) % SLIDE_COUNT
   if (offset > SLIDE_COUNT / 2) offset -= SLIDE_COUNT
   if (offset < -SLIDE_COUNT / 2) offset += SLIDE_COUNT
   const absOffset = Math.abs(offset)
+
+  // Mobile: center slide at 1, others slightly smaller
   if (visibleCount === 1) {
     if (absOffset === 0) return 1
-    return 0.72
+    return 0.9
   }
-  if (absOffset === 0) return 1.28   // center: tallest, most prominent
-  if (absOffset === 1) return 0.8    // adjacent: shorter, clear step down
-  if (absOffset === 2) return 0.9    // outer: in between
-  return 0.88
+
+  // Desktop: keep center card at base size so the flipped overlay and
+  // "Know More" button never get clipped by the viewport; emphasize it
+  // by shrinking neighbors instead of enlarging the center.
+  if (absOffset === 0) return 1      // center: base size
+  if (absOffset === 1) return 0.9    // immediate neighbors
+  if (absOffset === 2) return 0.86   // outer visible cards
+  return 0.82
 }
 
 // BCG-like opacity: center full, sides slightly dimmed
@@ -65,6 +72,7 @@ function getOpacityForPosition(index: number, selectedIndex: number, visibleCoun
 }
 
 function HeroCarousel() {
+  const navigate = useNavigate()
   const isMobile = useIsMobile()
   const visibleCount = isMobile ? 1 : 5
   const slideGapPx = isMobile ? 0 : 36
@@ -180,7 +188,7 @@ function HeroCarousel() {
           type="button"
           onClick={scrollNext}
           disabled={!canScrollNext}
-          className="md:hidden absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-[0_2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] border border-slate-200/60 dark:border-slate-600/50 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all duration-200"
+          className="md:hidden absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-[0_2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] border border-slate-200/60 dark:border-slate-600/50 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all duration-200"
           aria-label="Next slide"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -265,7 +273,13 @@ function HeroCarousel() {
                             onClick={(e) => {
                               e.preventDefault()
                               e.stopPropagation()
-                              handleLibraryClick()
+                              // For the /white_mode.jpeg slide, open the Value Definition page.
+                              // For all other slides, keep the existing behavior (scroll to library).
+                              if (slide.image === '/white_mode.jpeg') {
+                                navigate({ to: '/value-definition' })
+                              } else {
+                                handleLibraryClick()
+                              }
                             }}
                             className="inline-flex items-center justify-center flex-1 sm:flex-none w-full sm:w-auto py-2.5 px-4 rounded-md bg-white text-slate-900 text-sm font-medium hover:bg-slate-100 transition-colors cursor-pointer"
                           >
@@ -297,12 +311,12 @@ function HeroCarousel() {
           </div>
         </div>
 
-        {/* Laptop: right arrow in same column as chatbot (right-5 from viewport; accounts for section px-8) */}
+        {/* Laptop: right arrow in same column as chatbot (right-5 sm:right-6) */}
         <button
           type="button"
           onClick={scrollNext}
           disabled={!canScrollNext}
-          className="hidden md:flex flex-shrink-0 w-11 h-11 md:ml-[max(0rem,calc((100vw-80rem-4rem)/2+0.5rem))] lg:ml-[max(0rem,calc((100vw-80rem-4rem)/2-2in+0.5rem))] items-center justify-center rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-[0_2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] border border-slate-200/60 dark:border-slate-600/50 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all duration-200 mt-1"
+          className="hidden md:flex flex-shrink-0 w-11 h-11 md:ml-[max(0rem,calc((100vw-80rem-4rem)/2+2.5rem))] lg:ml-[max(0rem,calc((100vw-80rem-4rem)/2-2in+2.5rem))] md:mr-[-102px] items-center justify-center rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-[0_2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] border border-slate-200/60 dark:border-slate-600/50 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all duration-200 mt-1"
           aria-label="Next slide"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
