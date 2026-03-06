@@ -1,6 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useNavigate } from '@tanstack/react-router'
 import { useTheme } from '../contexts/ThemeContext'
+import { useAuth } from '../contexts/AuthContext'
 
 const CloseIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -16,28 +18,40 @@ interface LoginModalProps {
 
 export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const { theme } = useTheme()
+  const { login, isAuthenticated } = useAuth()
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [message, setMessage] = useState('')
+  const pendingRedirectRef = useRef(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Navigate to dashboard only after auth state has updated (avoids first-login redirect back to home)
+  useEffect(() => {
+    if (isAuthenticated && pendingRedirectRef.current) {
+      pendingRedirectRef.current = false
+      onClose()
+      navigate({ to: '/dashboard' })
+    }
+  }, [isAuthenticated, onClose, navigate])
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setMessage('')
-    if (!email.trim() || !email.includes('@')) {
-      setMessage('Please enter a valid email address.')
-      return
-    }
-    if (!password.trim()) {
-      setMessage('Please enter your password.')
-      return
-    }
     setIsSubmitting(true)
-    // Placeholder: replace with your auth API call
-    setTimeout(() => {
-      setMessage('Login is not connected yet. Connect your auth backend.')
+    try {
+      await login(email, password)
+      pendingRedirectRef.current = true
+      // Navigation happens in useEffect when isAuthenticated flips to true
+    } catch (err) {
+      if (err instanceof Error) {
+        setMessage(err.message)
+      } else {
+        setMessage('Unable to sign in. Please try again.')
+      }
+    } finally {
       setIsSubmitting(false)
-    }, 600)
+    }
   }
 
   const handleClose = () => {

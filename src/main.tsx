@@ -6,6 +6,7 @@ import { ComingSoonProvider } from './contexts/ComingSoonContext'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { GlobalCTABarProvider } from './contexts/GlobalCTABarContext'
 import { CookieConsentProvider } from './contexts/CookieConsentContext'
+import { AuthProvider } from './contexts/AuthContext'
 import './index.css'
 
 const router = createRouter({ routeTree })
@@ -25,7 +26,9 @@ if (!rootElement.innerHTML) {
         <CookieConsentProvider>
           <GlobalCTABarProvider>
             <ComingSoonProvider>
-              <RouterProvider router={router} />
+              <AuthProvider>
+                <RouterProvider router={router} />
+              </AuthProvider>
             </ComingSoonProvider>
           </GlobalCTABarProvider>
         </CookieConsentProvider>

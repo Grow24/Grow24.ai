@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Outlet } from '@tanstack/react-router'
+import { Outlet, useLocation } from '@tanstack/react-router'
 import { AnimatePresence } from 'framer-motion'
 import { Header } from './Header'
 import { FloatingLeftWidgets } from './FloatingWidgets'
@@ -11,6 +11,20 @@ import CookieConsentBanner from './CookieConsentBanner'
 
 export const RootLayout: React.FC = () => {
   const [megaMenuOpen, setMegaMenuOpen] = useState(false)
+  const location = useLocation()
+  const isDashboard = location.pathname === '/dashboard'
+
+  // Dashboard uses its own layout: no main-site header, sidebar, CTA, or floating widgets
+  if (isDashboard) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white relative">
+        <main className="min-h-screen">
+          <Outlet />
+        </main>
+        <CookieConsentBanner />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white relative">
