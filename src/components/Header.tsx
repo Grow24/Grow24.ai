@@ -727,7 +727,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
         {/* Top notification bar */}
         <div className="bg-emerald-600 text-[11px] sm:text-xs text-white text-center px-3 py-1 shadow-md">
           <span className="opacity-90">
-            Help us shape the future of Grow24.ai.&nbsp;
+            Help us shape the future of Grow24.ai website.&nbsp;
           </span>
           <a
             href="/survey"
