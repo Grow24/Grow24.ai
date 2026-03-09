@@ -47,9 +47,14 @@ function SurveyLandingPage() {
                 <button className="inline-flex items-center justify-center rounded-full border border-slate-600/80 bg-slate-900/70 px-4 py-2 text-xs sm:text-sm text-slate-100 shadow-sm hover:bg-slate-800/90 transition-colors">
                   LANGUAGE: <span className="ml-1 font-semibold">ENGLISH</span>
                 </button>
-                <button className="inline-flex items-center justify-center rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold px-5 py-2 text-xs sm:text-sm shadow-lg shadow-emerald-500/40 transition-colors">
+                <a
+                  href="https://docs.google.com/forms/d/e/1FAIpQLSfRFLQzPsFxHQPt9mbkr6rfBvXMe6vPDMa67Zugh8u1WHujsA/viewform"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold px-5 py-2 text-xs sm:text-sm shadow-lg shadow-emerald-500/40 transition-colors"
+                >
                   TAKE THE SURVEY NOW
-                </button>
+                </a>
               </div>
             </div>
 
