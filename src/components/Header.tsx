@@ -724,6 +724,19 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
           filter: 'none'
         } as React.CSSProperties}
       >
+        {/* Top notification bar */}
+        <div className="bg-emerald-600 text-[11px] sm:text-xs text-white text-center px-3 py-1 shadow-md">
+          <span className="opacity-90">
+            Help us shape the future of Grow24.ai.&nbsp;
+          </span>
+          <a
+            href="/survey"
+            className="font-semibold underline underline-offset-2 hover:text-emerald-100"
+          >
+            Take the short survey
+          </a>
+        </div>
+
         <div 
           className="no-blur-header transition-all duration-300 bg-transparent"
           style={{

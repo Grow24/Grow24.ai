@@ -10,6 +10,7 @@ const VALID_PATHS = [
   '/become-partner',
   '/dashboard',
   '/echarts',
+  '/survey',
   '/library',
   '/privacy-policy',
   '/value-definition',

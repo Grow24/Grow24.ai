@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WhatWeOfferRouteImport } from './routes/what-we-offer'
 import { Route as ValueDefinitionRouteImport } from './routes/value-definition'
+import { Route as SurveyRouteImport } from './routes/survey'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as LibraryRouteImport } from './routes/library'
@@ -30,6 +31,11 @@ const WhatWeOfferRoute = WhatWeOfferRouteImport.update({
 const ValueDefinitionRoute = ValueDefinitionRouteImport.update({
   id: '/value-definition',
   path: '/value-definition',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SurveyRoute = SurveyRouteImport.update({
+  id: '/survey',
+  path: '/survey',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SolutionsRoute = SolutionsRouteImport.update({
@@ -92,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/library': typeof LibraryRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/solutions': typeof SolutionsRouteWithChildren
+  '/survey': typeof SurveyRoute
   '/value-definition': typeof ValueDefinitionRoute
   '/what-we-offer': typeof WhatWeOfferRoute
   '/solutions/$solutionId': typeof SolutionsSolutionIdRoute
@@ -106,6 +113,7 @@ export interface FileRoutesByTo {
   '/library': typeof LibraryRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/solutions': typeof SolutionsRouteWithChildren
+  '/survey': typeof SurveyRoute
   '/value-definition': typeof ValueDefinitionRoute
   '/what-we-offer': typeof WhatWeOfferRoute
   '/solutions/$solutionId': typeof SolutionsSolutionIdRoute
@@ -121,6 +129,7 @@ export interface FileRoutesById {
   '/library': typeof LibraryRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/solutions': typeof SolutionsRouteWithChildren
+  '/survey': typeof SurveyRoute
   '/value-definition': typeof ValueDefinitionRoute
   '/what-we-offer': typeof WhatWeOfferRoute
   '/solutions/$solutionId': typeof SolutionsSolutionIdRoute
@@ -137,6 +146,7 @@ export interface FileRouteTypes {
     | '/library'
     | '/privacy-policy'
     | '/solutions'
+    | '/survey'
     | '/value-definition'
     | '/what-we-offer'
     | '/solutions/$solutionId'
@@ -151,6 +161,7 @@ export interface FileRouteTypes {
     | '/library'
     | '/privacy-policy'
     | '/solutions'
+    | '/survey'
     | '/value-definition'
     | '/what-we-offer'
     | '/solutions/$solutionId'
@@ -165,6 +176,7 @@ export interface FileRouteTypes {
     | '/library'
     | '/privacy-policy'
     | '/solutions'
+    | '/survey'
     | '/value-definition'
     | '/what-we-offer'
     | '/solutions/$solutionId'
@@ -180,6 +192,7 @@ export interface RootRouteChildren {
   LibraryRoute: typeof LibraryRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   SolutionsRoute: typeof SolutionsRouteWithChildren
+  SurveyRoute: typeof SurveyRoute
   ValueDefinitionRoute: typeof ValueDefinitionRoute
   WhatWeOfferRoute: typeof WhatWeOfferRoute
 }
@@ -198,6 +211,13 @@ declare module '@tanstack/react-router' {
       path: '/value-definition'
       fullPath: '/value-definition'
       preLoaderRoute: typeof ValueDefinitionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/survey': {
+      id: '/survey'
+      path: '/survey'
+      fullPath: '/survey'
+      preLoaderRoute: typeof SurveyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/solutions': {
@@ -296,6 +316,7 @@ const rootRouteChildren: RootRouteChildren = {
   LibraryRoute: LibraryRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   SolutionsRoute: SolutionsRouteWithChildren,
+  SurveyRoute: SurveyRoute,
   ValueDefinitionRoute: ValueDefinitionRoute,
   WhatWeOfferRoute: WhatWeOfferRoute,
 }
