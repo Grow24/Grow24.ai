@@ -14,6 +14,7 @@ import { Route as ValueDefinitionRouteImport } from './routes/value-definition'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as LibraryRouteImport } from './routes/library'
+import { Route as EchartsRouteImport } from './routes/echarts'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as BecomePartnerRouteImport } from './routes/become-partner'
 import { Route as AboutRouteImport } from './routes/about'
@@ -44,6 +45,11 @@ const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
 const LibraryRoute = LibraryRouteImport.update({
   id: '/library',
   path: '/library',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EchartsRoute = EchartsRouteImport.update({
+  id: '/echarts',
+  path: '/echarts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/become-partner': typeof BecomePartnerRoute
   '/dashboard': typeof DashboardRoute
+  '/echarts': typeof EchartsRoute
   '/library': typeof LibraryRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/solutions': typeof SolutionsRouteWithChildren
@@ -95,6 +102,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/become-partner': typeof BecomePartnerRoute
   '/dashboard': typeof DashboardRoute
+  '/echarts': typeof EchartsRoute
   '/library': typeof LibraryRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/solutions': typeof SolutionsRouteWithChildren
@@ -109,6 +117,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/become-partner': typeof BecomePartnerRoute
   '/dashboard': typeof DashboardRoute
+  '/echarts': typeof EchartsRoute
   '/library': typeof LibraryRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/solutions': typeof SolutionsRouteWithChildren
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/become-partner'
     | '/dashboard'
+    | '/echarts'
     | '/library'
     | '/privacy-policy'
     | '/solutions'
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/become-partner'
     | '/dashboard'
+    | '/echarts'
     | '/library'
     | '/privacy-policy'
     | '/solutions'
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/become-partner'
     | '/dashboard'
+    | '/echarts'
     | '/library'
     | '/privacy-policy'
     | '/solutions'
@@ -164,6 +176,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   BecomePartnerRoute: typeof BecomePartnerRoute
   DashboardRoute: typeof DashboardRoute
+  EchartsRoute: typeof EchartsRoute
   LibraryRoute: typeof LibraryRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   SolutionsRoute: typeof SolutionsRouteWithChildren
@@ -206,6 +219,13 @@ declare module '@tanstack/react-router' {
       path: '/library'
       fullPath: '/library'
       preLoaderRoute: typeof LibraryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/echarts': {
+      id: '/echarts'
+      path: '/echarts'
+      fullPath: '/echarts'
+      preLoaderRoute: typeof EchartsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -272,6 +292,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   BecomePartnerRoute: BecomePartnerRoute,
   DashboardRoute: DashboardRoute,
+  EchartsRoute: EchartsRoute,
   LibraryRoute: LibraryRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   SolutionsRoute: SolutionsRouteWithChildren,

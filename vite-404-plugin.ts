@@ -9,6 +9,7 @@ const VALID_PATHS = [
   '/about',
   '/become-partner',
   '/dashboard',
+  '/echarts',
   '/library',
   '/privacy-policy',
   '/value-definition',
@@ -30,7 +31,7 @@ const BODY_404 = `<!DOCTYPE html>
 </html>`
 
 function isDefinedRoute(pathname: string): boolean {
-  const path = pathname.replace(/\?.*$/, '').replace(/#.*$/, '').trim() || '/'
+  const path = pathname.replace(/\?.*$/, '').replace(/#.*$/, '').trim().replace(/\/$/, '') || '/'
   if (VALID_PATHS.includes(path)) return true
   if (path.startsWith(VALID_PREFIX)) return true
   return false

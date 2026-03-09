@@ -77,6 +77,14 @@ const PricingIcon = () => (
   </svg>
 )
 
+const EChartsIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <line x1="18" y1="20" x2="18" y2="10" />
+    <line x1="12" y1="20" x2="12" y2="4" />
+    <line x1="6" y1="20" x2="6" y2="14" />
+  </svg>
+)
+
 const AboutIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <circle cx="12" cy="12" r="10" />
@@ -214,6 +222,7 @@ const menuItems: MenuItem[] = [
   { label: 'Get Support', href: '#support', icon: SupportIcon },
   { label: 'Engage', href: '#engage', icon: EngageIcon },
   { label: 'Contact Us', href: '#contact', icon: ContactIcon },
+  { label: 'ECharts', href: '/echarts', icon: EChartsIcon },
   // Dedicated About page
   { label: 'About Us', href: '/about', icon: AboutIcon },
   { label: 'Partner with Us', href: '/become-partner', icon: PartnerIcon },

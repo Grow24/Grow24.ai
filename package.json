@@ -26,6 +26,7 @@
     "@tanstack/router-plugin": "^1.153.2",
     "@tanstack/router-vite-plugin": "^1.153.2",
     "@tanstack/start": "^1.15.0",
+    "echarts": "^6.0.0",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^10.18.0",
     "isbot": "^4.4.0",
