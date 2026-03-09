@@ -1,5 +1,15 @@
 import { createFileRoute, Navigate, useNavigate } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+
+const GET_FILTERS_API = 'https://intelligentsalesman.com/ism1/API/get_filters.php'
+
+type FilterRecord = Record<string, string | null>
+
+type GetFiltersResponse = {
+  success: boolean
+  filters: FilterRecord[]
+}
 
 export const Route = createFileRoute('/dashboard')({
   component: Dashboard,
@@ -8,6 +18,40 @@ export const Route = createFileRoute('/dashboard')({
 function Dashboard() {
   const { isAuthenticated, user, logout } = useAuth()
   const navigate = useNavigate()
+  const [filters, setFilters] = useState<FilterRecord[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+    setError(null)
+    fetch(GET_FILTERS_API)
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        return res.json()
+      })
+      .then((data: GetFiltersResponse) => {
+        if (cancelled) return
+        if (data?.success && Array.isArray(data.filters)) {
+          setFilters(data.filters)
+        } else {
+          setFilters([])
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : 'Failed to load filters')
+          setFilters([])
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   if (!isAuthenticated) {
     return <Navigate to="/" />
@@ -17,6 +61,23 @@ function Dashboard() {
     logout()
     navigate({ to: '/' })
   }
+
+  // Columns to show in the table (key, header label)
+  const tableColumns: { key: string; label: string }[] = [
+    { key: 'id', label: 'ID' },
+    { key: 'name', label: 'Name' },
+    { key: 'type', label: 'Type' },
+    { key: 'field', label: 'Field' },
+    { key: 'condition_operator', label: 'Operator' },
+    { key: 'placeholder', label: 'Placeholder' },
+    { key: 'position', label: 'Position' },
+    { key: 'isActive', label: 'Active' },
+    { key: 'required', label: 'Required' },
+    { key: 'visible', label: 'Visible' },
+    { key: 'filterApply', label: 'Apply' },
+    { key: 'createdAt', label: 'Created' },
+    { key: 'updatedAt', label: 'Updated' },
+  ]
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
@@ -86,60 +147,75 @@ function Dashboard() {
                   Dashboard
                 </h1>
                 <p className="mt-1 text-sm text-slate-400">
-                  Central view of your PBMP workspace: goals, plans, activities, and progress.
+                  Filters from get_filters API — dynamic list view.
                 </p>
               </div>
             </header>
 
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-4">
-                <p className="text-xs font-medium text-emerald-400 uppercase tracking-wide">
-                  Plan
-                </p>
-                <p className="mt-2 text-xl font-semibold text-slate-50">3 active goals</p>
-                <p className="mt-1 text-xs text-slate-400">
-                  Set clear objectives across personal and business growth.
-                </p>
+            {error && (
+              <div className="rounded-xl border border-red-800/50 bg-red-950/30 px-4 py-3 text-sm text-red-200">
+                {error}
+                {error.includes('Failed') && (
+                  <span className="block mt-1 text-red-300/80">
+                    Check network/CORS for {GET_FILTERS_API}
+                  </span>
+                )}
               </div>
-              <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-4">
-                <p className="text-xs font-medium text-sky-400 uppercase tracking-wide">
-                  Build
-                </p>
-                <p className="mt-2 text-xl font-semibold text-slate-50">7 open activities</p>
-                <p className="mt-1 text-xs text-slate-400">
-                  Translate plans into week-by-week execution.
-                </p>
-              </div>
-              <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-4">
-                <p className="text-xs font-medium text-amber-400 uppercase tracking-wide">
-                  Measure
-                </p>
-                <p className="mt-2 text-xl font-semibold text-slate-50">4 KPIs tracked</p>
-                <p className="mt-1 text-xs text-slate-400">
-                  Monitor performance and adjust in real time.
-                </p>
-              </div>
-            </div>
+            )}
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
-              <h2 className="text-sm font-semibold text-slate-100">
-                Today&apos;s focus
-              </h2>
-              <ul className="mt-3 space-y-2 text-sm text-slate-300">
-                <li className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                  Review this week&apos;s PBMP plan and confirm priorities.
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-sky-400" />
-                  Log key activities completed across sales, marketing, and operations.
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-amber-400" />
-                  Check progress against your primary growth KPIs.
-                </li>
-              </ul>
-            </div>
+            {loading ? (
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-8 text-center text-slate-400">
+                Loading filters…
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/80 overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[800px] text-sm">
+                    <thead>
+                      <tr className="border-b border-slate-700 bg-slate-800/80">
+                        {tableColumns.map(({ key, label }) => (
+                          <th
+                            key={key}
+                            className="px-4 py-3 text-left font-semibold text-slate-200 whitespace-nowrap"
+                          >
+                            {label}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filters.length === 0 && !error ? (
+                        <tr>
+                          <td
+                            colSpan={tableColumns.length}
+                            className="px-4 py-6 text-center text-slate-500"
+                          >
+                            No filters returned
+                          </td>
+                        </tr>
+                      ) : (
+                        filters.map((row, idx) => (
+                          <tr
+                            key={row.id ?? idx}
+                            className="border-b border-slate-800 hover:bg-slate-800/50 transition-colors"
+                          >
+                            {tableColumns.map(({ key }) => (
+                              <td
+                                key={key}
+                                className="px-4 py-2.5 text-slate-300 whitespace-nowrap max-w-[200px] truncate"
+                                title={row[key] ?? ''}
+                              >
+                                {row[key] ?? '—'}
+                              </td>
+                            ))}
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </section>
         </div>
       </div>
