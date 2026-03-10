@@ -60,7 +60,8 @@ export function MobileRadialMenu() {
   const { openLoginModal } = useLoginModal()
   const { openChatbot } = useChatbotContext()
 
-  const bottomClass = isCTABarVisible ? 'bottom-[200px]' : 'bottom-[180px]'
+  // Mobile: position plus icon above the Individual Growth Cycle section on the left
+  const bottomClass = isCTABarVisible ? 'bottom-[260px]' : 'bottom-[240px]'
   const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '+919370239600'
   const waUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}`
 
