@@ -156,28 +156,15 @@ function HeroCarousel() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15, duration: 0.5 }}
-      className="w-full mx-auto lg:w-[calc(100%+4in)] lg:max-w-none lg:-ml-[2in] lg:mx-0 px-4 sm:px-4 md:px-5 mb-20 sm:mb-24 md:mb-28"
+      className="relative w-full mb-20 sm:mb-24 md:mb-28"
     >
-      <div className="relative md:flex md:flex-wrap md:items-start md:gap-x-3">
-        {/* Laptop: left arrow in same column as WhatsApp/social (fixed left-4 sm:left-6) */}
+      <div className="md:flex md:flex-wrap md:items-start md:gap-x-3">
+        {/* Arrows: on laptop (md+) align with WhatsApp/social (left) and chatbot (right) columns; on mobile use inset position */}
         <button
           type="button"
           onClick={scrollPrev}
           disabled={!canScrollPrev}
-          className="hidden md:flex flex-shrink-0 w-11 h-11 md:-ml-[max(0rem,calc((100vw-80rem)/2-1.75rem))] lg:-ml-[max(0rem,calc((100vw-80rem)/2-1.75rem-2in))] items-center justify-center rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-[0_2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] border border-slate-200/60 dark:border-slate-600/50 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all duration-200 mt-1"
-          aria-label="Previous slide"
-        >
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M15 18l-6-6 6-6" />
-          </svg>
-        </button>
-
-        {/* Mobile/tablet: overlay arrows centered on images */}
-        <button
-          type="button"
-          onClick={scrollPrev}
-          disabled={!canScrollPrev}
-          className="md:hidden absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-[0_2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] border border-slate-200/60 dark:border-slate-600/50 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all duration-200"
+          className="absolute left-3 sm:left-4 md:left-6 md:-ml-[109px] top-6 md:top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-[0_2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] border border-slate-200/60 dark:border-slate-600/50 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all duration-200"
           aria-label="Previous slide"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -188,7 +175,7 @@ function HeroCarousel() {
           type="button"
           onClick={scrollNext}
           disabled={!canScrollNext}
-          className="md:hidden absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-[0_2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] border border-slate-200/60 dark:border-slate-600/50 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all duration-200"
+          className="absolute right-3 sm:right-4 md:right-6 md:-mr-[100px] top-6 md:top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-[0_2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] border border-slate-200/60 dark:border-slate-600/50 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all duration-200"
           aria-label="Next slide"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -310,19 +297,6 @@ function HeroCarousel() {
             })}
           </div>
         </div>
-
-        {/* Laptop: right arrow in same column as chatbot (right-5 sm:right-6) */}
-        <button
-          type="button"
-          onClick={scrollNext}
-          disabled={!canScrollNext}
-          className="hidden md:flex flex-shrink-0 w-11 h-11 md:ml-[max(0rem,calc((100vw-80rem-4rem)/2+2.5rem))] lg:ml-[max(0rem,calc((100vw-80rem-4rem)/2-2in+2.5rem))] md:mr-[-102px] items-center justify-center rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-[0_2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] border border-slate-200/60 dark:border-slate-600/50 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all duration-200 mt-1"
-          aria-label="Next slide"
-        >
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M9 18l6-6-6-6" />
-          </svg>
-        </button>
 
         {/* BCG-style dots + nav below: prev/next squares, dots in middle */}
         <div className="flex w-full items-center justify-center gap-4 sm:gap-6 mt-5 sm:mt-6">

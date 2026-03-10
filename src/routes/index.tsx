@@ -420,8 +420,8 @@ function IndexPage() {
             </div>
           </motion.div>
 
-          {/* Slider full-bleed so it can use max width and match BCG prominence; laptop: +1in each side */}
-          <div className="w-full -mx-4 sm:-mx-6 md:-mx-8 px-0 lg:overflow-x-visible">
+          {/* Slider container - centered with equal left/right spacing on all devices */}
+          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:overflow-x-visible">
             <HeroCarousel />
           </div>
 

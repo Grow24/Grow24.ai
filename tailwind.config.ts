@@ -5,6 +5,9 @@ export default {
   content: ['./src/**/*.{js,ts,jsx,tsx}', './index.html'],
   theme: {
     extend: {
+      maxWidth: {
+        '7xl': '106rem',
+      },
       fontFamily: {
         serif: ['"Libre Baskerville"', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif'],
         // Modern sans for Grow24 hero block (matches reference image)
