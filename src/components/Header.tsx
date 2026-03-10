@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from '@tanstack/react-router'
 import { useComingSoon } from '../contexts/ComingSoonContext'
 import { useTheme } from '../contexts/ThemeContext'
 import { isValidSolutionId } from '../constants/solutions'
-import LoginModal from './LoginModal'
+import { useLoginModal } from '../contexts/LoginModalContext'
 
 // SVG Icons - Hamburger menu icon (3 horizontal lines)
 const HamburgerIcon = () => (
@@ -395,7 +395,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
   const [highlightedElements, setHighlightedElements] = useState<HTMLElement[]>([])
   const [isDesktop, setIsDesktop] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
-  const [loginModalOpen, setLoginModalOpen] = useState(false)
+  const { openLoginModal } = useLoginModal()
   const { showComingSoon } = useComingSoon()
   const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
@@ -796,7 +796,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                 >
                 {/* Login */}
                 <motion.button
-                  onClick={() => setLoginModalOpen(true)}
+                  onClick={() => openLoginModal()}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-sm font-semibold transition-colors ${
@@ -1222,7 +1222,6 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
         )}
       </AnimatePresence>
 
-      <LoginModal isOpen={loginModalOpen} onClose={() => setLoginModalOpen(false)} />
     </>
   )
 }

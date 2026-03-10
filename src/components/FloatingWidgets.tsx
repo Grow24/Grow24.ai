@@ -385,7 +385,7 @@ export const FloatingLeftWidgets: React.FC = () => {
   const bottomClass = isCTABarVisible ? 'bottom-[200px]' : 'bottom-[180px]'
   return (
     <div
-      className={`fixed ${bottomClass} left-4 sm:left-6 z-50 flex flex-col gap-3 items-start transition-all duration-300`}
+      className={`hidden md:flex fixed ${bottomClass} left-4 sm:left-6 z-50 flex-col gap-3 items-start transition-all duration-300`}
       aria-label="Contact and social links"
     >
       <SocialLinks />

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useGlobalCTABar } from '../contexts/GlobalCTABarContext'
+import { useChatbotContext } from '../contexts/ChatbotContext'
 import Bubble from './pbmp/Bubble'
 import PromptSuggestionsRow from './pbmp/PromptSuggestionsRow'
 import LoadingBubbles from './pbmp/LoadingBubbles'
@@ -19,9 +20,10 @@ interface Message {
 
 interface PBMPChatbotProps {
   position?: 'left' | 'right'
+  hideFab?: boolean
 }
 
-export default function PBMPChatbot({ position = 'right' }: PBMPChatbotProps) {
+export default function PBMPChatbot({ position = 'right', hideFab = false }: PBMPChatbotProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
@@ -30,6 +32,11 @@ export default function PBMPChatbot({ position = 'right' }: PBMPChatbotProps) {
   const [isInBookingFlow, setIsInBookingFlow] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const { isVisible: isCTABarVisible } = useGlobalCTABar()
+  const { registerOpener } = useChatbotContext()
+
+  useEffect(() => {
+    return registerOpener(() => setIsOpen(true))
+  }, [registerOpener])
 
   const noMessages = messages.length === 0
 
@@ -207,9 +214,9 @@ export default function PBMPChatbot({ position = 'right' }: PBMPChatbotProps) {
 
   return (
     <>
-      {/* Toggle Button */}
+      {/* Toggle Button - hidden on mobile when radial menu is used */}
       <AnimatePresence>
-        {!isOpen && (
+        {!hideFab && !isOpen && (
           <motion.button
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
