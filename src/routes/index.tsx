@@ -431,6 +431,7 @@ function IndexPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.28, duration: 0.5 }}
             className="max-w-4xl mx-auto px-4 mb-4 text-center"
+            id="growth-cycle-heading"
           >
             <p className="text-xs sm:text-sm font-semibold uppercase tracking-wide text-teal-700 dark:text-teal-300">
               Individual Growth Cycle

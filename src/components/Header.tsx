@@ -199,6 +199,20 @@ const PressroomIcon = () => (
   </svg>
 )
 
+// Survey control icons
+const SurveyPauseIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <rect x="7" y="5" width="3" height="14" />
+    <rect x="14" y="5" width="3" height="14" />
+  </svg>
+)
+
+const SurveyPlayIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <polygon points="8 5 19 12 8 19 8 5" />
+  </svg>
+)
+
 // Theme Toggle Icons
 const SunIcon = () => (
   <svg
@@ -395,6 +409,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
   const [highlightedElements, setHighlightedElements] = useState<HTMLElement[]>([])
   const [isDesktop, setIsDesktop] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [isSurveyPaused, setIsSurveyPaused] = useState(false)
   const { openLoginModal } = useLoginModal()
   const { showComingSoon } = useComingSoon()
   const { theme, toggleTheme } = useTheme()
@@ -725,17 +740,43 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
         } as React.CSSProperties}
       >
         {/* Top notification bar */}
-        <div className="bg-emerald-600 text-[11px] sm:text-xs text-white text-center px-3 py-1 shadow-md">
-          <span className="opacity-90">
-            Help us shape the future of Grow24.ai website.&nbsp;
-          </span>
-          <a
-            href="/survey"
-            className="font-semibold underline underline-offset-2 hover:text-emerald-100"
-          >
-            Take the short survey
-          </a>
-        </div>
+        {location.pathname !== '/survey' && (
+          <div className="bg-emerald-600 text-[11px] sm:text-xs text-white px-3 py-1 shadow-md">
+            <div className="flex items-center justify-center gap-3 overflow-hidden">
+              <motion.div
+                className="inline-flex items-center gap-1 whitespace-nowrap"
+                animate={
+                  isSurveyPaused
+                    ? { x: 0 }
+                    : { x: ['100%', '-100%'] }
+                }
+                transition={
+                  isSurveyPaused
+                    ? { duration: 0 }
+                    : { duration: 15, repeat: Infinity, ease: 'linear', repeatType: 'loop' }
+                }
+              >
+                <span className="opacity-90">
+                  Help us shape the future of Grow24.ai website.&nbsp;
+                </span>
+                <a
+                  href="/survey"
+                  className="font-semibold underline underline-offset-2 hover:text-emerald-100"
+                >
+                  Take the short survey
+                </a>
+              </motion.div>
+              <button
+                type="button"
+                onClick={() => setIsSurveyPaused((prev) => !prev)}
+                className="flex items-center justify-center w-6 h-6 rounded-full border border-white/60 bg-white/10 hover:bg-white/20 text-white transition-colors"
+                aria-label={isSurveyPaused ? 'Start survey banner animation' : 'Pause survey banner animation'}
+              >
+                {isSurveyPaused ? <SurveyPlayIcon /> : <SurveyPauseIcon />}
+              </button>
+            </div>
+          </div>
+        )}
 
         <div 
           className="no-blur-header transition-all duration-300 bg-transparent"

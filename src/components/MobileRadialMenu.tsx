@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useGlobalCTABar } from '../contexts/GlobalCTABarContext'
 import { useLoginModal } from '../contexts/LoginModalContext'
 import { useChatbotContext } from '../contexts/ChatbotContext'
 
@@ -56,12 +55,32 @@ const socialLinks = [
 export function MobileRadialMenu() {
   const [isOpen, setIsOpen] = useState(false)
   const [socialPanelOpen, setSocialPanelOpen] = useState(false)
-  const { isVisible: isCTABarVisible } = useGlobalCTABar()
+  const [plusTop, setPlusTop] = useState<number | null>(null)
   const { openLoginModal } = useLoginModal()
   const { openChatbot } = useChatbotContext()
 
-  // Mobile: position plus icon above the Individual Growth Cycle section on the left
-  const bottomClass = isCTABarVisible ? 'bottom-[260px]' : 'bottom-[240px]'
+  // Mobile: position plus icon to the left of the "Individual Growth Cycle" heading
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const updatePosition = () => {
+      const heading = document.getElementById('growth-cycle-heading')
+      if (!heading) return
+      const rect = heading.getBoundingClientRect()
+      // Move slightly more above the heading center
+      const offset = rect.height / 2 - 50
+      setPlusTop(rect.top + offset)
+    }
+
+    updatePosition()
+    window.addEventListener('resize', updatePosition)
+    return () => {
+      window.removeEventListener('resize', updatePosition)
+    }
+  }, [])
+
+  // Fallback position if heading isn't found yet
+  const fallbackBottomClass = 'bottom-[240px]'
   const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '+919370239600'
   const waUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}`
 
@@ -74,7 +93,13 @@ export function MobileRadialMenu() {
 
   return (
     <>
-      <div className={`md:hidden fixed ${bottomClass} left-4 z-50 transition-all duration-300`} aria-label="Quick actions">
+      <div
+        className={`md:hidden fixed left-4 z-50 transition-all duration-300 ${
+          plusTop == null ? fallbackBottomClass : ''
+        }`}
+        style={plusTop != null ? { top: plusTop } : undefined}
+        aria-label="Quick actions"
+      >
         <div className="flex flex-col items-start gap-2">
           <motion.button
             type="button"
