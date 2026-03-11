@@ -100,7 +100,8 @@ export function MobileRadialMenu() {
         style={plusTop != null ? { top: plusTop } : undefined}
         aria-label="Quick actions"
       >
-        <div className="flex flex-col items-start gap-2">
+        <div className="relative flex items-center">
+          {/* Plus / Close FAB – position anchor (stays fixed) */}
           <motion.button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
@@ -110,16 +111,18 @@ export function MobileRadialMenu() {
           >
             {isOpen ? <CloseIcon /> : <PlusIcon />}
           </motion.button>
+
+          {/* Radial menu items – absolutely positioned above the FAB so the FAB never moves */}
           <AnimatePresence>
             {isOpen && (
               <motion.div
-                className="flex flex-col items-center gap-2"
+                className="absolute left-1/2 -translate-x-1/2 -top-2 flex flex-col items-center gap-2"
                 variants={containerVariants}
                 initial="closed"
                 animate="open"
                 exit="closed"
               >
-                {items.map((item, index) => (
+                {items.map((item) => (
                   <motion.button
                     key={item.id}
                     type="button"
