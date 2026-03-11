@@ -374,7 +374,7 @@ function IndexPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="flex items-start justify-center -mt-24 sm:-mt-20 md:-mt-24 pt-0 sm:pt-1 md:pt-2 pb-6 sm:pb-12 md:pb-16 px-4 sm:px-6 md:px-8 scroll-mt-header lg:overflow-x-visible"
+        className="flex items-start justify-center -mt-24 sm:-mt-20 md:-mt-24 pt-0 sm:pt-1 md:pt-2 pb-2 sm:pb-10 md:pb-16 px-4 sm:px-6 md:px-8 scroll-mt-header lg:overflow-x-visible"
         style={{ minHeight: 'calc(100vh - var(--header-offset))' }}
       >
         <div className="w-full max-w-7xl mx-auto text-center mt-0 lg:overflow-x-visible">
@@ -383,9 +383,9 @@ function IndexPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05, duration: 0.5 }}
-            className="font-jakarta -mt-1 sm:-mt-2 md:-mt-1 mb-4 sm:mb-8 md:mb-10"
+            className="font-jakarta -mt-1 sm:-mt-2 md:-mt-1 mb-2 sm:mb-8 md:mb-10"
           >
-            <div className="flex items-center justify-center mb-0 -ml-4 sm:ml-0 mt-6 sm:mt-0">
+            <div className="flex items-center justify-center mb-0 -ml-4 sm:ml-0 mt-4 sm:mt-0">
               <img
                 src={theme === 'dark' ? '/grow_icon_dark.jpeg' : '/grow24_ai_icon_5.jpeg'}
                 alt="Grow24"

@@ -156,7 +156,7 @@ function HeroCarousel() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15, duration: 0.5 }}
-      className={`relative w-full ${isMobile ? 'mb-8' : 'mb-20 sm:mb-24 md:mb-28'}`}
+      className={`relative w-full ${isMobile ? 'mb-4' : 'mb-20 sm:mb-24 md:mb-28'}`}
     >
       <div className="md:flex md:flex-wrap md:items-start md:gap-x-3">
         {/* Arrows: on laptop (md+) align with WhatsApp/social (left) and chatbot (right) columns; on mobile use inset position */}
@@ -233,7 +233,7 @@ function HeroCarousel() {
                   >
                     <div
                       className={`relative aspect-[4/5] w-full ${
-                        isMobile ? 'min-h-[32vh]' : 'min-h-[40vh] md:min-h-[44vh]'
+                        isMobile ? 'min-h-[26vh]' : 'min-h-[40vh] md:min-h-[44vh]'
                       } bg-slate-200 dark:bg-slate-700`}
                     >
                       <img
