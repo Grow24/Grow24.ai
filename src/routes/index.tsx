@@ -368,13 +368,14 @@ function IndexPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section - Home (keep first viewport focused on hero + carousel) */}
+      {/* Hero Section - Home (first viewport: header + hero + carousel arrows) */}
       <motion.section
         id="home"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="min-h-screen flex items-start justify-center -mt-24 sm:-mt-20 md:-mt-24 pt-0 sm:pt-1 md:pt-2 pb-10 sm:pb-14 md:pb-18 px-4 sm:px-6 md:px-8 scroll-mt-header lg:overflow-x-visible"
+        className="flex items-start justify-center -mt-24 sm:-mt-20 md:-mt-24 pt-0 sm:pt-1 md:pt-2 pb-6 sm:pb-12 md:pb-16 px-4 sm:px-6 md:px-8 scroll-mt-header lg:overflow-x-visible"
+        style={{ minHeight: 'calc(100vh - var(--header-offset))' }}
       >
         <div className="w-full max-w-7xl mx-auto text-center mt-0 lg:overflow-x-visible">
           {/* Grow24 hero block – above Welcome to (design from reference) */}
