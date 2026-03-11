@@ -374,7 +374,7 @@ function IndexPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="flex items-start justify-center -mt-24 sm:-mt-20 md:-mt-24 pt-0 sm:pt-1 md:pt-2 pb-2 sm:pb-10 md:pb-16 px-4 sm:px-6 md:px-8 scroll-mt-header lg:overflow-x-visible"
+        className="flex items-start justify-center -mt-16 sm:-mt-20 md:-mt-24 pt-0 sm:pt-1 md:pt-2 pb-0 sm:pb-10 md:pb-16 px-4 sm:px-6 md:px-8 scroll-mt-header lg:overflow-x-visible"
         style={{ minHeight: 'calc(100vh - var(--header-offset))' }}
       >
         <div className="w-full max-w-7xl mx-auto text-center mt-0 lg:overflow-x-visible">
