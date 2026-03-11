@@ -7,6 +7,7 @@ import { ThemeProvider } from './contexts/ThemeContext'
 import { GlobalCTABarProvider } from './contexts/GlobalCTABarContext'
 import { CookieConsentProvider } from './contexts/CookieConsentContext'
 import { AuthProvider } from './contexts/AuthContext'
+import { BlogTabsProvider } from './contexts/BlogTabsContext'
 import './index.css'
 
 const router = createRouter({ routeTree })
@@ -27,7 +28,9 @@ if (!rootElement.innerHTML) {
           <GlobalCTABarProvider>
             <ComingSoonProvider>
               <AuthProvider>
-                <RouterProvider router={router} />
+                <BlogTabsProvider>
+                  <RouterProvider router={router} />
+                </BlogTabsProvider>
               </AuthProvider>
             </ComingSoonProvider>
           </GlobalCTABarProvider>

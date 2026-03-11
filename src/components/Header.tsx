@@ -5,6 +5,7 @@ import { useComingSoon } from '../contexts/ComingSoonContext'
 import { useTheme } from '../contexts/ThemeContext'
 import { isValidSolutionId } from '../constants/solutions'
 import { useLoginModal } from '../contexts/LoginModalContext'
+import { useBlogTabs, BLOG_TABS } from '../contexts/BlogTabsContext'
 
 // SVG Icons - Hamburger menu icon (3 horizontal lines)
 const HamburgerIcon = () => (
@@ -424,7 +425,10 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
   const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
   const location = useLocation()
+  const blogTabs = useBlogTabs()
   const searchRef = useRef<HTMLDivElement>(null)
+  const desktopTabsRef = useRef<HTMLDivElement | null>(null)
+  const mobileTabsRef = useRef<HTMLDivElement | null>(null)
 
   // Check if we're on desktop (xl breakpoint: 1280px+) and mobile
   useEffect(() => {
@@ -441,6 +445,37 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
     window.addEventListener('resize', checkScreenSize, { passive: true })
     return () => window.removeEventListener('resize', checkScreenSize)
   }, [])
+
+  // Keep active blog tab visible in the horizontal strip (auto-scroll tabs row)
+  useEffect(() => {
+    if (!blogTabs || location.pathname !== '/blog') return
+
+    const scrollActiveIntoView = (container: HTMLDivElement | null) => {
+      if (!container) return
+      const selector = `[data-blog-tab=\"${blogTabs.activeTab}\"]`
+      const btn = container.querySelector<HTMLButtonElement>(selector)
+      if (!btn) return
+
+      const containerRect = container.getBoundingClientRect()
+      const btnRect = btn.getBoundingClientRect()
+      const overflowLeft = btnRect.left - containerRect.left
+      const overflowRight = btnRect.right - containerRect.right
+
+      // If already fully visible, do nothing
+      if (overflowLeft >= 0 && overflowRight <= 0) return
+
+      const targetScroll =
+        container.scrollLeft + overflowLeft - (containerRect.width - btnRect.width) / 2
+
+      container.scrollTo({
+        left: Math.max(0, targetScroll),
+        behavior: 'smooth',
+      })
+    }
+
+    scrollActiveIntoView(desktopTabsRef.current)
+    scrollActiveIntoView(mobileTabsRef.current)
+  }, [blogTabs?.activeTab, location.pathname])
   
   // Track selected menu item based on current location/hash
   useEffect(() => {
@@ -800,9 +835,11 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
               scrolled ? 'py-1 sm:py-1.5' : 'py-1.5 sm:py-2'
             }`}
           >
-            <div className="flex items-center justify-between gap-2 sm:gap-2 md:gap-4">
-              {/* Left Side: Menu Button only (no visible background) */}
-              <div className="flex items-center gap-2 sm:gap-3 md:gap-6 flex-1 md:flex-none min-w-0 overflow-hidden">
+            <div className="flex flex-col gap-2">
+              {/* Row 1: Menu + actions */}
+              <div className="flex items-center justify-between gap-2 sm:gap-2 md:gap-4">
+                {/* Left Side: Menu Button only (no visible background) */}
+                <div className="flex items-center gap-2 sm:gap-3 md:gap-6 flex-1 md:flex-none min-w-0 overflow-hidden">
                 {/* Hamburger Menu Button - Only visible on mobile/tablet, hidden on laptop/desktop */}
                 <motion.button
                   type="button"
@@ -835,10 +872,38 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                     style={{ display: 'block', imageRendering: 'crisp-edges' }}
                   />
                 </a>
-              </div>
+                </div>
 
-              {/* Right Side: Login, Theme, Search */}
-              <div className="flex items-center flex-shrink-0">
+                {/* Center (blog only): Article tabs – desktop/tablet inline */}
+                {location.pathname === '/blog' && blogTabs && (
+                  <div
+                    ref={desktopTabsRef}
+                    className="hidden md:flex flex-1 justify-center min-w-0 mx-2 md:mx-4 overflow-x-auto"
+                  >
+                    <div className="flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-900/60 px-1.5 py-1 border border-slate-200 dark:border-slate-700 overflow-x-auto max-w-full flex-shrink-0">
+                      {BLOG_TABS.map((tab) => (
+                        <button
+                          key={tab.id}
+                          type="button"
+                          onClick={() => blogTabs.scrollToSection(tab.id)}
+                          data-blog-tab={tab.id}
+                          className={`relative px-2.5 sm:px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-medium whitespace-nowrap transition-colors flex-shrink-0 ${
+                            blogTabs.activeTab === tab.id
+                              ? 'bg-emerald-600 text-white shadow-sm'
+                              : theme === 'dark'
+                                ? 'text-slate-200 hover:bg-slate-800'
+                                : 'text-slate-700 hover:bg-slate-100'
+                          }`}
+                        >
+                          {tab.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Right Side: Login, Theme, Search */}
+                <div className="flex items-center flex-shrink-0">
                 <div
                   className={`flex items-center gap-2 sm:gap-2 md:gap-3 rounded-full border border-gray-200 dark:border-gray-700 shadow-sm px-2 sm:px-2 bg-white/95 dark:bg-slate-950/95 transition-all duration-200 ${
                     scrolled ? '' : 'bg-white/90 dark:bg-slate-950/90'
@@ -1098,7 +1163,36 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                 </div>
 
               </div>
-            </div>
+                </div>
+              </div>
+
+              {/* Row 2 (blog only): Article tabs – mobile, below menu/login row */}
+              {location.pathname === '/blog' && blogTabs && (
+                <div className="md:hidden -mx-4 px-4 pt-0.5 pb-1 overflow-x-auto">
+                  <div
+                    ref={mobileTabsRef}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-900/60 px-1.5 py-1 border border-slate-200 dark:border-slate-700"
+                  >
+                    {BLOG_TABS.map((tab) => (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        onClick={() => blogTabs.scrollToSection(tab.id)}
+                        data-blog-tab={tab.id}
+                        className={`relative px-2.5 py-1.5 rounded-full text-[11px] font-medium whitespace-nowrap transition-colors flex-shrink-0 ${
+                          blogTabs.activeTab === tab.id
+                            ? 'bg-emerald-600 text-white shadow-sm'
+                            : theme === 'dark'
+                              ? 'text-slate-200 hover:bg-slate-800'
+                              : 'text-slate-700 hover:bg-slate-100'
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
           </div>
         </div>
       </header>

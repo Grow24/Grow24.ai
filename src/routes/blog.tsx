@@ -1,21 +1,11 @@
-import { useState, useRef } from 'react'
+import { useRef, useEffect, useCallback, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import { useBlogTabs, type BlogTabId } from '../contexts/BlogTabsContext'
 
 export const Route = createFileRoute('/blog')({
   component: BlogPage,
 })
-
-type TabId = 'intro' | 'rise' | 'flexibility' | 'finland' | 'future' | 'authors'
-
-const tabs: { id: TabId; label: string }[] = [
-  { id: 'intro', label: 'Overview' },
-  { id: 'rise', label: 'Market Value Cannibalization' },
-  { id: 'flexibility', label: 'Systemic Flexibility' },
-  { id: 'finland', label: 'Finland Case' },
-  { id: 'future', label: 'Global Next Steps' },
-  { id: 'authors', label: 'Authors' },
-]
 
 const authors: { name: string; title: string; location: string }[] = [
   { name: 'Antti Belt', title: 'Managing Director & Partner', location: 'Helsinki' },
@@ -27,21 +17,183 @@ const authors: { name: string; title: string; location: string }[] = [
   { name: 'Zsófia Beck', title: 'Managing Director & Partner', location: 'Budapest' },
 ]
 
+type RelatedItem = {
+  eyebrow: string
+  category: string
+  kind: string
+  date: string
+  title: string
+  description: string
+  cta: string
+}
+
+const relatedContent: RelatedItem[] = [
+  {
+    eyebrow: 'Renewables and Low-Carbon Solutions',
+    category: 'Renewables and Low-Carbon Solutions',
+    kind: 'Slideshow',
+    date: 'December 17, 2021',
+    title: 'Rising to the Challenges of Integrating Solar and Wind at Scale',
+    description:
+      'As the share of variable renewable energy climbs, tackling four challenges will become an urgent task for system operators and designers.',
+    cta: 'Learn more',
+  },
+  {
+    eyebrow: 'Energy',
+    category: 'Energy',
+    kind: 'Article',
+    date: 'September 8, 2025',
+    title: 'What Wind Energy Teaches Us About Scaling Renewables',
+    description:
+      'Headlines may suggest climate investing is dead, but a confluence of tailwinds is creating opportunities in low-carbon technologies.',
+    cta: 'Learn more',
+  },
+  {
+    eyebrow: 'Energy Transition',
+    category: 'Energy Transition',
+    kind: 'Article',
+    date: 'August 21, 2025',
+    title: 'Offshore Wind Industry Update',
+    description:
+      'A comprehensive update on offshore wind, detailing current challenges, shifting strategies, and evolving government support frameworks.',
+    cta: 'Learn more',
+  },
+  {
+    eyebrow: 'Climate Change and Sustainability',
+    category: 'Climate Change and Sustainability',
+    kind: 'Article',
+    date: 'November 3, 2021',
+    title: 'Why Your Company Needs to Be an Electricity Trader',
+    description:
+      'Variable renewable generation will transform electricity systems and increase volatility—companies need to be more flexible in how they consume electricity.',
+    cta: 'Learn more',
+  },
+  {
+    eyebrow: 'Energy',
+    category: 'Energy',
+    kind: 'Article',
+    date: 'April 4, 2022',
+    title: 'Will Electricity Be Free? Not When You Really Need It',
+    description:
+      'As economies decarbonize, volatility will surge. Players can use levers to mitigate it—but must act carefully to avoid damaging competitiveness.',
+    cta: 'Learn more',
+  },
+]
+
+// Tab is selected based on the section intersecting this horizontal "selection line"
+// under the fixed header. Larger = highlights earlier while scrolling.
+const SPY_OFFSET = 380
+
 function BlogPage() {
-  const [activeTab, setActiveTab] = useState<TabId>('intro')
+  const blogTabs = useBlogTabs()
   const heroRef = useRef<HTMLElement>(null)
-  const articleRef = useRef<HTMLElement>(null)
+  const sectionIntroRef = useRef<HTMLElement>(null)
+  const sectionRiseRef = useRef<HTMLElement>(null)
+  const sectionFlexibilityRef = useRef<HTMLElement>(null)
+  const sectionFinlandRef = useRef<HTMLElement>(null)
+  const sectionFutureRef = useRef<HTMLElement>(null)
+  const sectionAuthorsRef = useRef<HTMLElement>(null)
+  const sectionRelatedRef = useRef<HTMLElement>(null)
+  const relatedRailRef = useRef<HTMLDivElement>(null)
+  const [activeRelatedIndex, setActiveRelatedIndex] = useState(0)
+
   const { scrollYProgress: heroProgress } = useScroll({
     target: heroRef,
     offset: ['start start', 'end end'],
   })
-  const { scrollYProgress: articleProgress } = useScroll({
-    target: articleRef,
-    offset: ['start end', 'start start'],
-  })
   const imageScale = useTransform(heroProgress, [0, 0.4], [1, 1.18])
-  const contentBelowY = useTransform(articleProgress, [0, 0.5], [36, 0])
-  const contentBelowRotateX = useTransform(articleProgress, [0, 0.5], [10, 0])
+
+  const scrollToSection = useCallback((tabId: BlogTabId) => {
+    const refMap = {
+      intro: sectionIntroRef,
+      rise: sectionRiseRef,
+      flexibility: sectionFlexibilityRef,
+      finland: sectionFinlandRef,
+      future: sectionFutureRef,
+      authors: sectionAuthorsRef,
+      related: sectionRelatedRef,
+    }
+    const el = refMap[tabId].current
+    if (!el) return
+    const raw = getComputedStyle(document.documentElement).getPropertyValue('--header-offset').trim()
+    let offsetPx = 128
+    if (raw.endsWith('rem')) {
+      const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
+      offsetPx = parseFloat(raw) * rem
+    } else if (raw.endsWith('px')) {
+      offsetPx = parseFloat(raw)
+    } else if (raw) {
+      offsetPx = parseFloat(raw) || 128
+    }
+    // Nudge the landing position upward so the new section starts immediately under the tabs.
+    // (Without this, a few lines from the previous section can remain visible above.)
+    const NUDGE_UP_PX = 24
+    const effectiveOffset = Math.max(0, offsetPx - NUDGE_UP_PX)
+    const rect = el.getBoundingClientRect()
+    const targetScrollY = window.scrollY + rect.top - effectiveOffset
+    window.scrollTo({ top: Math.max(0, targetScrollY), behavior: 'smooth' })
+  }, [])
+
+  // Register scroll handler once on mount so header tab clicks work; refs are stable so no deps needed
+  useEffect(() => {
+    if (!blogTabs) return
+    return blogTabs.registerScrollToSection(scrollToSection)
+  }, [blogTabs?.registerScrollToSection, scrollToSection])
+
+  // Scroll-spy: set active tab when section enters view (use ref so we don't re-run effect when activeTab changes)
+  const blogTabsRef = useRef(blogTabs)
+  blogTabsRef.current = blogTabs
+  useEffect(() => {
+    const refList: { id: BlogTabId; ref: typeof sectionIntroRef }[] = [
+      { id: 'intro', ref: sectionIntroRef },
+      { id: 'rise', ref: sectionRiseRef },
+      { id: 'flexibility', ref: sectionFlexibilityRef },
+      { id: 'finland', ref: sectionFinlandRef },
+      { id: 'future', ref: sectionFutureRef },
+      { id: 'authors', ref: sectionAuthorsRef },
+      { id: 'related', ref: sectionRelatedRef },
+    ]
+    const onScroll = () => {
+      const setActiveTab = blogTabsRef.current?.setActiveTab
+      if (!setActiveTab) return
+      // Prefer the section that currently spans the selection line.
+      for (let i = 0; i < refList.length; i++) {
+        const el = refList[i].ref.current
+        if (!el) continue
+        const rect = el.getBoundingClientRect()
+        if (rect.top <= SPY_OFFSET && rect.bottom > SPY_OFFSET) {
+          setActiveTab(refList[i].id)
+          return
+        }
+      }
+      // Fallback: last section whose top has passed the selection line.
+      for (let i = refList.length - 1; i >= 0; i--) {
+        const el = refList[i].ref.current
+        if (!el) continue
+        const rect = el.getBoundingClientRect()
+        if (rect.top <= SPY_OFFSET) {
+          setActiveTab(refList[i].id)
+          return
+        }
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  useEffect(() => {
+    const rail = relatedRailRef.current
+    if (!rail) return
+    const onRailScroll = () => {
+      const cardWidth = rail.firstElementChild ? (rail.firstElementChild as HTMLElement).offsetWidth : 1
+      const idx = Math.round(rail.scrollLeft / Math.max(cardWidth, 1))
+      setActiveRelatedIndex(Math.max(0, Math.min(relatedContent.length - 1, idx)))
+    }
+    rail.addEventListener('scroll', onRailScroll, { passive: true })
+    onRailScroll()
+    return () => rail.removeEventListener('scroll', onRailScroll as any)
+  }, [])
 
   return (
     <main className="min-h-screen bg-white dark:bg-slate-950 -mt-6 sm:-mt-8 pt-0 pb-8 sm:pb-10 md:pb-14 px-4 overflow-x-hidden">
@@ -63,49 +215,16 @@ function BlogPage() {
             Article &nbsp;·&nbsp; February 25, 2026 &nbsp;·&nbsp; 15 MIN read
           </p>
         </header>
-
-        {/* Tabs */}
-        <div className="mb-6 sm:mb-8 overflow-x-auto">
-          <div className="inline-flex items-center gap-2 rounded-full bg-slate-50 dark:bg-slate-900/60 px-2 py-1 border border-slate-200 dark:border-slate-700">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setActiveTab(tab.id)}
-                className={`relative px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-colors ${
-                  activeTab === tab.id
-                    ? 'bg-emerald-600 text-white shadow-sm'
-                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
       </div>
 
       <div className="max-w-6xl mx-auto">
-        {/* Main article body (tabbed) – flips and moves up on scroll */}
-        <motion.article
-          ref={articleRef}
-          style={{
-            y: contentBelowY,
-            rotateX: contentBelowRotateX,
-            transformPerspective: 800,
-          }}
-          className="max-w-3xl text-sm sm:text-base leading-relaxed text-slate-700 dark:text-slate-200"
-        >
-          <AnimatePresence mode="wait">
-            {activeTab === 'intro' && (
-              <motion.section
-                key="intro"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.2 }}
-                className="space-y-8"
-              >
+        <article className="max-w-3xl mx-auto text-sm sm:text-base leading-relaxed text-slate-700 dark:text-slate-200">
+          {/* Section: Overview (intro) */}
+          <section
+            id="section-intro"
+            ref={sectionIntroRef}
+            className="scroll-mt-blog-section space-y-8 pt-2 pb-6 sm:pb-8"
+          >
                 {/* Full-width hero image – Overview tab only (break out of article column to span viewport) */}
                 <section
                   ref={heroRef}
@@ -150,7 +269,7 @@ function BlogPage() {
                         </svg>
                       </div>
                     </motion.div>
-                    <div className="absolute inset-x-4 sm:inset-x-6 md:inset-x-8 top-4 sm:top-6 md:top-8 max-w-xl">
+                    <div className="absolute left-1/2 top-4 sm:top-6 md:top-8 -translate-x-1/2 w-[calc(100%-2rem)] sm:w-[calc(100%-3rem)] md:w-[calc(100%-4rem)] max-w-2xl mx-auto">
                       <motion.div
                         initial={{ opacity: 0, y: 12 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -229,18 +348,14 @@ function BlogPage() {
                       </button>
                     </div>
                   </section>
-              </motion.section>
-            )}
+          </section>
 
-            {activeTab === 'rise' && (
-              <motion.section
-                key="rise"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.2 }}
-                className="space-y-4"
-              >
+          {/* Section: Market Value Cannibalization */}
+          <section
+            id="section-rise"
+            ref={sectionRiseRef}
+            className="scroll-mt-blog-section space-y-4 pt-12 sm:pt-14 pb-10 sm:pb-12 border-t border-slate-200/70 dark:border-slate-800/70"
+          >
             <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-white">
               The Rise in Renewables Results in Market Value Cannibalization
             </h2>
@@ -264,18 +379,14 @@ function BlogPage() {
               electricity. The result is a vicious circle: the faster a system decarbonizes, the greater the risk of
               value decline—and the weaker the investment case for new renewable capacity.
             </p>
-              </motion.section>
-            )}
+          </section>
 
-            {activeTab === 'flexibility' && (
-              <motion.section
-                key="flexibility"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.2 }}
-                className="space-y-4"
-              >
+          {/* Section: Systemic Flexibility */}
+          <section
+            id="section-flexibility"
+            ref={sectionFlexibilityRef}
+            className="scroll-mt-blog-section space-y-4 pt-12 sm:pt-14 pb-10 sm:pb-12 border-t border-slate-200/70 dark:border-slate-800/70"
+          >
             <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-white">
               Tackling the Value Trap with Systemic Flexibility
             </h2>
@@ -297,18 +408,14 @@ function BlogPage() {
               and hydrogen or synthetic-fuel pathways more attractive. Market designs will need to reward duration and
               capacity, not just short-term response.
             </p>
-              </motion.section>
-            )}
+          </section>
 
-            {activeTab === 'finland' && (
-              <motion.section
-                key="finland"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.2 }}
-                className="space-y-4"
-              >
+          {/* Section: Finland Case */}
+          <section
+            id="section-finland"
+            ref={sectionFinlandRef}
+            className="scroll-mt-blog-section space-y-4 pt-12 sm:pt-14 pb-10 sm:pb-12 border-t border-slate-200/70 dark:border-slate-800/70"
+          >
             <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-white">
               How Finland Is Building Flexibility
             </h2>
@@ -329,18 +436,14 @@ function BlogPage() {
               run hard; when prices spike, they switch off and legacy boilers take over. This strategy is both
               financially attractive and highly effective at absorbing excess renewable generation.
             </p>
-              </motion.section>
-            )}
+          </section>
 
-            {activeTab === 'future' && (
-              <motion.section
-                key="future"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.2 }}
-                className="space-y-5"
-              >
+          {/* Section: Global Next Steps */}
+          <section
+            id="section-future"
+            ref={sectionFutureRef}
+            className="scroll-mt-blog-section space-y-5 pt-12 sm:pt-14 pb-10 sm:pb-12 border-t border-slate-200/70 dark:border-slate-800/70"
+          >
             <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-white">
               Ensuring a Future for Renewable Energy Globally
             </h2>
@@ -405,21 +508,17 @@ function BlogPage() {
                 </p>
               </div>
             </div>
-              </motion.section>
-            )}
+          </section>
 
-            {activeTab === 'authors' && (
-              <motion.section
-                key="authors"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.2 }}
-                className="space-y-8"
-              >
-                <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
-                  Authors
-                </h2>
+          {/* Section: Authors */}
+          <section
+            id="section-authors"
+            ref={sectionAuthorsRef}
+            className="scroll-mt-blog-section space-y-8 pt-12 sm:pt-14 pb-10 sm:pb-12 border-t border-slate-200/70 dark:border-slate-800/70"
+          >
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
+              Authors
+            </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
                   {authors.map((author) => (
                     <div
@@ -455,10 +554,93 @@ function BlogPage() {
                     </div>
                   ))}
                 </div>
-              </motion.section>
-            )}
-          </AnimatePresence>
-        </motion.article>
+          </section>
+
+          {/* Section: Related Content */}
+          <section
+            id="section-related"
+            ref={sectionRelatedRef}
+            className="scroll-mt-blog-section pt-12 sm:pt-14 pb-10 sm:pb-12 border-t border-slate-200/70 dark:border-slate-800/70"
+          >
+            <div className="w-screen max-w-[100vw] ml-[calc(-50vw+50%)] mr-[calc(-50vw+50%)] bg-slate-900 text-white">
+              <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-10 sm:py-12">
+                <div className="flex items-center justify-between gap-4 mb-6">
+                  <h2 className="text-2xl sm:text-3xl font-semibold">Related Content</h2>
+                  <div className="hidden sm:flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => relatedRailRef.current?.scrollBy({ left: -420, behavior: 'smooth' })}
+                      className="h-9 w-9 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 transition-colors inline-flex items-center justify-center"
+                      aria-label="Scroll related content left"
+                    >
+                      ‹
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => relatedRailRef.current?.scrollBy({ left: 420, behavior: 'smooth' })}
+                      className="h-9 w-9 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 transition-colors inline-flex items-center justify-center"
+                      aria-label="Scroll related content right"
+                    >
+                      ›
+                    </button>
+                  </div>
+                </div>
+
+                <div
+                  ref={relatedRailRef}
+                  className="flex gap-5 overflow-x-auto snap-x snap-mandatory scroll-px-4 sm:scroll-px-6 md:scroll-px-8 pb-3"
+                >
+                  {relatedContent.map((item) => (
+                    <div
+                      key={item.title}
+                      className="snap-start shrink-0 w-[280px] sm:w-[320px] md:w-[360px] rounded-2xl overflow-hidden bg-white/10 border border-white/15"
+                    >
+                      <div className="h-40 sm:h-44 md:h-48 bg-gradient-to-br from-sky-500/30 via-emerald-500/20 to-slate-950/60 relative">
+                        <span className="absolute left-4 top-4 inline-flex items-center rounded-full border border-white/25 bg-black/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide">
+                          {item.eyebrow}
+                        </span>
+                      </div>
+                      <div className="p-4 sm:p-5 space-y-3 bg-white/90 text-slate-900">
+                        <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-slate-600">
+                          <span>{item.kind}</span>
+                          <span>·</span>
+                          <span>{item.date}</span>
+                        </div>
+                        <h3 className="text-base sm:text-lg font-semibold leading-snug">{item.title}</h3>
+                        <p className="text-sm text-slate-600 leading-relaxed line-clamp-3">{item.description}</p>
+                        <div className="pt-2">
+                          <button
+                            type="button"
+                            className="inline-flex items-center gap-2 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 text-xs font-semibold"
+                          >
+                            {item.cta} <span aria-hidden="true">→</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-4 flex items-center justify-center gap-2">
+                  {relatedContent.map((_, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => {
+                        const rail = relatedRailRef.current
+                        if (!rail) return
+                        const card = rail.children.item(i) as HTMLElement | null
+                        card?.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' })
+                      }}
+                      className={`h-2 w-2 rounded-full transition-colors ${i === activeRelatedIndex ? 'bg-white' : 'bg-white/30 hover:bg-white/50'}`}
+                      aria-label={`Go to related content item ${i + 1}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        </article>
       </div>
     </main>
   )
