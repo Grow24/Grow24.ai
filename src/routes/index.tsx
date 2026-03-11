@@ -383,9 +383,9 @@ function IndexPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05, duration: 0.5 }}
-            className="font-jakarta -mt-1 sm:-mt-2 md:-mt-1 mb-6 sm:mb-8 md:mb-10"
+            className="font-jakarta -mt-1 sm:-mt-2 md:-mt-1 mb-4 sm:mb-8 md:mb-10"
           >
-            <div className="flex items-center justify-center mb-0 -ml-4 sm:ml-0 mt-12 sm:mt-0">
+            <div className="flex items-center justify-center mb-0 -ml-4 sm:ml-0 mt-6 sm:mt-0">
               <img
                 src={theme === 'dark' ? '/grow_icon_dark.jpeg' : '/grow24_ai_icon_5.jpeg'}
                 alt="Grow24"
