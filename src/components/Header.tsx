@@ -822,12 +822,12 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
           </div>
         )}
 
-        <div 
-          className="no-blur-header transition-all duration-300 bg-transparent"
+        <div
+          className="no-blur-header transition-all duration-300 bg-white/95 dark:bg-slate-950/95 border-b border-slate-200/70 dark:border-slate-800/80"
           style={{
             backdropFilter: 'none',
             WebkitBackdropFilter: 'none',
-            filter: 'none'
+            filter: 'none',
           } as React.CSSProperties}
         >
           <div

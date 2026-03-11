@@ -368,13 +368,13 @@ function IndexPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section - Home */}
+      {/* Hero Section - Home (keep first viewport focused on hero + carousel) */}
       <motion.section
         id="home"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="min-h-screen flex items-start justify-center -mt-24 sm:-mt-20 md:-mt-24 pt-0 sm:pt-1 md:pt-2 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8 scroll-mt-header lg:overflow-x-visible"
+        className="min-h-screen flex items-start justify-center -mt-24 sm:-mt-20 md:-mt-24 pt-0 sm:pt-1 md:pt-2 pb-10 sm:pb-14 md:pb-18 px-4 sm:px-6 md:px-8 scroll-mt-header lg:overflow-x-visible"
       >
         <div className="w-full max-w-7xl mx-auto text-center mt-0 lg:overflow-x-visible">
           {/* Grow24 hero block – above Welcome to (design from reference) */}
@@ -424,12 +424,23 @@ function IndexPage() {
           <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:overflow-x-visible">
             <HeroCarousel />
           </div>
+        </div>
+      </motion.section>
 
+      {/* Individual Growth Cycle section – moved below hero so on mobile the first view ends at the carousel nav arrows */}
+      <motion.section
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true, amount: 0.3 }}
+        className="pt-4 sm:pt-6 md:pt-8 pb-8 sm:pb-10 md:pb-12 px-4 sm:px-6 md:px-8"
+      >
+        <div className="w-full max-w-7xl mx-auto text-center">
           {/* Individual Growth Cycle line - above valu_cycle image */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.28, duration: 0.5 }}
+            transition={{ delay: 0.1, duration: 0.5 }}
             className="max-w-4xl mx-auto px-4 mb-4 text-center"
             id="growth-cycle-heading"
           >
@@ -442,7 +453,7 @@ function IndexPage() {
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.28, duration: 0.5 }}
+            transition={{ delay: 0.15, duration: 0.5 }}
             className="max-w-4xl mx-auto mb-6 sm:mb-8 px-4"
           >
             <img
@@ -455,7 +466,7 @@ function IndexPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
             className="max-w-2xl mx-auto mb-6 sm:mb-8 md:mb-10 px-4 text-left"
           >
             <p className="text-emerald-700 dark:text-emerald-300 font-bold text-lg sm:text-xl mb-1">
@@ -492,7 +503,7 @@ function IndexPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35, duration: 0.6 }}
+            transition={{ delay: 0.25, duration: 0.6 }}
             className="max-w-4xl mx-auto px-4 mb-8 sm:mb-10 md:mb-12"
           >
             {/* Stacked layout with L-shaped arrow (same on all screen sizes) */}
@@ -573,8 +584,8 @@ function IndexPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center flex-wrap px-4 mt-8 sm:mt-6 md:mt-4"
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center flex-wrap px-4 mt-6 sm:mt-6 md:mt-4"
           >
             <HeroButton3D
               onClick={() => showComingSoon('start-free-trial', 'Sign up for our Free Trial', 'Please fill in all required fields to start your free trial.')}
