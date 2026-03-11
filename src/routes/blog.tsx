@@ -562,8 +562,9 @@ function BlogPage() {
             ref={sectionRelatedRef}
             className="scroll-mt-blog-section pt-12 sm:pt-14 pb-10 sm:pb-12 border-t border-slate-200/70 dark:border-slate-800/70"
           >
-            <div className="w-screen max-w-[100vw] ml-[calc(-50vw+50%)] mr-[calc(-50vw+50%)] bg-slate-900 text-white">
-              <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-10 sm:py-12">
+            {/* Mobile: use container width with horizontal padding; sm+ : full-bleed like BCG */}
+            <div className="-mx-4 px-4 bg-slate-900 text-white sm:w-screen sm:max-w-[100vw] sm:ml-[calc(-50vw+50%)] sm:mr-[calc(-50vw+50%)]">
+              <div className="max-w-6xl mx-auto px-0 sm:px-6 md:px-8 py-8 sm:py-10 md:py-12">
                 <div className="flex items-center justify-between gap-4 mb-6">
                   <h2 className="text-2xl sm:text-3xl font-semibold">Related Content</h2>
                   <div className="hidden sm:flex items-center gap-2">
