@@ -233,7 +233,7 @@ function HeroCarousel() {
                   >
                     <div
                       className={`relative aspect-[4/5] w-full ${
-                        isMobile ? 'min-h-[18vh]' : 'min-h-[40vh] md:min-h-[44vh]'
+                        isMobile ? 'min-h-[16vh]' : 'min-h-[40vh] md:min-h-[44vh]'
                       } bg-slate-200 dark:bg-slate-700`}
                     >
                       <img

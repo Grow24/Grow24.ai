@@ -230,7 +230,6 @@ const menuItems: MenuItem[] = [
   { label: 'Get Support', href: '#support', icon: SupportIcon },
   { label: 'Engage', href: '#engage', icon: EngageIcon },
   { label: 'Contact Us', href: '#contact', icon: ContactIcon },
-  { label: 'Blog', href: '/blog', icon: BlogIcon },
   { label: 'ECharts', href: '/echarts', icon: EChartsIcon },
   // Dedicated About page
   { label: 'About Us', href: '/about', icon: AboutIcon },

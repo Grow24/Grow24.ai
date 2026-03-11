@@ -276,7 +276,6 @@ const navItems: NavItem[] = [
   { label: 'Get Support', href: '#support', icon: SupportIcon },
   { label: 'Engage', href: '#engage', icon: EngageIcon },
   { label: 'Contact Us', href: '#contact', icon: ContactIcon },
-  { label: 'Blog', href: '/blog', icon: BlogIcon },
   { label: 'ECharts', href: '/echarts', icon: EChartsIcon },
   // Dedicated About page
   { label: 'About Us', href: '/about', icon: AboutIcon },
@@ -785,8 +784,8 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
       >
         {/* Top notification bar */}
         {location.pathname !== '/survey' && (
-          <div className="bg-emerald-600 text-[11px] sm:text-xs text-white px-3 py-1 shadow-md">
-            <div className="flex items-center justify-center gap-3 overflow-hidden">
+          <div className="bg-emerald-600 text-[10px] sm:text-[11px] text-white px-3 py-0.5 shadow-md">
+            <div className="flex items-center justify-center gap-2 overflow-hidden">
               <motion.div
                 className="inline-flex items-center gap-1 whitespace-nowrap"
                 animate={
@@ -831,8 +830,8 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
           } as React.CSSProperties}
         >
           <div
-            className={`w-full px-4 sm:px-4 md:px-8 ${
-              scrolled ? 'py-1 sm:py-1.5' : 'py-1.5 sm:py-2'
+            className={`w-full px-3 sm:px-4 md:px-8 ${
+              scrolled ? 'py-0.5 sm:py-1' : 'py-1 sm:py-1.5'
             }`}
           >
             <div className="flex flex-col gap-2">

@@ -8,8 +8,8 @@
 
 :root {
   /* Reserve space for fixed header so content is never cut off when scrolling to top */
-  /* Mobile header is taller (survey bar + nav + blog tabs row), so reserve a bit more space */
-  --header-offset: 9.5rem;
+  /* Mobile header (survey bar + nav + optional blog tabs row) */
+  --header-offset: 8.5rem;
 }
 
 @media (min-width: 768px) {
