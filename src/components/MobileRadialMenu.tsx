@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useLoginModal } from '../contexts/LoginModalContext'
 import { useChatbotContext } from '../contexts/ChatbotContext'
+import { useGlobalCTABar } from '../contexts/GlobalCTABarContext'
 
 const containerVariants = {
   closed: { transition: { staggerChildren: 0.02, staggerDirection: -1 } },
@@ -39,9 +39,11 @@ const ChatbotIcon = () => (
     <path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
   </svg>
 )
-const LoginIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" strokeLinecap="round" strokeLinejoin="round" />
+const HarnessAIIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2l1.2 4.1L17 7l-3.8 1L12 12l-1.2-4-3.8-1 3.8-.9L12 2z" />
+    <path d="M5 13l.8 2.7L8 16l-2.2.7L5 19l-.8-2.3L2 16l2.2-.3L5 13z" />
+    <path d="M19 13l.8 2.7L22 16l-2.2.7L19 19l-.8-2.3L16 16l2.2-.3L19 13z" />
   </svg>
 )
 
@@ -56,8 +58,8 @@ export function MobileRadialMenu() {
   const [isOpen, setIsOpen] = useState(false)
   const [socialPanelOpen, setSocialPanelOpen] = useState(false)
   const [plusTop, setPlusTop] = useState<number | null>(null)
-  const { openLoginModal } = useLoginModal()
   const { openChatbot } = useChatbotContext()
+  const { setIsVisible: setCtaVisible } = useGlobalCTABar()
 
   // Mobile: position plus icon to the left of the "Individual Growth Cycle" heading
   useEffect(() => {
@@ -88,7 +90,7 @@ export function MobileRadialMenu() {
     { id: 'social', label: 'Social', Icon: SocialIcon, color: 'from-slate-600 to-slate-800', action: () => { setIsOpen(false); setSocialPanelOpen(true) } },
     { id: 'whatsapp', label: 'WhatsApp', Icon: WhatsAppIcon, color: 'from-green-400 to-green-600', action: () => { setIsOpen(false); window.open(waUrl, '_blank') } },
     { id: 'chatbot', label: 'Chatbot', Icon: ChatbotIcon, color: 'from-purple-500 to-purple-700', action: () => { setIsOpen(false); openChatbot() } },
-    { id: 'login', label: 'Login', Icon: LoginIcon, color: 'from-emerald-500 to-emerald-600', action: () => { setIsOpen(false); openLoginModal() } },
+    { id: 'harness-ai', label: 'Harness the Power of AI', Icon: HarnessAIIcon, color: 'from-emerald-500 to-emerald-600', action: () => { setIsOpen(false); setCtaVisible(true) } },
   ]
 
   return (

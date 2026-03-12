@@ -8,7 +8,10 @@ interface GlobalCTABarContextType {
 const GlobalCTABarContext = createContext<GlobalCTABarContextType | undefined>(undefined)
 
 export function GlobalCTABarProvider({ children }: { children: ReactNode }) {
-  const [isVisible, setIsVisible] = useState(true)
+  const [isVisible, setIsVisible] = useState(() => {
+    if (typeof window === 'undefined') return true
+    return !window.matchMedia('(max-width: 767px)').matches
+  })
 
   return (
     <GlobalCTABarContext.Provider value={{ isVisible, setIsVisible }}>
