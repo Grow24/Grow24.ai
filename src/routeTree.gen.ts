@@ -17,7 +17,6 @@ import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as LibraryRouteImport } from './routes/library'
 import { Route as EchartsRouteImport } from './routes/echarts'
 import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as BlogRouteImport } from './routes/blog'
 import { Route as BecomePartnerRouteImport } from './routes/become-partner'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -64,11 +63,6 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BlogRoute = BlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const BecomePartnerRoute = BecomePartnerRouteImport.update({
   id: '/become-partner',
   path: '/become-partner',
@@ -99,7 +93,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/become-partner': typeof BecomePartnerRoute
-  '/blog': typeof BlogRoute
   '/dashboard': typeof DashboardRoute
   '/echarts': typeof EchartsRoute
   '/library': typeof LibraryRoute
@@ -115,7 +108,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/become-partner': typeof BecomePartnerRoute
-  '/blog': typeof BlogRoute
   '/dashboard': typeof DashboardRoute
   '/echarts': typeof EchartsRoute
   '/library': typeof LibraryRoute
@@ -132,7 +124,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/become-partner': typeof BecomePartnerRoute
-  '/blog': typeof BlogRoute
   '/dashboard': typeof DashboardRoute
   '/echarts': typeof EchartsRoute
   '/library': typeof LibraryRoute
@@ -150,7 +141,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/become-partner'
-    | '/blog'
     | '/dashboard'
     | '/echarts'
     | '/library'
@@ -166,7 +156,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/become-partner'
-    | '/blog'
     | '/dashboard'
     | '/echarts'
     | '/library'
@@ -182,7 +171,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/become-partner'
-    | '/blog'
     | '/dashboard'
     | '/echarts'
     | '/library'
@@ -199,7 +187,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   BecomePartnerRoute: typeof BecomePartnerRoute
-  BlogRoute: typeof BlogRoute
   DashboardRoute: typeof DashboardRoute
   EchartsRoute: typeof EchartsRoute
   LibraryRoute: typeof LibraryRoute
@@ -268,13 +255,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/blog': {
-      id: '/blog'
-      path: '/blog'
-      fullPath: '/blog'
-      preLoaderRoute: typeof BlogRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/become-partner': {
       id: '/become-partner'
       path: '/become-partner'
@@ -331,7 +311,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   BecomePartnerRoute: BecomePartnerRoute,
-  BlogRoute: BlogRoute,
   DashboardRoute: DashboardRoute,
   EchartsRoute: EchartsRoute,
   LibraryRoute: LibraryRoute,

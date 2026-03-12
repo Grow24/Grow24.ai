@@ -8,7 +8,7 @@
 
 :root {
   /* Reserve space for fixed header so content is never cut off when scrolling to top */
-  /* Mobile header (survey bar + nav + optional blog tabs row) */
+  /* Mobile header (survey bar + nav) */
   --header-offset: 8.5rem;
 }
 
@@ -41,11 +41,6 @@ main.pt-header {
 /* Anchor targets scroll into view below the fixed header */
 .scroll-mt-header {
   scroll-margin-top: var(--header-offset);
-}
-
-/* Blog section targets: below fixed header (tabs live inside header) */
-.scroll-mt-blog-section {
-  scroll-margin-top: calc(var(--header-offset) + 0.5rem);
 }
 
 ::-webkit-scrollbar {

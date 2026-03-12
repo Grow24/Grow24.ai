@@ -7,7 +7,6 @@ import type { Plugin } from 'vite'
 const VALID_PATHS = [
   '/',
   '/about',
-  '/blog',
   '/become-partner',
   '/dashboard',
   '/echarts',
