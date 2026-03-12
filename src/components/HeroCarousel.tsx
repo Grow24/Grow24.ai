@@ -231,11 +231,13 @@ function HeroCarousel() {
                       opacity,
                     }}
                   >
-                    <div
-                      className={`relative aspect-[4/5] w-full ${
-                        isMobile ? 'min-h-[16vh]' : 'min-h-[40vh] md:min-h-[44vh]'
-                      } bg-slate-200 dark:bg-slate-700`}
-                    >
+              <div
+                className={`relative w-full ${
+                  isMobile
+                    ? 'aspect-[16/9] min-h-[18vh]'
+                    : 'aspect-[4/5] min-h-[40vh] md:min-h-[44vh]'
+                } bg-slate-200 dark:bg-slate-700`}
+              >
                       <img
                         src={slide.image}
                         alt={slide.title}
@@ -303,7 +305,7 @@ function HeroCarousel() {
         </div>
 
         {/* BCG-style dots + nav below: prev/next squares, dots in middle */}
-        <div className="flex w-full items-center justify-center gap-4 sm:gap-6 mt-5 sm:mt-6">
+        <div className="flex w-full items-center justify-center gap-4 sm:gap-6 mt-3 sm:mt-4">
           <button
             type="button"
             onClick={scrollPrev}
