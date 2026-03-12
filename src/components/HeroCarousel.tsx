@@ -234,7 +234,7 @@ function HeroCarousel() {
               <div
                 className={`relative w-full ${
                   isMobile
-                    ? 'aspect-[16/9] min-h-[18vh]'
+                    ? 'aspect-[4/5] min-h-[24vh]'
                     : 'aspect-[4/5] min-h-[40vh] md:min-h-[44vh]'
                 } bg-slate-200 dark:bg-slate-700`}
               >

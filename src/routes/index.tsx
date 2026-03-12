@@ -416,7 +416,7 @@ function IndexPage() {
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true, amount: 0.3 }}
-        className="pt-4 sm:pt-6 md:pt-8 pb-8 sm:pb-10 md:pb-12 px-4 sm:px-6 md:px-8"
+        className="pt-6 sm:pt-6 md:pt-8 pb-8 sm:pb-10 md:pb-12 px-4 sm:px-6 md:px-8"
       >
         <div className="w-full max-w-7xl mx-auto text-center">
           {/* Individual Growth Cycle line - above valu_cycle image */}
