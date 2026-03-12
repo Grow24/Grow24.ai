@@ -383,22 +383,22 @@ function IndexPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05, duration: 0.5 }}
-            className="font-jakarta -mt-1 sm:-mt-2 md:-mt-1 mb-1 sm:mb-8 md:mb-10 overflow-visible"
+            className="font-jakarta -mt-1 sm:-mt-2 md:-mt-1 mb-0 sm:mb-8 md:mb-10 overflow-visible"
           >
-            <div className="flex items-center justify-center mb-0 -ml-4 sm:ml-0 mt-2 sm:mt-0 pt-0 md:pt-2 lg:pt-3">
+            <div className="flex items-center justify-center mb-0 -ml-4 sm:ml-0 mt-1 sm:mt-0 pt-0 md:pt-2 lg:pt-3">
               <img
                 src={theme === 'dark' ? '/grow_icon_dark.jpeg' : '/grow24_ai_icon_5.jpeg'}
                 alt="Grow24"
                 className="h-12 sm:h-14 md:h-16 lg:h-20 w-auto max-w-full object-contain block"
               />
             </div>
-            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-1 sm:mb-2">
+            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-2">
               Personal &amp; Business Management Platform
             </p>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-800 dark:text-slate-100 mb-2 sm:mb-4 max-w-4xl mx-auto leading-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-800 dark:text-slate-100 mb-1 sm:mb-4 max-w-4xl mx-auto leading-tight">
               Unlocking Potential in Business and Life.
             </h2>
-            <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm md:text-base max-w-2xl mx-auto mb-2 sm:mb-4">
+            <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm md:text-base max-w-2xl mx-auto mb-1 sm:mb-4">
               A unified system to identify goals, craft plans, and execute with precision across personal and professional domains.
             </p>
           </motion.div>

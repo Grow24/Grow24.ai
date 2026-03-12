@@ -307,7 +307,7 @@ function HeroCarousel() {
         {/* BCG-style dots + nav below: prev/next squares, dots in middle */}
         <div
           id="hero-carousel-nav"
-          className="flex w-full items-center justify-center gap-4 sm:gap-6 mt-2 sm:mt-3"
+          className="flex w-full items-center justify-center gap-4 sm:gap-6 mt-1 sm:mt-3"
         >
           <button
             type="button"
