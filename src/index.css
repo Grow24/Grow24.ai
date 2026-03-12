@@ -30,6 +30,7 @@ html {
 }
 
 body {
+  margin: 0;
   @apply bg-white dark:bg-slate-950 text-slate-900 dark:text-white;
 }
 

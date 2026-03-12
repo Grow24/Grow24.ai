@@ -310,7 +310,7 @@ export default function Sidebar() {
         <motion.button
           type="button"
           onClick={() => setIsOpen(true)}
-          className={`hidden md:flex fixed top-6 left-6 z-[70] w-12 h-12 rounded-lg items-center justify-center transition-all duration-200 cursor-pointer border ${
+          className={`hidden md:flex fixed top-6 left-6 mt-[7px] z-[70] w-12 h-12 rounded-lg items-center justify-center transition-all duration-200 cursor-pointer border ${
             theme === 'dark'
               ? 'bg-slate-950/95 border-slate-800/80 text-white hover:bg-slate-800/95'
               : 'bg-white/95 border-slate-200/70 text-gray-800 hover:bg-gray-100'
