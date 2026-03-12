@@ -61,17 +61,17 @@ export function MobileRadialMenu() {
   const { openChatbot } = useChatbotContext()
   const { setIsVisible: setCtaVisible } = useGlobalCTABar()
 
-  // Mobile: position plus icon to the left of the "Individual Growth Cycle" heading
+  // Mobile: position plus icon to the left of the carousel nav row
   useEffect(() => {
     if (typeof window === 'undefined') return
 
     const updatePosition = () => {
-      const heading = document.getElementById('growth-cycle-heading')
-      if (!heading) return
-      const rect = heading.getBoundingClientRect()
-      // Move slightly more above the heading center
-      const offset = rect.height / 2 - 50
-      setPlusTop(rect.top + offset)
+      const nav = document.getElementById('hero-carousel-nav')
+      if (!nav) return
+      const rect = nav.getBoundingClientRect()
+      // Vertically align with the nav row center
+      const centerY = rect.top + rect.height / 2
+      setPlusTop(centerY)
     }
 
     updatePosition()
@@ -81,8 +81,8 @@ export function MobileRadialMenu() {
     }
   }, [])
 
-  // Fallback position if heading isn't found yet
-  const fallbackBottomClass = 'bottom-[240px]'
+  // Fallback position if nav isn't found yet
+  const fallbackBottomClass = 'bottom-[210px]'
   const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '+919370239600'
   const waUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}`
 
