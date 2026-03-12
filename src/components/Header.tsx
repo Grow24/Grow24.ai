@@ -750,37 +750,61 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
               >
                 {isSurveyPaused ? <SurveyPlayIcon /> : <SurveyPauseIcon />}
               </button>
-              <div className="flex flex-1 min-w-0 justify-center overflow-hidden">
-                <motion.div
-                  className="inline-flex items-center gap-1 whitespace-nowrap"
-                  animate={
-                    isSurveyPaused
-                      ? { x: 0 }
-                      : { x: ['100%', '-100%'] }
-                  }
-                  transition={
-                    isSurveyPaused
-                      ? { duration: 0 }
-                      : { duration: 15, repeat: Infinity, ease: 'linear', repeatType: 'loop' }
-                  }
+              <div className="flex flex-1 min-w-0 overflow-hidden">
+                <div
+                  className="inline-flex items-center gap-0 whitespace-nowrap survey-marquee"
+                  style={{ animationPlayState: isSurveyPaused ? 'paused' : 'running' }}
                 >
-                  <span className="opacity-90">
-                    Help us shape the future of Grow24.ai website.&nbsp;
-                  </span>
-                  <a
-                    href="/survey"
-                    className="font-semibold underline underline-offset-2 hover:text-emerald-100"
-                  >
-                    Take the short survey
-                  </a>
-                </motion.div>
+                  {/* Announcement 1 */}
+                  <div className="inline-flex items-center gap-1 mr-24">
+                    <span className="opacity-90">
+                      Help us shape the future of Grow24.ai website.&nbsp;
+                    </span>
+                    <a
+                      href="/survey"
+                      className="font-semibold underline underline-offset-2 hover:text-emerald-100"
+                    >
+                      Take the short survey
+                    </a>
+                  </div>
+
+                  {/* Announcement 2 */}
+                  <div className="inline-flex items-center gap-1 mr-24">
+                    <span className="opacity-90">
+                      New: Explore our Value Definition journey.&nbsp;
+                    </span>
+                    <a
+                      href="/value-definition"
+                      className="font-semibold underline underline-offset-2 hover:text-emerald-100"
+                    >
+                      Start here
+                    </a>
+                  </div>
+
+                  {/* Announcement 3 */}
+                  <div className="inline-flex items-center gap-1 mr-24">
+                    <span className="opacity-90">
+                      Library updated with the latest AI &amp; digitalization concepts.&nbsp;
+                    </span>
+                    <a
+                      href="#library"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        scrollToSection('#library', navigate, location)
+                      }}
+                      className="font-semibold underline underline-offset-2 hover:text-emerald-100"
+                    >
+                      Visit the Library
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         )}
 
         <div
-          className="no-blur-header transition-all duration-300 bg-white/95 dark:bg-slate-950/95 border-b border-slate-200/70 dark:border-slate-800/80"
+          className="no-blur-header transition-all duration-300 bg-white/95 dark:bg-slate-950/95 border-b border-slate-200/70 dark:border-slate-800/80 md:border-b-0"
           style={{
             backdropFilter: 'none',
             WebkitBackdropFilter: 'none',

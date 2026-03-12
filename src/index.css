@@ -119,6 +119,23 @@ main.pt-header {
   }
 }
 
+/* Survey banner marquee animation */
+.survey-marquee {
+  display: inline-block;
+  white-space: nowrap;
+  padding-left: 100%;
+  animation: survey-marquee 15s linear infinite;
+}
+
+@keyframes survey-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
 /* Glass morphism effects */
 .glass-effect {
   @apply backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl;
