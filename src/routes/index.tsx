@@ -374,22 +374,22 @@ function IndexPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="flex items-start justify-center -mt-16 sm:-mt-20 md:-mt-24 pt-0 sm:pt-1 md:pt-2 pb-0 sm:pb-10 md:pb-16 px-4 sm:px-6 md:px-8 scroll-mt-header lg:overflow-x-visible"
+        className="flex items-start justify-center -mt-16 sm:-mt-20 md:-mt-24 pt-0 sm:pt-1 md:pt-2 pb-0 sm:pb-10 md:pb-16 px-4 sm:px-6 md:px-8 scroll-mt-header overflow-visible"
         style={{ minHeight: 'calc(100vh - var(--header-offset))' }}
       >
-        <div className="w-full max-w-7xl mx-auto text-center mt-0 lg:overflow-x-visible">
+        <div className="w-full max-w-7xl mx-auto text-center mt-0 overflow-visible">
           {/* Grow24 hero block – above Welcome to (design from reference) */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05, duration: 0.5 }}
-            className="font-jakarta -mt-1 sm:-mt-2 md:-mt-1 mb-1 sm:mb-8 md:mb-10"
+            className="font-jakarta -mt-1 sm:-mt-2 md:-mt-1 mb-1 sm:mb-8 md:mb-10 overflow-visible"
           >
-            <div className="flex items-center justify-center mb-0 -ml-4 sm:ml-0 mt-3 sm:mt-0">
+            <div className="flex items-center justify-center mb-0 -ml-4 sm:ml-0 mt-3 sm:mt-0 pt-2 md:pt-3 lg:pt-4">
               <img
                 src={theme === 'dark' ? '/grow_icon_dark.jpeg' : '/grow24_ai_icon_5.jpeg'}
                 alt="Grow24"
-                className="h-12 sm:h-14 md:h-16 lg:h-20 w-auto"
+                className="h-12 sm:h-14 md:h-16 lg:h-20 w-auto max-w-full object-contain block"
               />
             </div>
             <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-1 sm:mb-2">
@@ -401,24 +401,6 @@ function IndexPage() {
             <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm md:text-base max-w-2xl mx-auto mb-2 sm:mb-4">
               A unified system to identify goals, craft plans, and execute with precision across personal and professional domains.
             </p>
-            <div className="w-full flex items-center justify-center mt-0 sm:mt-1">
-              <div className="flex flex-row items-center justify-center gap-2 sm:gap-4">
-                <motion.button
-                  type="button"
-                  onClick={() => document.getElementById('library')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                  className="px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold text-xs sm:text-sm md:text-base text-white bg-gradient-to-r from-cta-green-500 to-cta-green-600 hover:from-cta-green-600 hover:to-cta-green-700 transition-colors shadow-md sm:shadow-lg text-center whitespace-nowrap"
-                >
-                  Start Your Transformation
-                </motion.button>
-                <motion.button
-                  type="button"
-                  onClick={() => document.getElementById('library')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                  className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold text-xs sm:text-sm md:text-base text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 transition-colors shadow-sm sm:shadow-md text-center whitespace-nowrap"
-                >
-                  Explore the Grow24 Cycle
-                </motion.button>
-              </div>
-            </div>
           </motion.div>
 
           {/* Slider container - centered with equal left/right spacing on all devices */}

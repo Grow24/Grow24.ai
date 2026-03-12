@@ -741,38 +741,40 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
         {/* Top notification bar */}
         {location.pathname !== '/survey' && (
           <div className="bg-emerald-600 text-[10px] sm:text-[11px] text-white px-3 py-0.5 shadow-md">
-            <div className="flex items-center justify-center gap-2 overflow-hidden">
-              <motion.div
-                className="inline-flex items-center gap-1 whitespace-nowrap"
-                animate={
-                  isSurveyPaused
-                    ? { x: 0 }
-                    : { x: ['100%', '-100%'] }
-                }
-                transition={
-                  isSurveyPaused
-                    ? { duration: 0 }
-                    : { duration: 15, repeat: Infinity, ease: 'linear', repeatType: 'loop' }
-                }
-              >
-                <span className="opacity-90">
-                  Help us shape the future of Grow24.ai website.&nbsp;
-                </span>
-                <a
-                  href="/survey"
-                  className="font-semibold underline underline-offset-2 hover:text-emerald-100"
-                >
-                  Take the short survey
-                </a>
-              </motion.div>
+            <div className="flex items-center gap-2 overflow-hidden">
               <button
                 type="button"
                 onClick={() => setIsSurveyPaused((prev) => !prev)}
-                className="flex items-center justify-center w-6 h-6 rounded-full border border-white/60 bg-white/10 hover:bg-white/20 text-white transition-colors"
+                className="flex flex-shrink-0 items-center justify-center w-6 h-6 rounded-full border border-white/60 bg-white/10 hover:bg-white/20 text-white transition-colors"
                 aria-label={isSurveyPaused ? 'Start survey banner animation' : 'Pause survey banner animation'}
               >
                 {isSurveyPaused ? <SurveyPlayIcon /> : <SurveyPauseIcon />}
               </button>
+              <div className="flex flex-1 min-w-0 justify-center overflow-hidden">
+                <motion.div
+                  className="inline-flex items-center gap-1 whitespace-nowrap"
+                  animate={
+                    isSurveyPaused
+                      ? { x: 0 }
+                      : { x: ['100%', '-100%'] }
+                  }
+                  transition={
+                    isSurveyPaused
+                      ? { duration: 0 }
+                      : { duration: 15, repeat: Infinity, ease: 'linear', repeatType: 'loop' }
+                  }
+                >
+                  <span className="opacity-90">
+                    Help us shape the future of Grow24.ai website.&nbsp;
+                  </span>
+                  <a
+                    href="/survey"
+                    className="font-semibold underline underline-offset-2 hover:text-emerald-100"
+                  >
+                    Take the short survey
+                  </a>
+                </motion.div>
+              </div>
             </div>
           </div>
         )}
