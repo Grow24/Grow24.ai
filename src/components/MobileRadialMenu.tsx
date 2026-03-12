@@ -118,7 +118,7 @@ export function MobileRadialMenu() {
           <AnimatePresence>
             {isOpen && (
               <motion.div
-                className="absolute left-1/2 -translate-x-1/2 -top-2 flex flex-col items-center gap-2"
+                className="absolute left-1/2 -translate-x-1/2 bottom-full mb-3 flex flex-col items-center gap-2"
                 variants={containerVariants}
                 initial="closed"
                 animate="open"
