@@ -7,21 +7,16 @@
 
 	respond @unsafePath 404
 
-	@univer {
-		path /univer /univer/* 
-	}
-
-	# Univer is a separate static app under /univer/
-	handle @univer {
-		root * /usr/share/caddy
-		try_files {path} {path}/ /univer/index.html
+	# Serve Univer static app from /univer/*
+	handle_path /univer* {
+		root * /usr/share/caddy/univer
+		try_files {path} {path}/ /index.html
 		file_server
 	}
 
-	file_server
-
-	# SPA routing: serve index.html for all non-file requests
+	# Main SPA routing at /
 	try_files {path} /index.html
+	file_server
 
 	zeaburextension
 
