@@ -61,9 +61,13 @@ export default function EmailTemplateBuilder({
   const [activeTab, setActiveTab] = useState<'compose' | 'preview'>('compose')
   const [isSending, setIsSending] = useState(false)
   const [sendStatus, setSendStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
+  const [fileError, setFileError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const audioInputRef = useRef<HTMLInputElement>(null)
   const videoInputRef = useRef<HTMLInputElement>(null)
+
+  const MAX_FILE_SIZE_MB = 35
+  const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
 
   const update = (updates: Partial<EmailTemplateState>) => {
     setTemplate((t) => ({ ...t, ...updates }))
@@ -71,6 +75,12 @@ export default function EmailTemplateBuilder({
 
   const addAttachment = (files: FileList | null) => {
     if (!files?.length) return
+    setFileError(null)
+    const oversized = Array.from(files).filter((f) => f.size > MAX_FILE_SIZE_BYTES)
+    if (oversized.length) {
+      setFileError(`File${oversized.length > 1 ? 's' : ''} too large: ${oversized.map((f) => `${f.name} (${(f.size / 1024 / 1024).toFixed(1)} MB)`).join(', ')}. Max allowed size is ${MAX_FILE_SIZE_MB} MB per file.`)
+      return
+    }
     const newAttachments: EmailAttachment[] = Array.from(files).map((file) => ({
       file,
       id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
@@ -429,6 +439,26 @@ export default function EmailTemplateBuilder({
                   </div>
                 </div>
 
+                {/* File size error */}
+                {fileError && (
+                  <div className="flex items-start gap-2 px-4 py-3 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 text-sm">
+                    <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                    </svg>
+                    <span>{fileError}</span>
+                    <button
+                      type="button"
+                      onClick={() => setFileError(null)}
+                      className="ml-auto shrink-0 text-red-500 hover:text-red-700 dark:hover:text-red-300"
+                      aria-label="Dismiss"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+
                 {/* Attachments */}
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Attachments</label>
@@ -478,7 +508,15 @@ export default function EmailTemplateBuilder({
                     className="hidden"
                     onChange={(e) => {
                       const f = e.target.files?.[0]
-                      if (f) update({ audioFile: f, audioUrl: '' })
+                      if (f) {
+                        if (f.size > MAX_FILE_SIZE_BYTES) {
+                          setFileError(`Audio file too large: ${f.name} (${(f.size / 1024 / 1024).toFixed(1)} MB). Max allowed size is ${MAX_FILE_SIZE_MB} MB.`)
+                          e.target.value = ''
+                          return
+                        }
+                        setFileError(null)
+                        update({ audioFile: f, audioUrl: '' })
+                      }
                       e.target.value = ''
                     }}
                   />
@@ -516,7 +554,15 @@ export default function EmailTemplateBuilder({
                     className="hidden"
                     onChange={(e) => {
                       const f = e.target.files?.[0]
-                      if (f) update({ videoFile: f, videoUrl: '' })
+                      if (f) {
+                        if (f.size > MAX_FILE_SIZE_BYTES) {
+                          setFileError(`Video file too large: ${f.name} (${(f.size / 1024 / 1024).toFixed(1)} MB). Max allowed size is ${MAX_FILE_SIZE_MB} MB.`)
+                          e.target.value = ''
+                          return
+                        }
+                        setFileError(null)
+                        update({ videoFile: f, videoUrl: '' })
+                      }
                       e.target.value = ''
                     }}
                   />
