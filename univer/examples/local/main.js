@@ -42,6 +42,8 @@ var package_default = {
     prepare: "husky",
     "pre-commit": "lint-staged",
     dev: "pnpm --filter univer-examples dev:demo -- --host 0.0.0.0",
+    "install:ci": "CI=true pnpm install --frozen-lockfile",
+    "build:static": "pnpm build && pnpm build:demo",
     "dev:libs": "pnpm --filter univer-examples dev:demo-libs",
     "dev:e2e": "pnpm --filter univer-examples dev:e2e",
     "use:react16": "tsx ./scripts/react-version-manager.ts --react=16",

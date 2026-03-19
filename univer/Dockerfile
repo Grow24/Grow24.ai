@@ -8,13 +8,11 @@ RUN npm install -g pnpm@10.24.0
 
 COPY . .
 
-RUN pnpm install
+RUN pnpm run install:ci
 
-RUN pnpm build
+RUN pnpm run build:static
 
-RUN pnpm build:demo
-
-FROM zeabur/caddy-static
+FROM zeabur/caddy-static:latest
 
 COPY --from=0 /src/examples/local /usr/share/caddy
 

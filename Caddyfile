@@ -2,10 +2,21 @@
 	root * /usr/share/caddy
 
 	@unsafePath {
-		path /.git/* /node_modules/* /vendor/* /.venv/*
+		path /.git/* /univer/.git/* /node_modules/* /vendor/* /.venv/*
 	}
 
 	respond @unsafePath 404
+
+	@univer {
+		path /univer /univer/* 
+	}
+
+	# Univer is a separate static app under /univer/
+	handle @univer {
+		root * /usr/share/caddy
+		try_files {path} {path}/ /univer/index.html
+		file_server
+	}
 
 	file_server
 

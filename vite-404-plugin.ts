@@ -51,7 +51,9 @@ export function vite404Plugin(): Plugin {
           pathname.includes('.') ||
           pathname.startsWith('/@') ||
           pathname.startsWith('/node_modules') ||
-          pathname.startsWith('/api/')
+          pathname.startsWith('/api/') ||
+          pathname === '/univer' ||
+          pathname.startsWith('/univer/')
         ) {
           return next()
         }
