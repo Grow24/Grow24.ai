@@ -4,15 +4,20 @@
 		path /.git/* /univer/.git/* /node_modules/* /vendor/* /.venv/*
 	}
 	respond @unsafePath 404
+
 	# Serve Univer Sheets app from /univer/*
 	handle_path /univer/* {
 		root * /usr/share/caddy/univer/sheets
 		try_files {path} {path}/ /index.html
 		file_server
 	}
+
 	# Main SPA routing at /
-	try_files {path} /index.html
-	file_server
+	handle {
+		try_files {path} /index.html
+		file_server
+	}
+
 	zeaburextension
 	log {
 		output stderr
