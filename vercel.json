@@ -1,6 +1,8 @@
 {
   "rewrites": [
     { "source": "/", "destination": "/index.html" },
+    { "source": "/univer", "destination": "/univer/index.html" },
+    { "source": "/univer/:path*", "destination": "/univer/:path*" },
     { "source": "/about", "destination": "/index.html" },
     { "source": "/become-partner", "destination": "/index.html" },
     { "source": "/dashboard", "destination": "/index.html" },

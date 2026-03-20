@@ -210,7 +210,12 @@ async function main() {
         await nodeBuildTask();
         await ctx.watch();
 
-        const port = isE2E ? 3000 : await detect(3002);
+        const requestedPort = Number(process.env.UNIVER_PORT || 3002);
+        const availablePort = await detect(requestedPort);
+        if (!isE2E && availablePort !== requestedPort) {
+            throw new Error(`Requested UNIVER_PORT ${requestedPort} is not available (available: ${availablePort}).`);
+        }
+        const port = isE2E ? 3000 : requestedPort;
         await ctx.serve({
             servedir: './local',
             port,

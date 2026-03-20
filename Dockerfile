@@ -25,7 +25,7 @@ RUN mkdir -p /etc/caddy && cat > /etc/caddy/Caddyfile << 'EOF'
 	respond @unsafePath 404
 
 	handle_path /univer/* {
-		root * /usr/share/caddy/univer/sheets
+		root * /usr/share/caddy/univer
 		try_files {path} {path}/ /index.html
 		file_server
 	}

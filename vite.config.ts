@@ -6,13 +6,16 @@ import { vite404Plugin } from './vite-404-plugin'
 
 export default defineConfig({
   server: {
+    host: '0.0.0.0',
+    port: 5173,
+    strictPort: true,
     proxy: {
       '/api/send-email': {
         target: 'http://localhost:3000',
         changeOrigin: true,
       },
       '/univer': {
-        target: 'http://localhost:3002',
+        target: `http://localhost:${process.env.UNIVER_PORT || '3002'}`,
         changeOrigin: true,
         ws: true,
         rewrite: (path) => path.replace(/^\/univer/, ''),

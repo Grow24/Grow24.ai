@@ -5,9 +5,9 @@
 	}
 	respond @unsafePath 404
 
-	# Serve Univer Sheets app from /univer/*
+	# Serve full Univer static app from /univer/*
 	handle_path /univer/* {
-		root * /usr/share/caddy/univer/sheets
+		root * /usr/share/caddy/univer
 		try_files {path} {path}/ /index.html
 		file_server
 	}

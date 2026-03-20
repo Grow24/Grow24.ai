@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:both": "concurrently -k -n main,univer -c cyan,magenta \"UNIVER_PORT=3002 npm run dev\" \"UNIVER_PORT=3002 npm run dev:univer\"",
     "build": "npm run build:main && npm run build:univer:static && npm run copy:univer",
     "build:main": "vite build",
     "build:univer": "cd univer && CI=true pnpm install --frozen-lockfile && pnpm build && pnpm build:demo",
@@ -55,6 +56,7 @@
     "@typescript-eslint/parser": "^6.19.0",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.17",
+    "concurrently": "^9.2.1",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.37.5",
