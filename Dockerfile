@@ -30,6 +30,15 @@ RUN mkdir -p /etc/caddy && cat > /etc/caddy/Caddyfile << 'EOF'
 		file_server
 	}
 
+	@univerRootAssets {
+		path /chunk-*.js /chunk-*.js.map /vs/* /worker.js /lazy.js
+	}
+	handle @univerRootAssets {
+		root * /usr/share/caddy/univer
+		try_files {path} =404
+		file_server
+	}
+
 	handle {
 		try_files {path} /index.html
 		file_server

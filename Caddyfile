@@ -12,6 +12,17 @@
 		file_server
 	}
 
+	# Univer bundle emits chunk files requested from domain root (e.g. /chunk-*.js)
+	# Serve those from the Univer output directory instead of falling back to main index.html.
+	@univerRootAssets {
+		path /chunk-*.js /chunk-*.js.map /vs/* /worker.js /lazy.js
+	}
+	handle @univerRootAssets {
+		root * /usr/share/caddy/univer
+		try_files {path} =404
+		file_server
+	}
+
 	# Main SPA routing at /
 	handle {
 		try_files {path} /index.html

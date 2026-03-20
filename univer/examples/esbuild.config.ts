@@ -160,6 +160,8 @@ const config: SameShape<BuildOptions, BuildOptions> = {
     bundle: true,
     format: 'esm',
     splitting: true,
+    // Use relative URLs so chunks resolve under /univer/ in production.
+    publicPath: './',
     color: true,
     loader: { '.svg': 'file', '.ttf': 'file' },
     sourcemap: args.watch,
