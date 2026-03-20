@@ -4,9 +4,9 @@
 		path /.git/* /univer/.git/* /node_modules/* /vendor/* /.venv/*
 	}
 	respond @unsafePath 404
-	# Serve Univer static app from /univer/*
+	# Serve Univer Sheets app from /univer/*
 	handle_path /univer/* {
-		root * /usr/share/caddy/univer
+		root * /usr/share/caddy/univer/sheets
 		try_files {path} {path}/ /index.html
 		file_server
 	}
