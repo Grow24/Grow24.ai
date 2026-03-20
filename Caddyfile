@@ -18,7 +18,6 @@
 		file_server
 	}
 
-	zeaburextension
 	log {
 		output stderr
 	}
