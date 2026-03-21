@@ -27,6 +27,13 @@ RUN mkdir -p /etc/caddy && cat > /etc/caddy/Caddyfile << 'EOF'
 	@univerExact path /univer
 	redir @univerExact /univer/ 308
 
+	@univerAssets path_regexp univer_assets ^/univer/.*\.(js|mjs|css|map|json|wasm|ttf|woff|woff2|svg|png|jpg|jpeg|gif|webp)$
+	handle @univerAssets {
+		root * /usr/share/caddy
+		try_files {path} =404
+		file_server
+	}
+
 	handle_path /univer/* {
 		root * /usr/share/caddy/univer
 		try_files {path} {path}/ /index.html
