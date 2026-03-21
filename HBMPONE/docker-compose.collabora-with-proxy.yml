@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  collabora:
+    # Using the dev edition which has better HTTP support
+    image: collabora/code:24.04.9.2.1
+    container_name: hbmp-collabora
+    environment:
+      - aliasgroup1=http://nginx:8080
+      - domain=localhost
+      - username=admin
+      - password=admin
+      - extra_params=--o:ssl.enable=false --o:ssl.termination=true --o:logging.level=trace --o:net.proto=all
+      - DONT_GEN_SSL_CERT=true
+    cap_add:
+      - MKNOD
+    restart: unless-stopped
+    networks:
+      - collabora-net
+
+  nginx:
+    image: nginx:alpine
+    container_name: collabora-proxy
+    ports:
+      - "9980:8080"
+    volumes:
+      - ./nginx-collabora.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - collabora
+    networks:
+      - collabora-net
+    restart: unless-stopped
+
+networks:
+  collabora-net:
+    driver: bridge

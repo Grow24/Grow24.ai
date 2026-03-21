@@ -14,8 +14,20 @@ export default defineConfig({
       ignored: ['**/univer/examples/local/**'],
     },
     proxy: {
+      // More specific than `/api` → HBMP backend
       '/api/send-email': {
         target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+      // HBMPONE client (Vite) — keep /HBMPONE prefix; client uses base: /HBMPONE/
+      '/HBMPONE': {
+        target: `http://localhost:${process.env.HBMPONE_PORT || '5175'}`,
+        changeOrigin: true,
+        ws: true,
+      },
+      // HBMP docs API (Express on 4000 by default)
+      '/api': {
+        target: `http://localhost:${process.env.HBMP_API_PORT || '4000'}`,
         changeOrigin: true,
       },
       '/univer': {

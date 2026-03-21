@@ -33,7 +33,7 @@ npm run build
 1. Visit [Zeabur Dashboard](https://dashboard.zeabur.com)
 2. Create new project
 3. Connect GitHub repository
-4. **Frontend:** deploy with the **root `Dockerfile`** (port **8080**), not plain static hosting — this serves both `/` and `/univer/` correctly via Caddy. See **[DEPLOY_ZEABUR.md](./DEPLOY_ZEABUR.md)**.
+4. **Frontend:** deploy with the **root `Dockerfile`** (port **8080**), not plain static hosting — Caddy serves `/`, `/univer/`, and `/HBMPONE/` from **`Caddyfile`**. See **[DEPLOY_ZEABUR.md](./DEPLOY_ZEABUR.md)**.
 5. Set environment variables (see below)
 6. Deploy!
 
@@ -43,6 +43,8 @@ npm run build
 
 ```env
 VITE_API_ENDPOINT=https://your-backend.zeabur.app/api/chat
+# HBMPONE client (build-time): full URL of HBMP API, e.g. https://your-hbmp-api.zeabur.app/api
+# VITE_API_URL=https://your-hbmp-api.zeabur.app/api
 # Optional: set explicitly for Contact Us → Send Email (defaults to same host as above)
 # VITE_SEND_EMAIL_ENDPOINT=https://your-backend.zeabur.app/api/send-email
 VITE_WHATSAPP_NUMBER=+91 9370239600

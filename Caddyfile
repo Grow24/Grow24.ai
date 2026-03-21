@@ -1,7 +1,7 @@
 :8080 {
 	root * /usr/share/caddy
 	@unsafePath {
-		path /.git/* /univer/.git/* /node_modules/* /vendor/* /.venv/*
+		path /.git/* /univer/.git/* /HBMPONE/.git/* /node_modules/* /vendor/* /.venv/*
 	}
 	respond @unsafePath 404
 
@@ -32,6 +32,23 @@
 	handle @univerRootAssets {
 		root * /usr/share/caddy/univer
 		try_files {path} =404
+		file_server
+	}
+
+	# --- HBMPONE (Vite base: /HBMPONE/) — same pattern as /univer/ ---
+	@hbmpExact path /HBMPONE
+	redir @hbmpExact /HBMPONE/ 308
+
+	@hbmpAssets path_regexp hbmp_assets ^/HBMPONE/.*\.(js|mjs|css|map|json|wasm|ttf|woff|woff2|svg|png|jpg|jpeg|gif|webp|ico)$
+	handle @hbmpAssets {
+		root * /usr/share/caddy
+		try_files {path} =404
+		file_server
+	}
+
+	handle_path /HBMPONE/* {
+		root * /usr/share/caddy/HBMPONE
+		try_files {path} {path}/ /index.html
 		file_server
 	}
 

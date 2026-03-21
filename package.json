@@ -6,8 +6,12 @@
   "scripts": {
     "dev": "vite",
     "dev:both": "concurrently -k -n main,univer -c cyan,magenta \"UNIVER_PORT=3002 npm run dev\" \"UNIVER_PORT=3002 npm run dev:univer\"",
-    "build": "npm run build:main && npm run build:univer:static && npm run copy:univer && node scripts/patch-univer-dist-paths.mjs && node scripts/verify-univer-dist.mjs",
+    "dev:hbmpone": "cd HBMPONE/client && HBMPONE_PORT=${HBMPONE_PORT:-5175} HBMPONE_BASE=/HBMPONE/ VITE_API_URL=/api npx vite",
+    "dev:univer-hbmp": "concurrently -k -n univer,hbmp -c magenta,green \"UNIVER_PORT=${UNIVER_PORT:-3002} npm run dev:univer\" \"npm run dev:hbmpone\"",
+    "dev:all": "concurrently -k -n main,univer,hbmp -c cyan,magenta,green \"HBMPONE_PORT=${HBMPONE_PORT:-5175} UNIVER_PORT=${UNIVER_PORT:-3002} HBMP_API_PORT=${HBMP_API_PORT:-4000} npm run dev\" \"UNIVER_PORT=${UNIVER_PORT:-3002} npm run dev:univer\" \"npm run dev:hbmpone\"",
+    "build": "npm run build:main && npm run build:hbmpone && npm run build:univer:static && npm run copy:univer && node scripts/patch-univer-dist-paths.mjs && node scripts/verify-univer-dist.mjs && node scripts/verify-hbmp-dist.mjs",
     "build:main": "vite build",
+    "build:hbmpone": "cd HBMPONE/client && npm ci && HBMPONE_BASE=/HBMPONE/ VITE_API_URL=\"${VITE_API_URL:-/api}\" npm run build && mkdir -p ../../dist/HBMPONE && rm -rf ../../dist/HBMPONE && cp -r dist/. ../../dist/HBMPONE/",
     "build:univer": "cd univer && CI=true pnpm install --frozen-lockfile && pnpm build && pnpm build:demo",
     "build:univer:static": "corepack enable && corepack prepare pnpm@10.24.0 --activate && cd univer && pnpm run install:ci && pnpm run build:static",
     "copy:univer": "mkdir -p dist/univer && cp -r univer/examples/local/. dist/univer/ && (test -f dist/univer/index.html || cp scripts/univer-index.html dist/univer/index.html)",

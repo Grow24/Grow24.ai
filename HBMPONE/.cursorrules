@@ -1,0 +1,57 @@
+# HBMP Docs Platform - Cursor Rules
+
+## Context
+You are helping build a monorepo called hbmp-docs-platform for managing business documentation.
+
+## Architecture Rules
+
+### Backend (/server)
+- Node.js 20, TypeScript, Express
+- Prisma ORM with SQLite (file: server/prisma/dev.db)
+- REST APIs as specified in docs/api-spec.md
+- Listen on port 4000
+- Enable CORS for http://localhost:5173
+- Use proper error handling and validation
+
+### Frontend (/client)
+- React 18+ with Vite
+- TypeScript
+- shadcn/ui components + Tailwind CSS
+- React Router for navigation
+- Functional components with hooks
+- Connect to backend at http://localhost:4000/api
+
+## Code Style
+- Use TypeScript strictly (no `any` unless necessary)
+- Prefer functional components and hooks
+- Use async/await over promises
+- Follow RESTful API conventions
+- Use meaningful variable and function names
+- Add comments for complex logic
+
+## Before Making Changes
+1. ALWAYS read relevant docs/ files first:
+   - docs/system-overview.md
+   - docs/domain-model.md
+   - docs/api-spec.md
+   - docs/ui-spec.md
+
+2. Follow the established patterns
+3. Test locally before committing
+
+## MVP Focus
+- Start with Business Case document flow end-to-end
+- Keep it simple and working
+- Add features incrementally
+- No authentication in v1 (use fake user)
+
+## Libraries to Use
+- Backend: express, prisma, zod (validation), docx (export), pdf-lib (PDF export)
+- Frontend: react, react-router-dom, axios, @tanstack/react-query, shadcn/ui, tailwindcss, tip-tap (rich text editor)
+
+## Error Handling
+- Always handle errors gracefully
+- Show user-friendly error messages
+- Log errors server-side
+- Use proper HTTP status codes
+
