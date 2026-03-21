@@ -1,3 +1,5 @@
-public
+# Generated demo HTML under public/* — keep only committed entry assets tracked.
+# (Using `public` alone prevents Git from ever tracking !public/index.html.)
+public/**
 !public/index.html
 !public/favicon.svg

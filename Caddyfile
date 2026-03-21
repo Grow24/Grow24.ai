@@ -5,6 +5,10 @@
 	}
 	respond @unsafePath 404
 
+	# Normalize /univer -> /univer/ (otherwise catch-all may serve main SPA)
+	@univerExact path /univer
+	redir @univerExact /univer/ 308
+
 	# Serve full Univer static app from /univer/*
 	handle_path /univer/* {
 		root * /usr/share/caddy/univer

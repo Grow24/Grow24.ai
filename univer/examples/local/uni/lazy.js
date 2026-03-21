@@ -5,20 +5,20 @@ import {
   RemoveDocUniFormulaMutation,
   UniverDocUniFormulaPlugin,
   UpdateDocUniFormulaMutation
-} from "/univer/chunk-RBDGU5A5.js";
+} from "./chunk-TFEGL6LS.js";
 import {
   CanvasView,
   ISlideEditorBridgeService,
   SLIDE_EDITOR_ID
-} from "/univer/chunk-BWQLCAPN.js";
+} from "./chunk-HAJU43KU.js";
 import {
   UniverSheetsFilterUIPlugin
-} from "/univer/chunk-G47N2NM6.js";
-import "/univer/chunk-NFRKHRYD.js";
+} from "./chunk-5T2OU57I.js";
+import "./chunk-I56OIIV5.js";
 import {
   FORMULA_PROMPT_ACTIVATED
-} from "/univer/chunk-HTZYHXGN.js";
-import "/univer/chunk-LXKHVO4Y.js";
+} from "./chunk-6TVBTQ2X.js";
+import "./chunk-WPDJPIZN.js";
 import {
   DeleteLeftCommand,
   DocCanvasPopManagerService,
@@ -28,7 +28,7 @@ import {
   InsertCommand,
   MoveCursorOperation,
   replaceSelectionFactory
-} from "/univer/chunk-4MI62PCK.js";
+} from "./chunk-IJAOVONG.js";
 import {
   CheckMarkIcon,
   CloseIcon,
@@ -40,18 +40,18 @@ import {
   require_react,
   useDependency,
   useObservable
-} from "/univer/chunk-XUI25LTE.js";
+} from "./chunk-R42OVMY4.js";
 import {
   RegisterOtherFormulaService
-} from "/univer/chunk-H5NJEYZ5.js";
+} from "./chunk-TOYW4IMU.js";
 import {
   DataSyncPrimaryController
-} from "/univer/chunk-CDHET2WN.js";
+} from "./chunk-SV6SUIS4.js";
 import {
   IRenderManagerService,
   RichText
-} from "/univer/chunk-7ZBW2CWY.js";
-import "/univer/chunk-SSSDKVVD.js";
+} from "./chunk-BPIUAXSQ.js";
+import "./chunk-G4UBMCOX.js";
 import {
   BehaviorSubject,
   BuildTextUtils,
@@ -82,13 +82,13 @@ import {
   take,
   toDisposable,
   touchDependencies
-} from "/univer/chunk-YLGQP2EX.js";
+} from "./chunk-DN46DLPI.js";
 import {
   __decorateClass,
   __decorateParam,
   __publicField,
   __toESM
-} from "/univer/chunk-AROCCXDN.js";
+} from "./chunk-62WIURJL.js";
 
 // ../packages-experimental/uni-formula-ui/src/const.ts
 var DOC_FORMULA_UI_PLUGIN_NAME = "DOC_FORMULA_UI_PLUGIN";
@@ -1069,3 +1069,4 @@ function getLazyPlugins() {
 export {
   getLazyPlugins as default
 };
+//# sourceMappingURL=uni/lazy.js.map
