@@ -1,63 +1,63 @@
 import {
   UniverSheetsDataValidationMobileUIPlugin
-} from "../chunk-DWKWUDJW.js";
+} from "./chunk-OILTDE5W.js";
 import {
   UniverSheetsConditionalFormattingMobileUIPlugin
-} from "../chunk-J6CT3WQT.js";
+} from "./chunk-ZIBCZIIV.js";
 import {
   UniverSheetsFilterMobileUIPlugin
-} from "../chunk-LHQ67NL3.js";
-import "../chunk-HUZHMH6I.js";
+} from "./chunk-5T2OU57I.js";
+import "./chunk-2CQBTLI7.js";
 import {
   UniverSheetsFilterPlugin
-} from "../chunk-SSBZJR5N.js";
+} from "./chunk-I56OIIV5.js";
 import {
   UniverSheetsFormulaUIPlugin
-} from "../chunk-ZR7BMKL3.js";
+} from "./chunk-6TVBTQ2X.js";
 import {
   DEFAULT_WORKBOOK_DATA_DEMO
-} from "../chunk-HR7RQ36T.js";
+} from "./chunk-VMFOP3F4.js";
 import {
   UniverSheetsNumfmtUIPlugin
-} from "../chunk-MYZLY44N.js";
+} from "./chunk-GGUDRFK6.js";
 import {
   UniverSheetsNumfmtPlugin
-} from "../chunk-GNGDE6PL.js";
+} from "./chunk-W2QCNNNM.js";
 import {
   UniverSheetsDataValidationPlugin
-} from "../chunk-ZB3FDSA3.js";
+} from "./chunk-ZRJXDTFY.js";
 import {
   UniverSheetsMobileUIPlugin
-} from "../chunk-BGPMR3ZY.js";
+} from "./chunk-WPDJPIZN.js";
 import {
   UniverDocsPlugin,
   UniverDocsUIPlugin
-} from "../chunk-PAANS7B4.js";
-import "../chunk-222VPS6G.js";
+} from "./chunk-IJAOVONG.js";
+import "./chunk-63AGE64E.js";
 import {
   UniverMobileUIPlugin
-} from "../chunk-CSPB4B6P.js";
+} from "./chunk-R42OVMY4.js";
 import {
   zh_CN_default
-} from "../chunk-UBR24CGB.js";
+} from "./chunk-J4OFPKRX.js";
 import {
   UniverSheetsFormulaPlugin
-} from "../chunk-EK3JRTKZ.js";
+} from "./chunk-TOYW4IMU.js";
 import {
   UniverFormulaEnginePlugin,
   UniverRPCMainThreadPlugin,
   UniverSheetsPlugin
-} from "../chunk-O5WA5YRR.js";
+} from "./chunk-SV6SUIS4.js";
 import {
   UniverRenderEnginePlugin
-} from "../chunk-I5MCYWYL.js";
-import "../chunk-OJWCZZ56.js";
+} from "./chunk-BPIUAXSQ.js";
+import "./chunk-G4UBMCOX.js";
 import {
   O,
   Univer,
   UserManagerService
-} from "../chunk-ZRYQFDHJ.js";
-import "../chunk-NSSCU2QI.js";
+} from "./chunk-DN46DLPI.js";
+import "./chunk-62WIURJL.js";
 
 // src/mobile-s/main.ts
 var univer = new Univer({
@@ -99,4 +99,4 @@ var injector = univer.__getInjector();
 var userManagerService = injector.get(UserManagerService);
 userManagerService.setCurrentUser(mockUser);
 univer.createUnit(O.UNIVER_SHEET, DEFAULT_WORKBOOK_DATA_DEMO);
-//# sourceMappingURL=main.js.map
+//# sourceMappingURL=mobile-s/main.js.map

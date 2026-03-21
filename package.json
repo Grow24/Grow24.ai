@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:both": "concurrently -k -n main,univer -c cyan,magenta \"UNIVER_PORT=3002 npm run dev\" \"UNIVER_PORT=3002 npm run dev:univer\"",
-    "build": "npm run build:main && npm run build:univer:static && npm run copy:univer",
+    "build": "npm run build:main && npm run build:univer:static && npm run copy:univer && node scripts/verify-univer-dist.mjs",
     "build:main": "vite build",
     "build:univer": "cd univer && CI=true pnpm install --frozen-lockfile && pnpm build && pnpm build:demo",
     "build:univer:static": "corepack enable && corepack prepare pnpm@10.24.0 --activate && cd univer && pnpm run install:ci && pnpm run build:static",

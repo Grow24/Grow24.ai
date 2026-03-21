@@ -1,23 +1,23 @@
 import {
   UniverSheetsFilterPlugin
-} from "../chunk-SSBZJR5N.js";
+} from "./chunk-I56OIIV5.js";
 import {
   zh_CN_default
-} from "../chunk-UBR24CGB.js";
+} from "./chunk-J4OFPKRX.js";
 import {
   UniverRemoteSheetsFormulaPlugin
-} from "../chunk-EK3JRTKZ.js";
+} from "./chunk-TOYW4IMU.js";
 import {
   UniverFormulaEnginePlugin,
   UniverRPCWorkerThreadPlugin,
   UniverSheetsPlugin
-} from "../chunk-O5WA5YRR.js";
-import "../chunk-I5MCYWYL.js";
-import "../chunk-OJWCZZ56.js";
+} from "./chunk-SV6SUIS4.js";
+import "./chunk-BPIUAXSQ.js";
+import "./chunk-G4UBMCOX.js";
 import {
   Univer
-} from "../chunk-ZRYQFDHJ.js";
-import "../chunk-NSSCU2QI.js";
+} from "./chunk-DN46DLPI.js";
+import "./chunk-62WIURJL.js";
 
 // src/sheets/worker.ts
 var univer = new Univer({
@@ -35,4 +35,4 @@ univer.registerPlugins([
   [UniverSheetsFilterPlugin]
 ]);
 self.univer = univer;
-//# sourceMappingURL=worker.js.map
+//# sourceMappingURL=sheets/worker.js.map

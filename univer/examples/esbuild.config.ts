@@ -39,6 +39,12 @@ const args = minimist(process.argv.slice(2));
 const isE2E = !!args.e2e;
 const isReact16 = React.version.startsWith('16');
 
+// Production: all split chunks & dynamic imports must load under /univer/ (Zeabur + Caddy).
+// Watch/dev: relative paths so esbuild serve on :3002 and Vite proxy on :5173/univer both work.
+const univerAssetBase
+    = process.env.UNIVER_ASSET_BASE?.replace(/\/?$/, '/')
+        ?? (args.watch ? './' : '/univer/');
+
 // User should also config their bundler to build monaco editor's resources for web worker.
 const monacoEditorEntryPoints = [
     'vs/language/json/json.worker.js',
@@ -160,8 +166,7 @@ const config: SameShape<BuildOptions, BuildOptions> = {
     bundle: true,
     format: 'esm',
     splitting: true,
-    // Use relative URLs so chunks resolve under /univer/ in production.
-    publicPath: './',
+    publicPath: univerAssetBase,
     color: true,
     loader: { '.svg': 'file', '.ttf': 'file' },
     sourcemap: args.watch,

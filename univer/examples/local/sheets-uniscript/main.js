@@ -1,55 +1,55 @@
 import {
   UniverUniscriptPlugin
-} from "../chunk-7MGMVNE2.js";
-import "../chunk-KWR4RQXX.js";
-import "../chunk-FQB5FGHR.js";
-import "../chunk-CH3J6FPQ.js";
+} from "./chunk-OR3E4XC3.js";
+import "./chunk-NYIU2LNW.js";
+import "./chunk-T4VQCJ7G.js";
+import "./chunk-UR3YKDTU.js";
 import {
   UniverDebuggerPlugin
-} from "../chunk-EBHXHYVD.js";
-import "../chunk-JTSBSRTH.js";
-import "../chunk-6GIX2Z6C.js";
-import "../chunk-JWBVGNBO.js";
+} from "./chunk-UJI7K6GU.js";
+import "./chunk-HFVM6MYW.js";
+import "./chunk-6W4YZ3HG.js";
+import "./chunk-JWXRDIU7.js";
 import {
   UNISCRIT_WORKBOOK_DATA_DEMO
-} from "../chunk-HR7RQ36T.js";
+} from "./chunk-VMFOP3F4.js";
 import {
   UniverSheetsNumfmtUIPlugin
-} from "../chunk-MYZLY44N.js";
+} from "./chunk-GGUDRFK6.js";
 import {
   UniverSheetsNumfmtPlugin
-} from "../chunk-GNGDE6PL.js";
-import "../chunk-ZB3FDSA3.js";
+} from "./chunk-W2QCNNNM.js";
+import "./chunk-ZRJXDTFY.js";
 import {
   UniverSheetsUIPlugin
-} from "../chunk-BGPMR3ZY.js";
+} from "./chunk-WPDJPIZN.js";
 import {
   UniverDocsPlugin,
   UniverDocsUIPlugin
-} from "../chunk-PAANS7B4.js";
-import "../chunk-222VPS6G.js";
+} from "./chunk-IJAOVONG.js";
+import "./chunk-63AGE64E.js";
 import {
   UniverUIPlugin
-} from "../chunk-CSPB4B6P.js";
+} from "./chunk-R42OVMY4.js";
 import {
   zh_CN_default
-} from "../chunk-UBR24CGB.js";
+} from "./chunk-J4OFPKRX.js";
 import {
   UniverSheetsFormulaPlugin
-} from "../chunk-EK3JRTKZ.js";
+} from "./chunk-TOYW4IMU.js";
 import {
   UniverFormulaEnginePlugin,
   UniverSheetsPlugin
-} from "../chunk-O5WA5YRR.js";
+} from "./chunk-SV6SUIS4.js";
 import {
   UniverRenderEnginePlugin
-} from "../chunk-I5MCYWYL.js";
-import "../chunk-OJWCZZ56.js";
+} from "./chunk-BPIUAXSQ.js";
+import "./chunk-G4UBMCOX.js";
 import {
   O,
   Univer
-} from "../chunk-ZRYQFDHJ.js";
-import "../chunk-NSSCU2QI.js";
+} from "./chunk-DN46DLPI.js";
+import "./chunk-62WIURJL.js";
 
 // src/sheets-uniscript/main.ts
 var univer = new Univer({
@@ -82,4 +82,4 @@ univer.registerPlugin(UniverUniscriptPlugin, {
 });
 univer.createUnit(O.UNIVER_SHEET, UNISCRIT_WORKBOOK_DATA_DEMO);
 window.univer = univer;
-//# sourceMappingURL=main.js.map
+//# sourceMappingURL=sheets-uniscript/main.js.map

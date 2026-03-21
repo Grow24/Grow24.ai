@@ -1,10 +1,10 @@
 import {
   UniverSheetsFindReplacePlugin,
   UniverSheetsSortUIPlugin
-} from "../chunk-DPZQZD2Z.js";
+} from "./chunk-2INEARRN.js";
 import {
   UniverDocUniFormulaPlugin
-} from "../chunk-764ESCAG.js";
+} from "./chunk-TFEGL6LS.js";
 import {
   ActivateSlidePageOperation,
   AppendSlideOperation,
@@ -17,50 +17,50 @@ import {
   UniverSlidesPlugin,
   UniverSlidesUIPlugin,
   menuSchema as menuSchema4
-} from "../chunk-5XOCCV3C.js";
+} from "./chunk-HAJU43KU.js";
 import {
   UniverSheetsConditionalFormattingUIPlugin
-} from "../chunk-J6CT3WQT.js";
+} from "./chunk-ZIBCZIIV.js";
 import {
   UniverThreadCommentUIPlugin
-} from "../chunk-C3BN3AO3.js";
+} from "./chunk-TAAUQX2Y.js";
 import {
   UniverSheetsHyperLinkUIPlugin
-} from "../chunk-TUYVJHM2.js";
+} from "./chunk-354FJ26S.js";
 import {
   UniverSheetsThreadCommentPlugin
-} from "../chunk-VKG4ODRP.js";
-import "../chunk-4ZNIAQOP.js";
-import "../chunk-7I7VZCGI.js";
-import "../chunk-HUZHMH6I.js";
+} from "./chunk-KQMHMMC7.js";
+import "./chunk-LI73LENO.js";
+import "./chunk-OD5D7OYC.js";
+import "./chunk-2CQBTLI7.js";
 import {
   DOCS_IMAGE_MENU_ID,
   UniverDocsDrawingUIPlugin
-} from "../chunk-JTSBSRTH.js";
+} from "./chunk-HFVM6MYW.js";
 import {
   SHEETS_IMAGE_MENU_ID,
   UniverSheetsDrawingUIPlugin
-} from "../chunk-6GIX2Z6C.js";
+} from "./chunk-6W4YZ3HG.js";
 import {
   FUniver
-} from "../chunk-JWBVGNBO.js";
+} from "./chunk-JWXRDIU7.js";
 import {
   UniverSheetsFormulaUIPlugin
-} from "../chunk-ZR7BMKL3.js";
+} from "./chunk-6TVBTQ2X.js";
 import {
   DEFAULT_DOCUMENT_DATA_CN,
   DEFAULT_DOCUMENT_DATA_EN,
   DEFAULT_SLIDE_DATA,
   DEFAULT_WORKBOOK_DATA_DEMO,
   DEFAULT_WORKBOOK_DATA_DEMO1
-} from "../chunk-HR7RQ36T.js";
+} from "./chunk-VMFOP3F4.js";
 import {
   UniverSheetsNumfmtUIPlugin
-} from "../chunk-MYZLY44N.js";
+} from "./chunk-GGUDRFK6.js";
 import {
   UniverSheetsNumfmtPlugin
-} from "../chunk-GNGDE6PL.js";
-import "../chunk-ZB3FDSA3.js";
+} from "./chunk-W2QCNNNM.js";
+import "./chunk-ZRJXDTFY.js";
 import {
   EMBEDDING_FORMULA_EDITOR_COMPONENT_KEY,
   IEditorBridgeService,
@@ -82,7 +82,7 @@ import {
   useActiveWorkbook,
   useKeyEventConfig,
   useWorkbooks
-} from "../chunk-BGPMR3ZY.js";
+} from "./chunk-WPDJPIZN.js";
 import {
   BulletListCommand,
   DocCreateTableOperation,
@@ -102,8 +102,8 @@ import {
   UniverDocsPlugin,
   UniverDocsUIPlugin,
   menuSchema as menuSchema2
-} from "../chunk-PAANS7B4.js";
-import "../chunk-222VPS6G.js";
+} from "./chunk-IJAOVONG.js";
+import "./chunk-63AGE64E.js";
 import {
   BrowserClipboardService,
   Button,
@@ -199,13 +199,13 @@ import {
   useDependency,
   useFloating,
   useObservable
-} from "../chunk-CSPB4B6P.js";
+} from "./chunk-R42OVMY4.js";
 import {
   zh_CN_default
-} from "../chunk-UBR24CGB.js";
+} from "./chunk-J4OFPKRX.js";
 import {
   UniverSheetsFormulaPlugin
-} from "../chunk-EK3JRTKZ.js";
+} from "./chunk-TOYW4IMU.js";
 import {
   InsertSheetCommand,
   InsertSheetMutation,
@@ -229,12 +229,12 @@ import {
   WorksheetProtectionRuleModel,
   WorksheetSetCellStylePermission,
   WorksheetSetCellValuePermission
-} from "../chunk-O5WA5YRR.js";
+} from "./chunk-SV6SUIS4.js";
 import {
   IRenderManagerService,
   UniverRenderEnginePlugin
-} from "../chunk-I5MCYWYL.js";
-import "../chunk-OJWCZZ56.js";
+} from "./chunk-BPIUAXSQ.js";
+import "./chunk-G4UBMCOX.js";
 import {
   BehaviorSubject,
   DOCS_FORMULA_BAR_EDITOR_UNIT_ID_KEY,
@@ -280,14 +280,14 @@ import {
   take,
   throttleTime,
   toDisposable
-} from "../chunk-ZRYQFDHJ.js";
+} from "./chunk-DN46DLPI.js";
 import {
   __commonJS,
   __decorateClass,
   __decorateParam,
   __publicField,
   __toESM
-} from "../chunk-NSSCU2QI.js";
+} from "./chunk-62WIURJL.js";
 
 // ../node_modules/.pnpm/use-sync-external-store@1.6.0_react@19.2.0/node_modules/use-sync-external-store/cjs/use-sync-external-store-shim.development.js
 var require_use_sync_external_store_shim_development = __commonJS({
@@ -11802,7 +11802,7 @@ univer.createUnit(O.UNIVER_SHEET, DEFAULT_WORKBOOK_DATA_DEMO);
 univer.createUnit(O.UNIVER_DOC, DEFAULT_DOCUMENT_DATA_EN);
 univer.createUnit(O.UNIVER_SHEET, DEFAULT_WORKBOOK_DATA_DEMO1);
 setTimeout(() => {
-  import("./lazy.js").then((lazy) => {
+  import("./uni/lazy.js").then((lazy) => {
     const plugins = lazy.default();
     plugins.forEach((p) => univer.registerPlugin(p[0], p[1]));
     univer.createUnit(O.UNIVER_DOC, DEFAULT_DOCUMENT_DATA_CN);
@@ -11896,4 +11896,4 @@ use-sync-external-store/cjs/use-sync-external-store-shim/with-selector.developme
    * LICENSE file in the root directory of this source tree.
    *)
 */
-//# sourceMappingURL=main.js.map
+//# sourceMappingURL=uni/main.js.map

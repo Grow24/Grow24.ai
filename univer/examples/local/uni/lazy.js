@@ -5,20 +5,20 @@ import {
   RemoveDocUniFormulaMutation,
   UniverDocUniFormulaPlugin,
   UpdateDocUniFormulaMutation
-} from "../chunk-764ESCAG.js";
+} from "./chunk-TFEGL6LS.js";
 import {
   CanvasView,
   ISlideEditorBridgeService,
   SLIDE_EDITOR_ID
-} from "../chunk-5XOCCV3C.js";
+} from "./chunk-HAJU43KU.js";
 import {
   UniverSheetsFilterUIPlugin
-} from "../chunk-LHQ67NL3.js";
-import "../chunk-SSBZJR5N.js";
+} from "./chunk-5T2OU57I.js";
+import "./chunk-I56OIIV5.js";
 import {
   FORMULA_PROMPT_ACTIVATED
-} from "../chunk-ZR7BMKL3.js";
-import "../chunk-BGPMR3ZY.js";
+} from "./chunk-6TVBTQ2X.js";
+import "./chunk-WPDJPIZN.js";
 import {
   DeleteLeftCommand,
   DocCanvasPopManagerService,
@@ -28,7 +28,7 @@ import {
   InsertCommand,
   MoveCursorOperation,
   replaceSelectionFactory
-} from "../chunk-PAANS7B4.js";
+} from "./chunk-IJAOVONG.js";
 import {
   CheckMarkIcon,
   CloseIcon,
@@ -40,18 +40,18 @@ import {
   require_react,
   useDependency,
   useObservable
-} from "../chunk-CSPB4B6P.js";
+} from "./chunk-R42OVMY4.js";
 import {
   RegisterOtherFormulaService
-} from "../chunk-EK3JRTKZ.js";
+} from "./chunk-TOYW4IMU.js";
 import {
   DataSyncPrimaryController
-} from "../chunk-O5WA5YRR.js";
+} from "./chunk-SV6SUIS4.js";
 import {
   IRenderManagerService,
   RichText
-} from "../chunk-I5MCYWYL.js";
-import "../chunk-OJWCZZ56.js";
+} from "./chunk-BPIUAXSQ.js";
+import "./chunk-G4UBMCOX.js";
 import {
   BehaviorSubject,
   BuildTextUtils,
@@ -82,13 +82,13 @@ import {
   take,
   toDisposable,
   touchDependencies
-} from "../chunk-ZRYQFDHJ.js";
+} from "./chunk-DN46DLPI.js";
 import {
   __decorateClass,
   __decorateParam,
   __publicField,
   __toESM
-} from "../chunk-NSSCU2QI.js";
+} from "./chunk-62WIURJL.js";
 
 // ../packages-experimental/uni-formula-ui/src/const.ts
 var DOC_FORMULA_UI_PLUGIN_NAME = "DOC_FORMULA_UI_PLUGIN";
@@ -1069,4 +1069,4 @@ function getLazyPlugins() {
 export {
   getLazyPlugins as default
 };
-//# sourceMappingURL=lazy.js.map
+//# sourceMappingURL=uni/lazy.js.map

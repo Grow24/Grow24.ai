@@ -31,7 +31,7 @@ RUN mkdir -p /etc/caddy && cat > /etc/caddy/Caddyfile << 'EOF'
 	}
 
 	@univerRootAssets {
-		path /chunk-*.js /chunk-*.js.map /vs/* /worker.js /lazy.js
+		path_regexp ^/(chunk-.*\.js(\.map)?|lazy-.*\.js(\.map)?|very-lazy-.*\.js(\.map)?|vs/.*|worker\.js|lazy\.js)$
 	}
 	handle @univerRootAssets {
 		root * /usr/share/caddy/univer

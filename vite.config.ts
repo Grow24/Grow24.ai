@@ -9,6 +9,10 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 5173,
     strictPort: true,
+    // Univer writes to univer/examples/local; don't let that trigger main-app reloads
+    watch: {
+      ignored: ['**/univer/examples/local/**'],
+    },
     proxy: {
       '/api/send-email': {
         target: 'http://localhost:3000',

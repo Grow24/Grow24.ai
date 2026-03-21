@@ -1,36 +1,36 @@
 import {
   UniverSlidesPlugin,
   UniverSlidesUIPlugin
-} from "../chunk-5XOCCV3C.js";
+} from "./chunk-HAJU43KU.js";
 import {
   DEFAULT_SLIDE_DATA
-} from "../chunk-HR7RQ36T.js";
-import "../chunk-ZB3FDSA3.js";
+} from "./chunk-VMFOP3F4.js";
+import "./chunk-ZRJXDTFY.js";
 import {
   UniverDocsPlugin,
   UniverDocsUIPlugin,
   UniverDrawingPlugin
-} from "../chunk-PAANS7B4.js";
-import "../chunk-222VPS6G.js";
+} from "./chunk-IJAOVONG.js";
+import "./chunk-63AGE64E.js";
 import {
   UniverUIPlugin
-} from "../chunk-CSPB4B6P.js";
+} from "./chunk-R42OVMY4.js";
 import {
   zh_CN_default
-} from "../chunk-UBR24CGB.js";
-import "../chunk-EK3JRTKZ.js";
+} from "./chunk-J4OFPKRX.js";
+import "./chunk-TOYW4IMU.js";
 import {
   UniverFormulaEnginePlugin
-} from "../chunk-O5WA5YRR.js";
+} from "./chunk-SV6SUIS4.js";
 import {
   UniverRenderEnginePlugin
-} from "../chunk-I5MCYWYL.js";
-import "../chunk-OJWCZZ56.js";
+} from "./chunk-BPIUAXSQ.js";
+import "./chunk-G4UBMCOX.js";
 import {
   O,
   Univer
-} from "../chunk-ZRYQFDHJ.js";
-import "../chunk-NSSCU2QI.js";
+} from "./chunk-DN46DLPI.js";
+import "./chunk-62WIURJL.js";
 
 // src/slides/main.ts
 var univer = new Univer({
@@ -49,4 +49,4 @@ univer.registerPlugin(UniverSlidesPlugin);
 univer.registerPlugin(UniverSlidesUIPlugin);
 univer.createUnit(O.UNIVER_SLIDE, DEFAULT_SLIDE_DATA);
 window.univer = univer;
-//# sourceMappingURL=main.js.map
+//# sourceMappingURL=slides/main.js.map
