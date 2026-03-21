@@ -43,7 +43,7 @@ var package_default = {
     "pre-commit": "lint-staged",
     dev: "pnpm --filter univer-examples dev:demo -- --host 0.0.0.0",
     "install:ci": "CI=true pnpm install --frozen-lockfile",
-    "build:static": "pnpm build && pnpm build:demo",
+    "build:static": "pnpm build && pnpm --filter univer-examples run prepare && pnpm build:demo",
     "dev:libs": "pnpm --filter univer-examples dev:demo-libs",
     "dev:e2e": "pnpm --filter univer-examples dev:e2e",
     "use:react16": "tsx ./scripts/react-version-manager.ts --react=16",
@@ -119,11 +119,11 @@ if (true) {
     // eslint-disable-next-line node/prefer-global/process
     NODE_ENV: "production",
     // eslint-disable-next-line node/prefer-global/process
-    GIT_COMMIT_HASH: "a41b834",
+    GIT_COMMIT_HASH: "8dde1fa",
     // eslint-disable-next-line node/prefer-global/process
     GIT_REF_NAME: "main",
     // eslint-disable-next-line node/prefer-global/process
-    BUILD_TIME: "2026-03-21T02:53:52.591Z"
+    BUILD_TIME: "2026-03-21T04:07:52.226Z"
   });
 }
 function Examples() {

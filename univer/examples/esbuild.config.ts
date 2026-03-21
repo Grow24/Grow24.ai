@@ -175,9 +175,10 @@ const config: SameShape<BuildOptions, BuildOptions> = {
     plugins: [
         ignoreGlobalCssPlugin(),
         removeClassnameNewlinesPlugin(),
+        // `public/**/*` skips files directly under `public/` (e.g. index.html, favicon.svg).
         copyPlugin({
             assets: {
-                from: ['./public/**/*'],
+                from: ['./public/**'],
                 to: ['./'],
             },
         }),
