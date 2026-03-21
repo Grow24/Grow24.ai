@@ -1,0 +1,20 @@
+const t = {
+  "script-panel": {
+    title: "Uniscript",
+    tooltip: {
+      "menu-button": "Mở/Thu gọn bảng điều khiển Uniscript"
+    },
+    panel: {
+      execute: "Thực thi Uniscript"
+    }
+  },
+  uniscript: {
+    message: {
+      success: "Thực thi thành công",
+      failed: "Thực thi thất bại"
+    }
+  }
+};
+export {
+  t as default
+};

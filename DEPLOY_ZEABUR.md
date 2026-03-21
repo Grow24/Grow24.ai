@@ -5,6 +5,17 @@ This project should run as **two Zeabur services**:
 - `web-frontend`: static app + `/univer/*` served by Caddy (root `Dockerfile`)
 - `web-backend`: Express API in `backend/` (`backend/Dockerfile`)
 
+## 0) CRITICAL: Frontend must use Docker (not static export)
+
+The root **`Dockerfile`** runs `npm run build` (main site + Univer static bundle) and serves **`dist/`** with **Caddy** so that:
+
+- `/` → main SPA
+- `/univer/` → Univer app and its chunks under `/univer/*`
+
+If Zeabur is set to **Node static site** (only `zeabur.json` → `outputDirectory: dist`), **Caddy is not used**. Browsers may request Univer chunks at the wrong path and get **HTML instead of JavaScript** → blank `/univer/` page.
+
+**Fix:** In Zeabur → your frontend service → **use Dockerfile build** (root `Dockerfile`), expose port **8080**. Do not rely on plain static hosting for this repo.
+
 ## 1) Frontend service
 
 1. In Zeabur, create a service from this repo using the root `Dockerfile`.

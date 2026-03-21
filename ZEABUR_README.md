@@ -33,8 +33,9 @@ npm run build
 1. Visit [Zeabur Dashboard](https://dashboard.zeabur.com)
 2. Create new project
 3. Connect GitHub repository
-4. Set environment variables (see below)
-5. Deploy!
+4. **Frontend:** deploy with the **root `Dockerfile`** (port **8080**), not plain static hosting — this serves both `/` and `/univer/` correctly via Caddy. See **[DEPLOY_ZEABUR.md](./DEPLOY_ZEABUR.md)**.
+5. Set environment variables (see below)
+6. Deploy!
 
 ### Required Environment Variables
 

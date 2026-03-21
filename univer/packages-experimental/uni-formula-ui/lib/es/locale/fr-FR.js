@@ -1,0 +1,21 @@
+const e = {
+  "uni-formula": {
+    popup: {
+      title: {
+        new: "Créer une nouvelle formule",
+        existing: "Modifier la formule"
+      },
+      placeholder: "Cliquez ici pour insérer une formule ou continuez à taper pour fermer...",
+      button: {
+        confirm: "Confirmer",
+        cancel: "Annuler"
+      }
+    },
+    command: {
+      "stream-placeholder": "Formule Uni"
+    }
+  }
+};
+export {
+  e as default
+};

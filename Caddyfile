@@ -15,7 +15,7 @@
 	# Legacy / misconfigured builds may request Univer chunks at site root (/chunk-*.js).
 	# Those must NOT fall through to the main SPA (which returns HTML and breaks JS).
 	@univerRootAssets {
-		path_regexp ^/(chunk-.*\.js(\.map)?|lazy-.*\.js(\.map)?|very-lazy-.*\.js(\.map)?|vs/.*|worker\.js|lazy\.js)$
+		path_regexp univer_root ^/(chunk-.*\.js(\.map)?|lazy-.*\.js(\.map)?|very-lazy-.*\.js(\.map)?|vs/.*|worker\.js|lazy\.js)$
 	}
 	handle @univerRootAssets {
 		root * /usr/share/caddy/univer

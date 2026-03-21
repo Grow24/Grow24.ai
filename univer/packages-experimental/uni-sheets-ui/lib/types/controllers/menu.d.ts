@@ -1,0 +1,10 @@
+import { IAccessor } from '@univerjs/core';
+import { IMenuButtonItem } from '@univerjs/ui';
+export declare const SHEET_BOLD_MUTATION_ID = "sheet.command.uni-bold";
+export declare const SHEET_ITALIC_MUTATION_ID = "sheet.command.uni-italic";
+export declare const SHEET_UNDERLINE_MUTATION_ID = "sheet.command.uni-underline";
+export declare const SHEET_STRIKE_MUTATION_ID = "sheet.command.uni-strike";
+export declare function SheetBoldMenuItemFactory(accessor: IAccessor): IMenuButtonItem;
+export declare function SheetItalicMenuItemFactory(accessor: IAccessor): IMenuButtonItem;
+export declare function SheetUnderlineMenuItemFactory(accessor: IAccessor): IMenuButtonItem;
+export declare function SheetStrikeThroughMenuItemFactory(accessor: IAccessor): IMenuButtonItem;

@@ -1,0 +1,1 @@
+(function(e,t){typeof exports=="object"&&typeof module<"u"?module.exports=t():typeof define=="function"&&define.amd?define(t):(e=typeof globalThis<"u"?globalThis:e||self,e.UniverSheetsCrosshairHighlightZhCN=t())})(this,(function(){"use strict";return{crosshair:{button:{tooltip:"十字高亮"}}}}));

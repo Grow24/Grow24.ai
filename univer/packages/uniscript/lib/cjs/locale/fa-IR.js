@@ -1,0 +1,1 @@
+"use strict";const t={"script-panel":{title:"Uniscript",tooltip:{"menu-button":"نمایش/مخفی کردن پنل Uniscript"},panel:{execute:"اجرای اسکریپت"}},uniscript:{message:{success:"اجرای موفق",failed:"اجرای ناموفق"}}};module.exports=t;

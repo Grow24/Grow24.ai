@@ -1,0 +1,1 @@
+(function(e,o){typeof exports=="object"&&typeof module<"u"?module.exports=o():typeof define=="function"&&define.amd?define(o):(e=typeof globalThis<"u"?globalThis:e||self,e.UniverSheetsCrosshairHighlightKoKR=o())})(this,(function(){"use strict";return{crosshair:{button:{tooltip:"십자선 강조"}}}}));

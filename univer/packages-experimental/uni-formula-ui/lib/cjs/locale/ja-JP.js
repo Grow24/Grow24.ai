@@ -1,0 +1,1 @@
+"use strict";const e={"uni-formula":{popup:{title:{new:"新しい数式を作成",existing:"数式を編集"},placeholder:"数式を挿入するか、入力を続けて閉じます...",button:{confirm:"確定",cancel:"キャンセル"}},command:{"stream-placeholder":"Uni Formula"}}};module.exports=e;

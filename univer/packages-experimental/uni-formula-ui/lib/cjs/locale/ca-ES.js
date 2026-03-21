@@ -1,0 +1,1 @@
+"use strict";const a={"uni-formula":{popup:{title:{new:"Crear nova fórmula",existing:"Edita la fórmula"},placeholder:"Fes clic aquí per inserir una fórmula o continua escrivint per tancar...",button:{confirm:"Confirma",cancel:"Cancel·la"}},command:{"stream-placeholder":"Fórmula Uni"}}};module.exports=a;

@@ -1,0 +1,1 @@
+"use strict";const e={"uni-formula":{popup:{title:{new:"添加公式",existing:"编辑公式"},placeholder:"点击此处添加公式，或继续输入以关闭",button:{confirm:"确认",cancel:"取消"}},command:{"stream-placeholder":"无界公式"}}};module.exports=e;

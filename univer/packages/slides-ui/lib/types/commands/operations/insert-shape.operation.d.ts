@@ -1,0 +1,14 @@
+import { ICommand } from '@univerjs/core';
+import { ObjectType } from '@univerjs/engine-render';
+export interface IInsertShapeOperationParams {
+    unitId: string;
+}
+export declare const InsertSlideShapeRectangleCommand: ICommand;
+export declare const InsertSlideShapeRectangleOperation: ICommand<IInsertShapeOperationParams>;
+export interface IToggleSlideEditSidebarOperation {
+    visible: string;
+    objectType: ObjectType;
+}
+export declare const ToggleSlideEditSidebarOperation: ICommand;
+export declare const InsertSlideShapeEllipseCommand: ICommand;
+export declare const InsertSlideShapeEllipseOperation: ICommand<IInsertShapeOperationParams>;

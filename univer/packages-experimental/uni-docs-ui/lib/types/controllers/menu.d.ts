@@ -1,0 +1,12 @@
+import { IAccessor } from '@univerjs/core';
+import { IMenuButtonItem, IMenuItem } from '@univerjs/ui';
+export declare const DOC_ITALIC_MUTATION_ID = "doc.command.uni-italic";
+export declare const DOC_BOLD_MUTATION_ID = "doc.command.uni-bold";
+export declare const DOC_UNDERLINE_MUTATION_ID = "doc.command.uni-underline";
+export declare const DOC_STRIKE_MUTATION_ID = "doc.command.uni-strike";
+export declare const DOC_TABLE_MUTATION_ID = "doc.command.uni-table";
+export declare function DocBoldMenuItemFactory(accessor: IAccessor): IMenuButtonItem;
+export declare function DocItalicMenuItemFactory(accessor: IAccessor): IMenuButtonItem;
+export declare function DocUnderlineMenuItemFactory(accessor: IAccessor): IMenuButtonItem;
+export declare function DocStrikeThroughMenuItemFactory(accessor: IAccessor): IMenuButtonItem;
+export declare function DocTableMenuFactory(accessor: IAccessor): IMenuItem;
