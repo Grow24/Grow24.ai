@@ -9,9 +9,15 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 5173,
     strictPort: true,
-    // Univer writes to univer/examples/local; don't let that trigger main-app reloads
+    // Univer is a huge monorepo — watching it exhausts Linux inotify (ENOSPC). HBMPONE is a
+    // separate Vite dev server. Ignore both so root `npm run dev` only watches this app.
     watch: {
-      ignored: ['**/univer/examples/local/**'],
+      ignored: [
+        '**/univer/**',
+        '**/HBMPONE/**',
+        '**/dist/**',
+        '**/backend/**',
+      ],
     },
     proxy: {
       // More specific than `/api` → HBMP backend

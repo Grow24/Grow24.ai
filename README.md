@@ -78,13 +78,37 @@ cp .env.example .env.local
 # - VITE_API_ENDPOINT: Chatbot API endpoint (defaults to localhost:3000/api/chat)
 ```
 
-### 3. Development Server
+### 3. Development server
+
+**Main site only** (Vite):
 
 ```bash
-bun run dev
+npm run dev
+# or: bun run dev / pnpm dev
 ```
 
-Application will be available at `http://localhost:3000`
+Open **http://localhost:5173/**
+
+**Main + Univer + HBMPONE together** (one browser origin — same pattern as Univer under `/univer/`):
+
+1. One-time: install Univer (pnpm) and HBMPONE client — see **[docs/LOCAL_DEV_UNIVER.md](./docs/LOCAL_DEV_UNIVER.md)**.
+2. Start everything:
+
+```bash
+npm run dev:all
+```
+
+Then open:
+
+| URL | App |
+|-----|-----|
+| http://localhost:5173/ | Main website |
+| http://localhost:5173/univer/ | Univer |
+| http://localhost:5173/HBMPONE/ | HBMPONE |
+
+Optional: HBMP API on port **4000** — `cd HBMPONE/server && npm install && npm run dev`
+
+**Deploy (GitHub → Zeabur / Docker):** use the root **`Dockerfile`** (Caddy serves `/`, `/univer/`, `/HBMPONE/`). See **[DEPLOY_ZEABUR.md](./DEPLOY_ZEABUR.md)**. Pushes to `main`/`master` run **`.github/workflows/build.yml`** to verify `npm run build`.
 
 ### 4. Build for Production
 

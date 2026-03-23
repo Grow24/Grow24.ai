@@ -1,0 +1,38 @@
+# Verifies the same production build Zeabur runs (root Dockerfile → npm run build).
+name: Build
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.24.0
+
+      - name: Install Univer dependencies
+        working-directory: univer
+        run: pnpm install --frozen-lockfile
+
+      - name: Install HBMPONE client dependencies
+        working-directory: HBMPONE/client
+        run: npm ci
+
+      - name: Production build
+        run: npm run build

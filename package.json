@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:both": "concurrently -k -n main,univer -c cyan,magenta \"UNIVER_PORT=3002 npm run dev\" \"UNIVER_PORT=3002 npm run dev:univer\"",
+    "dev:both": "concurrently -k -n main,univer -c cyan,magenta \"UNIVER_PORT=${UNIVER_PORT:-3002} npm run dev\" \"UNIVER_PORT=${UNIVER_PORT:-3002} npm run dev:univer\"",
     "dev:hbmpone": "cd HBMPONE/client && HBMPONE_PORT=${HBMPONE_PORT:-5175} HBMPONE_BASE=/HBMPONE/ VITE_API_URL=/api npx vite",
     "dev:univer-hbmp": "concurrently -k -n univer,hbmp -c magenta,green \"UNIVER_PORT=${UNIVER_PORT:-3002} npm run dev:univer\" \"npm run dev:hbmpone\"",
     "dev:all": "concurrently -k -n main,univer,hbmp -c cyan,magenta,green \"HBMPONE_PORT=${HBMPONE_PORT:-5175} UNIVER_PORT=${UNIVER_PORT:-3002} HBMP_API_PORT=${HBMP_API_PORT:-4000} npm run dev\" \"UNIVER_PORT=${UNIVER_PORT:-3002} npm run dev:univer\" \"npm run dev:hbmpone\"",

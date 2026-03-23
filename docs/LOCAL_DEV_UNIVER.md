@@ -16,15 +16,17 @@ Root Vite listens on **5173** and:
 
 See root `vite.config.ts` → `server.proxy`.
 
-## One-time setup (Univer)
+## One-time setup (Univer + HBMPONE client)
 
 From the repo root:
 
 ```bash
 corepack enable && corepack prepare pnpm@10.24.0 --activate
-cd univer && pnpm install
-cd ..
+cd univer && pnpm install && cd ..
+cd HBMPONE/client && npm install && cd ../..
 ```
+
+(`npm install` at the repo root does **not** install HBMPONE client dependencies — run the line above once.)
 
 ## Start all three apps (recommended)
 
@@ -96,6 +98,11 @@ cd HBMPONE/client && HBMPONE_PORT=5175 HBMPONE_BASE=/HBMPONE/ VITE_API_URL=/api 
 
 ## Troubleshooting
 
+- **`ENOSPC: System limit for number of file watchers reached`** — Linux ran out of inotify watches (common with large repos). Root `vite.config.ts` ignores `univer/` and `HBMPONE/` for the main dev server; if it still happens, raise the limit (until reboot unless you persist sysctl):
+  ```bash
+  sudo sysctl fs.inotify.max_user_watches=524288
+  ```
+  Or add `fs.inotify.max_user_watches=524288` under `/etc/sysctl.d/`.
 - **`Port 5173 is already in use`** — Stop the other root Vite (`npm run dev` / old `dev:both`). Or run `npm run dev:univer-hbmp` while keeping a single main dev server on 5173.
 - **`Requested UNIVER_PORT 3002 is not available`** — Free port 3002 or set `UNIVER_PORT` and the same value in the Vite proxy target (env `UNIVER_PORT` is read in `vite.config.ts` for `/univer`).
 - **Univer 404 or blank** — Ensure Univer finished starting (see `Local server: http://localhost:3002` in the terminal) before opening `/univer/`.
