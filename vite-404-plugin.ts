@@ -53,7 +53,9 @@ export function vite404Plugin(): Plugin {
           pathname.startsWith('/node_modules') ||
           pathname.startsWith('/api/') ||
           pathname === '/univer' ||
-          pathname.startsWith('/univer/')
+          pathname.startsWith('/univer/') ||
+          pathname === '/HBMPONE' ||
+          pathname.startsWith('/HBMPONE/')
         ) {
           return next()
         }

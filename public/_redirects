@@ -1,0 +1,9 @@
+# Zeabur static hosting (Netlify-style). Real files under /HBMPONE/* and /univer/*
+# are served first; these rules rewrite “app routes” to each sub-app’s index.html.
+# Without this, /HBMPONE/* falls through to the root SPA → “Not Found”.
+
+/univer /univer/ 308
+/univer/* /univer/index.html 200
+
+/HBMPONE /HBMPONE/ 308
+/HBMPONE/* /HBMPONE/index.html 200

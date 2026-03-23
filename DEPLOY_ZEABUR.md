@@ -6,17 +6,29 @@ This project should run as **two or more Zeabur services**:
 - `web-backend`: Express API in `backend/` (`backend/Dockerfile`)
 - **Optional** `hbmp-api`: HBMPONE API in `HBMPONE/server` (`HBMPONE/server/Dockerfile`) — required for the HBMPONE app to load/save data
 
-## 0) CRITICAL: Frontend must use Docker (not static export)
+## 0) CRITICAL: Docker vs Zeabur static (`zeabur.json`)
 
-The root **`Dockerfile`** runs `npm run build` (main site + HBMPONE client + Univer static bundle) and serves **`dist/`** with **Caddy** (from repo **`Caddyfile`**) so that:
+### Option A — Docker (recommended)
+
+The root **`Dockerfile`** runs `npm run build` (main + HBMPONE + Univer) and serves **`dist/`** with the repo **`Caddyfile`**:
 
 - `/` → main SPA
-- `/univer/` → Univer app and its chunks under `/univer/*`
-- `/HBMPONE/` → HBMPONE React app (Vite `base: /HBMPONE/`) and its assets under `/HBMPONE/*`
+- `/univer/` → Univer + chunks under `/univer/*`
+- `/HBMPONE/` → HBMPONE + assets under `/HBMPONE/*`
 
-If Zeabur is set to **Node static site** (only `zeabur.json` → `outputDirectory: dist`), **Caddy is not used**. Browsers may request Univer chunks at the wrong path and get **HTML instead of JavaScript** → blank `/univer/` page.
+In Zeabur → frontend → **Dockerfile** build, port **8080**.
 
-**Fix:** In Zeabur → your frontend service → **use Dockerfile build** (root `Dockerfile`), expose port **8080**. Do not rely on plain static hosting for this repo.
+### Option B — Zeabur static site (`zeabur.json` → `outputDirectory: dist`)
+
+Static hosting falls back **unknown paths to the root `index.html`**. Then **`https://yoursite/HBMPONE/` loads the main Grow24 app**, which has no route → **“Not Found”** with the normal header (what you see in the browser).
+
+**Fix:** This repo includes **`public/_redirects`** (copied to **`dist/_redirects`** on build). Zeabur applies Netlify-style rules so **`/HBMPONE/*` → `/HBMPONE/index.html`** (and the same for `/univer/*`). **Redeploy** after pulling; confirm the build produces **`dist/HBMPONE/index.html`**.
+
+**Prefer Option A** if you still see blank sub-apps (JS chunks getting HTML).
+
+### Custom Caddyfile on Zeabur
+
+If you edited the platform Caddyfile manually, add the same **`/HBMPONE/`** handling as in the repo **`Caddyfile`**, or switch to the Dockerfile image that ships the file.
 
 ## 1) Frontend service
 
