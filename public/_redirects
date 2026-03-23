@@ -3,10 +3,13 @@
 # Without this, /HBMPONE/* falls through to the root SPA → “Not Found”.
 
 /univer /univer/ 308
+/univer/ /univer/index.html 200
 /univer/* /univer/index.html 200
 
 /HBMPONE /HBMPONE/ 308
+/HBMPONE/ /HBMPONE/index.html 200
 /HBMPONE/* /HBMPONE/index.html 200
 
 /ivvychainv2 /ivvychainv2/ 308
+/ivvychainv2/ /ivvychainv2/index.html 200
 /ivvychainv2/* /ivvychainv2/index.html 200
