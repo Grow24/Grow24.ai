@@ -34,5 +34,9 @@ jobs:
         working-directory: HBMPONE/client
         run: npm ci
 
+      - name: Install ivvychainv2 client dependencies
+        working-directory: ivvychainv2
+        run: npm install
+
       - name: Production build
         run: npm run build
