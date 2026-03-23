@@ -1,0 +1,18 @@
+{
+  "name": "ivychain-v2-backend",
+  "version": "1.0.0",
+  "description": "Backend API for IVYCHAIN v2",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node src/server.js",
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
+

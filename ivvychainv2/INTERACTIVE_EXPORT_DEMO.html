@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Dashboard Demo - IVYCHAIN v2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #3B82F6 0%, #1F2937 100%);
+            color: white;
+            padding: 30px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 0.95em;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        
+        .export-info {
+            background: rgba(255,255,255,0.1);
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            display: inline-block;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            background: #F9FAFB;
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid #3B82F6;
+        }
+        
+        .section h2 {
+            color: #1F2937;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #E5E7EB;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .filters-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #E5E7EB;
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .filter-label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.9em;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .filter-value {
+            background: #EFF6FF;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid #BFDBFE;
+            color: #1E40AF;
+            font-weight: 500;
+            word-break: break-word;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .data-table thead {
+            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+            color: white;
+        }
+        
+        .data-table th {
+            padding: 14px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9em;
+            letter-spacing: 0.5px;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .data-table th:last-child {
+            border-right: none;
+        }
+        
+        .data-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #E5E7EB;
+            color: #374151;
+        }
+        
+        .data-table tbody tr:hover {
+            background: #F3F4F6;
+            transition: background 0.2s ease;
+        }
+        
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .status-a {
+            background: #DCFCE7;
+            color: #15803D;
+        }
+        
+        .status-b {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+        
+        .status-c {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #E5E7EB;
+            border-radius: 6px;
+            font-size: 0.95em;
+            margin-bottom: 15px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #3B82F6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2563EB;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #E5E7EB;
+            color: #374151;
+        }
+        
+        .btn-secondary:hover {
+            background: #D1D5DB;
+        }
+        
+        .demo-note {
+            background: #FEF3C7;
+            border-left: 4px solid #F59E0B;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            color: #92400E;
+        }
+        
+        .demo-note strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .metric-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .metric-value {
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+        
+        .footer {
+            background: #F3F4F6;
+            padding: 20px;
+            border-top: 1px solid #E5E7EB;
+            text-align: center;
+            color: #6B7280;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Analysis By Product Dashboard</h1>
+            <p>Interactive Dashboard Export - Fully Functional & Self-Contained</p>
+            <div class="export-info">
+                <strong>Exported:</strong> December 17, 2025 at 2:30 PM
+            </div>
+        </div>
+        
+        <div class="content">
+            <!-- Demo Notice -->
+            <div class="demo-note">
+                <strong>✨ This is a DEMO of the new interactive export</strong>
+                Your dashboards will look like this when you use the new downloadInteractiveDashboard() function.
+                Try searching in the table below!
+            </div>
+            
+            <!-- Filters Section -->
+            <div class="section">
+                <h2>🔍 Applied Filters</h2>
+                <div class="filters-section">
+                    <div class="filter-grid">
+                        <div class="filter-item">
+                            <div class="filter-label">Accounts</div>
+                            <div class="filter-value">All</div>
+                        </div>
+                        <div class="filter-item">
+                            <div class="filter-label">Territory</div>
+                            <div class="filter-value">North America</div>
+                        </div>
+                        <div class="filter-item">
+                            <div class="filter-label">Start Period</div>
+                            <div class="filter-value">2024-01-01</div>
+                        </div>
+                        <div class="filter-item">
+                            <div class="filter-label">End Period</div>
+                            <div class="filter-value">2024-12-31</div>
+                        </div>
+                        <div class="filter-item">
+                            <div class="filter-label">Industry Group</div>
+                            <div class="filter-value">Manufacturing</div>
+                        </div>
+                        <div class="filter-item">
+                            <div class="filter-label">Product Group</div>
+                            <div class="filter-value">All</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Metrics Section -->
+            <div class="section">
+                <h2>📈 Key Metrics</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Total Products</div>
+                        <div class="metric-value">247</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Total Sales</div>
+                        <div class="metric-value">$2.5M</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Avg Profit</div>
+                        <div class="metric-value">32%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Orders</div>
+                        <div class="metric-value">1,243</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Data Section -->
+            <div class="section">
+                <h2>📋 Product Analysis Table</h2>
+                <p style="color: #6B7280; margin-bottom: 15px;">✨ Try searching for "Widget" or "Premium" in the search box below</p>
+                <input type="text" class="search-box" placeholder="🔍 Search table... (Try: Widget, Premium, 5000)">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Sales</th>
+                            <th>Sales LY</th>
+                            <th>LY Var %</th>
+                            <th>Status</th>
+                            <th>Target Var</th>
+                            <th>COGS</th>
+                            <th>Gross Profit</th>
+                            <th>Quantity</th>
+                            <th>Orders</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Widget Premium A</td>
+                            <td>$5,230</td>
+                            <td>$4,800</td>
+                            <td>8.9%</td>
+                            <td><span class="status-badge status-a">A</span></td>
+                            <td>$250</td>
+                            <td>$3,138</td>
+                            <td>$2,092</td>
+                            <td>1,243</td>
+                            <td>142</td>
+                        </tr>
+                        <tr>
+                            <td>Widget Standard B</td>
+                            <td>$3,840</td>
+                            <td>$4,200</td>
+                            <td>-8.6%</td>
+                            <td><span class="status-badge status-b">B</span></td>
+                            <td>-$150</td>
+                            <td>$2,304</td>
+                            <td>$1,536</td>
+                            <td>856</td>
+                            <td>89</td>
+                        </tr>
+                        <tr>
+                            <td>Widget Economy C</td>
+                            <td>$2,150</td>
+                            <td>$2,890</td>
+                            <td>-25.6%</td>
+                            <td><span class="status-badge status-c">C</span></td>
+                            <td>-$640</td>
+                            <td>$1,290</td>
+                            <td>$860</td>
+                            <td>642</td>
+                            <td>71</td>
+                        </tr>
+                        <tr>
+                            <td>Premium Deluxe X</td>
+                            <td>$8,900</td>
+                            <td>$7,250</td>
+                            <td>22.8%</td>
+                            <td><span class="status-badge status-a">A</span></td>
+                            <td>$1,650</td>
+                            <td>$4,450</td>
+                            <td>$4,450</td>
+                            <td>234</td>
+                            <td>156</td>
+                        </tr>
+                        <tr>
+                            <td>Professional Plus Y</td>
+                            <td>$6,540</td>
+                            <td>$6,100</td>
+                            <td>7.2%</td>
+                            <td><span class="status-badge status-a">A</span></td>
+                            <td>$440</td>
+                            <td>$3,924</td>
+                            <td>$2,616</td>
+                            <td>524</td>
+                            <td>98</td>
+                        </tr>
+                        <tr>
+                            <td>Basic Entry Z</td>
+                            <td>$1,320</td>
+                            <td>$1,850</td>
+                            <td>-28.6%</td>
+                            <td><span class="status-badge status-c">C</span></td>
+                            <td>-$530</td>
+                            <td>$792</td>
+                            <td>$528</td>
+                            <td>312</td>
+                            <td>34</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="controls">
+                    <button class="btn btn-primary">📥 Print to PDF</button>
+                    <button class="btn btn-secondary">📋 Copy Table</button>
+                    <button class="btn btn-secondary">📊 Export to Excel</button>
+                </div>
+            </div>
+            
+            <!-- What You Get -->
+            <div class="section">
+                <h2>✨ Features Included in Interactive Export</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div style="background: white; padding: 15px; border-radius: 6px; border-left: 4px solid #10B981;">
+                        <strong style="color: #10B981;">✓ Search & Filter</strong>
+                        <p style="margin-top: 5px; font-size: 0.9em; color: #6B7280;">Real-time table search across all columns</p>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 6px; border-left: 4px solid #3B82F6;">
+                        <strong style="color: #3B82F6;">✓ Responsive Design</strong>
+                        <p style="margin-top: 5px; font-size: 0.9em; color: #6B7280;">Works on desktop, tablet, and mobile</p>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 6px; border-left: 4px solid #F59E0B;">
+                        <strong style="color: #F59E0B;">✓ Print Friendly</strong>
+                        <p style="margin-top: 5px; font-size: 0.9em; color: #6B7280;">Optimized PDF export with formatting</p>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 6px; border-left: 4px solid #8B5CF6;">
+                        <strong style="color: #8B5CF6;">✓ Self-Contained</strong>
+                        <p style="margin-top: 5px; font-size: 0.9em; color: #6B7280;">No external dependencies or files needed</p>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 6px; border-left: 4px solid #EC4899;">
+                        <strong style="color: #EC4899;">✓ Professional Styling</strong>
+                        <p style="margin-top: 5px; font-size: 0.9em; color: #6B7280;">Modern UI with gradient headers and cards</p>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 6px; border-left: 4px solid #06B6D4;">
+                        <strong style="color: #06B6D4;">✓ Easy to Share</strong>
+                        <p style="margin-top: 5px; font-size: 0.9em; color: #6B7280;">Send HTML file via email - works everywhere</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>📄 This is a self-contained HTML dashboard. All data and styling are embedded. You can print, share, or archive this file.</p>
+            <p style="margin-top: 10px; opacity: 0.7;">This demo shows what your downloaded dashboards will look like with the new interactive export system!</p>
+        </div>
+    </div>
+    
+    <script>
+        // Search functionality
+        const searchBox = document.querySelector('.search-box');
+        const table = document.querySelector('.data-table');
+        
+        searchBox.addEventListener('input', function(e) {
+            const filter = e.target.value.toLowerCase();
+            const rows = table.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(filter) ? '' : 'none';
+            });
+        });
+        
+        // Button functionality
+        document.querySelectorAll('.btn-primary')[0].addEventListener('click', () => {
+            alert('✓ This would print the dashboard to PDF');
+            window.print();
+        });
+        
+        document.querySelectorAll('.btn-secondary')[0].addEventListener('click', () => {
+            const table = document.querySelector('.data-table');
+            const text = table.innerText;
+            navigator.clipboard.writeText(text);
+            alert('✓ Table copied to clipboard!');
+        });
+        
+        document.querySelectorAll('.btn-secondary')[1].addEventListener('click', () => {
+            alert('✓ Excel export would download here');
+        });
+    </script>
+</body>
+</html>
