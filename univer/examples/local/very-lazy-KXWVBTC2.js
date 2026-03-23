@@ -22,7 +22,7 @@ import "/univer/chunk-3K36HQZG.js";
 import {
   UniverDebuggerPlugin,
   UniverWatermarkPlugin
-} from "/univer/chunk-CTEXKRJN.js";
+} from "/univer/chunk-JQFLECRR.js";
 import "/univer/chunk-4EAWMATX.js";
 import "/univer/chunk-CGMM54DM.js";
 import "/univer/chunk-3RXJ4LZI.js";
@@ -39,7 +39,7 @@ import "/univer/chunk-SSSDKVVD.js";
 import "/univer/chunk-YLGQP2EX.js";
 import "/univer/chunk-AROCCXDN.js";
 
-// src/sheets/very-lazy.ts
+// src/sheets-multi-units/very-lazy.ts
 var IS_E2E = false;
 function getVeryLazyPlugins() {
   const plugins = [
