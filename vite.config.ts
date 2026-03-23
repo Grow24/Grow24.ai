@@ -9,12 +9,13 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 5173,
     strictPort: true,
-    // Univer is a huge monorepo — watching it exhausts Linux inotify (ENOSPC). HBMPONE is a
-    // separate Vite dev server. Ignore both so root `npm run dev` only watches this app.
+    // Child apps are served by their own dev servers and proxied by this root server.
+    // Ignore those trees to avoid Linux inotify exhaustion (ENOSPC).
     watch: {
       ignored: [
         '**/univer/**',
         '**/HBMPONE/**',
+        '**/ivvychainv2/**',
         '**/dist/**',
         '**/backend/**',
       ],
@@ -28,6 +29,12 @@ export default defineConfig({
       // HBMPONE client (Vite) — keep /HBMPONE prefix; client uses base: /HBMPONE/
       '/HBMPONE': {
         target: `http://localhost:${process.env.HBMPONE_PORT || '5175'}`,
+        changeOrigin: true,
+        ws: true,
+      },
+      // ivvychainv2 (CRA dev server) — keep /ivvychainv2 prefix
+      '/ivvychainv2': {
+        target: `http://localhost:${process.env.IVVY_PORT || '5176'}`,
         changeOrigin: true,
         ws: true,
       },

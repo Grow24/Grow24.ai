@@ -5,6 +5,8 @@
     { "source": "/univer/:path*", "destination": "/univer/:path*" },
     { "source": "/HBMPONE", "destination": "/HBMPONE/index.html" },
     { "source": "/HBMPONE/:path*", "destination": "/HBMPONE/:path*" },
+    { "source": "/ivvychainv2", "destination": "/ivvychainv2/index.html" },
+    { "source": "/ivvychainv2/:path*", "destination": "/ivvychainv2/:path*" },
     { "source": "/about", "destination": "/index.html" },
     { "source": "/become-partner", "destination": "/index.html" },
     { "source": "/dashboard", "destination": "/index.html" },

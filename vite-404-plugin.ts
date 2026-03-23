@@ -55,7 +55,9 @@ export function vite404Plugin(): Plugin {
           pathname === '/univer' ||
           pathname.startsWith('/univer/') ||
           pathname === '/HBMPONE' ||
-          pathname.startsWith('/HBMPONE/')
+          pathname.startsWith('/HBMPONE/') ||
+          pathname === '/ivvychainv2' ||
+          pathname.startsWith('/ivvychainv2/')
         ) {
           return next()
         }

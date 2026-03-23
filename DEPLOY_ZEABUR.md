@@ -2,7 +2,7 @@
 
 This project should run as **two or more Zeabur services**:
 
-- `web-frontend`: static app + `/univer/*` + `/HBMPONE/*` served by Caddy (root `Dockerfile`)
+- `web-frontend`: static app + `/univer/*` + `/HBMPONE/*` + `/ivvychainv2/*` served by Caddy (root `Dockerfile`)
 - `web-backend`: Express API in `backend/` (`backend/Dockerfile`)
 - **Optional** `hbmp-api`: HBMPONE API in `HBMPONE/server` (`HBMPONE/server/Dockerfile`) — required for the HBMPONE app to load/save data
 
@@ -10,11 +10,12 @@ This project should run as **two or more Zeabur services**:
 
 ### Option A — Docker (recommended)
 
-The root **`Dockerfile`** runs `npm run build` (main + HBMPONE + Univer) and serves **`dist/`** with the repo **`Caddyfile`**:
+The root **`Dockerfile`** runs `npm run build` (main + HBMPONE + ivvychainv2 + Univer) and serves **`dist/`** with the repo **`Caddyfile`**:
 
 - `/` → main SPA
 - `/univer/` → Univer + chunks under `/univer/*`
 - `/HBMPONE/` → HBMPONE + assets under `/HBMPONE/*`
+- `/ivvychainv2/` → ivvychainv2 + assets under `/ivvychainv2/*`
 
 In Zeabur → frontend → **Dockerfile** build, port **8080**.
 
@@ -22,7 +23,7 @@ In Zeabur → frontend → **Dockerfile** build, port **8080**.
 
 Static hosting falls back **unknown paths to the root `index.html`**. Then **`https://yoursite/HBMPONE/` loads the main Grow24 app**, which has no route → **“Not Found”** with the normal header (what you see in the browser).
 
-**Fix:** This repo includes **`public/_redirects`** (copied to **`dist/_redirects`** on build). Zeabur applies Netlify-style rules so **`/HBMPONE/*` → `/HBMPONE/index.html`** (and the same for `/univer/*`). **Redeploy** after pulling; confirm the build produces **`dist/HBMPONE/index.html`**.
+**Fix:** This repo includes **`public/_redirects`** (copied to **`dist/_redirects`** on build). Zeabur applies Netlify-style rules so `/HBMPONE/*`, `/ivvychainv2/*`, and `/univer/*` each rewrite to their own `index.html`. **Redeploy** after pulling; confirm the build produces **`dist/HBMPONE/index.html`** and **`dist/ivvychainv2/index.html`**.
 
 **Prefer Option A** if you still see blank sub-apps (JS chunks getting HTML).
 
