@@ -1,37 +1,37 @@
 import {
   UniverDocsMentionUIPlugin
-} from "/univer/chunk-UJ67HL2T.js";
+} from "./chunk-GWJAKJV4.js";
 import {
   SetActiveCommentOperation,
   ThreadCommentPanel,
   ThreadCommentPanelService,
   UniverThreadCommentUIPlugin
-} from "/univer/chunk-HTDH6JZQ.js";
+} from "./chunk-TAAUQX2Y.js";
 import {
   AddCommentMutation,
   IThreadCommentDataSourceService,
   ThreadCommentModel,
   getDT
-} from "/univer/chunk-SKYS6W5P.js";
+} from "./chunk-OD5D7OYC.js";
 import {
   UniverDebuggerPlugin
-} from "/univer/chunk-7ES5XYTF.js";
+} from "./chunk-UJI7K6GU.js";
 import {
   InsertDocImageCommand,
   UniverDocsDrawingUIPlugin
-} from "/univer/chunk-4EAWMATX.js";
+} from "./chunk-HFVM6MYW.js";
 import {
   UniverDocsDrawingPlugin,
   UniverDrawingUIPlugin
-} from "/univer/chunk-CGMM54DM.js";
+} from "./chunk-6W4YZ3HG.js";
 import {
   FUniver
-} from "/univer/chunk-3RXJ4LZI.js";
+} from "./chunk-JWXRDIU7.js";
 import {
   DEFAULT_DOCUMENT_DATA_SIMPLE
-} from "/univer/chunk-2PJ3QCNN.js";
-import "/univer/chunk-XXJESKVN.js";
-import "/univer/chunk-LXKHVO4Y.js";
+} from "./chunk-VMFOP3F4.js";
+import "./chunk-ZRJXDTFY.js";
+import "./chunk-WPDJPIZN.js";
 import {
   BulletListCommand,
   CutContentCommand,
@@ -63,8 +63,8 @@ import {
   deleteCustomRangeFactory,
   replaceSelectionFactory,
   whenDocAndEditorFocused
-} from "/univer/chunk-4MI62PCK.js";
-import "/univer/chunk-YXIT6Q6A.js";
+} from "./chunk-IJAOVONG.js";
+import "./chunk-63AGE64E.js";
 import {
   Button,
   CommentIcon,
@@ -97,20 +97,20 @@ import {
   useDependency,
   useEvent,
   useObservable
-} from "/univer/chunk-XUI25LTE.js";
+} from "./chunk-R42OVMY4.js";
 import {
   zh_CN_default
-} from "/univer/chunk-Q3VLDO2L.js";
-import "/univer/chunk-H5NJEYZ5.js";
+} from "./chunk-J4OFPKRX.js";
+import "./chunk-TOYW4IMU.js";
 import {
   UniverFormulaEnginePlugin
-} from "/univer/chunk-CDHET2WN.js";
+} from "./chunk-SV6SUIS4.js";
 import {
   IRenderManagerService,
   UniverRenderEnginePlugin,
   withCurrentTypeOfRenderer
-} from "/univer/chunk-7ZBW2CWY.js";
-import "/univer/chunk-SSSDKVVD.js";
+} from "./chunk-BPIUAXSQ.js";
+import "./chunk-G4UBMCOX.js";
 import {
   BehaviorSubject,
   BuildTextUtils,
@@ -147,13 +147,13 @@ import {
   sequenceExecute,
   tap,
   toDisposable
-} from "/univer/chunk-YLGQP2EX.js";
+} from "./chunk-DN46DLPI.js";
 import {
   __decorateClass,
   __decorateParam,
   __publicField,
   __toESM
-} from "/univer/chunk-AROCCXDN.js";
+} from "./chunk-62WIURJL.js";
 
 // ../packages/docs-hyper-link/src/commands/mutations/hyper-link.mutation.ts
 var AddHyperLinkMuatation = {
@@ -2784,3 +2784,4 @@ var mockUser = {
 };
 userManagerService.setCurrentUser(mockUser);
 window.univerAPI = FUniver.newAPI(univer);
+//# sourceMappingURL=docs/main.js.map
