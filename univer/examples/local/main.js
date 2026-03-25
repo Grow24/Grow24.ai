@@ -1,17 +1,17 @@
-import "./chunk-63AGE64E.js";
+import "/univer/chunk-YXIT6Q6A.js";
 import {
   ThemeSwitcherService,
   render,
   require_jsx_runtime
-} from "./chunk-R42OVMY4.js";
-import "./chunk-BPIUAXSQ.js";
-import "./chunk-G4UBMCOX.js";
+} from "/univer/chunk-XUI25LTE.js";
+import "/univer/chunk-7ZBW2CWY.js";
+import "/univer/chunk-SSSDKVVD.js";
 import {
   default_default
-} from "./chunk-DN46DLPI.js";
+} from "/univer/chunk-YLGQP2EX.js";
 import {
   __toESM
-} from "./chunk-62WIURJL.js";
+} from "/univer/chunk-AROCCXDN.js";
 
 // ../package.json
 var package_default = {
@@ -114,16 +114,16 @@ var package_default = {
 
 // src/main.tsx
 var import_jsx_runtime = __toESM(require_jsx_runtime());
-if (false) {
+if (true) {
   console.table({
     // eslint-disable-next-line node/prefer-global/process
-    NODE_ENV: "development",
+    NODE_ENV: "production",
     // eslint-disable-next-line node/prefer-global/process
-    GIT_COMMIT_HASH: process.env.GIT_COMMIT_HASH,
+    GIT_COMMIT_HASH: "41e2db0",
     // eslint-disable-next-line node/prefer-global/process
-    GIT_REF_NAME: process.env.GIT_REF_NAME,
+    GIT_REF_NAME: "main",
     // eslint-disable-next-line node/prefer-global/process
-    BUILD_TIME: process.env.BUILD_TIME
+    BUILD_TIME: "2026-03-25T11:35:30.205Z"
   });
 }
 function Examples() {
@@ -200,4 +200,3 @@ function Examples() {
   );
 }
 render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Examples, {}), document.getElementById("app"));
-//# sourceMappingURL=main.js.map

@@ -2,11 +2,11 @@ import {
   UniverFormulaEnginePlugin,
   UniverRPCWorkerThreadPlugin,
   UniverSheetsPlugin
-} from "./chunk-SV6SUIS4.js";
+} from "/univer/chunk-CDHET2WN.js";
 import {
   Univer
-} from "./chunk-DN46DLPI.js";
-import "./chunk-62WIURJL.js";
+} from "/univer/chunk-YLGQP2EX.js";
+import "/univer/chunk-AROCCXDN.js";
 
 // src/mobile-s/worker.ts
 var univer = new Univer({
@@ -17,4 +17,3 @@ univer.registerPlugin(UniverSheetsPlugin, { onlyRegisterFormulaRelatedMutations:
 univer.registerPlugin(UniverFormulaEnginePlugin);
 univer.registerPlugin(UniverRPCWorkerThreadPlugin);
 self.univer = univer;
-//# sourceMappingURL=mobile-s/worker.js.map

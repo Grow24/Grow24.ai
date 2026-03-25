@@ -6181,7 +6181,7 @@
 @font-face {
   font-family: "codicon";
   font-display: block;
-  src: url("./codicon-LN6W7LCM.ttf") format("truetype");
+  src: url("/univer/codicon-LN6W7LCM.ttf") format("truetype");
 }
 .codicon[class*=codicon-] {
   font: normal normal normal 16px/1 codicon;
@@ -9904,4 +9904,3 @@
 .monaco-component.multiDiffEditor .multiDiffEntry .editorContainer {
   flex: 1;
 }
-/*# sourceMappingURL=sheets-no-worker/main.css.map */
