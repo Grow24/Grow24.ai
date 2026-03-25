@@ -20,6 +20,7 @@ export default defineConfig({
         '**/mcp_server/**',
         '**/Microsoft/**',
         '**/OpenStreetMaps/**',
+        '**/ImageProcessing/**',
         '**/dist/**',
         '**/backend/**',
       ],
@@ -60,6 +61,12 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/OpenStreetMaps/, '') || '/',
       },
+      // ImageProcessing static app — strip /ImageProcessing prefix
+      '/ImageProcessing': {
+        target: `http://localhost:${process.env.IMAGE_PROCESSING_PORT || '5182'}`,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/ImageProcessing/, '') || '/',
+      },
       // HBMP docs API (Express on 4000 by default)
       '/api': {
         target: `http://localhost:${process.env.HBMP_API_PORT || '4000'}`,
@@ -89,6 +96,12 @@ export default defineConfig({
           if (url === '/Microsoft' || url === '/Microsoft/') {
             res.statusCode = 302
             res.setHeader('Location', '/Microsoft/index.html')
+            res.end()
+            return
+          }
+          if (url === '/ImageProcessing' || url === '/ImageProcessing/') {
+            res.statusCode = 302
+            res.setHeader('Location', '/ImageProcessing/index.html')
             res.end()
             return
           }

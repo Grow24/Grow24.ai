@@ -105,6 +105,7 @@ Then open:
 | http://localhost:5173/ | Main website |
 | http://localhost:5173/univer/ | Univer |
 | http://localhost:5173/HBMPONE/ | HBMPONE |
+| http://localhost:5173/ImageProcessing/ | ImageProcessing |
 
 Optional: HBMP API on port **4000** — `cd HBMPONE/server && npm install && npm run dev`
 

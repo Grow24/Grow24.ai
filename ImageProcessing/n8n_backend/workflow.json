@@ -1,0 +1,219 @@
+{
+  "name": "AutoDocX copy",
+  "nodes": [
+    {
+      "parameters": {
+        "inputDataFieldName": "data0",
+        "options": {}
+      },
+      "type": "n8n-nodes-tesseractjs.tesseractNode",
+      "typeVersion": 1,
+      "position": [
+        240,
+        -400
+      ],
+      "id": "10c319ae-1b6e-4095-82e1-88a4d5e20e5a",
+      "name": "Tesseract"
+    },
+    {
+      "parameters": {
+        "jsCode": "let content = $input.first().json.message.content;\n\nif (!content) {\n  throw new Error(\"LLM response is missing or malformed\");\n}\n\n// Handle both string and object cases\nif (typeof content === \"string\") {\n  content = content.trim()\n    .replace(/^```json/, '')\n    .replace(/^```/, '')\n    .replace(/```$/, '')\n    .trim();\n\n  content = JSON.parse(content); // parse only if it was a string\n}\n\n// Now content is safely a JS object\nreturn [\n  {\n    json: content\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        864,
+        -400
+      ],
+      "id": "6066d68f-9c30-45af-b8df-53ec6fd21bb2",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "jsCode": "const lineItems = $input.first().json.line_items\n\n// Arrays to hold valid and invalid entries\nconst valid = [];\nconst invalid = [];\n\nlineItems.forEach((item, index) => {\n  const errors = [];\n\n  // Check for required fields\n  if (!item.description || item.description.trim() === '') errors.push('Missing description');\n  if (!item.quantity || item.quantity.trim() === '') errors.push('Missing quantity');\n  \n  if (!item.amount || item.amount.trim() === '') errors.push('Missing amount');\n\n  // Regex validations\n  const quantityRegex = /^[0-9]+$/;\n  const priceRegex = /^\\d+(\\.\\d{1,2})?$/;\n\n  if (item.quantity && !quantityRegex.test(item.quantity)) errors.push('Invalid quantity format');\n  if (item.unit_price && !priceRegex.test(item.unit_price)) errors.push('Invalid unit_price format');\n  if (item.amount && !priceRegex.test(item.amount)) errors.push('Invalid amount format');\n\n  // Logical validation: unit_price * quantity = amount\n  const quantity = parseInt(item.quantity);\n  const unitPrice = parseFloat(item.unit_price);\n  const amount = parseFloat(item.amount);\n\n  if (!isNaN(quantity) && !isNaN(unitPrice) && !isNaN(amount)) {\n    const expectedAmount = (unitPrice * quantity).toFixed(2);\n    if (expectedAmount !== item.amount) {\n      errors.push(`Amount mismatch: expected ${expectedAmount}, got ${item.amount}`);\n    }\n  }\n\n  // Push to valid or invalid list\n  if (errors.length === 0) {\n    valid.push({\n      json: {\n        ...item,\n        status: 'Valid'\n      }\n    });\n  } else {\n    invalid.push({\n      json: {\n        ...item,\n        status: 'Invalid',\n        errors\n      }\n    });\n  }\n});\n\nreturn [...valid, ...invalid];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        -304
+      ],
+      "id": "bbf66d07-b540-4353-ac49-e4a88a9b00e4",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "526448a8-2556-4689-8b34-a97001c3b218",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "Valid",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1312,
+        -304
+      ],
+      "id": "22110646-d6b8-4033-a67b-3de7f4dc7940",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "chatgpt-4o-latest",
+          "mode": "list",
+          "cachedResultName": "CHATGPT-4O-LATEST"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=This is the ocr generaed extracted text::\n {{ $json.text }}"
+            },
+            {
+              "content": "You are a highly accurate invoice and receipt extraction assistant... (rest of prompt)",
+              "role": "system"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        464,
+        -400
+      ],
+      "id": "28a1d856-92d1-4da1-a09a-f860472e9789",
+      "name": "Message a model",
+      "//comment_credentials": "REMOVED: The credentials block below was removed as it contained a unique ID linking to your specific OpenAI API key.",
+      "//credentials": {
+      "//  openAiApi": {
+      "//    id": "q6Y0S1LDncoIXPPV",
+      "//    name": "autodoc"
+      "//  }
+      "//}
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "your-webhook-path",
+        "//comment_path": "REMOVED: Your unique webhook path 'bc7e87f9-...' was replaced.",
+        "responseMode": "responseNode",
+        "options": {
+          "//comment_allowedOrigins": "REMOVED: Your specific CORS origin '[http://127.0.0.1:5500](http://127.0.0.1:5500)' was removed.",
+          "binaryPropertyName": "data"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        16,
+        -400
+      ],
+      "id": "439bee74-9dcc-4de1-b2a3-d46becc3e7a9",
+      "name": "Webhook",
+      "//comment_webhookId": "REMOVED: Your unique webhook ID 'bc7e87f9-...' was removed."
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "=\n\n{{\n  // ... Your IIFE code here ...\n}}\n",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1760,
+        -400
+      ],
+      "id": "82a712d2-bdd4-436b-8931-128a424bee20",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "67357b24-b437-4d5b-b640-4fa05677e998",
+              "leftValue": "={{ $json.total }}",
+              "rightValue": 5000,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1312,
+        -496
+      ],
+      "id": "43497167-1d13-4c38-b92f-35c78fc19edf",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1536,
+        -400
+      ],
+      "id": "0206601d-24ba-4846-b4bc-ba545ddde0a2",
+      "name": "Merge"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "//comment": "No sensitive data in connections, safe to keep."
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "//comment_metadata": "REMOVED: Unique IDs for the workflow, instance, version, and tags were removed from the section below.",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": [
+    {
+      "createdAt": "2025-07-25T10:44:22.904Z",
+      "updatedAt": "2025-07-25T10:44:22.904Z",
+      "name": "Document Processing"
+    }
+  ]
+}

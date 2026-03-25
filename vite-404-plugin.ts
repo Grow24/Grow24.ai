@@ -63,7 +63,9 @@ export function vite404Plugin(): Plugin {
           pathname === '/Microsoft' ||
           pathname.startsWith('/Microsoft/') ||
           pathname === '/OpenStreetMaps' ||
-          pathname.startsWith('/OpenStreetMaps/')
+          pathname.startsWith('/OpenStreetMaps/') ||
+          pathname === '/ImageProcessing' ||
+          pathname.startsWith('/ImageProcessing/')
         ) {
           return next()
         }

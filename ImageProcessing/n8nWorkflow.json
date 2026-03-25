@@ -1,0 +1,311 @@
+{
+  "name": "AutoDocX copy",
+  "nodes": [
+    {
+      "parameters": {
+        "inputDataFieldName": "data0",
+        "options": {}
+      },
+      "type": "n8n-nodes-tesseractjs.tesseractNode",
+      "typeVersion": 1,
+      "position": [
+        416,
+        -352
+      ],
+      "id": "10c319ae-1b6e-4095-82e1-88a4d5e20e5a",
+      "name": "Tesseract"
+    },
+    {
+      "parameters": {
+        "jsCode": "let content = $input.first().json.message.content;\n\nif (!content) {\n  throw new Error(\"LLM response is missing or malformed\");\n}\n\n// Handle both string and object cases\nif (typeof content === \"string\") {\n  content = content.trim()\n    .replace(/^```json/, '')\n    .replace(/^```/, '')\n    .replace(/```$/, '')\n    .trim();\n\n  content = JSON.parse(content); // parse only if it was a string\n}\n\n// Now content is safely a JS object\nreturn [\n  {\n    json: content\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        -352
+      ],
+      "id": "6066d68f-9c30-45af-b8df-53ec6fd21bb2",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "jsCode": "const lineItems = $input.first().json.line_items\n\n// Arrays to hold valid and invalid entries\nconst valid = [];\nconst invalid = [];\n\nlineItems.forEach((item, index) => {\n  const errors = [];\n\n  // Check for required fields\n  if (!item.description || item.description.trim() === '') errors.push('Missing description');\n  if (!item.quantity || item.quantity.trim() === '') errors.push('Missing quantity');\n  \n  if (!item.amount || item.amount.trim() === '') errors.push('Missing amount');\n\n  // Regex validations\n  const quantityRegex = /^[0-9]+$/;\n  const priceRegex = /^\\d+(\\.\\d{1,2})?$/;\n\n  if (item.quantity && !quantityRegex.test(item.quantity)) errors.push('Invalid quantity format');\n  if (item.unit_price && !priceRegex.test(item.unit_price)) errors.push('Invalid unit_price format');\n  if (item.amount && !priceRegex.test(item.amount)) errors.push('Invalid amount format');\n\n  // Logical validation: unit_price * quantity = amount\n  const quantity = parseInt(item.quantity);\n  const unitPrice = parseFloat(item.unit_price);\n  const amount = parseFloat(item.amount);\n\n  if (!isNaN(quantity) && !isNaN(unitPrice) && !isNaN(amount)) {\n    const expectedAmount = (unitPrice * quantity).toFixed(2);\n    if (expectedAmount !== item.amount) {\n      errors.push(`Amount mismatch: expected ${expectedAmount}, got ${item.amount}`);\n    }\n  }\n\n  // Push to valid or invalid list\n  if (errors.length === 0) {\n    valid.push({\n      json: {\n        ...item,\n        status: 'Valid'\n      }\n    });\n  } else {\n    invalid.push({\n      json: {\n        ...item,\n        status: 'Invalid',\n        errors\n      }\n    });\n  }\n});\n\nreturn [...valid, ...invalid];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1264,
+        -256
+      ],
+      "id": "bbf66d07-b540-4353-ac49-e4a88a9b00e4",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "526448a8-2556-4689-8b34-a97001c3b218",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "Valid",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1488,
+        -256
+      ],
+      "id": "22110646-d6b8-4033-a67b-3de7f4dc7940",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "chatgpt-4o-latest",
+          "mode": "list",
+          "cachedResultName": "CHATGPT-4O-LATEST"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=This is the ocr generaed extracted text::\n {{ $json.text }}"
+            },
+            {
+              "content": "You are a highly accurate invoice and receipt extraction assistant.\n\nThe input is raw OCR text from Tesseract. It may contain spelling errors, extra symbols, inconsistent formatting, or misplaced fields. Your goal is to extract only structured data in the exact format below and return **one and only one JSON object**. If any field is missing in the input, return an empty string (\"\") for that field. Do **not guess or hallucinate values**.\n\n### JSON Output Schema:\n{\n  \"document_type\":       \"\",   // Must be either \"Receipt\" or \"Invoice\"\n  \"document_number\":     \"\",\n  \"date\":                \"\",   // Format: DD-MM-YYYY\n  \"due_date\":            \"\",\n  \"vendor_name\":         \"\",\n  \"vendor_address\":      \"\",\n  \"customer_name\":       \"\",\n  \"customer_address\":    \"\",\n  \"line_items\": [\n    {\n      \"description\":    \"\",\n      \"quantity\":       \"\",   // Numeric only\n      \"unit_price\":     \"\",   // Numeric only\n      \"amount\":         \"\"    // Numeric only\n    }\n  ],\n  \"subtotal\":            \"\",   // Numeric only\n  \"tax_rate\":            \"\",   // Numeric only\n  \"tax_amount\":          \"\",   // Numeric only\n  \"total\":               \"\",   // Numeric only\n  \"payment_method\":      \"\",\n  \"cash_paid\":           \"\",   // Only for receipts\n  \"change_due\":          \"\"    // Only for receipts\n}\n\n### Extraction Rules:\n1. Return only the JSON object, no extra commentary or text.\n2. Dates must be strictly in **DD-MM-YYYY** format.\n3. Remove all currency symbols (₹, $, etc.) and keep numeric values only.\n4. Concatenate multiline addresses using commas.\n5. If document_type is \"Receipt\":\n   - Populate `cash_paid` and `change_due`.\n6. If document_type is \"Invoice\":\n   - Populate `due_date` only; set `cash_paid` and `change_due` to \"\".\n7. **Line Item Validation**:\n   - If both `quantity` and `unit_price` are present, ensure `amount = quantity * unit_price`. Use other line items to infer the correct pattern if uncertain.\n   - Majority of line items follow **either** of these formats:\n     - `quantity description unit_price amount`\n     - `description quantity unit_price amount`\n   - If a unit appears like kg, hr, hrs, meters, etc., **do not treat the number before it** as quantity, unit_price, total, or phone number.\n8. Use regex-like matching and positional clues:\n   - Total, subtotal, tax usually appear at the **bottom** of the document.\n   - Vendor/customer info and line items generally appear **above** totals.\n   - Document number may resemble invoice IDs or phone numbers — disambiguate based on context.\n9. Check and validate the final output against:\n   - Key format rules\n   - Basic invoice/receipt layout expectations\n   - Numerical relationships (`unit_price * quantity = amount`)\n\n### Important:\n- Think step-by-step. Validate each field logically.\n- Do not invent data that doesn’t exist in the input.\n- Only output valid JSON in the defined schema.\n\n",
+              "role": "system"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        640,
+        -352
+      ],
+      "id": "28a1d856-92d1-4da1-a09a-f860472e9789",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "q6Y0S1LDncoIXPPV",
+          "name": "autodoc"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bc7e87f9-c710-4b1f-a635-fa6811985db1",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "http://127.0.0.1:5500",
+          "binaryPropertyName": "data"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        192,
+        -352
+      ],
+      "id": "439bee74-9dcc-4de1-b2a3-d46becc3e7a9",
+      "name": "Webhook",
+      "webhookId": "bc7e87f9-c710-4b1f-a635-fa6811985db1"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{\n  JSON.stringify((() => {\n    const input = $json;\n    const output = {};\n\n    // --- Part 1: Main document fields (No changes here) ---\n    const textFields = [\"document_number\", \"date\", \"due_date\", \"vendor_name\", \"vendor_address\", \"customer_name\", \"customer_address\", \"payment_method\"];\n    const numericFields = [\"subtotal\", \"tax_rate\", \"tax_amount\", \"total\", \"cash_paid\", \"change_due\"];\n    if (input.document_type === \"Receipt\" || input.document_type === \"Invoice\") { output.document_type = input.document_type; }\n    textFields.forEach(field => { if (input[field]) output[field] = input[field]; });\n    numericFields.forEach(field => {\n      if (input[field] !== null && input[field] !== undefined && input[field] !== '') {\n        const num = parseFloat(input[field]);\n        if (!isNaN(num)) output[field] = num;\n      }\n    });\n\n    // --- Part 2: Process line_items with corrected logic ---\n    if (Array.isArray(input.line_items)) {\n      output.line_items = input.line_items.map(item => {\n        const processedItem = { ...item };\n\n        // Process 'amount' first\n        const amountNum = parseFloat(processedItem.amount);\n        processedItem.amount = isNaN(amountNum) ? 0 : amountNum;\n\n        // Process 'quantity'\n        const quantityNum = parseFloat(processedItem.quantity);\n        // If quantity is not a valid number OR it is 0, set to 1.\n        if (isNaN(quantityNum) || quantityNum === 0) {\n          processedItem.quantity = 1;\n        } else {\n          processedItem.quantity = quantityNum;\n        }\n\n        // Process 'unit_price'\n        const unitPriceNum = parseFloat(processedItem.unit_price);\n        // If unit_price is not a valid number OR it is 0, set it to the amount.\n        if (isNaN(unitPriceNum) || unitPriceNum === 0) {\n          processedItem.unit_price = processedItem.amount;\n        } else {\n          processedItem.unit_price = unitPriceNum;\n        }\n        \n        return processedItem;\n      });\n    }\n\n    return output;\n  })())\n}}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1936,
+        -352
+      ],
+      "id": "82a712d2-bdd4-436b-8931-128a424bee20",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "67357b24-b437-4d5b-b640-4fa05677e998",
+              "leftValue": "={{ $json.total }}",
+              "rightValue": 5000,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1488,
+        -448
+      ],
+      "id": "43497167-1d13-4c38-b92f-35c78fc19edf",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1712,
+        -352
+      ],
+      "id": "0206601d-24ba-4846-b4bc-ba545ddde0a2",
+      "name": "Merge"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Tesseract": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        []
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Tesseract",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2daf2a8a-a490-4371-8f08-857cf4910f36",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "47e60fe084fec2384a7a1c2226440631132e3e1e50f74082c49d5c94dc78204f"
+  },
+  "id": "ZZxyhRiiCd7YMkHt",
+  "tags": []
+}

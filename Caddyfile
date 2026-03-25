@@ -1,7 +1,7 @@
 :8080 {
 	root * /usr/share/caddy
 	@unsafePath {
-		path /.git/* /univer/.git/* /HBMPONE/.git/* /HBMP_DOCS_PLATFORM/.git/* /ivvychainv2/.git/* /OpenStreetMaps/.git/* /Microsoft/.git/* /node_modules/* /vendor/* /.venv/*
+		path /.git/* /univer/.git/* /HBMPONE/.git/* /HBMP_DOCS_PLATFORM/.git/* /ivvychainv2/.git/* /OpenStreetMaps/.git/* /Microsoft/.git/* /ImageProcessing/.git/* /node_modules/* /vendor/* /.venv/*
 	}
 	respond @unsafePath 404
 
@@ -116,6 +116,23 @@
 
 	handle_path /Microsoft/* {
 		root * /usr/share/caddy/Microsoft
+		try_files {path} {path}/ /index.html
+		file_server
+	}
+
+	# --- ImageProcessing (static files under /ImageProcessing/) ---
+	@imageProcessingExact path /ImageProcessing
+	redir @imageProcessingExact /ImageProcessing/ 308
+
+	@imageProcessingAssets path_regexp image_processing_assets ^/ImageProcessing/.*\.(js|mjs|css|map|json|wasm|ttf|woff|woff2|svg|png|jpg|jpeg|gif|webp|ico)$
+	handle @imageProcessingAssets {
+		root * /usr/share/caddy
+		try_files {path} =404
+		file_server
+	}
+
+	handle_path /ImageProcessing/* {
+		root * /usr/share/caddy/ImageProcessing
 		try_files {path} {path}/ /index.html
 		file_server
 	}
