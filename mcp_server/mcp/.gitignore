@@ -1,0 +1,28 @@
+# Environment (never commit virtualenvs — Playwright driver exceeds GitHub 100MB limit)
+venv/
+.venv_test/
+venv_broken_backup/
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Data files
+scraped_questions.json
+cleaned_questions.json
+*.json
+!requirements.txt
+
+# Credentials
+credentials/
+
+# Debug
+debug_screenshots/
+
+# OS
+.DS_Store
+Thumbs.db

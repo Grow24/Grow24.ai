@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HBMP Notes - OneNote</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #7719AA 0%, #5a1480 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow: hidden;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 18px 32px;
+            box-shadow: 0 2px 14px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #7719AA;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: white;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4a5568;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #f7fafc;
+            border-color: #7719AA;
+            color: #7719AA;
+            transform: translateY(-1px);
+        }
+
+        .main-container {
+            display: flex;
+            height: calc(100vh - 68px);
+        }
+
+        .sidebar {
+            width: 300px;
+            background: white;
+            border-right: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .sidebar-header h2 {
+            font-size: 16px;
+            color: #111827;
+            margin-bottom: 10px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .file-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 4px;
+            transition: background 0.2s;
+        }
+
+        .file-item:hover {
+            background: #f3f4f6;
+        }
+
+        .file-item.active {
+            background: #ede9fe;
+            border-left: 3px solid #7719AA;
+        }
+
+        .file-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #7719AA, #5a1480);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .file-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .file-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #111827;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-meta {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 2px;
+        }
+
+        .viewer-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .viewer-toolbar {
+            background: white;
+            padding: 14px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .viewer-toolbar h3 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            color: #111827;
+        }
+
+        .toolbar-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #7719AA, #5a1480);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .toolbar-btn:hover {
+            opacity: 0.9;
+        }
+
+        .file-viewer {
+            flex: 1;
+            background: white;
+            overflow: auto;
+            position: relative;
+        }
+
+        .file-viewer iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .no-files {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #e5e7eb;
+            border-top-color: #7719AA;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 40px;
+            color: #6b7280;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #7719AA, #5a1480);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: 40vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            HBMP Notes
+        </h1>
+        <div class="header-actions">
+            <button class="btn" onclick="refreshNotes()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                </svg>
+                Refresh
+            </button>
+            <button class="btn" onclick="window.location.href='/dashboard.html'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                </svg>
+                Dashboard
+            </button>
+            <div id="userAvatar" class="user-avatar">U</div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>OneNote Notebooks <span id="fileCount" style="background:#f3f4f6;padding:2px 8px;border-radius:10px;font-size:12px;margin-left:6px">0</span></h2>
+                <input type="text" class="search-box" id="searchBox" placeholder="Search notebooks..." oninput="filterNotebooks()">
+            </div>
+            <div class="file-list" id="fileList">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading notebooks...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="viewer-container">
+            <div class="viewer-toolbar" id="viewerToolbar" style="display:none">
+                <h3 id="currentFileName">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                    <span id="fileNameText">Untitled</span>
+                </h3>
+                <button class="toolbar-btn" id="openOneNoteBtn" onclick="openInOneNote()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                        <polyline points="15 3 21 3 21 9"/>
+                        <line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                    Edit in OneNote
+                </button>
+            </div>
+            <div class="file-viewer" id="fileViewer">
+                <div class="no-files">
+                    <div style="font-size:60px;opacity:0.5">📝</div>
+                    <h3 style="margin-top:12px;color:#6b7280">No page selected</h3>
+                    <p style="color:#9ca3af;margin-top:8px">Select a notebook → section → page on the left</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allNotebooks = [];
+        let filteredNotebooks = [];
+        let selectedPage = null;
+
+        async function loadUserProfile() {
+            try {
+                const response = await fetch('/api/me');
+                if (response.status === 401) {
+                    window.location.href = '/';
+                    return;
+                }
+                const data = await response.json();
+                const displayName = data.displayName || 'User';
+                const initials = displayName ? displayName.split(' ').map(n => n[0]).join('') : 'U';
+                document.getElementById('userAvatar').textContent = initials;
+            } catch (err) {
+                console.error('Error loading profile:', err);
+            }
+        }
+
+        async function loadNotebooks() {
+            const fileList = document.getElementById('fileList');
+            try {
+                const response = await fetch('/api/onenote/notebooks');
+                
+                if (response.status === 401) {
+                    alert('Session expired. Please login again.');
+                    window.location.href = '/';
+                    return;
+                }
+
+                if (!response.ok) {
+                    let errorMessage = 'Failed to load notebooks';
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.error?.message || errorData.message || errorMessage;
+                        
+                        // Check for permission issues
+                        if (errorMessage.includes('Access Denied') || errorMessage.includes('Forbidden') || errorMessage.includes('Notes.Read')) {
+                            fileList.innerHTML = `
+                                <div class="no-files" style="color:#6b7280;padding:20px;text-align:center">
+                                    <div style="font-size:48px;margin-bottom:16px">🔒</div>
+                                    <h3 style="margin-bottom:8px">OneNote Permission Required</h3>
+                                    <p style="font-size:14px;margin-bottom:16px">You need to grant OneNote access permissions.</p>
+                                    <ol style="text-align:left;font-size:13px;margin:0 auto;max-width:350px">
+                                        <li>Go to <a href="https://portal.azure.com" target="_blank">Azure Portal</a></li>
+                                        <li>Navigate to App registrations → Your app → API permissions</li>
+                                        <li>Add <strong>Notes.Read</strong> delegated permission</li>
+                                        <li>Click "Grant admin consent"</li>
+                                        <li><a href="/auth/logout">Sign out</a> and sign back in</li>
+                                    </ol>
+                                </div>`;
+                            return;
+                        }
+                    } catch (e) {
+                        errorMessage = `Server error: ${response.status}`;
+                    }
+                    fileList.innerHTML = `<div class="no-files" style="color:#6b7280;padding:20px">${errorMessage}</div>`;
+                    return;
+                }
+
+                const data = await response.json();
+                allNotebooks = data.value || [];
+                filteredNotebooks = [...allNotebooks];
+
+                console.log('Loaded notebooks:', allNotebooks);
+
+                if (allNotebooks.length === 0) {
+                    fileList.innerHTML = '<div class="no-files" style="color:#6b7280;padding:20px">No notebooks found</div>';
+                    document.getElementById('fileCount').textContent = '0';
+                } else {
+                    renderNotebooks();
+                    document.getElementById('fileCount').textContent = allNotebooks.length;
+                }
+            } catch (err) {
+                console.error('Error loading notebooks:', err);
+                fileList.innerHTML = '<div class="no-files" style="color:#6b7280;padding:20px">Error loading notebooks</div>';
+            }
+        }
+
+        function filterNotebooks() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            filteredNotebooks = allNotebooks.filter(nb => 
+                nb.displayName.toLowerCase().includes(searchTerm)
+            );
+            renderNotebooks();
+        }
+
+        function renderNotebooks() {
+            const fileList = document.getElementById('fileList');
+            
+            if (filteredNotebooks.length === 0) {
+                fileList.innerHTML = '<div class="no-files" style="color:#6b7280;padding:20px">No matching notebooks</div>';
+                return;
+            }
+
+            const fileHTML = filteredNotebooks.map(nb => {
+                const displayName = nb.displayName || 'Untitled Notebook';
+                const initials = displayName.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+                const created = nb.createdDateTime ? new Date(nb.createdDateTime).toLocaleDateString() : 'Unknown';
+                
+                return `
+                    <div class="file-item" onclick="selectNotebook('${nb.id}', '${escapeHtml(displayName)}')">
+                        <div class="file-icon">${initials}</div>
+                        <div class="file-info">
+                            <div class="file-name">${escapeHtml(displayName)}</div>
+                            <div class="file-meta">Created ${created}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            fileList.innerHTML = fileHTML;
+        }
+
+        async function selectNotebook(notebookId, notebookName) {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading sections...</p></div>';
+
+            try {
+                const response = await fetch(`/api/onenote/notebooks/${notebookId}/sections`);
+                if (!response.ok) {
+                    fileList.innerHTML = '<div class="no-files" style="color:#6b7280;padding:20px">Unable to load sections</div>';
+                    return;
+                }
+
+                const data = await response.json();
+                const sections = data.value || [];
+
+                if (sections.length === 0) {
+                    fileList.innerHTML = '<div class="no-files" style="color:#6b7280;padding:20px">No sections found</div>';
+                    return;
+                }
+
+                const sectionsHTML = sections.map(sec => `
+                    <div class="file-item" onclick="selectSection('${sec.id}', '${escapeHtml(sec.displayName)}', '${notebookName}')">
+                        <div class="file-icon" style="background:linear-gradient(135deg,#9b87d3,#6b5ea6)">📂</div>
+                        <div class="file-info">
+                            <div class="file-name">${escapeHtml(sec.displayName)}</div>
+                            <div class="file-meta">Section in ${escapeHtml(notebookName)}</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                fileList.innerHTML = sectionsHTML;
+            } catch (err) {
+                console.error('Error loading sections:', err);
+                fileList.innerHTML = '<div class="no-files" style="color:#6b7280;padding:20px">Error loading sections</div>';
+            }
+        }
+
+        async function selectSection(sectionId, sectionName, notebookName) {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading pages...</p></div>';
+
+            try {
+                const response = await fetch(`/api/onenote/sections/${sectionId}/pages`);
+                if (!response.ok) {
+                    fileList.innerHTML = '<div class="no-files" style="color:#6b7280;padding:20px">Unable to load pages</div>';
+                    return;
+                }
+
+                const data = await response.json();
+                const pages = data.value || [];
+
+                if (pages.length === 0) {
+                    fileList.innerHTML = '<div class="no-files" style="color:#6b7280;padding:20px">No pages found</div>';
+                    return;
+                }
+
+                const pagesHTML = pages.map(page => {
+                    const modified = new Date(page.lastModifiedDateTime).toLocaleDateString();
+                    return `
+                        <div class="file-item" onclick="selectPage('${page.id}', '${escapeHtml(page.title || 'Untitled')}', '${escapeHtml(page.links?.oneNoteWebUrl?.href || '')}')">
+                            <div class="file-icon" style="background:linear-gradient(135deg,#c4b5fd,#a78bfa);font-size:16px">📄</div>
+                            <div class="file-info">
+                                <div class="file-name">${escapeHtml(page.title || 'Untitled')}</div>
+                                <div class="file-meta">Modified ${modified}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                fileList.innerHTML = pagesHTML;
+            } catch (err) {
+                console.error('Error loading pages:', err);
+                fileList.innerHTML = '<div class="no-files" style="color:#6b7280;padding:20px">Error loading pages</div>';
+            }
+        }
+
+        async function selectPage(pageId, pageTitle, webUrl) {
+            selectedPage = { id: pageId, title: pageTitle, webUrl };
+            document.getElementById('viewerToolbar').style.display = 'flex';
+            document.getElementById('fileNameText').textContent = pageTitle;
+            document.getElementById('openOneNoteBtn').dataset.url = webUrl;
+
+            const viewer = document.getElementById('fileViewer');
+            viewer.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading page...</p></div>';
+
+            // Decode the webUrl if it's encoded
+            const decodedWebUrl = webUrl ? decodeURIComponent(webUrl).replace(/&amp;/g, '&') : '';
+
+            if (decodedWebUrl) {
+                // Try to load the page directly in iframe using OneNote web URL
+                viewer.innerHTML = `<iframe src="${decodedWebUrl}" style="width:100%;height:100%;border:none;background:white" onload="this.style.opacity=1" onerror="handleIframeError('${pageId}')"></iframe>`;
+            } else {
+                // Fallback: try to get page details from API
+                try {
+                    const pageResponse = await fetch(`/api/onenote/pages/${pageId}`);
+                    if (pageResponse.ok) {
+                        const pageData = await pageResponse.json();
+                        const embedUrl = pageData.links?.oneNoteWebUrl?.href;
+                        
+                        if (embedUrl) {
+                            viewer.innerHTML = `<iframe src="${embedUrl}" style="width:100%;height:100%;border:none;background:white"></iframe>`;
+                        } else {
+                            viewer.innerHTML = `
+                                <div class="no-files" style="color:#6b7280;padding:20px">
+                                    <p>Unable to display page in iframe.</p>
+                                    <button class="btn" style="margin-top:10px" onclick="window.open('${embedUrl || 'https://www.onenote.com/notebooks'}', '_blank')">Open in OneNote</button>
+                                </div>`;
+                        }
+                    } else {
+                        viewer.innerHTML = '<div class="no-files" style="color:#6b7280;padding:20px">Unable to load page</div>';
+                    }
+                } catch (err) {
+                    console.error('Error loading page:', err);
+                    viewer.innerHTML = '<div class="no-files" style="color:#6b7280;padding:20px">Error loading page</div>';
+                }
+            }
+        }
+
+        function handleIframeError(pageId) {
+            console.error('Iframe failed to load:', pageId);
+            const viewer = document.getElementById('fileViewer');
+            viewer.innerHTML = `
+                <div class="no-files" style="color:#6b7280;padding:20px">
+                    <p>Unable to display page in iframe.</p>
+                    <p style="font-size:12px;margin-top:8px">Some pages may not support embedding.</p>
+                    <button class="btn" style="margin-top:10px" onclick="openInOneNote()">Open in OneNote</button>
+                </div>`;
+        }
+
+        function openInOneNote() {
+            const url = document.getElementById('openOneNoteBtn').dataset.url;
+            if (url) {
+                window.open(url, '_blank');
+            }
+        }
+
+        function refreshNotes() {
+            loadNotebooks();
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Initialize
+        loadUserProfile();
+        loadNotebooks();
+    </script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  clientName  String?
+  status      String   @default("ACTIVE") // ACTIVE | ARCHIVED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  dockets     Docket[]
+  documents   DocumentInstance[]
+
+  @@map("projects")
+}
+
+model Docket {
+  id        String   @id @default(uuid())
+  projectId String
+  name      String
+  type      String   // BUSINESS_CASE | BUSINESS_REQUIREMENTS | TEST
+  level     String   // C | L | I (can be comma-separated for BUSINESS_REQUIREMENTS)
+  createdAt DateTime @default(now())
+
+  project   Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  documents DocumentInstance[]
+
+  @@map("dockets")
+}
+
+model DocumentTemplate {
+  id        String   @id @default(uuid())
+  name      String
+  code      String   @unique // BUSINESS_CASE, BRD, SRS, etc.
+  level     String   // C | L | I
+  version   Int      @default(1)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sections  TemplateSection[]
+  documents DocumentInstance[]
+
+  @@map("document_templates")
+}
+
+model TemplateSection {
+  id          String   @id @default(uuid())
+  templateId  String
+  title       String
+  order       Int
+  description String?
+
+  fields TemplateField[]
+  sections SectionInstance[]
+
+  templateRef DocumentTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@map("template_sections")
+}
+
+model TemplateField {
+  id         String   @id @default(uuid())
+  sectionId  String
+  label      String
+  dataType   String   // RICH_TEXT | STRING | TEXT | NUMBER | DATE | SELECT | BOOLEAN
+  mandatory  Boolean  @default(false)
+  helpText   String?
+  options    String?  // JSON for SELECT type
+  order      Int      @default(0)
+
+  section TemplateSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  values  FieldValue[]
+
+  @@map("template_fields")
+}
+
+model DocumentInstance {
+  id        String   @id @default(uuid())
+  projectId String
+  docketId  String
+  templateId String
+  title     String
+  level     String   // C | L | I (derived from template)
+  status    String   @default("DRAFT") // DRAFT | UNDER_REVIEW | APPROVED | SUPERSEDED
+  version   Int       @default(1)
+  createdBy String   @default("system") // Fake user for v1
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project    Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  docket     Docket           @relation(fields: [docketId], references: [id], onDelete: Cascade)
+  template   DocumentTemplate @relation(fields: [templateId], references: [id])
+  sections   SectionInstance[]
+  attachments Attachment[]
+  workflowHistory WorkflowHistory[]
+  sectionDockets SectionDocket[]
+
+  @@map("document_instances")
+}
+
+model SectionInstance {
+  id                String   @id @default(uuid())
+  documentId        String
+  templateSectionId String
+
+  document   DocumentInstance @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  section    TemplateSection  @relation(fields: [templateSectionId], references: [id])
+  fieldValues FieldValue[]
+
+  @@map("section_instances")
+}
+
+model FieldValue {
+  id                String   @id @default(uuid())
+  sectionInstanceId String
+  templateFieldId   String
+  value             String   // HTML/JSON for RICH_TEXT; raw string for others
+
+  sectionInstance SectionInstance @relation(fields: [sectionInstanceId], references: [id], onDelete: Cascade)
+  field           TemplateField   @relation(fields: [templateFieldId], references: [id])
+
+  @@unique([sectionInstanceId, templateFieldId])
+  @@map("field_values")
+}
+
+model Attachment {
+  id          String   @id @default(uuid())
+  documentId  String
+  fileName    String
+  mimeType    String
+  storagePath String
+  uploadedBy  String   @default("system")
+  uploadedAt  DateTime @default(now())
+
+  document DocumentInstance @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@map("attachments")
+}
+
+model WorkflowHistory {
+  id          String   @id @default(uuid())
+  documentId  String
+  fromStatus  String   // DRAFT | UNDER_REVIEW | APPROVED | SUPERSEDED
+  toStatus    String   // DRAFT | UNDER_REVIEW | APPROVED | SUPERSEDED
+  performedBy String   @default("system") // Fake user for v1
+  performedAt DateTime @default(now())
+  comment     String?
+
+  document DocumentInstance @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([performedAt])
+  @@map("workflow_history")
+}
+
+// SectionDocketItemType enum values: HBMP_DOC | GOOGLE_DOC | GOOGLE_SHEET | GOOGLE_SLIDE | FILE | LINK
+// SQLite doesn't support enums, so we use String and validate at application level
+
+model SectionDocket {
+  id          String   @id @default(uuid())
+  documentId  String
+  sectionId   String   // references template section id (TemplateSection.id)
+  title       String
+  description String?
+  status      String   @default("ACTIVE") // ACTIVE | ARCHIVED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  document DocumentInstance @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  items    SectionDocketItem[]
+
+  @@unique([documentId, sectionId])
+  @@index([documentId])
+  @@map("section_dockets")
+}
+
+model SectionDocketItem {
+  id             String   @id @default(uuid())
+  sectionDocketId String
+  itemType       String   // HBMP_DOC | GOOGLE_DOC | GOOGLE_SHEET | GOOGLE_SLIDE | FILE | LINK
+  title          String
+  refId          String?  // for HBMP_DOC => DocumentInstance.id
+  url            String?  // for google/link
+  attachmentId   String?  // for FILE => Attachment.id
+  orderIndex     Int      @default(0)
+  metadata       String?  // JSON string for extra info (preview image, mime type, etc.)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  sectionDocket SectionDocket @relation(fields: [sectionDocketId], references: [id], onDelete: Cascade)
+
+  @@index([sectionDocketId])
+  @@map("section_docket_items")
+}
+

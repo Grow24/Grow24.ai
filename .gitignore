@@ -14,3 +14,7 @@ tsconfig.tsbuildinfo
 *.tsbuildinfo
 .vite/
 .cache/
+
+# Python virtual environments (may contain large binaries e.g. Playwright)
+**/.venv*/
+**/venv/

@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Microsoft Graph</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 40px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+
+        .user-profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 10px;
+            transition: all 0.2s;
+            background: transparent;
+            border: 2px solid transparent;
+        }
+
+        .user-profile-trigger:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: rgba(102, 126, 234, 0.2);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropdown-arrow {
+            transition: transform 0.3s;
+        }
+
+        .user-profile-trigger.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            min-width: 280px;
+            z-index: 1000;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+            overflow: hidden;
+        }
+
+        .user-dropdown.active {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .dropdown-header-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .dropdown-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 600;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .dropdown-user-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .dropdown-user-info p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .dropdown-menu {
+            padding: 8px 0;
+        }
+
+        .dropdown-section {
+            padding: 8px 0;
+        }
+
+        .dropdown-section:not(:last-child) {
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .dropdown-section-title {
+            padding: 8px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #2d3748;
+            text-decoration: none;
+        }
+
+        .dropdown-item:hover {
+            background: #f7fafc;
+            color: #667eea;
+        }
+
+        .dropdown-item-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .dropdown-item-content {
+            flex: 1;
+        }
+
+        .dropdown-item-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .dropdown-item-subtitle {
+            font-size: 12px;
+            color: #718096;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 8px 0;
+        }
+
+        .logout-item {
+            color: #ef4444;
+        }
+
+        .logout-item:hover {
+            background: #fee;
+            color: #dc2626;
+        }
+
+        .logout-item .dropdown-item-icon {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            display: none; /* Hidden as it's now in dropdown */
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 40px;
+        }
+
+        .welcome-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .welcome-card h2 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-card p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .token-info {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 14px;
+            font-family: monospace;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: #667eea;
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            color: #2d3748;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .card p {
+            color: #718096;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .result-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 900px;
+            max-height: 80vh;
+            width: 90%;
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .result-container.active {
+            display: block;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1999;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-backdrop.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .result-header h3 {
+            color: #2d3748;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-btn {
+            background: #e2e8f0;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #cbd5e0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+        }
+
+        .spinner {
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        pre {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            overflow: auto;
+            max-height: 500px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .profile-photo {
+            max-width: 200px;
+            border-radius: 50%;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            margin: 20px auto;
+            display: block;
+        }
+
+        .file-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .file-item {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.2s;
+        }
+
+        .file-item:hover {
+            background: #edf2f7;
+        }
+
+        .file-item-clickable {
+            cursor: pointer;
+        }
+
+        .file-item-clickable:hover {
+            background: #e6f2ff;
+            border: 2px solid #667eea;
+            transform: translateX(5px);
+        }
+
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .file-info h4 {
+            color: #2d3748;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .file-info p {
+            color: #718096;
+            font-size: 12px;
+        }
+
+        .success-message {
+            background: #c6f6d5;
+            color: #22543d;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            color: #2d3748;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modal-close {
+            background: #e2e8f0;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #cbd5e0;
+            transform: rotate(90deg);
+        }
+
+        .breadcrumb {
+            padding: 15px 30px;
+            background: #f7fafc;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .breadcrumb-item {
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .breadcrumb-item:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb-separator {
+            color: #a0aec0;
+        }
+
+        .breadcrumb-current {
+            color: #2d3748;
+            cursor: default;
+        }
+
+        .breadcrumb-current:hover {
+            text-decoration: none;
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 30px;
+        }
+
+        .file-browser {
+            display: grid;
+            gap: 10px;
+        }
+
+        .file-browser-item {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .file-browser-item:hover {
+            background: #edf2f7;
+            transform: translateX(5px);
+        }
+
+        .file-browser-item.folder:hover {
+            background: #e6f2ff;
+            border-color: #667eea;
+        }
+
+        .file-browser-item.viewable:hover {
+            background: #e6ffed;
+            border-color: #10b981;
+        }
+
+        .file-browser-icon {
+            width: 45px;
+            height: 45px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .file-browser-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .file-browser-info h4 {
+            color: #2d3748;
+            font-size: 15px;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-browser-info p {
+            color: #718096;
+            font-size: 13px;
+        }
+
+        .view-badge {
+            background: #10b981;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .empty-folder {
+            text-align: center;
+            padding: 60px 20px;
+            color: #a0aec0;
+        }
+
+        .empty-folder-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 20px;
+            }
+
+            .header {
+                padding: 15px 20px;
+            }
+
+            .modal-content {
+                width: 95%;
+                max-height: 90vh;
+            }
+
+            .modal-header {
+                padding: 20px;
+            }
+
+            .modal-body {
+                padding: 15px 20px;
+            }
+
+            .breadcrumb {
+                padding: 12px 20px;
+            }
+        }
+
+            .welcome-card {
+                padding: 25px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #667eea;">
+                <rect x="3" y="3" width="7" height="7"/>
+                <rect x="14" y="3" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
+            </svg>
+            Microsoft Dashboard
+        </h1>
+        <div class="user-info">
+            <div class="user-profile-trigger" id="userProfileTrigger" onclick="toggleUserDropdown()">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <span class="user-name" id="userName">Loading...</span>
+                <svg class="dropdown-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"/>
+                </svg>
+            </div>
+            
+            <!-- User Dropdown Menu -->
+            <div class="user-dropdown" id="userDropdown">
+                <div class="dropdown-header">
+                    <div class="dropdown-header-content">
+                        <div class="dropdown-avatar" id="dropdownAvatar">U</div>
+                        <div class="dropdown-user-info">
+                            <h3 id="dropdownUserName">User</h3>
+                            <p id="dropdownUserEmail">user@example.com</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dropdown-menu">
+                    <div class="dropdown-section">
+                        <div class="dropdown-section-title">Account</div>
+                        <div class="dropdown-item" onclick="testAPI('me', '👤 My Profile'); closeUserDropdown();">
+                            <div class="dropdown-item-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
+                                </svg>
+                            </div>
+                            <div class="dropdown-item-content">
+                                <div class="dropdown-item-title">My Profile</div>
+                                <div class="dropdown-item-subtitle">View account information</div>
+                            </div>
+                        </div>
+                        
+                        <div class="dropdown-item" onclick="testAPI('photo', '📷 Profile Photo'); closeUserDropdown();">
+                            <div class="dropdown-item-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                                    <circle cx="12" cy="13" r="4"/>
+                                </svg>
+                            </div>
+                            <div class="dropdown-item-content">
+                                <div class="dropdown-item-title">Profile Photo</div>
+                                <div class="dropdown-item-subtitle">View your picture</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dropdown-section">
+                        <div class="dropdown-section-title">Files & Storage</div>
+                        <div class="dropdown-item" onclick="openFileBrowser(); closeUserDropdown();">
+                            <div class="dropdown-item-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                                </svg>
+                            </div>
+                            <div class="dropdown-item-content">
+                                <div class="dropdown-item-title">Browse Files</div>
+                                <div class="dropdown-item-subtitle">OneDrive files & folders</div>
+                            </div>
+                        </div>
+                        
+                        <div class="dropdown-item" onclick="testAPI('recent', '🕐 Recent Files'); closeUserDropdown();">
+                            <div class="dropdown-item-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                            </div>
+                            <div class="dropdown-item-content">
+                                <div class="dropdown-item-title">Recent Files</div>
+                                <div class="dropdown-item-subtitle">Recently accessed</div>
+                            </div>
+                        </div>
+                        
+                        <div class="dropdown-item" onclick="testAPI('shared', '🔗 Shared Files'); closeUserDropdown();">
+                            <div class="dropdown-item-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                                </svg>
+                            </div>
+                            <div class="dropdown-item-content">
+                                <div class="dropdown-item-title">Shared With Me</div>
+                                <div class="dropdown-item-subtitle">Files others shared</div>
+                            </div>
+                        </div>
+                        
+                        <div class="dropdown-item" onclick="searchFiles(); closeUserDropdown();">
+                            <div class="dropdown-item-icon" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); color: white;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"/>
+                                    <path d="m21 21-4.35-4.35"/>
+                                </svg>
+                            </div>
+                            <div class="dropdown-item-content">
+                                <div class="dropdown-item-title">Search Files</div>
+                                <div class="dropdown-item-subtitle">Find in OneDrive</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dropdown-section">
+                        <div class="dropdown-section-title">Organization</div>
+                        <div class="dropdown-item" onclick="testAPI('sites', '🏢 SharePoint Sites'); closeUserDropdown();">
+                            <div class="dropdown-item-icon" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); color: white;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                    <polyline points="9 22 9 12 15 12 15 22"/>
+                                </svg>
+                            </div>
+                            <div class="dropdown-item-content">
+                                <div class="dropdown-item-title">SharePoint Sites</div>
+                                <div class="dropdown-item-subtitle">Organization sites</div>
+                            </div>
+                        </div>
+                        
+                        <div class="dropdown-item" onclick="testAPI('upload-test', '⬆️ Upload Test'); closeUserDropdown();">
+                            <div class="dropdown-item-icon" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                            </div>
+                            <div class="dropdown-item-content">
+                                <div class="dropdown-item-title">Upload Test</div>
+                                <div class="dropdown-item-subtitle">Create test file</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dropdown-section">
+                        <div class="dropdown-item logout-item" onclick="logout();">
+                            <div class="dropdown-item-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                    <polyline points="16 17 21 12 16 7"/>
+                                    <line x1="21" y1="12" x2="9" y2="12"/>
+                                </svg>
+                            </div>
+                            <div class="dropdown-item-content">
+                                <div class="dropdown-item-title">Sign Out</div>
+                                <div class="dropdown-item-subtitle">Exit your account</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="welcome-card">
+            <h2>Welcome, <span id="welcomeUserName">Abhinav</span></h2>
+            <p>Explore your Microsoft data with these powerful tools</p>
+            <div class="token-info">
+                <strong>Status:</strong> <span style="color: #10b981;">✓ Authenticated</span><br>
+                <strong>Session:</strong> Secure server-side session active
+            </div>
+        </div>
+
+        <!-- File Type Filter Buttons -->
+        <div style="margin: 30px 0;">
+            <h2 style="margin-bottom: 20px; color: #2d3748;">HBMP Toolsets</h2>
+            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+                <div class="card" onclick="window.location.href='/excel.html'" style="cursor: pointer;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #0F9D58 0%, #0b8043 100%); color: white;">
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <line x1="12" y1="9" x2="12" y2="17"/>
+                        </svg>
+                    </div>
+                    <h3>HBMP Excel</h3>
+                    <p>View all Excel spreadsheets (.xlsx, .xls)</p>
+                </div>
+
+                <div class="card" onclick="window.location.href='/docs.html'" style="cursor: pointer;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #2B579A 0%, #1a3a6b 100%); color: white;">
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <line x1="16" y1="9" x2="10" y2="9"/>
+                        </svg>
+                    </div>
+                    <h3>HBMP Docs</h3>
+                    <p>View all Word documents (.docx, .doc)</p>
+                </div>
+
+                <div class="card" onclick="window.location.href='/slides.html'" style="cursor: pointer;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #D24726 0%, #a33619 100%); color: white;">
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M7 8h10"/>
+                            <path d="M7 12h10"/>
+                            <path d="M7 16h10"/>
+                        </svg>
+                    </div>
+                    <h3>HBMP Slides</h3>
+                    <p>View all PowerPoint presentations (.pptx, .ppt)</p>
+                </div>
+
+                <div class="card" onclick="window.location.href='/pdfs.html'" style="cursor: pointer;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white;">
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <path d="M10 12h4"/>
+                            <path d="M10 16h4"/>
+                        </svg>
+                    </div>
+                    <h3>HBMP PDFs</h3>
+                    <p>View all PDF documents (.pdf)</p>
+                </div>
+
+                <div class="card" onclick="window.location.href='/forms.html'" style="cursor: pointer;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #038387 0%, #026064 100%); color: white;">
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <path d="M9 9h6"/>
+                            <path d="M9 13h6"/>
+                            <path d="M9 17h3"/>
+                        </svg>
+                    </div>
+                    <h3>HBMP Forms</h3>
+                    <p>View and manage Microsoft Forms</p>
+                </div>
+
+                <div class="card" onclick="window.location.href='/teams.html'" style="cursor: pointer;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #6264A7 0%, #464775 100%); color: white;">
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <h3>HBMP Teams</h3>
+                    <p>View Teams, channels, and messages</p>
+                </div>
+
+                <div class="card" onclick="window.location.href='/notes.html'" style="cursor: pointer;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #7719AA 0%, #5a1480 100%); color: white;">
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                    </div>
+                    <h3>HBMP Notes</h3>
+                    <p>View and manage OneNote notebooks</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Backdrop -->
+        <div class="modal-backdrop" id="modalBackdrop" onclick="closeResults()"></div>
+
+        <div class="result-container" id="resultContainer">
+            <div class="result-header">
+                <h3 id="resultTitle">Results</h3>
+                <button class="close-btn" onclick="closeResults()">✕ Close</button>
+            </div>
+            <div id="resultContent"></div>
+        </div>
+    </div>
+
+    <!-- File Browser Modal -->
+    <div class="modal" id="fileBrowserModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    OneDrive Browser
+                </h2>
+                <button class="modal-close" onclick="closeFileBrowser()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="breadcrumb" id="breadcrumb">
+                <span class="breadcrumb-item" onclick="navigateToFolder(null)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    </svg>
+                    Root
+                </span>
+            </div>
+            <div class="modal-body" id="fileBrowserContent">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading files...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check authentication status on page load
+        checkAuth();
+
+        // File browser state
+        let currentFolderId = null;
+        let breadcrumbPath = [];
+
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/auth/status');
+                const data = await response.json();
+                
+                if (!data.authenticated) {
+                    // Not authenticated, redirect to login
+                    window.location.href = '/';
+                    return;
+                }
+                
+                // User is authenticated, load their profile
+                loadUserProfile();
+            } catch (err) {
+                console.error('Error checking auth:', err);
+                window.location.href = '/';
+            }
+        }
+
+        async function loadUserProfile() {
+            try {
+                const response = await fetch('/api/me');
+                
+                if (response.status === 401) {
+                    // Session expired
+                    window.location.href = '/';
+                    return;
+                }
+                
+                const data = await response.json();
+                const displayName = data.displayName || 'User';
+                const email = data.mail || data.userPrincipalName || '';
+                
+                // Extract first name for welcome message
+                const firstName = data.givenName || displayName.split(' ')[0] || 'User';
+                
+                document.getElementById('userName').textContent = displayName;
+                document.getElementById('dropdownUserName').textContent = displayName;
+                document.getElementById('dropdownUserEmail').textContent = email;
+                
+                // Update welcome message with first name
+                const welcomeUserName = document.getElementById('welcomeUserName');
+                if (welcomeUserName) {
+                    welcomeUserName.textContent = firstName;
+                }
+                
+                const initials = displayName ? displayName.split(' ').map(n => n[0]).join('') : 'U';
+                document.getElementById('userAvatar').textContent = initials;
+                document.getElementById('dropdownAvatar').textContent = initials;
+            } catch (err) {
+                console.error('Error loading profile:', err);
+            }
+        }
+
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            const trigger = document.getElementById('userProfileTrigger');
+            
+            dropdown.classList.toggle('active');
+            trigger.classList.toggle('active');
+        }
+
+        function closeUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            const trigger = document.getElementById('userProfileTrigger');
+            
+            dropdown.classList.remove('active');
+            trigger.classList.remove('active');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('userDropdown');
+            const trigger = document.getElementById('userProfileTrigger');
+            
+            if (dropdown && trigger) {
+                if (!trigger.contains(event.target) && !dropdown.contains(event.target)) {
+                    closeUserDropdown();
+                }
+            }
+        });
+
+        async function logout() {
+            if (confirm('Are you sure you want to sign out?')) {
+                try {
+                    await fetch('/auth/logout');
+                    window.location.href = '/';
+                } catch (err) {
+                    console.error('Logout error:', err);
+                    window.location.href = '/';
+                }
+            }
+        }
+
+        async function testAPI(endpoint, title) {
+            // Special handling for OneDrive Files - open modal instead
+            if (endpoint === 'drive') {
+                openFileBrowser();
+                return;
+            }
+
+            const resultContainer = document.getElementById('resultContainer');
+            const modalBackdrop = document.getElementById('modalBackdrop');
+            const resultContent = document.getElementById('resultContent');
+            const resultTitle = document.getElementById('resultTitle');
+
+            resultTitle.textContent = title;
+            resultContainer.classList.add('active');
+            modalBackdrop.classList.add('active');
+            resultContent.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading...</p></div>';
+
+            try {
+                const response = await fetch(`/api/${endpoint}`);
+                
+                // Check if session expired
+                if (response.status === 401) {
+                    alert('Your session has expired. Please login again.');
+                    window.location.href = '/';
+                    return;
+                }
+                
+                const contentType = response.headers.get('content-type');
+
+                if (contentType && contentType.includes('image')) {
+                    const blob = await response.blob();
+                    const imageUrl = URL.createObjectURL(blob);
+                    resultContent.innerHTML = `
+                        <div style="text-align: center;">
+                            <img src="${imageUrl}" class="profile-photo" alt="Profile Photo">
+                        </div>
+                    `;
+                } else {
+                    const data = await response.json();
+                    
+                    if (endpoint === 'me') {
+                        // Render profile UI
+                        renderProfileUI(data);
+                    } else if (endpoint === 'upload-test' && data.success) {
+                        resultContent.innerHTML = `
+                            <div class="success-message">
+                                ✅ File uploaded successfully!
+                            </div>
+                            <div style="background: #f7fafc; padding: 20px; border-radius: 10px; margin-top: 15px;">
+                                <h4 style="margin-bottom: 10px;">File Details:</h4>
+                                <div style="display: grid; gap: 10px;">
+                                    <div><strong>Name:</strong> ${data.file.name}</div>
+                                    <div><strong>Size:</strong> ${formatBytes(data.file.size)}</div>
+                                    <div><strong>Created:</strong> ${new Date(data.file.createdDateTime).toLocaleString()}</div>
+                                </div>
+                            </div>
+                        `;
+                    } else if ((endpoint === 'recent' || endpoint === 'shared' || endpoint.startsWith('search?')) && data.value) {
+                        if (endpoint.startsWith('search?')) {
+                            renderSearchResults(data.value);
+                        } else {
+                            renderFileList(data.value);
+                        }
+                    } else if (endpoint === 'sites' && data.value) {
+                        renderSitesList(data.value);
+                    } else {
+                        resultContent.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                    }
+                }
+            } catch (err) {
+                resultContent.innerHTML = `<div style="color: #e53e3e; padding: 20px;">
+                    <h4>Error occurred</h4>
+                    <p>${err.message}</p>
+                </div>`;
+            }
+        }
+
+        // Open file browser modal
+        function openFileBrowser() {
+            document.getElementById('fileBrowserModal').classList.add('active');
+            currentFolderId = null;
+            breadcrumbPath = [];
+            navigateToFolder(null);
+        }
+
+        // Close file browser modal
+        function closeFileBrowser() {
+            document.getElementById('fileBrowserModal').classList.remove('active');
+        }
+
+        // Navigate to a folder
+        async function navigateToFolder(folderId, folderName) {
+            const content = document.getElementById('fileBrowserContent');
+            content.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading files...</p></div>';
+
+            currentFolderId = folderId;
+
+            // Update breadcrumb
+            if (folderId === null) {
+                breadcrumbPath = [];
+            } else {
+                // Find if folder already in path
+                const existingIndex = breadcrumbPath.findIndex(f => f.id === folderId);
+                if (existingIndex >= 0) {
+                    breadcrumbPath = breadcrumbPath.slice(0, existingIndex + 1);
+                } else {
+                    breadcrumbPath.push({ id: folderId, name: folderName });
+                }
+            }
+            updateBreadcrumb();
+
+            try {
+                const endpoint = folderId 
+                    ? `/api/folder/${folderId}/children`
+                    : '/api/drive';
+                
+                const response = await fetch(endpoint);
+                
+                if (response.status === 401) {
+                    alert('Session expired. Please login again.');
+                    window.location.href = '/';
+                    return;
+                }
+                
+                const data = await response.json();
+                const files = data.value || [];
+                
+                renderFileBrowser(files);
+            } catch (err) {
+                console.error('Error loading folder:', err);
+                content.innerHTML = `
+                    <div style="color: #e53e3e; padding: 40px; text-align: center;">
+                        <h4>Error loading files</h4>
+                        <p>${err.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Update breadcrumb navigation
+        function updateBreadcrumb() {
+            const breadcrumb = document.getElementById('breadcrumb');
+            let html = `
+                <span class="breadcrumb-item ${breadcrumbPath.length === 0 ? 'breadcrumb-current' : ''}" onclick="navigateToFolder(null)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    </svg>
+                    Root
+                </span>
+            `;
+            
+            breadcrumbPath.forEach((folder, index) => {
+                const isLast = index === breadcrumbPath.length - 1;
+                html += `
+                    <span class="breadcrumb-separator">›</span>
+                    <span class="breadcrumb-item ${isLast ? 'breadcrumb-current' : ''}" onclick="navigateToFolder('${folder.id}', '${escapeHtml(folder.name)}')">
+                        ${escapeHtml(folder.name)}
+                    </span>
+                `;
+            });
+            
+            breadcrumb.innerHTML = html;
+        }
+
+        // Render files in modal browser
+        function renderFileBrowser(files) {
+            const content = document.getElementById('fileBrowserContent');
+            
+            if (files.length === 0) {
+                content.innerHTML = `
+                    <div class="empty-folder">
+                        <div class="empty-folder-icon">📁</div>
+                        <h3>This folder is empty</h3>
+                        <p>No files or folders to display</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort: folders first, then files
+            const sortedFiles = files.sort((a, b) => {
+                if (a.folder && !b.folder) return -1;
+                if (!a.folder && b.folder) return 1;
+                return a.name.localeCompare(b.name);
+            });
+
+            const fileHTML = sortedFiles.map(file => {
+                const isFolder = !!file.folder;
+                const ext = file.name.split('.').pop().toLowerCase();
+                // ALL files are now viewable (not just Office formats)
+                const isViewable = !isFolder;
+                
+                const iconSvg = isFolder
+                    ? `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`
+                    : getFileIconSvg(file.name);
+                
+                const size = file.size ? formatBytes(file.size) : 'N/A';
+                const modified = file.lastModifiedDateTime ? new Date(file.lastModifiedDateTime).toLocaleDateString() : 'N/A';
+                
+                const itemClass = isFolder ? 'folder' : 'viewable';
+                
+                return `
+                    <div class="file-browser-item ${itemClass}" data-file-id="${file.id}" data-file-name="${escapeHtml(file.name)}" data-is-folder="${isFolder}" data-is-viewable="${isViewable}">
+                        <div class="file-browser-icon">${iconSvg}</div>
+                        <div class="file-browser-info">
+                            <h4>${escapeHtml(file.name)}</h4>
+                            <p>${isFolder ? 'Folder' : `${size}`} • ${modified}</p>
+                        </div>
+                        ${isViewable ? '<span class="view-badge">Click to view</span>' : ''}
+                        ${isFolder ? '<span class="view-badge" style="background: #667eea;">Open →</span>' : ''}
+                    </div>
+                `;
+            }).join('');
+
+            content.innerHTML = `<div class="file-browser">${fileHTML}</div>`;
+            
+            // Add click handlers after rendering
+            document.querySelectorAll('.file-browser-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const fileId = item.dataset.fileId;
+                    const fileName = item.dataset.fileName;
+                    const isFolder = item.dataset.isFolder === 'true';
+                    const isViewable = item.dataset.isViewable === 'true';
+                    
+                    if (isFolder) {
+                        navigateToFolder(fileId, fileName);
+                    } else if (isViewable) {
+                        openFileViewer(fileId, fileName);
+                    }
+                });
+            });
+        }
+
+        function renderProfileUI(data) {
+            const resultContent = document.getElementById('resultContent');
+            
+            resultContent.innerHTML = `
+                <div style="max-width: 600px; margin: 0 auto;">
+                    <!-- Profile Header Card -->
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 15px; margin-bottom: 20px; text-align: center;">
+                        <div style="width: 100px; height: 100px; border-radius: 50%; background: rgba(255,255,255,0.2); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 600; border: 3px solid rgba(255,255,255,0.5);">
+                            ${data.displayName ? data.displayName.split(' ').map(n => n[0]).join('') : 'U'}
+                        </div>
+                        <h2 style="margin-bottom: 5px; font-size: 28px;">${data.displayName || 'User'}</h2>
+                        <p style="opacity: 0.9; font-size: 16px;">${data.jobTitle || 'Microsoft User'}</p>
+                    </div>
+                    
+                    <!-- Contact Information -->
+                    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; margin-bottom: 15px;">
+                        <h3 style="color: #2d3748; margin-bottom: 20px; font-size: 18px; display: flex; align-items: center; gap: 8px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                <polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                            Contact Information
+                        </h3>
+                        <div style="display: grid; gap: 15px;">
+                            <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f7fafc; border-radius: 8px;">
+                                <div style="width: 40px; height: 40px; border-radius: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                        <polyline points="22,6 12,13 2,6"/>
+                                    </svg>
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 12px; color: #718096; margin-bottom: 2px;">Email</div>
+                                    <div style="font-weight: 500; color: #2d3748;">${data.mail || data.userPrincipalName || 'Not available'}</div>
+                                </div>
+                            </div>
+                            
+                            ${data.mobilePhone ? `
+                                <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f7fafc; border-radius: 8px;">
+                                    <div style="width: 40px; height: 40px; border-radius: 8px; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); display: flex; align-items: center; justify-content: center; color: white;">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                                            <line x1="12" y1="18" x2="12.01" y2="18"/>
+                                        </svg>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 12px; color: #718096; margin-bottom: 2px;">Mobile Phone</div>
+                                        <div style="font-weight: 500; color: #2d3748;">${data.mobilePhone}</div>
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
+                            ${data.officeLocation ? `
+                                <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f7fafc; border-radius: 8px;">
+                                    <div style="width: 40px; height: 40px; border-radius: 8px; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); display: flex; align-items: center; justify-content: center; color: white;">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                            <circle cx="12" cy="10" r="3"/>
+                                        </svg>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 12px; color: #718096; margin-bottom: 2px;">Office Location</div>
+                                        <div style="font-weight: 500; color: #2d3748;">${data.officeLocation}</div>
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    
+                    <!-- Account Details -->
+                    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px;">
+                        <h3 style="color: #2d3748; margin-bottom: 20px; font-size: 18px; display: flex; align-items: center; gap: 8px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            Account Details
+                        </h3>
+                        <div style="display: grid; gap: 12px;">
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e2e8f0;">
+                                <span style="color: #718096;">User ID</span>
+                                <span style="font-weight: 500; color: #2d3748; font-family: monospace; font-size: 13px;">${data.id ? data.id.substring(0, 20) + '...' : 'N/A'}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e2e8f0;">
+                                <span style="color: #718096;">User Principal Name</span>
+                                <span style="font-weight: 500; color: #2d3748;">${data.userPrincipalName || 'N/A'}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e2e8f0;">
+                                <span style="color: #718096;">Given Name</span>
+                                <span style="font-weight: 500; color: #2d3748;">${data.givenName || 'N/A'}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e2e8f0;">
+                                <span style="color: #718096;">Surname</span>
+                                <span style="font-weight: 500; color: #2d3748;">${data.surname || 'N/A'}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0;">
+                                <span style="color: #718096;">Preferred Language</span>
+                                <span style="font-weight: 500; color: #2d3748;">${data.preferredLanguage || 'en-US'}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderFileList(files) {
+            const resultContent = document.getElementById('resultContent');
+            
+            if (!files || files.length === 0) {
+                resultContent.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; color: #718096;">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 20px; opacity: 0.5;">
+                            <path d="M9 2v6H2V2h7zm0 20v-6H2v6h7zM22 2v6h-7V2h7zm0 20v-6h-7v6h7z"/>
+                        </svg>
+                        <p style="font-size: 18px; margin-bottom: 8px;">No files found</p>
+                        <p style="font-size: 14px;">There are no files to display at this time.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const fileHTML = files.map(file => {
+                const iconSvg = file.folder 
+                    ? `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`
+                    : getFileIconSvg(file.name);
+                const size = file.size ? formatBytes(file.size) : 'N/A';
+                const modified = file.lastModifiedDateTime ? new Date(file.lastModifiedDateTime).toLocaleDateString() : 'N/A';
+                
+                // Check if file is viewable (Office files)
+                const ext = file.name.split('.').pop().toLowerCase();
+                const isViewable = ['xlsx', 'xls', 'docx', 'doc', 'pptx', 'ppt', 'pdf'].includes(ext);
+                const clickHandler = isViewable && !file.folder 
+                    ? `onclick="openFileViewer('${file.id}', '${escapeHtml(file.name)}')"` 
+                    : '';
+                const cursor = isViewable && !file.folder ? 'cursor: pointer;' : '';
+                const hover = isViewable && !file.folder ? 'file-item-clickable' : '';
+                
+                // Determine color based on file type
+                const fileExt = file.name.split('.').pop().toLowerCase();
+                let gradient = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                if (fileExt === 'xlsx' || fileExt === 'xls') gradient = 'linear-gradient(135deg, #0F9D58 0%, #0a7d46 100%)';
+                else if (fileExt === 'docx' || fileExt === 'doc') gradient = 'linear-gradient(135deg, #2B579A 0%, #1e3a6b 100%)';
+                else if (fileExt === 'pptx' || fileExt === 'ppt') gradient = 'linear-gradient(135deg, #D24726 0%, #a5381d 100%)';
+                else if (fileExt === 'pdf') gradient = 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)';
+                
+                return `
+                    <div ${clickHandler} style="display: flex; align-items: center; padding: 16px; background: white; border: 1px solid #e2e8f0; border-radius: 10px; transition: all 0.2s; ${cursor} margin-bottom: 12px;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'; this.style.borderColor='#cbd5e0';" onmouseout="this.style.boxShadow='none'; this.style.borderColor='#e2e8f0';">
+                        <div style="width: 48px; height: 48px; border-radius: 10px; background: ${gradient}; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: white;">
+                            ${iconSvg}
+                        </div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="font-weight: 600; color: #2d3748; font-size: 15px; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                ${escapeHtml(file.name)}
+                                ${isViewable && !file.folder ? ' <span style="color: #667eea; font-size: 12px;">▶ Click to view</span>' : ''}
+                            </div>
+                            <div style="display: flex; gap: 15px; font-size: 13px; color: #718096;">
+                                <span style="display: flex; align-items: center; gap: 4px;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <polyline points="12 6 12 12 16 14"/>
+                                    </svg>
+                                    ${modified}
+                                </span>
+                                <span style="display: flex; align-items: center; gap: 4px;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+                                        <polyline points="13 2 13 9 20 9"/>
+                                    </svg>
+                                    ${size}
+                                </span>
+                            </div>
+                        </div>
+                        ${isViewable && !file.folder ? `
+                            <div style="margin-left: 15px;">
+                                <button style="padding: 8px 16px; background: ${gradient}; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                                    Open
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            resultContent.innerHTML = `
+                <div style="max-width: 800px; margin: 0 auto;">
+                    <div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px;">
+                        <h3 style="margin: 0 0 5px 0; font-size: 20px;">Files</h3>
+                        <p style="margin: 0; opacity: 0.9; font-size: 14px;">${files.length} file${files.length !== 1 ? 's' : ''} found</p>
+                    </div>
+                    ${fileHTML}
+                </div>
+            `;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function openFileViewer(fileId, fileName) {
+            // Get file extension
+            const ext = fileName.split('.').pop().toLowerCase();
+            
+            // Route to appropriate viewer based on file type
+            if (ext === 'xlsx' || ext === 'xls') {
+                // Excel files → HBMP Sheets (excel.html)
+                window.location.href = `/excel.html?fileId=${fileId}&fileName=${encodeURIComponent(fileName)}`;
+            } else if (ext === 'docx' || ext === 'doc') {
+                // Word files → HBMP Docs (docs.html)
+                window.location.href = `/docs.html?fileId=${fileId}&fileName=${encodeURIComponent(fileName)}`;
+            } else if (ext === 'pptx' || ext === 'ppt') {
+                // PowerPoint files → HBMP Slides (slides.html)
+                window.location.href = `/slides.html?fileId=${fileId}&fileName=${encodeURIComponent(fileName)}`;
+            } else if (ext === 'pdf') {
+                // PDF files → HBMP PDFs (pdfs.html)
+                window.location.href = `/pdfs.html?fileId=${fileId}&fileName=${encodeURIComponent(fileName)}`;
+            } else {
+                // All other files → Unified File Viewer
+                window.location.href = `/file-viewer.html?fileId=${fileId}&fileName=${encodeURIComponent(fileName)}`;
+            }
+        }
+
+        function renderSitesList(sites) {
+            const resultContent = document.getElementById('resultContent');
+            
+            if (!sites || sites.length === 0) {
+                resultContent.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; color: #718096;">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 20px; opacity: 0.5;">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                        <p style="font-size: 18px; margin-bottom: 8px;">No SharePoint sites found</p>
+                        <p style="font-size: 14px;">There are no SharePoint sites to display at this time.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const sitesHTML = sites.map(site => `
+                <div style="display: flex; align-items: center; padding: 16px; background: white; border: 1px solid #e2e8f0; border-radius: 10px; transition: all 0.2s; cursor: pointer; margin-bottom: 12px;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'; this.style.borderColor='#cbd5e0';" onmouseout="this.style.boxShadow='none'; this.style.borderColor='#e2e8f0';" onclick="window.open('${site.webUrl}', '_blank')">
+                    <div style="width: 48px; height: 48px; border-radius: 10px; background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%); display: flex; align-items: center; justify-content: center; margin-right: 15px; color: white;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="font-weight: 600; color: #2d3748; font-size: 15px; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            ${site.displayName || site.name}
+                        </div>
+                        <div style="font-size: 13px; color: #718096; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            ${site.webUrl || 'No URL available'}
+                        </div>
+                    </div>
+                    <div style="margin-left: 15px;">
+                        <button style="padding: 8px 16px; background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                            Visit
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            resultContent.innerHTML = `
+                <div style="max-width: 800px; margin: 0 auto;">
+                    <div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%); color: white; border-radius: 12px;">
+                        <h3 style="margin: 0 0 5px 0; font-size: 20px;">SharePoint Sites</h3>
+                        <p style="margin: 0; opacity: 0.9; font-size: 14px;">${sites.length} site${sites.length !== 1 ? 's' : ''} found</p>
+                    </div>
+                    ${sitesHTML}
+                </div>
+            `;
+        }
+
+        function renderSearchResults(results) {
+            const resultContent = document.getElementById('resultContent');
+            
+            if (!results || results.length === 0) {
+                resultContent.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; color: #718096;">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 20px; opacity: 0.5;">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <p style="font-size: 18px; margin-bottom: 8px;">No results found</p>
+                        <p style="font-size: 14px;">Try a different search query.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const searchHTML = results.map(item => {
+                const iconSvg = item['@odata.type'] === '#microsoft.graph.driveItem' 
+                    ? getFileIconSvg(item.name)
+                    : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 2v6H2V2h7zm0 20v-6H2v6h7zM22 2v6h-7V2h7zm0 20v-6h-7v6h7z"/></svg>`;
+                
+                const date = item.lastModifiedDateTime ? new Date(item.lastModifiedDateTime).toLocaleDateString() : 'N/A';
+                const size = item.size ? formatBytes(item.size) : 'N/A';
+                
+                // Determine color based on file type
+                const fileExt = item.name ? item.name.split('.').pop().toLowerCase() : '';
+                let gradient = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                if (fileExt === 'xlsx' || fileExt === 'xls') gradient = 'linear-gradient(135deg, #0F9D58 0%, #0a7d46 100%)';
+                else if (fileExt === 'docx' || fileExt === 'doc') gradient = 'linear-gradient(135deg, #2B579A 0%, #1e3a6b 100%)';
+                else if (fileExt === 'pptx' || fileExt === 'ppt') gradient = 'linear-gradient(135deg, #D24726 0%, #a5381d 100%)';
+                else if (fileExt === 'pdf') gradient = 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)';
+                
+                return `
+                    <div style="display: flex; align-items: center; padding: 16px; background: white; border: 1px solid #e2e8f0; border-radius: 10px; transition: all 0.2s; cursor: pointer; margin-bottom: 12px;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'; this.style.borderColor='#cbd5e0';" onmouseout="this.style.boxShadow='none'; this.style.borderColor='#e2e8f0';">
+                        <div style="width: 48px; height: 48px; border-radius: 10px; background: ${gradient}; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: white;">
+                            ${iconSvg}
+                        </div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="font-weight: 600; color: #2d3748; font-size: 15px; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                ${item.name || 'Unnamed'}
+                            </div>
+                            <div style="display: flex; gap: 15px; font-size: 13px; color: #718096;">
+                                <span style="display: flex; align-items: center; gap: 4px;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <polyline points="12 6 12 12 16 14"/>
+                                    </svg>
+                                    ${date}
+                                </span>
+                                <span style="display: flex; align-items: center; gap: 4px;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+                                        <polyline points="13 2 13 9 20 9"/>
+                                    </svg>
+                                    ${size}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            resultContent.innerHTML = `
+                <div style="max-width: 800px; margin: 0 auto;">
+                    <div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px;">
+                        <h3 style="margin: 0 0 5px 0; font-size: 20px;">Search Results</h3>
+                        <p style="margin: 0; opacity: 0.9; font-size: 14px;">${results.length} result${results.length !== 1 ? 's' : ''} found</p>
+                    </div>
+                    ${searchHTML}
+                </div>
+            `;
+        }
+
+        function getFileIconSvg(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            
+            // Define SVG icons for different file types
+            const svgIcons = {
+                // Documents
+                'pdf': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`,
+                'doc': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>`,
+                'docx': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>`,
+                // Spreadsheets
+                'xls': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>`,
+                'xlsx': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>`,
+                // Presentations
+                'ppt': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>`,
+                'pptx': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>`,
+                // Images
+                'jpg': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
+                'jpeg': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
+                'png': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
+                'gif': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
+                // Video
+                'mp4': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>`,
+                'avi': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>`,
+                'mov': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>`,
+                // Audio
+                'mp3': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+                'wav': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+                // Archive
+                'zip': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`,
+                'rar': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`,
+                // Text
+                'txt': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`
+            };
+            
+            return svgIcons[ext] || `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>`;
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        function searchFiles() {
+            const query = prompt('Enter search query:');
+            if (query) {
+                testAPI(`search?q=${encodeURIComponent(query)}`, `🔍 Search Results for "${query}"`);
+            }
+        }
+
+        function closeResults() {
+            document.getElementById('resultContainer').classList.remove('active');
+            document.getElementById('modalBackdrop').classList.remove('active');
+        }
+    </script>
+</body>
+</html>

@@ -56,8 +56,14 @@ export function vite404Plugin(): Plugin {
           pathname.startsWith('/univer/') ||
           pathname === '/HBMPONE' ||
           pathname.startsWith('/HBMPONE/') ||
+          pathname === '/HBMP_DOCS_PLATFORM' ||
+          pathname.startsWith('/HBMP_DOCS_PLATFORM/') ||
           pathname === '/ivvychainv2' ||
-          pathname.startsWith('/ivvychainv2/')
+          pathname.startsWith('/ivvychainv2/') ||
+          pathname === '/Microsoft' ||
+          pathname.startsWith('/Microsoft/') ||
+          pathname === '/OpenStreetMaps' ||
+          pathname.startsWith('/OpenStreetMaps/')
         ) {
           return next()
         }

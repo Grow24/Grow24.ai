@@ -10,6 +10,10 @@
 /HBMPONE/ /HBMPONE/index.html 200
 /HBMPONE/* /HBMPONE/index.html 200
 
+/HBMP_DOCS_PLATFORM /HBMP_DOCS_PLATFORM/ 308
+/HBMP_DOCS_PLATFORM/ /HBMP_DOCS_PLATFORM/index.html 200
+/HBMP_DOCS_PLATFORM/* /HBMP_DOCS_PLATFORM/index.html 200
+
 /ivvychainv2 /ivvychainv2/ 308
 /ivvychainv2/ /ivvychainv2/index.html 200
 /ivvychainv2/* /ivvychainv2/index.html 200

@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Viewer - Microsoft Graph</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #718096;
+        }
+
+        .btn-secondary:hover {
+            background: #4a5568;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .viewer-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .viewer-toolbar {
+            background: white;
+            padding: 15px 30px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .viewer-toolbar h3 {
+            color: #2d3748;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toolbar-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .toolbar-btn {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .toolbar-btn:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+        }
+
+        .file-viewer {
+            flex: 1;
+            background: white;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .file-viewer iframe,
+        .file-viewer img,
+        .file-viewer video {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .file-viewer iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .loading-state {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            z-index: 10;
+        }
+
+        .loading-content {
+            text-align: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e2e8f0;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-content h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .loading-content p {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .empty-state {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+        }
+
+        .empty-state-content {
+            text-align: center;
+            color: #718096;
+        }
+
+        .empty-icon {
+            margin-bottom: 20px;
+        }
+
+        .empty-state-content h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .file-type-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .badge-excel {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-word {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-powerpoint {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-pdf {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-image {
+            background: #e9d5ff;
+            color: #6b21a8;
+        }
+
+        .badge-video {
+            background: #fce7f3;
+            color: #9f1239;
+        }
+
+        .badge-audio {
+            background: #ccfbf1;
+            color: #115e59;
+        }
+
+        .badge-text {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .badge-archive {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .error-state {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            padding: 40px;
+        }
+
+        .error-content {
+            text-align: center;
+            max-width: 500px;
+        }
+
+        .error-icon {
+            width: 60px;
+            height: 60px;
+            background: #fee2e2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .error-content h3 {
+            color: #dc2626;
+            margin-bottom: 10px;
+        }
+
+        .error-content p {
+            color: #718096;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <h1>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                </svg>
+                File Viewer
+            </h1>
+            <button class="btn btn-secondary" onclick="window.location.href='/dashboard.html'">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                Back to Dashboard
+            </button>
+        </div>
+        <div class="user-info">
+            <div id="userAvatar" style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px;">U</div>
+        </div>
+    </div>
+
+    <div class="viewer-container">
+        <div class="viewer-toolbar" id="viewerToolbar">
+            <h3 id="currentFileName">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                </svg>
+                <span id="fileNameText">Loading...</span>
+                <span id="fileTypeBadge" class="file-type-badge"></span>
+            </h3>
+            <div class="toolbar-actions">
+                <button class="toolbar-btn" onclick="openInNewTab()" id="openBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                        <polyline points="15 3 21 3 21 9"/>
+                        <line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                    Open in Office Online
+                </button>
+            </div>
+        </div>
+
+        <div class="file-viewer" id="fileViewer">
+            <div class="loading-state" id="loadingState">
+                <div class="loading-content">
+                    <div class="spinner"></div>
+                    <h3>Loading file...</h3>
+                    <p>Please wait while we prepare your document</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const fileId = urlParams.get('fileId');
+        const fileName = urlParams.get('fileName');
+
+        if (!fileId) {
+            showError('No file specified', 'Please select a file from your OneDrive to view.');
+        } else {
+            loadFile();
+        }
+
+        // Check authentication on page load
+        checkAuth();
+
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/auth/status');
+                const data = await response.json();
+                
+                if (!data.authenticated) {
+                    window.location.href = '/';
+                    return;
+                }
+                
+                loadUserProfile();
+            } catch (err) {
+                console.error('Error checking auth:', err);
+                window.location.href = '/';
+            }
+        }
+
+        async function loadUserProfile() {
+            try {
+                const response = await fetch('/api/me');
+                if (response.status === 401) {
+                    window.location.href = '/';
+                    return;
+                }
+                const data = await response.json();
+                const initials = data.displayName ? data.displayName.split(' ').map(n => n[0]).join('') : 'U';
+                document.getElementById('userAvatar').textContent = initials;
+            } catch (err) {
+                console.error('Error loading profile:', err);
+            }
+        }
+
+        async function loadFile() {
+            const viewer = document.getElementById('fileViewer');
+            const loadingState = document.getElementById('loadingState');
+
+            try {
+                console.log('📡 Fetching file details for:', fileId);
+                
+                // Determine endpoint based on file extension
+                const ext = fileName.split('.').pop().toLowerCase();
+                let endpoint;
+                let fileType = 'File';
+                let badgeClass = 'file-type-badge';
+                
+                // Categorize file types and set appropriate badges
+                if (['xlsx', 'xls'].includes(ext)) {
+                    endpoint = `/api/excel/${fileId}`;
+                    fileType = 'Excel';
+                    badgeClass = 'file-type-badge badge-excel';
+                } else if (['docx', 'doc'].includes(ext)) {
+                    endpoint = `/api/word/${fileId}`;
+                    fileType = 'Word';
+                    badgeClass = 'file-type-badge badge-word';
+                } else if (['pptx', 'ppt'].includes(ext)) {
+                    endpoint = `/api/powerpoint/${fileId}`;
+                    fileType = 'PowerPoint';
+                    badgeClass = 'file-type-badge badge-powerpoint';
+                } else if (['pdf'].includes(ext)) {
+                    endpoint = `/api/file/${fileId}`;
+                    fileType = 'PDF';
+                    badgeClass = 'file-type-badge badge-pdf';
+                } else if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(ext)) {
+                    endpoint = `/api/file/${fileId}`;
+                    fileType = 'Image';
+                    badgeClass = 'file-type-badge badge-image';
+                } else if (['mp4', 'webm', 'ogg', 'mov', 'avi'].includes(ext)) {
+                    endpoint = `/api/file/${fileId}`;
+                    fileType = 'Video';
+                    badgeClass = 'file-type-badge badge-video';
+                } else if (['mp3', 'wav', 'ogg', 'aac', 'm4a'].includes(ext)) {
+                    endpoint = `/api/file/${fileId}`;
+                    fileType = 'Audio';
+                    badgeClass = 'file-type-badge badge-audio';
+                } else if (['txt', 'csv', 'log', 'json', 'xml', 'html', 'css', 'js', 'ts', 'py', 'java', 'c', 'cpp', 'md'].includes(ext)) {
+                    endpoint = `/api/file/${fileId}`;
+                    fileType = 'Text';
+                    badgeClass = 'file-type-badge badge-text';
+                } else if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) {
+                    endpoint = `/api/file/${fileId}`;
+                    fileType = 'Archive';
+                    badgeClass = 'file-type-badge badge-archive';
+                } else {
+                    // Generic file endpoint for all other types
+                    endpoint = `/api/file/${fileId}`;
+                    fileType = ext.toUpperCase() || 'File';
+                    badgeClass = 'file-type-badge';
+                }
+                
+                document.getElementById('fileTypeBadge').textContent = fileType;
+                document.getElementById('fileTypeBadge').className = badgeClass;
+
+                const response = await fetch(endpoint);
+                
+                if (response.status === 401) {
+                    alert('Session expired. Please login again.');
+                    window.location.href = '/';
+                    return;
+                }
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load file');
+                }
+                
+                const data = await response.json();
+                console.log('📄 File data:', data);
+                
+                // Update UI
+                document.getElementById('fileNameText').textContent = data.name;
+                
+                // Store URLs for actions
+                window.currentFileUrl = data.webUrl;
+                window.currentDownloadUrl = data.downloadUrl;
+                
+                // Microsoft's downloadUrl is a temporary authenticated URL that works directly
+                const fileUrl = data.downloadUrl || data.embedUrl;
+                
+                // Hide loading state
+                loadingState.style.display = 'none';
+                
+                // Render appropriate viewer based on file type
+                if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(ext)) {
+                    // Image viewer
+                    const img = document.createElement('img');
+                    img.src = fileUrl;
+                    img.style.maxWidth = '100%';
+                    img.style.maxHeight = '100%';
+                    img.style.objectFit = 'contain';
+                    img.style.display = 'block';
+                    img.style.margin = 'auto';
+                    viewer.appendChild(img);
+                    
+                } else if (['mp4', 'webm', 'ogg'].includes(ext)) {
+                    // Video player
+                    const video = document.createElement('video');
+                    video.controls = true;
+                    video.src = fileUrl;
+                    video.style.width = '100%';
+                    video.style.maxHeight = '100%';
+                    viewer.appendChild(video);
+                    
+                } else if (['mp3', 'wav', 'ogg', 'aac', 'm4a'].includes(ext)) {
+                    // Audio player
+                    const audioContainer = document.createElement('div');
+                    audioContainer.style.display = 'flex';
+                    audioContainer.style.alignItems = 'center';
+                    audioContainer.style.justifyContent = 'center';
+                    audioContainer.style.height = '100%';
+                    audioContainer.style.flexDirection = 'column';
+                    audioContainer.style.gap = '20px';
+                    
+                    const audioIcon = document.createElement('div');
+                    audioIcon.innerHTML = `
+                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2">
+                            <path d="M9 18V5l12-2v13"/>
+                            <circle cx="6" cy="18" r="3"/>
+                            <circle cx="18" cy="16" r="3"/>
+                        </svg>
+                    `;
+                    
+                    const audio = document.createElement('audio');
+                    audio.controls = true;
+                    audio.src = fileUrl;
+                    audio.style.width = '80%';
+                    audio.style.maxWidth = '600px';
+                    
+                    audioContainer.appendChild(audioIcon);
+                    audioContainer.appendChild(audio);
+                    viewer.appendChild(audioContainer);
+                    
+                } else if (['txt', 'csv', 'log', 'json', 'xml', 'html', 'css', 'js', 'ts', 'py', 'java', 'c', 'cpp', 'md'].includes(ext)) {
+                    // Text file viewer - fetch and display content
+                    const textContainer = document.createElement('div');
+                    textContainer.style.padding = '20px';
+                    textContainer.style.height = '100%';
+                    textContainer.style.overflow = 'auto';
+                    
+                    fetch(fileUrl)
+                        .then(res => res.text())
+                        .then(text => {
+                            const pre = document.createElement('pre');
+                            pre.style.margin = '0';
+                            pre.style.fontFamily = 'monospace';
+                            pre.style.fontSize = '14px';
+                            pre.style.whiteSpace = 'pre-wrap';
+                            pre.style.wordWrap = 'break-word';
+                            pre.textContent = text;
+                            textContainer.appendChild(pre);
+                        })
+                        .catch(err => {
+                            textContainer.innerHTML = '<p style="color: #dc2626;">Failed to load text content</p>';
+                        });
+                    
+                    viewer.appendChild(textContainer);
+                    
+                } else if (['pdf'].includes(ext)) {
+                    // PDF viewer - use Office Online viewer with the downloadUrl
+                    const iframe = document.createElement('iframe');
+                    const pdfEmbedUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}`;
+                    iframe.src = pdfEmbedUrl;
+                    iframe.style.width = '100%';
+                    iframe.style.height = '100%';
+                    iframe.style.border = 'none';
+                    viewer.appendChild(iframe);
+                    
+                } else if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) {
+                    // Archive files - show download option
+                    const archiveContainer = document.createElement('div');
+                    archiveContainer.style.display = 'flex';
+                    archiveContainer.style.alignItems = 'center';
+                    archiveContainer.style.justifyContent = 'center';
+                    archiveContainer.style.height = '100%';
+                    archiveContainer.style.flexDirection = 'column';
+                    archiveContainer.style.gap = '20px';
+                    
+                    archiveContainer.innerHTML = `
+                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        <h3 style="color: #2d3748;">Archive File</h3>
+                        <p style="color: #718096;">This is a compressed archive file. Click below to download.</p>
+                        <button class="btn" onclick="window.open('${fileUrl}', '_blank')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            Download File
+                        </button>
+                    `;
+                    viewer.appendChild(archiveContainer);
+                    
+                } else if (data.embedUrl) {
+                    // Office files and other embeddable content
+                    const iframe = document.createElement('iframe');
+                    iframe.src = data.embedUrl;
+                    iframe.style.width = '100%';
+                    iframe.style.height = '100%';
+                    iframe.style.border = 'none';
+                    viewer.appendChild(iframe);
+                    
+                } else {
+                    // Unknown file type - show download option
+                    const unknownContainer = document.createElement('div');
+                    unknownContainer.style.display = 'flex';
+                    unknownContainer.style.alignItems = 'center';
+                    unknownContainer.style.justifyContent = 'center';
+                    unknownContainer.style.height = '100%';
+                    unknownContainer.style.flexDirection = 'column';
+                    unknownContainer.style.gap = '20px';
+                    
+                    unknownContainer.innerHTML = `
+                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2">
+                            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+                            <polyline points="13 2 13 9 20 9"/>
+                        </svg>
+                        <h3 style="color: #2d3748;">Preview Not Available</h3>
+                        <p style="color: #718096;">This file type cannot be previewed in the browser.</p>
+                        <button class="btn" onclick="window.open('${data.webUrl}', '_blank')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                                <polyline points="15 3 21 3 21 9"/>
+                                <line x1="10" y1="14" x2="21" y2="3"/>
+                            </svg>
+                            Open in OneDrive
+                        </button>
+                    `;
+                    viewer.appendChild(unknownContainer);
+                }
+                
+            } catch (err) {
+                console.error('❌ Error loading file:', err);
+                showError('Failed to load file', err.message);
+            }
+        }
+
+        function showError(title, message) {
+            const viewer = document.getElementById('fileViewer');
+            viewer.innerHTML = `
+                <div class="error-state">
+                    <div class="error-content">
+                        <div class="error-icon">
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="8" x2="12" y2="12"/>
+                                <line x1="12" y1="16" x2="12.01" y2="16"/>
+                            </svg>
+                        </div>
+                        <h3>${title}</h3>
+                        <p>${message}</p>
+                        <button class="btn" onclick="window.location.href='/dashboard.html'">
+                            Back to Dashboard
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openInNewTab() {
+            if (window.currentFileUrl) {
+                window.open(window.currentFileUrl, '_blank');
+            }
+        }
+    </script>
+</body>
+</html>

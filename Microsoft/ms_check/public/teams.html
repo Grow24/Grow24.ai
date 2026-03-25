@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microsoft Teams - HBMP Tools</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #6264A7 0%, #464775 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 40px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #6264A7;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .header h1 svg {
+            color: #6264A7;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4a5568;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #f7fafc;
+            border-color: #6264A7;
+            color: #6264A7;
+            transform: translateY(-1px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 40px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #6264A7;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #718096;
+            font-weight: 500;
+        }
+
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+        }
+
+        .team-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .team-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(98, 100, 167, 0.2);
+            border-color: #6264A7;
+        }
+
+        .team-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .team-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #6264A7 0%, #464775 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .team-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .team-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .team-description {
+            font-size: 13px;
+            color: #718096;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .team-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .team-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #718096;
+        }
+
+        .team-stat svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: white;
+        }
+
+        .empty-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            color: white;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading p {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6264A7 0%, #464775 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .channels-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .channels-label {
+            font-size: 12px;
+            color: #718096;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .channel-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .channel-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #4a5568;
+            padding: 4px 0;
+        }
+
+        .channel-item svg {
+            width: 14px;
+            height: 14px;
+            color: #6264A7;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(98, 100, 167, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .container {
+                padding: 0 20px;
+            }
+
+            .teams-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            Microsoft Teams
+        </h1>
+        <div class="header-actions">
+            <button class="btn" onclick="refreshTeams()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                </svg>
+                Refresh
+            </button>
+            <button class="btn" onclick="window.location.href='/dashboard.html'">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                </svg>
+                Dashboard
+            </button>
+            <div class="user-info">
+                <div id="userAvatar" class="user-avatar">U</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Meeting Actions Section -->
+        <div style="background: white; border-radius: 16px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+            <h2 style="color: #2d3748; margin-bottom: 20px; font-size: 22px;">Microsoft Teams Meetings</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 20px;">
+                <button onclick="createMeetingLink()" style="background: linear-gradient(135deg, #6264A7 0%, #464775 100%); color: white; border: none; padding: 16px 24px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                    </svg>
+                    Create Meeting Link
+                </button>
+                
+                <button onclick="scheduleMeeting()" style="background: white; color: #6264A7; border: 2px solid #6264A7; padding: 16px 24px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                    Schedule a Meeting
+                </button>
+                
+                <button onclick="joinMeeting()" style="background: white; color: #6264A7; border: 2px solid #6264A7; padding: 16px 24px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="7" width="20" height="15" rx="2" ry="2"/>
+                        <polyline points="17 2 12 7 7 2"/>
+                    </svg>
+                    Join with Meeting Link
+                </button>
+            </div>
+            
+            <div id="meetingResult" style="margin-top: 20px; display: none;"></div>
+        </div>
+
+        <div id="teamsContainer"></div>
+    </div>
+
+    <script>
+        let allTeams = [];
+
+        async function loadUserProfile() {
+            try {
+                const response = await fetch('/api/me');
+                if (response.status === 401) {
+                    window.location.href = '/';
+                    return;
+                }
+                const data = await response.json();
+                const displayName = data.displayName || 'User';
+                const initials = displayName ? displayName.split(' ').map(n => n[0]).join('') : 'U';
+                document.getElementById('userAvatar').textContent = initials;
+            } catch (err) {
+                console.error('Error loading profile:', err);
+            }
+        }
+
+        async function loadTeams() {
+            const container = document.getElementById('teamsContainer');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading Microsoft Teams...</p></div>';
+
+            try {
+                const response = await fetch('/api/teams');
+                
+                if (response.status === 401) {
+                    alert('Session expired. Please login again.');
+                    window.location.href = '/';
+                    return;
+                }
+
+                if (!response.ok) {
+                    let errorMessage = 'Failed to load teams';
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.error?.message || errorData.message || errorMessage;
+                    } catch (e) {
+                        const errorText = await response.text();
+                        console.error('Error response:', errorText);
+                        errorMessage = `Server error: ${response.status}`;
+                    }
+                    throw new Error(errorMessage);
+                }
+
+                const data = await response.json();
+                allTeams = data.value || [];
+
+                // Load channels for each team
+                for (let team of allTeams) {
+                    try {
+                        const channelsResponse = await fetch(`/api/teams/${team.id}/channels`);
+                        if (channelsResponse.ok) {
+                            const channelsData = await channelsResponse.json();
+                            team.channels = channelsData.value || [];
+                        } else {
+                            team.channels = [];
+                        }
+                    } catch (err) {
+                        console.error(`Error loading channels for team ${team.id}:`, err);
+                        team.channels = [];
+                    }
+                }
+
+                updateStats();
+                renderTeams();
+            } catch (err) {
+                console.error('Error loading teams:', err);
+                // Don't show error, just show empty state
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p style="font-size: 14px; opacity: 0.8; margin-top: 10px;">
+                            Use the meeting buttons above to create, schedule, or join Teams meetings.
+                        </p>
+                    </div>
+                `;
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('totalTeams').textContent = allTeams.length;
+            
+            let totalChannels = 0;
+            let totalMembers = 0;
+            
+            allTeams.forEach(team => {
+                totalChannels += (team.channels || []).length;
+                // Note: Member count would require additional API calls
+            });
+            
+            document.getElementById('totalChannels').textContent = totalChannels;
+            document.getElementById('totalMembers').textContent = '-';
+        }
+
+        function renderTeams() {
+            const container = document.getElementById('teamsContainer');
+
+            if (allTeams.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">👥</div>
+                        <h3>No teams found</h3>
+                        <p>You don't have any Microsoft Teams yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const teamsHTML = allTeams.map(team => {
+                const initials = team.displayName ? team.displayName.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase() : 'T';
+                const description = team.description || 'No description available';
+                const channels = team.channels || [];
+                const channelCount = channels.length;
+
+                return `
+                    <div class="team-card" onclick="openTeam('${team.id}', '${encodeURIComponent(team.webUrl)}')">
+                        <div class="team-header">
+                            <div class="team-icon">${initials}</div>
+                            <div class="team-info">
+                                <div class="team-name">${team.displayName}</div>
+                                <div class="team-description">${description}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="team-stats">
+                            <div class="team-stat">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                </svg>
+                                <span>${channelCount} channel${channelCount !== 1 ? 's' : ''}</span>
+                            </div>
+                        </div>
+
+                        ${channels.length > 0 ? `
+                            <div class="channels-section">
+                                <div class="channels-label">Channels</div>
+                                <div class="channel-list">
+                                    ${channels.slice(0, 3).map(channel => `
+                                        <div class="channel-item">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                            </svg>
+                                            <span>${channel.displayName}</span>
+                                        </div>
+                                    `).join('')}
+                                    ${channels.length > 3 ? `<div class="channel-item" style="color: #6264A7; font-weight: 500;">+ ${channels.length - 3} more</div>` : ''}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `<div class="teams-grid">${teamsHTML}</div>`;
+        }
+
+        function openTeam(teamId, webUrl) {
+            // Open team in Teams web app
+            const decodedUrl = decodeURIComponent(webUrl);
+            window.open(decodedUrl, '_blank');
+        }
+
+        function refreshTeams() {
+            loadTeams();
+        }
+
+        // Meeting functions
+        function createMeetingLink() {
+            const resultDiv = document.getElementById('meetingResult');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <div style="background: #f7fafc; border-radius: 12px; padding: 20px; border-left: 4px solid #6264A7;">
+                    <h3 style="color: #2d3748; margin-bottom: 10px; font-size: 16px;">Create Instant Meeting</h3>
+                    <p style="color: #718096; font-size: 14px; margin-bottom: 15px;">
+                        Click the button below to create an instant Teams meeting link that you can share with others.
+                    </p>
+                    <button onclick="window.open('https://teams.microsoft.com/l/meeting/new', '_blank')" 
+                            style="background: linear-gradient(135deg, #6264A7 0%, #464775 100%); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">
+                        Open Teams Meeting Creator
+                    </button>
+                </div>
+            `;
+        }
+
+        function scheduleMeeting() {
+            const resultDiv = document.getElementById('meetingResult');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <div style="background: #f7fafc; border-radius: 12px; padding: 20px; border-left: 4px solid #6264A7;">
+                    <h3 style="color: #2d3748; margin-bottom: 10px; font-size: 16px;">Schedule a Meeting</h3>
+                    <p style="color: #718096; font-size: 14px; margin-bottom: 15px;">
+                        Open Teams Calendar to schedule a meeting with specific date, time, and attendees.
+                    </p>
+                    <button onclick="window.open('https://teams.microsoft.com/_#/calendarv2', '_blank')" 
+                            style="background: linear-gradient(135deg, #6264A7 0%, #464775 100%); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">
+                        Open Teams Calendar
+                    </button>
+                </div>
+            `;
+        }
+
+        function joinMeeting() {
+            const resultDiv = document.getElementById('meetingResult');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <div style="background: #f7fafc; border-radius: 12px; padding: 20px; border-left: 4px solid #6264A7;">
+                    <h3 style="color: #2d3748; margin-bottom: 10px; font-size: 16px;">Join with Meeting ID</h3>
+                    <p style="color: #718096; font-size: 14px; margin-bottom: 15px;">
+                        Enter a meeting ID or link to join a Teams meeting.
+                    </p>
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <input type="text" id="meetingIdInput" placeholder="Enter meeting ID or link..." 
+                               style="flex: 1; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px;">
+                        <button onclick="joinWithId()" 
+                                style="background: linear-gradient(135deg, #6264A7 0%, #464775 100%); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap;">
+                            Join Meeting
+                        </button>
+                    </div>
+                    <p style="color: #a0aec0; font-size: 12px;">Or</p>
+                    <button onclick="window.open('https://teams.microsoft.com/', '_blank')" 
+                            style="background: white; color: #6264A7; border: 2px solid #6264A7; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 10px;">
+                        Open Teams App
+                    </button>
+                </div>
+            `;
+        }
+
+        function joinWithId() {
+            const meetingId = document.getElementById('meetingIdInput').value.trim();
+            if (!meetingId) {
+                alert('Please enter a meeting ID or link');
+                return;
+            }
+            
+            // If it's a full URL, open it directly
+            if (meetingId.startsWith('http')) {
+                window.open(meetingId, '_blank');
+            } else {
+                // If it's just an ID, try to construct Teams URL
+                window.open(`https://teams.microsoft.com/l/meetup-join/${encodeURIComponent(meetingId)}`, '_blank');
+            }
+        }
+
+        // Initialize
+        loadUserProfile();
+        loadTeams();
+    </script>
+</body>
+</html>

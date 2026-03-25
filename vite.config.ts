@@ -15,7 +15,11 @@ export default defineConfig({
       ignored: [
         '**/univer/**',
         '**/HBMPONE/**',
+        '**/HBMP_DOCS_PLATFORM/**',
         '**/ivvychainv2/**',
+        '**/mcp_server/**',
+        '**/Microsoft/**',
+        '**/OpenStreetMaps/**',
         '**/dist/**',
         '**/backend/**',
       ],
@@ -32,11 +36,29 @@ export default defineConfig({
         changeOrigin: true,
         ws: true,
       },
+      '/HBMP_DOCS_PLATFORM': {
+        target: `http://localhost:${process.env.HBMP_DOCS_PORT || '5177'}`,
+        changeOrigin: true,
+        ws: true,
+      },
       // ivvychainv2 (CRA dev server) — keep /ivvychainv2 prefix
       '/ivvychainv2': {
         target: `http://localhost:${process.env.IVVY_PORT || '5176'}`,
         changeOrigin: true,
         ws: true,
+      },
+      // Microsoft Graph app (Express) — keep /Microsoft prefix
+      '/Microsoft': {
+        target: `http://localhost:${process.env.MICROSOFT_PORT || '5180'}`,
+        changeOrigin: true,
+        ws: true,
+        rewrite: (path) => path.replace(/^\/Microsoft/, '') || '/',
+      },
+      // OpenStreetMaps static app — strip /OpenStreetMaps prefix
+      '/OpenStreetMaps': {
+        target: `http://localhost:${process.env.OSM_PORT || '5181'}`,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/OpenStreetMaps/, '') || '/',
       },
       // HBMP docs API (Express on 4000 by default)
       '/api': {
@@ -53,6 +75,27 @@ export default defineConfig({
   },
   plugins: [
     vite404Plugin(),
+    {
+      name: 'subapp-index-redirect',
+      configureServer(server) {
+        server.middlewares.use((req, res, next) => {
+          const url = req.url || ''
+          if (url === '/OpenStreetMaps' || url === '/OpenStreetMaps/') {
+            res.statusCode = 302
+            res.setHeader('Location', '/OpenStreetMaps/index.html')
+            res.end()
+            return
+          }
+          if (url === '/Microsoft' || url === '/Microsoft/') {
+            res.statusCode = 302
+            res.setHeader('Location', '/Microsoft/index.html')
+            res.end()
+            return
+          }
+          next()
+        })
+      },
+    },
     TanStackRouterVite(),
     react({
       // Ensure React is properly handled
