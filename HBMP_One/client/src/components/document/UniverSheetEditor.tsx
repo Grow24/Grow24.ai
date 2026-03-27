@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Univer, UniverInstanceType } from '@univerjs/core';
 import { defaultTheme } from '@univerjs/design';
 import { UniverSheetsPlugin } from '@univerjs/sheets';
@@ -99,7 +99,8 @@ export default function UniverSheetEditor({
           }
           changeTimeoutRef.current = setTimeout(() => {
             try {
-              const wb = univer.getUnit(UniverInstanceType.UNIVER_SHEET, `workbook-${containerId}`);
+              const univerAny = univer as any;
+              const wb = univerAny.getUnit?.(UniverInstanceType.UNIVER_SHEET, `workbook-${containerId}`);
               if (wb) {
                 const sheet = wb.getActiveSheet();
                 if (sheet) {
@@ -139,7 +140,7 @@ export default function UniverSheetEditor({
         };
 
         // Subscribe to sheet changes
-        const api = univer.getAPI();
+        const api = (univer as any).getAPI?.();
         if (api && typeof api.onSheetChange === 'function') {
           api.onSheetChange(() => {
             handleChange();
@@ -211,7 +212,7 @@ export default function UniverSheetEditor({
 
     try {
       const data = JSON.parse(value);
-      const workbook = univerRef.current.getUnit(UniverInstanceType.UNIVER_SHEET, `workbook-${containerId}`);
+      const workbook = (univerRef.current as any).getUnit?.(UniverInstanceType.UNIVER_SHEET, `workbook-${containerId}`);
       if (workbook && data.cellData) {
         const sheet = workbook.getActiveSheet();
         if (sheet) {

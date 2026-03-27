@@ -109,7 +109,7 @@ export function computeNextAction(
 
   // Rule 5: If UATP not created and BRD is approved
   const uatpDocs = documents.filter((d) => 
-    d.templateName === 'User Acceptance Test Plan' || d.templateName.includes('UATP') || d.templateCode === 'UATP'
+    d.templateName === 'User Acceptance Test Plan' || d.templateName.includes('UATP') || d.templateId === 'UATP'
   );
   if (latestBRD?.status === 'APPROVED' && uatpDocs.length === 0 && businessReqDocket) {
     return {
@@ -190,7 +190,7 @@ export function computeBlockers(
   // Check if UATP is locked (BRD not approved)
   const latestBRD = brdDocs[brdDocs.length - 1];
   const uatpDocs = documents.filter((d) => 
-    d.templateName === 'User Acceptance Test Plan' || d.templateName.includes('UATP') || d.templateCode === 'UATP'
+    d.templateName === 'User Acceptance Test Plan' || d.templateName.includes('UATP') || d.templateId === 'UATP'
   );
   if (!latestBRD || latestBRD.status !== 'APPROVED') {
     blockers.push({

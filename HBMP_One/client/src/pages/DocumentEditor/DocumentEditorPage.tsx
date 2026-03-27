@@ -273,7 +273,6 @@ export default function DocumentEditorPage() {
         checklistSummary={checklistSummary}
         requiredCompletionPercent={100}
         onSwitchToTab={setActiveRightTab}
-        onImport={() => setImportDialogOpen(true)}
       />
 
       <div className="w-full h-[calc(100vh-80px)] flex flex-col">

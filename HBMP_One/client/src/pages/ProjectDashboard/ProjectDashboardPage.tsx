@@ -84,7 +84,7 @@ export default function ProjectDashboardPage() {
   );
   // UATP is completed when it exists (regardless of status, just needs to be created/filled)
   const hasUATP = documents.some(
-    (d) => d.templateName === 'User Acceptance Test Plan' || d.templateName.includes('UATP') || d.templateCode === 'UATP'
+    (d) => d.templateName === 'User Acceptance Test Plan' || d.templateName.includes('UATP') || d.templateId === 'UATP'
   );
   // const hasApprovedSRS = documents.some(
   //   (d) => (d.templateName === 'SRS' || d.templateName === 'System Requirements Specification') && d.status === 'APPROVED'
@@ -336,7 +336,7 @@ export default function ProjectDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-semibold text-slate-900">
-              {documentsData?.documents.filter((d) => d.templateName === 'User Acceptance Test Plan' || d.templateName.includes('UATP') || d.templateCode === 'UATP').length || 0}
+              {documentsData?.documents.filter((d) => d.templateName === 'User Acceptance Test Plan' || d.templateName.includes('UATP') || d.templateId === 'UATP').length || 0}
             </div>
           </CardContent>
         </Card>

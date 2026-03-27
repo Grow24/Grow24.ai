@@ -1,7 +1,7 @@
 import { Document } from '@/api/documents.api';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Save, Send, Check, Download, ChevronDown, AlertCircle, Upload } from 'lucide-react';
+import { Save, Send, Check, Download, ChevronDown, AlertCircle } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,7 +32,6 @@ export default function DocumentHeader({
   checklistSummary,
   requiredCompletionPercent = 100,
   onSwitchToTab,
-  onImport,
 }: DocumentHeaderProps) {
   const dependencies = getDocumentDependencies(document.template.code);
   const getStatusVariant = (status: string) => {
@@ -222,12 +221,6 @@ export default function DocumentHeader({
               </>
             )}
 
-            {onImport && (
-              <Button variant="outline" size="sm" onClick={onImport}>
-                <Upload className="mr-2 h-4 w-4" />
-                Import
-              </Button>
-            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm">
