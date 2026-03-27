@@ -1,0 +1,19 @@
+# OS and editor
+.DS_Store
+
+# Dependencies/build output
+node_modules/
+dist/
+
+# Environment and local secrets
+**/.env
+**/.env.*
+!**/.env.example
+
+# OAuth and token cache files
+backend/.oauth-tokens.json
+
+# Service account and key material
+backend/credentials/service-account.json
+gen-lang-client-*.json
+*-service-account*.json

@@ -62,6 +62,8 @@ export function vite404Plugin(): Plugin {
           pathname.startsWith('/HBMP_DOCS_PLATFORM/') ||
           pathname === '/app_manager' ||
           pathname.startsWith('/app_manager/') ||
+          pathname === '/hbmp_form_manager' ||
+          pathname.startsWith('/hbmp_form_manager/') ||
           pathname === '/ivvychainv2' ||
           pathname.startsWith('/ivvychainv2/') ||
           pathname === '/Microsoft' ||

@@ -17,6 +17,7 @@ export default defineConfig({
         '**/HBMP_One/**',
         '**/HBMP_DOCS_PLATFORM/**',
         '**/app_manager/**',
+        '**/hbmp_form_manager/**',
         '**/ivvychainv2/**',
         '**/mcp_server/**',
         '**/Microsoft/**',
@@ -84,6 +85,18 @@ export default defineConfig({
       // app_manager (Vite + backend API)
       '/app_manager': {
         target: `http://localhost:${process.env.APP_MANAGER_PORT || '5183'}`,
+        changeOrigin: true,
+        ws: true,
+      },
+      // hbmp_form_manager backend API
+      '/hbmp_form_manager/api': {
+        target: `http://localhost:${process.env.HBMP_FORM_MANAGER_API_PORT || '5187'}`,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/hbmp_form_manager/, '') || '/',
+      },
+      // hbmp_form_manager frontend (Vite)
+      '/hbmp_form_manager': {
+        target: `http://localhost:${process.env.HBMP_FORM_MANAGER_PORT || '5186'}`,
         changeOrigin: true,
         ws: true,
       },
@@ -158,6 +171,12 @@ export default defineConfig({
           if (url === '/app_manager') {
             res.statusCode = 302
             res.setHeader('Location', '/app_manager/')
+            res.end()
+            return
+          }
+          if (url === '/hbmp_form_manager') {
+            res.statusCode = 302
+            res.setHeader('Location', '/hbmp_form_manager/')
             res.end()
             return
           }
