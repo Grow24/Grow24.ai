@@ -60,6 +60,8 @@ export function vite404Plugin(): Plugin {
           pathname.startsWith('/HBMP_One/') ||
           pathname === '/HBMP_DOCS_PLATFORM' ||
           pathname.startsWith('/HBMP_DOCS_PLATFORM/') ||
+          pathname === '/HBMP_AgentBot' ||
+          pathname.startsWith('/HBMP_AgentBot/') ||
           pathname === '/app_manager' ||
           pathname.startsWith('/app_manager/') ||
           pathname === '/hbmp_form_manager' ||

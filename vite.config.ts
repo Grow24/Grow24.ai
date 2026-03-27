@@ -20,6 +20,7 @@ export default defineConfig({
         '**/hbmp_form_manager/**',
         '**/ivvychainv2/**',
         '**/mcp_server/**',
+        '**/HBMP_AgentBot/**',
         '**/Microsoft/**',
         '**/OpenStreetMaps/**',
         '**/ImageProcessing/**',
@@ -106,6 +107,23 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/mcp_server/, '') || '/',
       },
+      // HBMP_AgentBot backend API + oauth
+      '/HBMP_AgentBot/api': {
+        target: `http://localhost:${process.env.AGENTBOT_API_PORT || '5188'}`,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/HBMP_AgentBot/, '') || '/',
+      },
+      '/HBMP_AgentBot/oauth': {
+        target: `http://localhost:${process.env.AGENTBOT_API_PORT || '5188'}`,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/HBMP_AgentBot/, '') || '/',
+      },
+      // HBMP_AgentBot frontend
+      '/HBMP_AgentBot': {
+        target: `http://localhost:${process.env.AGENTBOT_PORT || '5190'}`,
+        changeOrigin: true,
+        ws: true,
+      },
       // HBMP docs API (Express on 4000 by default)
       '/api': {
         target: `http://localhost:${process.env.HBMP_API_PORT || '4000'}`,
@@ -171,6 +189,12 @@ export default defineConfig({
           if (url === '/app_manager') {
             res.statusCode = 302
             res.setHeader('Location', '/app_manager/')
+            res.end()
+            return
+          }
+          if (url === '/HBMP_AgentBot') {
+            res.statusCode = 302
+            res.setHeader('Location', '/HBMP_AgentBot/')
             res.end()
             return
           }

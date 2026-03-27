@@ -1,0 +1,17 @@
+[phases.setup]
+nixPkgs = ["nodejs", "npm"]
+
+# Set NODE_OPTIONS globally for all phases
+[phases.install]
+env = { NODE_OPTIONS = "--max-old-space-size=8192" }
+cmds = ["npm ci"]
+
+[phases.build]
+env = { NODE_OPTIONS = "--max-old-space-size=8192" }
+cmds = [
+  "npm run build:packages",
+  "npm run build:client"
+]
+
+[start]
+cmd = "npm run backend"

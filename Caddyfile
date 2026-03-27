@@ -1,7 +1,7 @@
 :8080 {
 	root * /usr/share/caddy
 	@unsafePath {
-		path /.git/* /univer/.git/* /HBMP_One/.git/* /HBMP_DOCS_PLATFORM/.git/* /ivvychainv2/.git/* /OpenStreetMaps/.git/* /Microsoft/.git/* /ImageProcessing/.git/* /Google/.git/* /app_manager/.git/* /hbmp_form_manager/.git/* /mcp_server/.git/* /node_modules/* /vendor/* /.venv/*
+		path /.git/* /univer/.git/* /HBMP_One/.git/* /HBMP_DOCS_PLATFORM/.git/* /HBMP_AgentBot/.git/* /ivvychainv2/.git/* /OpenStreetMaps/.git/* /Microsoft/.git/* /ImageProcessing/.git/* /Google/.git/* /app_manager/.git/* /hbmp_form_manager/.git/* /mcp_server/.git/* /node_modules/* /vendor/* /.venv/*
 	}
 	respond @unsafePath 404
 
@@ -198,6 +198,23 @@
 
 	handle_path /mcp_server/* {
 		root * /usr/share/caddy/mcp_server
+		try_files {path} {path}/ /index.html
+		file_server
+	}
+
+	# --- HBMP_AgentBot (if built as static at /HBMP_AgentBot/) ---
+	@agentBotExact path /HBMP_AgentBot
+	redir @agentBotExact /HBMP_AgentBot/ 308
+
+	@agentBotAssets path_regexp agentbot_assets ^/HBMP_AgentBot/.*\.(js|mjs|css|map|json|wasm|ttf|woff|woff2|svg|png|jpg|jpeg|gif|webp|ico)$
+	handle @agentBotAssets {
+		root * /usr/share/caddy
+		try_files {path} =404
+		file_server
+	}
+
+	handle_path /HBMP_AgentBot/* {
+		root * /usr/share/caddy/HBMP_AgentBot
 		try_files {path} {path}/ /index.html
 		file_server
 	}
