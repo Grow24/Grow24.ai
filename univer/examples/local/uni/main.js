@@ -1,10 +1,10 @@
 import {
   UniverSheetsFindReplacePlugin,
   UniverSheetsSortUIPlugin
-} from "./chunk-2INEARRN.js";
+} from "/univer/chunk-LCS2JLUC.js";
 import {
   UniverDocUniFormulaPlugin
-} from "./chunk-TFEGL6LS.js";
+} from "/univer/chunk-RBDGU5A5.js";
 import {
   ActivateSlidePageOperation,
   AppendSlideOperation,
@@ -17,50 +17,50 @@ import {
   UniverSlidesPlugin,
   UniverSlidesUIPlugin,
   menuSchema as menuSchema4
-} from "./chunk-HAJU43KU.js";
+} from "/univer/chunk-BWQLCAPN.js";
 import {
   UniverSheetsConditionalFormattingUIPlugin
-} from "./chunk-ZIBCZIIV.js";
+} from "/univer/chunk-7Y223JCO.js";
 import {
   UniverThreadCommentUIPlugin
-} from "./chunk-TAAUQX2Y.js";
+} from "/univer/chunk-HTDH6JZQ.js";
 import {
   UniverSheetsHyperLinkUIPlugin
-} from "./chunk-354FJ26S.js";
+} from "/univer/chunk-AZZJ2Q3T.js";
 import {
   UniverSheetsThreadCommentPlugin
-} from "./chunk-KQMHMMC7.js";
-import "./chunk-LI73LENO.js";
-import "./chunk-OD5D7OYC.js";
-import "./chunk-2CQBTLI7.js";
+} from "/univer/chunk-WQN4YX5H.js";
+import "/univer/chunk-DKCX73BQ.js";
+import "/univer/chunk-SKYS6W5P.js";
+import "/univer/chunk-6EP3P65R.js";
 import {
   DOCS_IMAGE_MENU_ID,
   UniverDocsDrawingUIPlugin
-} from "./chunk-HFVM6MYW.js";
+} from "/univer/chunk-4EAWMATX.js";
 import {
   SHEETS_IMAGE_MENU_ID,
   UniverSheetsDrawingUIPlugin
-} from "./chunk-6W4YZ3HG.js";
+} from "/univer/chunk-CGMM54DM.js";
 import {
   FUniver
-} from "./chunk-JWXRDIU7.js";
+} from "/univer/chunk-3RXJ4LZI.js";
 import {
   UniverSheetsFormulaUIPlugin
-} from "./chunk-6TVBTQ2X.js";
+} from "/univer/chunk-HTZYHXGN.js";
 import {
   DEFAULT_DOCUMENT_DATA_CN,
   DEFAULT_DOCUMENT_DATA_EN,
   DEFAULT_SLIDE_DATA,
   DEFAULT_WORKBOOK_DATA_DEMO,
   DEFAULT_WORKBOOK_DATA_DEMO1
-} from "./chunk-VMFOP3F4.js";
+} from "/univer/chunk-2PJ3QCNN.js";
 import {
   UniverSheetsNumfmtUIPlugin
-} from "./chunk-GGUDRFK6.js";
+} from "/univer/chunk-RPHCUFXW.js";
 import {
   UniverSheetsNumfmtPlugin
-} from "./chunk-W2QCNNNM.js";
-import "./chunk-ZRJXDTFY.js";
+} from "/univer/chunk-DSZZQHBJ.js";
+import "/univer/chunk-XXJESKVN.js";
 import {
   EMBEDDING_FORMULA_EDITOR_COMPONENT_KEY,
   IEditorBridgeService,
@@ -82,7 +82,7 @@ import {
   useActiveWorkbook,
   useKeyEventConfig,
   useWorkbooks
-} from "./chunk-WPDJPIZN.js";
+} from "/univer/chunk-LXKHVO4Y.js";
 import {
   BulletListCommand,
   DocCreateTableOperation,
@@ -102,8 +102,8 @@ import {
   UniverDocsPlugin,
   UniverDocsUIPlugin,
   menuSchema as menuSchema2
-} from "./chunk-IJAOVONG.js";
-import "./chunk-63AGE64E.js";
+} from "/univer/chunk-4MI62PCK.js";
+import "/univer/chunk-YXIT6Q6A.js";
 import {
   BrowserClipboardService,
   Button,
@@ -199,13 +199,13 @@ import {
   useDependency,
   useFloating,
   useObservable
-} from "./chunk-R42OVMY4.js";
+} from "/univer/chunk-XUI25LTE.js";
 import {
   zh_CN_default
-} from "./chunk-J4OFPKRX.js";
+} from "/univer/chunk-Q3VLDO2L.js";
 import {
   UniverSheetsFormulaPlugin
-} from "./chunk-TOYW4IMU.js";
+} from "/univer/chunk-H5NJEYZ5.js";
 import {
   InsertSheetCommand,
   InsertSheetMutation,
@@ -229,12 +229,12 @@ import {
   WorksheetProtectionRuleModel,
   WorksheetSetCellStylePermission,
   WorksheetSetCellValuePermission
-} from "./chunk-SV6SUIS4.js";
+} from "/univer/chunk-CDHET2WN.js";
 import {
   IRenderManagerService,
   UniverRenderEnginePlugin
-} from "./chunk-BPIUAXSQ.js";
-import "./chunk-G4UBMCOX.js";
+} from "/univer/chunk-7ZBW2CWY.js";
+import "/univer/chunk-SSSDKVVD.js";
 import {
   BehaviorSubject,
   DOCS_FORMULA_BAR_EDITOR_UNIT_ID_KEY,
@@ -280,76 +280,65 @@ import {
   take,
   throttleTime,
   toDisposable
-} from "./chunk-DN46DLPI.js";
+} from "/univer/chunk-YLGQP2EX.js";
 import {
   __commonJS,
   __decorateClass,
   __decorateParam,
   __publicField,
   __toESM
-} from "./chunk-62WIURJL.js";
+} from "/univer/chunk-AROCCXDN.js";
 
-// ../node_modules/.pnpm/use-sync-external-store@1.6.0_react@19.2.0/node_modules/use-sync-external-store/cjs/use-sync-external-store-shim.development.js
-var require_use_sync_external_store_shim_development = __commonJS({
-  "../node_modules/.pnpm/use-sync-external-store@1.6.0_react@19.2.0/node_modules/use-sync-external-store/cjs/use-sync-external-store-shim.development.js"(exports) {
+// ../node_modules/.pnpm/use-sync-external-store@1.6.0_react@19.2.0/node_modules/use-sync-external-store/cjs/use-sync-external-store-shim.production.js
+var require_use_sync_external_store_shim_production = __commonJS({
+  "../node_modules/.pnpm/use-sync-external-store@1.6.0_react@19.2.0/node_modules/use-sync-external-store/cjs/use-sync-external-store-shim.production.js"(exports) {
     "use strict";
-    (function() {
-      function is(x, y) {
-        return x === y && (0 !== x || 1 / x === 1 / y) || x !== x && y !== y;
-      }
-      function useSyncExternalStore$2(subscribe, getSnapshot) {
-        didWarnOld18Alpha || void 0 === React.startTransition || (didWarnOld18Alpha = true, console.error(
-          "You are using an outdated, pre-release alpha of React 18 that does not support useSyncExternalStore. The use-sync-external-store shim will not work correctly. Upgrade to a newer pre-release."
-        ));
-        var value = getSnapshot();
-        if (!didWarnUncachedGetSnapshot) {
-          var cachedValue = getSnapshot();
-          objectIs(value, cachedValue) || (console.error(
-            "The result of getSnapshot should be cached to avoid an infinite loop"
-          ), didWarnUncachedGetSnapshot = true);
-        }
-        cachedValue = useState9({
-          inst: { value, getSnapshot }
-        });
-        var inst = cachedValue[0].inst, forceUpdate = cachedValue[1];
-        useLayoutEffect5(
-          function() {
-            inst.value = value;
-            inst.getSnapshot = getSnapshot;
+    var React = require_react();
+    function is(x, y) {
+      return x === y && (0 !== x || 1 / x === 1 / y) || x !== x && y !== y;
+    }
+    var objectIs = "function" === typeof Object.is ? Object.is : is;
+    var useState9 = React.useState;
+    var useEffect9 = React.useEffect;
+    var useLayoutEffect5 = React.useLayoutEffect;
+    var useDebugValue2 = React.useDebugValue;
+    function useSyncExternalStore$2(subscribe, getSnapshot) {
+      var value = getSnapshot(), _useState = useState9({ inst: { value, getSnapshot } }), inst = _useState[0].inst, forceUpdate = _useState[1];
+      useLayoutEffect5(
+        function() {
+          inst.value = value;
+          inst.getSnapshot = getSnapshot;
+          checkIfSnapshotChanged(inst) && forceUpdate({ inst });
+        },
+        [subscribe, value, getSnapshot]
+      );
+      useEffect9(
+        function() {
+          checkIfSnapshotChanged(inst) && forceUpdate({ inst });
+          return subscribe(function() {
             checkIfSnapshotChanged(inst) && forceUpdate({ inst });
-          },
-          [subscribe, value, getSnapshot]
-        );
-        useEffect9(
-          function() {
-            checkIfSnapshotChanged(inst) && forceUpdate({ inst });
-            return subscribe(function() {
-              checkIfSnapshotChanged(inst) && forceUpdate({ inst });
-            });
-          },
-          [subscribe]
-        );
-        useDebugValue2(value);
-        return value;
+          });
+        },
+        [subscribe]
+      );
+      useDebugValue2(value);
+      return value;
+    }
+    function checkIfSnapshotChanged(inst) {
+      var latestGetSnapshot = inst.getSnapshot;
+      inst = inst.value;
+      try {
+        var nextValue = latestGetSnapshot();
+        return !objectIs(inst, nextValue);
+      } catch (error) {
+        return true;
       }
-      function checkIfSnapshotChanged(inst) {
-        var latestGetSnapshot = inst.getSnapshot;
-        inst = inst.value;
-        try {
-          var nextValue = latestGetSnapshot();
-          return !objectIs(inst, nextValue);
-        } catch (error) {
-          return true;
-        }
-      }
-      function useSyncExternalStore$1(subscribe, getSnapshot) {
-        return getSnapshot();
-      }
-      "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var React = require_react(), objectIs = "function" === typeof Object.is ? Object.is : is, useState9 = React.useState, useEffect9 = React.useEffect, useLayoutEffect5 = React.useLayoutEffect, useDebugValue2 = React.useDebugValue, didWarnOld18Alpha = false, didWarnUncachedGetSnapshot = false, shim = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? useSyncExternalStore$1 : useSyncExternalStore$2;
-      exports.useSyncExternalStore = void 0 !== React.useSyncExternalStore ? React.useSyncExternalStore : shim;
-      "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop(Error());
-    })();
+    }
+    function useSyncExternalStore$1(subscribe, getSnapshot) {
+      return getSnapshot();
+    }
+    var shim = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? useSyncExternalStore$1 : useSyncExternalStore$2;
+    exports.useSyncExternalStore = void 0 !== React.useSyncExternalStore ? React.useSyncExternalStore : shim;
   }
 });
 
@@ -357,78 +346,80 @@ var require_use_sync_external_store_shim_development = __commonJS({
 var require_shim = __commonJS({
   "../node_modules/.pnpm/use-sync-external-store@1.6.0_react@19.2.0/node_modules/use-sync-external-store/shim/index.js"(exports, module) {
     "use strict";
-    if (false) {
-      module.exports = null;
+    if (true) {
+      module.exports = require_use_sync_external_store_shim_production();
     } else {
-      module.exports = require_use_sync_external_store_shim_development();
+      module.exports = null;
     }
   }
 });
 
-// ../node_modules/.pnpm/use-sync-external-store@1.6.0_react@19.2.0/node_modules/use-sync-external-store/cjs/use-sync-external-store-shim/with-selector.development.js
-var require_with_selector_development = __commonJS({
-  "../node_modules/.pnpm/use-sync-external-store@1.6.0_react@19.2.0/node_modules/use-sync-external-store/cjs/use-sync-external-store-shim/with-selector.development.js"(exports) {
+// ../node_modules/.pnpm/use-sync-external-store@1.6.0_react@19.2.0/node_modules/use-sync-external-store/cjs/use-sync-external-store-shim/with-selector.production.js
+var require_with_selector_production = __commonJS({
+  "../node_modules/.pnpm/use-sync-external-store@1.6.0_react@19.2.0/node_modules/use-sync-external-store/cjs/use-sync-external-store-shim/with-selector.production.js"(exports) {
     "use strict";
-    (function() {
-      function is(x, y) {
-        return x === y && (0 !== x || 1 / x === 1 / y) || x !== x && y !== y;
-      }
-      "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var React = require_react(), shim = require_shim(), objectIs = "function" === typeof Object.is ? Object.is : is, useSyncExternalStore = shim.useSyncExternalStore, useRef7 = React.useRef, useEffect9 = React.useEffect, useMemo6 = React.useMemo, useDebugValue2 = React.useDebugValue;
-      exports.useSyncExternalStoreWithSelector = function(subscribe, getSnapshot, getServerSnapshot, selector, isEqual) {
-        var instRef = useRef7(null);
-        if (null === instRef.current) {
-          var inst = { hasValue: false, value: null };
-          instRef.current = inst;
-        } else inst = instRef.current;
-        instRef = useMemo6(
-          function() {
-            function memoizedSelector(nextSnapshot) {
-              if (!hasMemo) {
-                hasMemo = true;
-                memoizedSnapshot = nextSnapshot;
-                nextSnapshot = selector(nextSnapshot);
-                if (void 0 !== isEqual && inst.hasValue) {
-                  var currentSelection = inst.value;
-                  if (isEqual(currentSelection, nextSnapshot))
-                    return memoizedSelection = currentSelection;
-                }
-                return memoizedSelection = nextSnapshot;
-              }
-              currentSelection = memoizedSelection;
-              if (objectIs(memoizedSnapshot, nextSnapshot))
-                return currentSelection;
-              var nextSelection = selector(nextSnapshot);
-              if (void 0 !== isEqual && isEqual(currentSelection, nextSelection))
-                return memoizedSnapshot = nextSnapshot, currentSelection;
+    var React = require_react();
+    var shim = require_shim();
+    function is(x, y) {
+      return x === y && (0 !== x || 1 / x === 1 / y) || x !== x && y !== y;
+    }
+    var objectIs = "function" === typeof Object.is ? Object.is : is;
+    var useSyncExternalStore = shim.useSyncExternalStore;
+    var useRef7 = React.useRef;
+    var useEffect9 = React.useEffect;
+    var useMemo6 = React.useMemo;
+    var useDebugValue2 = React.useDebugValue;
+    exports.useSyncExternalStoreWithSelector = function(subscribe, getSnapshot, getServerSnapshot, selector, isEqual) {
+      var instRef = useRef7(null);
+      if (null === instRef.current) {
+        var inst = { hasValue: false, value: null };
+        instRef.current = inst;
+      } else inst = instRef.current;
+      instRef = useMemo6(
+        function() {
+          function memoizedSelector(nextSnapshot) {
+            if (!hasMemo) {
+              hasMemo = true;
               memoizedSnapshot = nextSnapshot;
-              return memoizedSelection = nextSelection;
-            }
-            var hasMemo = false, memoizedSnapshot, memoizedSelection, maybeGetServerSnapshot = void 0 === getServerSnapshot ? null : getServerSnapshot;
-            return [
-              function() {
-                return memoizedSelector(getSnapshot());
-              },
-              null === maybeGetServerSnapshot ? void 0 : function() {
-                return memoizedSelector(maybeGetServerSnapshot());
+              nextSnapshot = selector(nextSnapshot);
+              if (void 0 !== isEqual && inst.hasValue) {
+                var currentSelection = inst.value;
+                if (isEqual(currentSelection, nextSnapshot))
+                  return memoizedSelection = currentSelection;
               }
-            ];
-          },
-          [getSnapshot, getServerSnapshot, selector, isEqual]
-        );
-        var value = useSyncExternalStore(subscribe, instRef[0], instRef[1]);
-        useEffect9(
-          function() {
-            inst.hasValue = true;
-            inst.value = value;
-          },
-          [value]
-        );
-        useDebugValue2(value);
-        return value;
-      };
-      "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop(Error());
-    })();
+              return memoizedSelection = nextSnapshot;
+            }
+            currentSelection = memoizedSelection;
+            if (objectIs(memoizedSnapshot, nextSnapshot)) return currentSelection;
+            var nextSelection = selector(nextSnapshot);
+            if (void 0 !== isEqual && isEqual(currentSelection, nextSelection))
+              return memoizedSnapshot = nextSnapshot, currentSelection;
+            memoizedSnapshot = nextSnapshot;
+            return memoizedSelection = nextSelection;
+          }
+          var hasMemo = false, memoizedSnapshot, memoizedSelection, maybeGetServerSnapshot = void 0 === getServerSnapshot ? null : getServerSnapshot;
+          return [
+            function() {
+              return memoizedSelector(getSnapshot());
+            },
+            null === maybeGetServerSnapshot ? void 0 : function() {
+              return memoizedSelector(maybeGetServerSnapshot());
+            }
+          ];
+        },
+        [getSnapshot, getServerSnapshot, selector, isEqual]
+      );
+      var value = useSyncExternalStore(subscribe, instRef[0], instRef[1]);
+      useEffect9(
+        function() {
+          inst.hasValue = true;
+          inst.value = value;
+        },
+        [value]
+      );
+      useDebugValue2(value);
+      return value;
+    };
   }
 });
 
@@ -436,10 +427,10 @@ var require_with_selector_development = __commonJS({
 var require_with_selector = __commonJS({
   "../node_modules/.pnpm/use-sync-external-store@1.6.0_react@19.2.0/node_modules/use-sync-external-store/shim/with-selector.js"(exports, module) {
     "use strict";
-    if (false) {
-      module.exports = null;
+    if (true) {
+      module.exports = require_with_selector_production();
     } else {
-      module.exports = require_with_selector_development();
+      module.exports = null;
     }
   }
 });
@@ -3852,7 +3843,7 @@ var getNodePositionWithOrigin = (node, nodeOrigin = [0, 0]) => {
   };
 };
 var getNodesBounds = (nodes, params = { nodeOrigin: [0, 0] }) => {
-  if (!params.nodeLookup) {
+  if (false) {
     console.warn("Please use `getNodesBounds` from `useReactFlow`/`useSvelteFlow` hook to ensure correct values for sub flows. If not possible, you have to provide a nodeLookup to support sub flows.");
   }
   if (nodes.length === 0) {
@@ -4091,7 +4082,7 @@ var getOverlappingArea = (rectA, rectB) => {
 var isRectObject = (obj) => isNumeric(obj.width) && isNumeric(obj.height) && isNumeric(obj.x) && isNumeric(obj.y);
 var isNumeric = (n) => !isNaN(n) && isFinite(n);
 var devWarn = (id2, message) => {
-  if (true) {
+  if (false) {
     console.warn(`[React Flow]: ${message} Help: https://reactflow.dev/error#${id2}`);
   }
 };
@@ -8767,8 +8758,7 @@ function useNodeOrEdgeTypesWarning(nodeOrEdgeTypes = emptyTypes) {
   const typesRef = (0, import_react2.useRef)(nodeOrEdgeTypes);
   const store = useStoreApi();
   (0, import_react2.useEffect)(() => {
-    var _a, _b;
-    if (true) {
+    if (false) {
       const usedKeys = /* @__PURE__ */ new Set([...Object.keys(typesRef.current), ...Object.keys(nodeOrEdgeTypes)]);
       for (const key of usedKeys) {
         if (typesRef.current[key] !== nodeOrEdgeTypes[key]) {
@@ -8784,8 +8774,7 @@ function useStylesLoadedWarning() {
   const store = useStoreApi();
   const checked = (0, import_react2.useRef)(false);
   (0, import_react2.useEffect)(() => {
-    var _a, _b;
-    if (true) {
+    if (false) {
       if (!checked.current) {
         const pane = document.querySelector(".react-flow__pane");
         if (pane && !(window.getComputedStyle(pane).zIndex === "1")) {
@@ -11802,7 +11791,7 @@ univer.createUnit(O.UNIVER_SHEET, DEFAULT_WORKBOOK_DATA_DEMO);
 univer.createUnit(O.UNIVER_DOC, DEFAULT_DOCUMENT_DATA_EN);
 univer.createUnit(O.UNIVER_SHEET, DEFAULT_WORKBOOK_DATA_DEMO1);
 setTimeout(() => {
-  import("./uni/lazy.js").then((lazy) => {
+  import("/univer/uni/lazy.js").then((lazy) => {
     const plugins = lazy.default();
     plugins.forEach((p) => univer.registerPlugin(p[0], p[1]));
     univer.createUnit(O.UNIVER_DOC, DEFAULT_DOCUMENT_DATA_CN);
@@ -11874,10 +11863,10 @@ function registerUniPlugins(univer2) {
 }
 /*! Bundled license information:
 
-use-sync-external-store/cjs/use-sync-external-store-shim.development.js:
+use-sync-external-store/cjs/use-sync-external-store-shim.production.js:
   (**
    * @license React
-   * use-sync-external-store-shim.development.js
+   * use-sync-external-store-shim.production.js
    *
    * Copyright (c) Meta Platforms, Inc. and affiliates.
    *
@@ -11885,10 +11874,10 @@ use-sync-external-store/cjs/use-sync-external-store-shim.development.js:
    * LICENSE file in the root directory of this source tree.
    *)
 
-use-sync-external-store/cjs/use-sync-external-store-shim/with-selector.development.js:
+use-sync-external-store/cjs/use-sync-external-store-shim/with-selector.production.js:
   (**
    * @license React
-   * use-sync-external-store-shim/with-selector.development.js
+   * use-sync-external-store-shim/with-selector.production.js
    *
    * Copyright (c) Meta Platforms, Inc. and affiliates.
    *
@@ -11896,4 +11885,3 @@ use-sync-external-store/cjs/use-sync-external-store-shim/with-selector.developme
    * LICENSE file in the root directory of this source tree.
    *)
 */
-//# sourceMappingURL=uni/main.js.map
