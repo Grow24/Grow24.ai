@@ -1,7 +1,7 @@
 :8080 {
 	root * /usr/share/caddy
 	@unsafePath {
-		path /.git/* /univer/.git/* /HBMPONE/.git/* /HBMP_DOCS_PLATFORM/.git/* /ivvychainv2/.git/* /OpenStreetMaps/.git/* /Microsoft/.git/* /ImageProcessing/.git/* /node_modules/* /vendor/* /.venv/*
+		path /.git/* /univer/.git/* /HBMP_One/.git/* /HBMP_DOCS_PLATFORM/.git/* /ivvychainv2/.git/* /OpenStreetMaps/.git/* /Microsoft/.git/* /ImageProcessing/.git/* /Google/.git/* /app_manager/.git/* /mcp_server/.git/* /node_modules/* /vendor/* /.venv/*
 	}
 	respond @unsafePath 404
 
@@ -35,19 +35,23 @@
 		file_server
 	}
 
-	# --- HBMPONE (Vite base: /HBMPONE/) — same pattern as /univer/ ---
-	@hbmpExact path /HBMPONE
-	redir @hbmpExact /HBMPONE/ 308
+	# --- HBMP_One (Vite base: /HBMP_One/) ---
+	@hbmpExact path /HBMP_One
+	redir @hbmpExact /HBMP_One/ 308
 
-	@hbmpAssets path_regexp hbmp_assets ^/HBMPONE/.*\.(js|mjs|css|map|json|wasm|ttf|woff|woff2|svg|png|jpg|jpeg|gif|webp|ico)$
+	# Backward-compat redirect
+	@hbmpLegacyExact path /HBMPONE
+	redir @hbmpLegacyExact /HBMP_One/ 308
+
+	@hbmpAssets path_regexp hbmp_assets ^/HBMP_One/.*\.(js|mjs|css|map|json|wasm|ttf|woff|woff2|svg|png|jpg|jpeg|gif|webp|ico)$
 	handle @hbmpAssets {
 		root * /usr/share/caddy
 		try_files {path} =404
 		file_server
 	}
 
-	handle_path /HBMPONE/* {
-		root * /usr/share/caddy/HBMPONE
+	handle_path /HBMP_One/* {
+		root * /usr/share/caddy/HBMP_One
 		try_files {path} {path}/ /index.html
 		file_server
 	}
@@ -133,6 +137,50 @@
 
 	handle_path /ImageProcessing/* {
 		root * /usr/share/caddy/ImageProcessing
+		try_files {path} {path}/ /index.html
+		file_server
+	}
+
+	# --- Google (Vite base: /Google/) ---
+	@googleExact path /Google
+	redir @googleExact /Google/ 308
+
+	@googleAssets path_regexp google_assets ^/Google/.*\.(js|mjs|css|map|json|wasm|ttf|woff|woff2|svg|png|jpg|jpeg|gif|webp|ico)$
+	handle @googleAssets {
+		root * /usr/share/caddy
+		try_files {path} =404
+		file_server
+	}
+
+	handle_path /Google/* {
+		root * /usr/share/caddy/Google
+		try_files {path} {path}/ /index.html
+		file_server
+	}
+
+	# --- app_manager (Vite base: /app_manager/) ---
+	@appManagerExact path /app_manager
+	redir @appManagerExact /app_manager/ 308
+
+	@appManagerAssets path_regexp app_manager_assets ^/app_manager/.*\.(js|mjs|css|map|json|wasm|ttf|woff|woff2|svg|png|jpg|jpeg|gif|webp|ico)$
+	handle @appManagerAssets {
+		root * /usr/share/caddy
+		try_files {path} =404
+		file_server
+	}
+
+	handle_path /app_manager/* {
+		root * /usr/share/caddy/app_manager
+		try_files {path} {path}/ /index.html
+		file_server
+	}
+
+	# --- mcp_server (static page under /mcp_server/) ---
+	@mcpServerExact path /mcp_server
+	redir @mcpServerExact /mcp_server/ 308
+
+	handle_path /mcp_server/* {
+		root * /usr/share/caddy/mcp_server
 		try_files {path} {path}/ /index.html
 		file_server
 	}

@@ -1,0 +1,236 @@
+🎥 OBS STUDIO WEBSOCKET INTEGRATION - SETUP GUIDE
+================================================================
+
+✅ What We Just Built:
+- Full OBS WebSocket control from HBMP Meet app
+- Start/Stop/Pause/Resume recording with one click
+- Real-time recording status and timer
+- Automatic connection to OBS Studio
+- Recording path display and notifications
+
+================================================================
+📋 SETUP STEPS (Do this now!)
+================================================================
+
+STEP 1: Configure OBS WebSocket
+--------------------------------
+1. Open OBS Studio (you already have it installed)
+
+2. Go to: Tools → WebSocket Server Settings
+   (If you don't see this, your OBS version is too old - update to OBS 28+)
+
+3. In the settings dialog:
+   ✅ Check "Enable WebSocket server"
+   📝 Server Port: 4455 (leave as default)
+   🔒 Password: Leave blank (or set one if you want security)
+   
+4. Click "OK" to save
+
+5. Keep OBS Studio RUNNING (minimized is fine)
+
+STEP 2: Configure Your OBS Scene (Important!)
+----------------------------------------------
+For best results when recording Google Meet:
+
+1. In OBS Studio, create a new Scene called "Google Meet"
+
+2. Add Sources:
+   - Click "+" under Sources
+   - Choose "Window Capture"
+   - Name it "Browser - Google Meet"
+   - Select your browser window from the dropdown
+   - Click OK
+
+3. Adjust the capture:
+   - Resize the red border to fit just the meeting area
+   - You can crop out browser tabs/toolbars if you want
+
+4. (Optional) Add your webcam:
+   - Click "+" → "Video Capture Device"
+   - Select your webcam
+   - Position it in a corner (bottom-right looks good)
+
+5. Test it:
+   - Join a Google Meet
+   - You should see it in OBS preview
+   - Looks good? ✅ You're ready!
+
+STEP 3: Start Your Servers
+---------------------------
+You need BOTH servers running:
+
+Terminal 1 - Backend:
+```
+cd /Users/abhinavrai/Desktop/DST/hbmp_tools/meet/backend
+npm start
+```
+
+Terminal 2 - Frontend:
+```
+cd /Users/abhinavrai/Desktop/DST/hbmp_tools/meet/frontend
+npm run dev
+```
+
+Wait for:
+🚀 HBMP Meet Backend running on http://localhost:3006
+🎥 OBS WebSocket integration ready
+➜ Local: http://localhost:5179/
+
+STEP 4: Test the Integration
+-----------------------------
+1. Open your browser: http://localhost:5179
+
+2. Select ANY meeting from your list
+   (Or create a test meeting)
+
+3. You'll see a new "OBS Studio Recording" panel:
+   
+   ┌─────────────────────────────────────┐
+   │ 🎥 OBS Studio Recording             │
+   │ ● Disconnected      [Connect]       │
+   └─────────────────────────────────────┘
+
+4. Click "Connect" button
+
+5. If successful, you'll see:
+   ✅ Connected to OBS Studio
+   Status changes to: ● Connected
+   
+6. Click "Start Recording" button
+   🎥 Recording starts in OBS!
+   Timer appears: 00:00:01... 00:00:02...
+
+7. Click "Stop" button when done
+   ✅ Recording saved!
+   You'll see the file path
+
+================================================================
+🎬 USAGE WORKFLOW
+================================================================
+
+Perfect workflow for recording Google Meet:
+
+1. Create/select a meeting in HBMP Meet
+2. Click "Connect" in OBS panel (one-time per session)
+3. Click "Start Recording" 
+4. Click "Join Meeting" button (opens Google Meet in new tab)
+5. Conduct your meeting
+6. When meeting ends, click "Stop" in HBMP Meet app
+7. Recording is saved! ✅
+
+You can pause/resume anytime during recording!
+
+================================================================
+🎯 WHAT EACH BUTTON DOES
+================================================================
+
+[Connect]           - Connects to OBS WebSocket (do this first!)
+[Disconnect]        - Disconnects from OBS (rarely needed)
+
+[Start Recording]   - Starts recording in OBS (big red button)
+[Pause]             - Pauses recording (can resume later)
+[Resume]            - Continues recording after pause
+[Stop]              - Stops and saves the recording
+
+================================================================
+📁 WHERE ARE RECORDINGS SAVED?
+================================================================
+
+Default OBS recording location:
+Mac: ~/Movies/
+Windows: C:\Users\[YourName]\Videos\
+
+To change this:
+1. OBS Studio → Settings → Output
+2. "Recording Path" - click Browse
+3. Choose your folder
+4. Click OK
+
+================================================================
+⚠️ TROUBLESHOOTING
+================================================================
+
+Problem: "Failed to connect to OBS"
+Solution:
+- Make sure OBS Studio is RUNNING
+- Check WebSocket is enabled (Tools → WebSocket Server Settings)
+- Port is 4455 (default)
+- Restart OBS if needed
+
+Problem: "No active recording to stop"
+Solution:
+- You need to click "Start Recording" first
+- OBS might have auto-stopped (check OBS window)
+
+Problem: Recording file is huge!
+Solution:
+- OBS Settings → Output → Recording Format: MP4
+- Video Encoder: x264 (Software)
+- Quality: High Quality, Medium File Size
+- This will reduce file size significantly
+
+Problem: Recording is laggy/choppy
+Solution:
+- OBS Settings → Video
+- Base Resolution: 1920x1080 (or your screen resolution)
+- Output Resolution: 1280x720 (lower = faster)
+- FPS: 30 (not 60)
+
+Problem: No audio in recording
+Solution:
+- OBS: Audio Mixer section (bottom)
+- Make sure "Desktop Audio" is NOT muted
+- Adjust volume slider to -6 dB or higher
+- Test with a YouTube video first
+
+================================================================
+✨ PRO TIPS
+================================================================
+
+1. Test First!
+   - Record a 10-second test meeting BEFORE important calls
+   - Watch it back to check quality
+   - Adjust settings if needed
+
+2. Monitor While Recording
+   - Keep OBS window visible (on second monitor if possible)
+   - Watch for CPU usage (shown in HBMP Meet app)
+   - Green = good, Red = struggling
+
+3. Automatic Naming
+   - OBS Settings → Output → Recording
+   - Filename Formatting: %CCYY-%MM-%DD_%hh-%mm-%ss
+   - Creates files like: 2025-11-03_14-30-00.mp4
+
+4. Keyboard Shortcuts
+   - OBS Settings → Hotkeys
+   - Set "Start Recording" to Ctrl+R (or Cmd+R on Mac)
+   - Set "Stop Recording" to Ctrl+S (or Cmd+S on Mac)
+
+5. Cloud Backup
+   - After recording, upload to Google Drive
+   - Or use OBS Advanced Output mode to save to cloud folder
+
+================================================================
+🚀 READY TO GO!
+================================================================
+
+You now have PROFESSIONAL recording capability!
+
+What you can do:
+✅ Record any Google Meet call
+✅ One-click start/stop from your web app
+✅ Real-time recording status
+✅ Pause/resume recording anytime
+✅ Automatic file saving
+✅ No monthly fees or subscriptions!
+
+Much better than:
+❌ Google Workspace recording ($12/month)
+❌ Loom ($12.50/month for HD)
+❌ Zoom recording (requires Pro plan)
+
+Your setup: 100% FREE, unlimited recording, full control! 🎉
+
+================================================================
+

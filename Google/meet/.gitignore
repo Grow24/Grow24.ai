@@ -1,0 +1,27 @@
+# Logs
+logs/
+*.log
+
+# Dependencies
+node_modules/
+
+# Environment
+.env
+
+# Build output
+dist/
+build/
+
+# OAuth tokens
+tokens.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+

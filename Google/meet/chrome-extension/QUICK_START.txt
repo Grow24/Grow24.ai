@@ -1,0 +1,76 @@
+🎥 HBMP MEET RECORDER - CHROME EXTENSION
+========================================
+
+QUICK INSTALLATION (2 MINUTES):
+================================
+
+STEP 1: Open Chrome Extensions
+-------------------------------
+1. Open Google Chrome
+2. Type in address bar: chrome://extensions
+3. Press Enter
+
+STEP 2: Enable Developer Mode
+------------------------------
+1. Look at top-right corner
+2. Toggle switch: ✅ Developer mode
+
+STEP 3: Load Extension
+----------------------
+1. Click "Load unpacked" button (top-left)
+2. Navigate to this folder:
+   /Users/abhinavrai/Desktop/DST/hbmp_tools/meet/chrome-extension
+3. Click "Select"
+4. Extension loads! ✅
+
+STEP 4: Test It!
+----------------
+1. Go to: https://meet.google.com
+2. Join any meeting (or start instant meeting)
+3. Wait 2-3 seconds
+4. Look for floating widget in top-right: "🎥 OBS Recorder"
+5. Click "Connect to OBS"
+6. Click "Start Recording"
+7. Done! 🎉
+
+========================================
+
+WHAT YOU'LL SEE IN GOOGLE MEET:
+================================
+
+┌──────────────────────────────────────┐
+│  Google Meet Window                  │
+│                                      │
+│  ┌────────────────┐                │
+│  │ 🎥 OBS Recorder│  ← Floating!    │
+│  │ ● Connected    │                 │
+│  │ ⏱️ 00:05:32    │                 │
+│  │ [Stop Recording]│                │
+│  └────────────────┘                │
+│                                      │
+│  [Your video and participants here]  │
+└──────────────────────────────────────┘
+
+FEATURES:
+- Draggable (move anywhere)
+- Minimizable (click −)
+- Real-time timer
+- One-click recording
+- Shows connection status
+
+========================================
+
+REQUIREMENTS (MUST BE RUNNING):
+================================
+
+✅ Backend server: http://localhost:3006
+   cd /Users/abhinavrai/Desktop/DST/hbmp_tools/meet/backend
+   npm start
+
+✅ OBS Studio: WebSocket enabled (port 4455)
+   Tools → WebSocket Server Settings → Enable
+
+========================================
+
+That's it! Join a Google Meet to see the magic! 🚀
+

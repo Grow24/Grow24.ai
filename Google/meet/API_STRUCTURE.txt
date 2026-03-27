@@ -1,0 +1,106 @@
+HBMP Meet Module - API Structure (Plain Text)
+
+Overview:
+- RESTful API with 3 main service layers:
+  1. OBS Recording Services
+  2. Google Calendar/Meet Services
+  3. Authentication Services
+- Base URL: http://localhost:3005
+
+---
+
+OBS Recording API:
+- POST /obs/connect         # Connect to OBS Studio (WebSocket)
+- POST /obs/disconnect      # Disconnect OBS
+- GET  /obs/status          # OBS connection status
+- POST /obs/recording/start # Start recording
+- POST /obs/recording/stop  # Stop recording
+- GET  /obs/recording/status# Recording status
+- POST /obs/recording/pause # Pause recording
+- POST /obs/recording/resume# Resume recording
+- GET  /obs/info            # OBS version and stats
+- POST /obs/recording/upload-to-drive # Upload recording to Google Drive
+- GET  /google/drive/folders # List Google Drive folders
+- POST /google/drive/folders # Create new Drive folder
+
+---
+
+Google Calendar/Meet API:
+- GET  /google/auth                         # Start Google OAuth
+- GET  /google/oauth/callback?code=...      # OAuth callback
+- GET  /auth/status                         # Check authentication
+- GET  /google/calendar/events              # List upcoming meetings
+- GET  /google/calendar/events/all          # List all meetings
+- POST /google/calendar/events              # Create meeting (with Meet link)
+- GET  /google/calendar/events/:eventId     # Get meeting details
+- PUT  /google/calendar/events/:eventId     # Update meeting
+- DELETE /google/calendar/events/:eventId   # Delete meeting
+- POST /google/calendar/events/:eventId/send-invitation # Send email invites
+- POST /google/calendar/events/:eventId/submit-approval # Submit for approval
+- POST /google/calendar/events/:eventId/approve         # Approve meeting
+- POST /google/calendar/events/:eventId/reject          # Reject meeting
+- GET  /google/calendar/list                # List calendars
+- GET  /google/meet/:conferenceId/recordings# Get Meet recordings
+- GET  /google/meet/:conferenceId/transcripts# Get Meet transcripts
+- GET  /google/meet/:conferenceId/transcripts/:transcriptId/entries # Transcript entries
+- GET  /google/meet/space/:conferenceId     # Meet space details
+
+---
+
+Frontend Integration:
+- API base URL: VITE_API_BASE_URL in frontend/.env
+- Example usage:
+  fetch(`${apiBase}/google/calendar/events`)
+  fetch(`${apiBase}/obs/connect`, { method: 'POST' })
+
+---
+
+Security & Auth:
+- OAuth 2.0 scopes: calendar, gmail.send, meetings.space.created, meetings.space.readonly
+- Tokens stored in backend/tokens.json
+- Backend config in backend/.env
+
+---
+
+Request/Response Flow:
+- Create Meeting:
+  1. Frontend POST /google/calendar/events
+  2. Backend creates event, adds Meet link
+  3. Returns event with hangoutLink
+  4. Frontend opens Meet link
+- OBS Recording:
+  1. Frontend POST /obs/connect
+  2. Backend connects to OBS
+  3. Frontend POST /obs/recording/start
+  4. Backend starts recording
+  5. Frontend POST /obs/recording/stop
+  6. Backend stops recording, returns file path
+- Approval Workflow:
+  1. Frontend POST /submit-approval
+  2. Backend sends approval email
+  3. Approver clicks approve/reject (POST)
+
+---
+
+Related Files:
+- backend/server.js
+- backend/googleClient.js
+- backend/obsService.js
+- backend/tokens.json
+- backend/.env
+- frontend/src/pages/Meet.tsx
+- frontend/.env
+- chrome-extension/manifest.json
+- chrome-extension/content.js
+- chrome-extension/popup.html
+
+---
+
+API Standards:
+- HTTP status codes: 200, 401, 404, 500
+- JSON response format: { success, data } or { success: false, error, details }
+- Endpoint naming: lowercase, hyphens
+- Methods: GET, POST, PUT, DELETE
+
+Last Updated: 2025-11-04
+Base URL: http://localhost:3005

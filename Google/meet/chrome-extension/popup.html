@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HBMP Meet Recorder</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        width: 320px;
+        padding: 20px;
+        font-family: "Roboto", "Google Sans", Arial, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .logo {
+        font-size: 48px;
+        margin-bottom: 10px;
+      }
+
+      h1 {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      .version {
+        font-size: 12px;
+        opacity: 0.9;
+      }
+
+      .info-box {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        backdrop-filter: blur(10px);
+      }
+
+      .info-box h2 {
+        font-size: 14px;
+        margin-bottom: 10px;
+        font-weight: 600;
+      }
+
+      .info-box ul {
+        font-size: 13px;
+        line-height: 1.8;
+        list-style: none;
+      }
+
+      .info-box li::before {
+        content: "✓ ";
+        margin-right: 5px;
+      }
+
+      .status {
+        text-align: center;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        font-size: 13px;
+        margin-bottom: 15px;
+      }
+
+      .status.active {
+        background: rgba(52, 168, 83, 0.3);
+      }
+
+      .btn {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        background: white;
+        color: #667eea;
+        transition: transform 0.2s;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .footer {
+        margin-top: 15px;
+        text-align: center;
+        font-size: 11px;
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div class="logo">REC</div>
+      <h1>HBMP Meet Recorder</h1>
+      <div class="version">Version 1.0.0</div>
+    </div>
+
+    <div class="status" id="status">
+      <span id="status-text">⚪ Extension Ready</span>
+    </div>
+
+    <div class="info-box">
+      <h2>How to Use:</h2>
+      <ul>
+        <li>Join a Google Meet</li>
+        <li>Look for floating widget</li>
+        <li>Click "Connect to OBS"</li>
+        <li>Click "Start Recording"</li>
+        <li>Done! Recording saved locally</li>
+      </ul>
+    </div>
+
+    <div class="info-box">
+      <h2>Requirements:</h2>
+      <ul>
+        <li>OBS Studio installed</li>
+        <li>WebSocket enabled (port 4455)</li>
+        <li>Backend server running</li>
+      </ul>
+    </div>
+
+    <button class="btn" id="openMeet">Open Google Meet</button>
+
+    <div class="footer">
+      Made with ❤️ by HBMP Tools<br />
+      No data collected • 100% Local
+    </div>
+
+    <script>
+      // Check if on Meet page
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        const currentTab = tabs[0];
+        if (currentTab.url && currentTab.url.includes("meet.google.com")) {
+          document.getElementById("status").className = "status active";
+          document.getElementById("status-text").textContent =
+            "● On Google Meet";
+        }
+      });
+
+      // Open Google Meet
+      document
+        .getElementById("openMeet")
+        .addEventListener("click", function () {
+          chrome.tabs.create({ url: "https://meet.google.com" });
+          window.close();
+        });
+    </script>
+  </body>
+</html>

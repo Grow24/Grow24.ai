@@ -1,0 +1,25 @@
+{
+  "name": "hbmp-backend",
+  "version": "1.0.0",
+  "description": "Backend for HBMP Tools with Google OAuth and Drive API",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "express",
+    "google-drive",
+    "oauth"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "fs-extra": "^11.3.2",
+    "googleapis": "^164.1.0"
+  }
+}

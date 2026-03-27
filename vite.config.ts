@@ -14,13 +14,15 @@ export default defineConfig({
     watch: {
       ignored: [
         '**/univer/**',
-        '**/HBMPONE/**',
+        '**/HBMP_One/**',
         '**/HBMP_DOCS_PLATFORM/**',
+        '**/app_manager/**',
         '**/ivvychainv2/**',
         '**/mcp_server/**',
         '**/Microsoft/**',
         '**/OpenStreetMaps/**',
         '**/ImageProcessing/**',
+        '**/Google/**',
         '**/dist/**',
         '**/backend/**',
       ],
@@ -31,9 +33,15 @@ export default defineConfig({
         target: 'http://localhost:3000',
         changeOrigin: true,
       },
-      // HBMPONE client (Vite) — keep /HBMPONE prefix; client uses base: /HBMPONE/
+      // HBMP_One client (Vite) — keep /HBMP_One prefix; client uses base: /HBMP_One/
+      '/HBMP_One': {
+        target: `http://localhost:${process.env.HBMP_ONE_PORT || '5175'}`,
+        changeOrigin: true,
+        ws: true,
+      },
+      // Backward compatibility
       '/HBMPONE': {
-        target: `http://localhost:${process.env.HBMPONE_PORT || '5175'}`,
+        target: `http://localhost:${process.env.HBMP_ONE_PORT || process.env.HBMPONE_PORT || '5175'}`,
         changeOrigin: true,
         ws: true,
       },
@@ -66,6 +74,24 @@ export default defineConfig({
         target: `http://localhost:${process.env.IMAGE_PROCESSING_PORT || '5182'}`,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/ImageProcessing/, '') || '/',
+      },
+      // Google app (Vite) — keep /Google prefix; app uses base: /Google/
+      '/Google': {
+        target: `http://localhost:${process.env.GOOGLE_PORT || '5179'}`,
+        changeOrigin: true,
+        ws: true,
+      },
+      // app_manager (Vite + backend API)
+      '/app_manager': {
+        target: `http://localhost:${process.env.APP_MANAGER_PORT || '5183'}`,
+        changeOrigin: true,
+        ws: true,
+      },
+      // mcp_server static view
+      '/mcp_server': {
+        target: `http://localhost:${process.env.MCP_SERVER_PORT || '5184'}`,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/mcp_server/, '') || '/',
       },
       // HBMP docs API (Express on 4000 by default)
       '/api': {
@@ -102,6 +128,36 @@ export default defineConfig({
           if (url === '/ImageProcessing' || url === '/ImageProcessing/') {
             res.statusCode = 302
             res.setHeader('Location', '/ImageProcessing/index.html')
+            res.end()
+            return
+          }
+          if (url === '/mcp_server') {
+            res.statusCode = 302
+            res.setHeader('Location', '/mcp_server/')
+            res.end()
+            return
+          }
+          if (url === '/Google') {
+            res.statusCode = 302
+            res.setHeader('Location', '/Google/')
+            res.end()
+            return
+          }
+          if (url === '/HBMP_One') {
+            res.statusCode = 302
+            res.setHeader('Location', '/HBMP_One/')
+            res.end()
+            return
+          }
+          if (url === '/HBMP_DOCS_PLATFORM') {
+            res.statusCode = 302
+            res.setHeader('Location', '/HBMP_DOCS_PLATFORM/')
+            res.end()
+            return
+          }
+          if (url === '/app_manager') {
+            res.statusCode = 302
+            res.setHeader('Location', '/app_manager/')
             res.end()
             return
           }

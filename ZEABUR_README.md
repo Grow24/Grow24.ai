@@ -33,7 +33,7 @@ npm run build
 1. Visit [Zeabur Dashboard](https://dashboard.zeabur.com)
 2. Create new project
 3. Connect GitHub repository
-4. **Frontend:** deploy with the **root `Dockerfile`** (port **8080**), not plain static hosting — Caddy serves `/`, `/univer/`, and `/HBMPONE/` from **`Caddyfile`**. See **[DEPLOY_ZEABUR.md](./DEPLOY_ZEABUR.md)**.
+4. **Frontend:** deploy with the **root `Dockerfile`** (port **8080**), not plain static hosting — Caddy serves `/`, `/univer/`, `/HBMP_One/`, `/HBMP_DOCS_PLATFORM/`, `/Google/`, `/app_manager/`, `/ivvychainv2/`, `/OpenStreetMaps/`, `/ImageProcessing/`, and `/mcp_server/`. See **[DEPLOY_ZEABUR.md](./DEPLOY_ZEABUR.md)**.
 5. Set environment variables (see below)
 6. Deploy!
 

@@ -1,0 +1,276 @@
+/* HBMP Meet Recorder - Floating Widget Styles */
+
+.hbmp-recorder-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 99999;
+  font-family: 'Roboto', 'Google Sans', Arial, sans-serif;
+}
+
+.hbmp-recorder-widget {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 320px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hbmp-recorder-header {
+  background: linear-gradient(135deg, #ea4335 0%, #d23f31 100%);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: grab;
+  user-select: none;
+}
+
+.hbmp-recorder-logo {
+  font-size: 20px;
+}
+
+.hbmp-recorder-title {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.3px;
+}
+
+.hbmp-recorder-minimize {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.hbmp-recorder-minimize:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.hbmp-recorder-body {
+  padding: 16px;
+}
+
+.hbmp-recorder-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.hbmp-status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #9aa0a6;
+  animation: pulse 2s infinite;
+}
+
+.hbmp-status-indicator.connected {
+  background: #34a853;
+}
+
+.hbmp-status-indicator.recording {
+  background: #ea4335;
+  animation: recordingPulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes recordingPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.2);
+  }
+}
+
+#hbmp-status-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #202124;
+}
+
+.hbmp-recorder-timer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: #fce8e6;
+  border: 2px solid #ea4335;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  justify-content: center;
+}
+
+.hbmp-timer-icon {
+  font-size: 18px;
+}
+
+#hbmp-timer-text {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ea4335;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
+}
+
+.hbmp-recorder-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hbmp-btn {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.hbmp-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.hbmp-btn-connect {
+  background: #1a73e8;
+  color: #ffffff;
+}
+
+.hbmp-btn-connect:hover:not(:disabled) {
+  background: #1557b0;
+  box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3);
+}
+
+.hbmp-btn-record {
+  background: linear-gradient(135deg, #ea4335 0%, #d23f31 100%);
+  color: #ffffff;
+  font-size: 15px;
+}
+
+.hbmp-btn-record:hover:not(:disabled) {
+  background: linear-gradient(135deg, #d23f31 0%, #c1362b 100%);
+  box-shadow: 0 4px 12px rgba(234, 67, 53, 0.4);
+  transform: translateY(-1px);
+}
+
+.hbmp-record-icon {
+  font-size: 18px;
+  display: inline-block;
+  animation: recordingPulse 1.5s infinite;
+}
+
+.hbmp-btn-stop {
+  background: #5f6368;
+  color: #ffffff;
+}
+
+.hbmp-btn-stop:hover:not(:disabled) {
+  background: #3c4043;
+  box-shadow: 0 2px 8px rgba(60, 64, 67, 0.3);
+}
+
+.hbmp-stop-icon {
+  font-size: 16px;
+}
+
+.hbmp-recorder-message {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.4;
+  display: none;
+  white-space: pre-line;
+}
+
+.hbmp-recorder-message.success {
+  background: #e6f4ea;
+  color: #137333;
+  border-left: 3px solid #34a853;
+}
+
+.hbmp-recorder-message.error {
+  background: #fce8e6;
+  color: #c5221f;
+  border-left: 3px solid #ea4335;
+}
+
+.hbmp-recorder-message.info {
+  background: #e8f0fe;
+  color: #1967d2;
+  border-left: 3px solid #1a73e8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .hbmp-recorder-widget {
+    width: 280px;
+  }
+}
+
+/* Dark mode support (if Google Meet enables it) */
+@media (prefers-color-scheme: dark) {
+  .hbmp-recorder-widget {
+    background: #2d2d2d;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  }
+  
+  .hbmp-recorder-status {
+    background: #3c4043;
+  }
+  
+  #hbmp-status-text {
+    color: #e8eaed;
+  }
+  
+  .hbmp-recorder-timer {
+    background: #442726;
+  }
+}
+

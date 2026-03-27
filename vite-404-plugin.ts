@@ -56,8 +56,12 @@ export function vite404Plugin(): Plugin {
           pathname.startsWith('/univer/') ||
           pathname === '/HBMPONE' ||
           pathname.startsWith('/HBMPONE/') ||
+          pathname === '/HBMP_One' ||
+          pathname.startsWith('/HBMP_One/') ||
           pathname === '/HBMP_DOCS_PLATFORM' ||
           pathname.startsWith('/HBMP_DOCS_PLATFORM/') ||
+          pathname === '/app_manager' ||
+          pathname.startsWith('/app_manager/') ||
           pathname === '/ivvychainv2' ||
           pathname.startsWith('/ivvychainv2/') ||
           pathname === '/Microsoft' ||
@@ -65,7 +69,11 @@ export function vite404Plugin(): Plugin {
           pathname === '/OpenStreetMaps' ||
           pathname.startsWith('/OpenStreetMaps/') ||
           pathname === '/ImageProcessing' ||
-          pathname.startsWith('/ImageProcessing/')
+          pathname.startsWith('/ImageProcessing/') ||
+          pathname === '/Google' ||
+          pathname.startsWith('/Google/') ||
+          pathname === '/mcp_server' ||
+          pathname.startsWith('/mcp_server/')
         ) {
           return next()
         }
