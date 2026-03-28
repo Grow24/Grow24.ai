@@ -22,8 +22,7 @@ const demoGraph: RFGraph = {
         kind: 'lane' as any,
         width: 600,
         height: 180,
-        department: 'Customer Service',
-        owner: 'CS Team'
+        props: { department: 'Customer Service', owner: 'CS Team' },
       }
     },
     {
@@ -35,8 +34,7 @@ const demoGraph: RFGraph = {
         kind: 'lane' as any,
         width: 600,
         height: 180,
-        department: 'IT Operations',
-        owner: 'Backend Team'
+        props: { department: 'IT Operations', owner: 'Backend Team' },
       }
     },
     {

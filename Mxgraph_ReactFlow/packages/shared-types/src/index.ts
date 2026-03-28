@@ -62,8 +62,8 @@ export interface RFNode {
   data: RFNodeData;
   /** Parent node id for nested graphs / subflows (React Flow) */
   parentNode?: string;
-  /** Restrict dragging to parent bounds (React Flow) */
-  extent?: "parent" | string;
+  /** Restrict dragging to parent bounds (React Flow — matches `Node.extent`) */
+  extent?: "parent" | [[number, number], [number, number]];
 }
 
 /**
@@ -82,6 +82,10 @@ export interface RFEdge {
   points?: Array<{ x: number; y: number }>;
   /** Semantic metadata for the edge */
   metadata?: any; // EdgeMetadata type from metadata.ts
+  /** React Flow edge type (e.g. smoothstep, default) */
+  type?: string;
+  animated?: boolean;
+  style?: Record<string, unknown>;
 }
 
 /**

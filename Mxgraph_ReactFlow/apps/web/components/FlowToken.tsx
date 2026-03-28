@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FlowToken } from '@/lib/framerFlowAnimator';
+import type { FlowToken } from '@/components/CSSFlowToken';
 
 interface FlowTokenProps {
   token: FlowToken;

@@ -39,6 +39,22 @@ export interface CameraMovement {
   easing?: 'linear' | 'easeInOut' | 'easeIn' | 'easeOut';
 }
 
+/** One step in `generateComplexFlowPath` / `runAdvancedAnimation` (prototype page) */
+export interface MultiLevelAnimationStep {
+  elementId: string;
+  elementType: 'swimlane' | 'node' | 'edge';
+  color?: string;
+  duration: number;
+  description?: string;
+  targetLaneId?: string | null;
+}
+
+export interface MultiLevelAnimation {
+  type: string;
+  steps: MultiLevelAnimationStep[];
+  levelDuration?: number;
+}
+
 export interface AdvancedAnimationState {
   isRunning: boolean;
   currentPath?: FlowPath;
@@ -48,7 +64,8 @@ export interface AdvancedAnimationState {
     nodes: Set<string>;
     edges: Set<string>;
   };
-  animationLevels: AnimationLevel[];
+  /** Preset levels from `ANIMATION_LEVELS`, or paths from `generateComplexFlowPath` */
+  animationLevels: (AnimationLevel | MultiLevelAnimation)[];
   progress: number; // 0-100
   cameraMovement?: CameraMovement;
 }
@@ -109,13 +126,13 @@ export class AdvancedTokenAnimator {
   /**
    * Generate sequential swimlane flow animation
    */
-  public generateComplexFlowPath(nodes: Node[], edges: Edge[]): any[] {
+  public generateComplexFlowPath(nodes: Node[], edges: Edge[]): MultiLevelAnimation[] {
     console.log('🎬 Generating sequential flow...');
     
     const swimlanes = nodes.filter(n => n.type === 'lane').sort((a, b) => a.position.y - b.position.y);
     const processNodes = nodes.filter(n => n.type !== 'lane');
     
-    const levels: any[] = [];
+    const levels: MultiLevelAnimation[] = [];
     
     // Process each swimlane sequentially
     swimlanes.forEach((lane) => {
@@ -125,7 +142,7 @@ export class AdvancedTokenAnimator {
       
       if (nodesInLane.length === 0) return;
       
-      const sequentialSteps: any[] = [];
+      const sequentialSteps: MultiLevelAnimationStep[] = [];
       
       // 1. Highlight swimlane first
       sequentialSteps.push({
@@ -489,9 +506,8 @@ export class AdvancedTokenAnimator {
       this.intervalId = undefined;
       this.state.isRunning = false;
     } else if (this.state.currentPath && this.state.currentStep < this.state.currentPath.steps.length) {
-      // Resume
+      // Resume — full step driver not implemented; keep state consistent
       this.state.isRunning = true;
-      this.executeNextStep();
     }
   }
 

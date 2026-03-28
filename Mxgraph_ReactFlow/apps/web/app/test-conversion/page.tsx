@@ -18,8 +18,9 @@ const sampleGraphs: Record<string, RFGraph> = {
         position: { x: 100, y: 100 },
         data: {
           label: 'Start Process',
-          description: 'Process initiation'
-        }
+          kind: 'event',
+          props: { description: 'Process initiation' },
+        },
       },
       {
         id: 'task-1',
@@ -27,8 +28,9 @@ const sampleGraphs: Record<string, RFGraph> = {
         position: { x: 300, y: 100 },
         data: {
           label: 'Process Task',
-          description: 'Main processing step'
-        }
+          kind: 'processTask',
+          props: { description: 'Main processing step' },
+        },
       },
       {
         id: 'end-1',
@@ -36,9 +38,10 @@ const sampleGraphs: Record<string, RFGraph> = {
         position: { x: 500, y: 100 },
         data: {
           label: 'End Process',
-          description: 'Process completion'
-        }
-      }
+          kind: 'event',
+          props: { description: 'Process completion' },
+        },
+      },
     ],
     edges: [
       {
@@ -63,32 +66,32 @@ const sampleGraphs: Record<string, RFGraph> = {
         id: 'start-1',
         type: 'event',
         position: { x: 50, y: 150 },
-        data: { label: 'Start' }
+        data: { label: 'Start', kind: 'event' },
       },
       {
         id: 'gateway-1',
         type: 'gateway',
         position: { x: 200, y: 150 },
-        data: { label: 'Decision' }
+        data: { label: 'Decision', kind: 'gateway' },
       },
       {
         id: 'task-1',
         type: 'processTask',
         position: { x: 350, y: 100 },
-        data: { label: 'Path A' }
+        data: { label: 'Path A', kind: 'processTask' },
       },
       {
         id: 'task-2',
         type: 'processTask',
         position: { x: 350, y: 200 },
-        data: { label: 'Path B' }
+        data: { label: 'Path B', kind: 'processTask' },
       },
       {
         id: 'end-1',
         type: 'event',
         position: { x: 500, y: 150 },
-        data: { label: 'End' }
-      }
+        data: { label: 'End', kind: 'event' },
+      },
     ],
     edges: [
       {
@@ -103,14 +106,16 @@ const sampleGraphs: Record<string, RFGraph> = {
         source: 'gateway-1',
         target: 'task-1',
         type: 'default',
-        data: { label: 'Yes' }
+        label: 'Yes',
+        data: {},
       },
       {
         id: 'e3',
         source: 'gateway-1',
         target: 'task-2',
         type: 'default',
-        data: { label: 'No' }
+        label: 'No',
+        data: {},
       },
       {
         id: 'e4',
@@ -136,9 +141,10 @@ const sampleGraphs: Record<string, RFGraph> = {
         position: { x: 0, y: 0 },
         data: {
           label: 'Customer',
+          kind: 'lane',
           width: 600,
-          height: 150
-        }
+          height: 150,
+        },
       },
       {
         id: 'lane-2',
@@ -146,9 +152,10 @@ const sampleGraphs: Record<string, RFGraph> = {
         position: { x: 0, y: 150 },
         data: {
           label: 'System',
+          kind: 'lane',
           width: 600,
-          height: 150
-        }
+          height: 150,
+        },
       },
       {
         id: 'start-1',
@@ -156,8 +163,9 @@ const sampleGraphs: Record<string, RFGraph> = {
         position: { x: 50, y: 75 },
         data: {
           label: 'Submit Request',
-          laneId: 'lane-1'
-        }
+          kind: 'event',
+          laneId: 'lane-1',
+        },
       },
       {
         id: 'task-1',
@@ -165,8 +173,9 @@ const sampleGraphs: Record<string, RFGraph> = {
         position: { x: 200, y: 225 },
         data: {
           label: 'Process Request',
-          laneId: 'lane-2'
-        }
+          kind: 'processTask',
+          laneId: 'lane-2',
+        },
       },
       {
         id: 'end-1',
@@ -174,9 +183,10 @@ const sampleGraphs: Record<string, RFGraph> = {
         position: { x: 400, y: 75 },
         data: {
           label: 'Request Complete',
-          laneId: 'lane-1'
-        }
-      }
+          kind: 'event',
+          laneId: 'lane-1',
+        },
+      },
     ],
     edges: [
       {
@@ -184,15 +194,17 @@ const sampleGraphs: Record<string, RFGraph> = {
         source: 'start-1',
         target: 'task-1',
         type: 'default',
-        data: { label: 'Request' }
+        label: 'Request',
+        data: {},
       },
       {
         id: 'e2',
         source: 'task-1',
         target: 'end-1',
         type: 'default',
-        data: { label: 'Response' }
-      }
+        label: 'Response',
+        data: {},
+      },
     ]
   }
 };
@@ -427,7 +439,7 @@ export default function TestConversionPage() {
               <h4 className="font-semibold">Testing with Custom Data:</h4>
               <ul className="text-sm space-y-1 text-muted-foreground">
                 <li>• Paste your React Flow JSON in the textarea</li>
-                <li>• Click "Convert Custom JSON"</li>
+                <li>• Click &quot;Convert Custom JSON&quot;</li>
                 <li>• Verify the XML structure matches expectations</li>
                 <li>• Test with edge cases and complex graphs</li>
               </ul>

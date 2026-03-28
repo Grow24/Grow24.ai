@@ -194,7 +194,7 @@ export const PortAwareNode = memo(({
   const renderPorts = useCallback(() => {
     if (!nodeTypeDef) return null
     
-    const handles = []
+    const handles: React.ReactNode[] = []
     
     // Input ports (left side)
     inputPorts.forEach((port, index) => {

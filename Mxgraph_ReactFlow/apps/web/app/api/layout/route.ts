@@ -114,7 +114,7 @@ function calculateOptimalSwimlaneLayout(graph: RFGraph): RFGraph {
           id: edgeId,
           source: sourceNode.id,
           target: targetNode.id,
-          type: 'smoothstep' as any,
+          type: 'smoothstep',
           animated: true,
           style: { 
             stroke: laneIndex === 0 ? '#0ea5e9' : '#9333ea', 

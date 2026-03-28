@@ -19,7 +19,8 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 import { dbService } from '@/lib/dbService';
 import { enhancedSwimlaneEngine, SwimlaneLayoutOptions } from '@/lib/enhancedSwimlaneEngine';
-import { tokenSimulator, TokenAnimationState, EventTrigger } from '@/lib/tokenSimulator';
+import { tokenSimulator, TokenAnimationState } from '@/lib/tokenSimulator';
+import type { EventTrigger } from '@/components/nodes/ProcessTaskNode';
 import { AdvancedTokenAnimator, AdvancedAnimationState, MultiLevelAnimation } from '@/lib/advancedTokenAnimator';
 import { enhancedFlowAnimator, FlowAnimationState } from '@/lib/enhancedFlowAnimator';
 import { apiUrl } from '@/lib/api';
@@ -706,7 +707,7 @@ function PrototypePageContent() {
             purple: '#a855f7'
           };
           
-          const color = colors[step.color] || colors.green;
+          const color = (step.color != null ? colors[step.color] : undefined) || colors.green;
           const originalBorder = element.style.border;
           const originalBoxShadow = element.style.boxShadow;
           

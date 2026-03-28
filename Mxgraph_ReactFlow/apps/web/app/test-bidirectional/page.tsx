@@ -48,26 +48,38 @@ export default function BidirectionalConversionTester() {
   const [mxToRfTime, setMxToRfTime] = useState<number>(0);
 
   // Sample RF Graph
-  const sampleRfGraph = {
+  const sampleRfGraph: RFGraph = {
     nodes: [
       {
         id: 'start-1',
         type: 'event',
         position: { x: 100, y: 100 },
-        data: { label: 'Start Process', description: 'Process initiation' }
+        data: {
+          label: 'Start Process',
+          kind: 'event',
+          props: { description: 'Process initiation' },
+        },
       },
       {
         id: 'task-1',
         type: 'processTask',
         position: { x: 300, y: 100 },
-        data: { label: 'Process Task', description: 'Main processing step' }
+        data: {
+          label: 'Process Task',
+          kind: 'processTask',
+          props: { description: 'Main processing step' },
+        },
       },
       {
         id: 'end-1',
         type: 'event',
         position: { x: 500, y: 100 },
-        data: { label: 'End Process', description: 'Process completion' }
-      }
+        data: {
+          label: 'End Process',
+          kind: 'event',
+          props: { description: 'Process completion' },
+        },
+      },
     ],
     edges: [
       {
@@ -75,16 +87,16 @@ export default function BidirectionalConversionTester() {
         source: 'start-1',
         target: 'task-1',
         type: 'default',
-        data: {}
+        data: {},
       },
       {
         id: 'e2-3',
         source: 'task-1',
         target: 'end-1',
         type: 'default',
-        data: {}
-      }
-    ]
+        data: {},
+      },
+    ],
   };
 
   // RF to MX conversion
@@ -382,7 +394,7 @@ export default function BidirectionalConversionTester() {
               <ul className="text-sm space-y-1 text-muted-foreground">
                 <li>• Use tabs to switch between RF→MX and MX→RF</li>
                 <li>• Paste your data in the input textarea</li>
-                <li>• Click "Convert" to see the output</li>
+                <li>• Click &quot;Convert&quot; to see the output</li>
                 <li>• Check conversion time and error status</li>
                 <li>• Copy results for external validation</li>
               </ul>

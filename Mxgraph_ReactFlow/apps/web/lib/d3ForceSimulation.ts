@@ -1,9 +1,13 @@
 import * as d3 from 'd3-force';
+import type { SimulationLinkDatum, SimulationNodeDatum } from 'd3-force';
 import { NetworkGraph, NetworkNode, NetworkEdge } from '@hbmp/shared-types';
 import { SimulationConfig } from './store';
 
+type SimNode = NetworkNode & SimulationNodeDatum;
+type SimLink = NetworkEdge & SimulationLinkDatum<SimNode>;
+
 export class D3ForceSimulation {
-  private simulation: d3.Simulation<NetworkNode, NetworkEdge> | null = null;
+  private simulation: d3.Simulation<SimNode, SimLink> | null = null;
   private onTick: ((nodes: NetworkNode[]) => void) | null = null;
 
   /**
@@ -18,12 +22,12 @@ export class D3ForceSimulation {
 
     // Create simulation
     this.simulation = d3
-      .forceSimulation<NetworkNode, NetworkEdge>(graph.nodes)
+      .forceSimulation<SimNode, SimLink>(graph.nodes as SimNode[])
       .force(
         'link',
         d3
-          .forceLink<NetworkNode, NetworkEdge>(graph.edges)
-          .id((d: any) => d.id)
+          .forceLink<SimNode, SimLink>(graph.edges as SimLink[])
+          .id((d: SimNode) => d.id)
           .strength(config.linkStrength)
           .distance(100)
       )
@@ -51,7 +55,7 @@ export class D3ForceSimulation {
       .force('center', d3.forceCenter(400, 300).strength(config.gravity))
       .force('collide', d3.forceCollide(config.collisionRadius));
 
-    const linkForce = this.simulation.force('link') as d3.ForceLink<NetworkNode, NetworkEdge>;
+    const linkForce = this.simulation.force('link') as d3.ForceLink<SimNode, SimLink>;
     if (linkForce) {
       linkForce.strength(config.linkStrength);
     }

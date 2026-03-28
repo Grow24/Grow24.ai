@@ -135,7 +135,8 @@ export const MultipleCSSFlowTokens: React.FC<MultipleTokensProps> = ({ tokens })
         />
       ))}
       
-      {/* CSS Keyframes */}
+      {/* CSS Keyframes — styled-jsx */}
+      {/* eslint-disable-next-line react/no-unknown-property */}
       <style jsx global>{`
         @keyframes tokenGlow {
           0%, 100% {

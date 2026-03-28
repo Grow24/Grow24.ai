@@ -89,6 +89,14 @@ const initialNodes: Node[] = [
 const initialEdges: Edge[] = []
 
 export default function PortSemanticsDemo() {
+  return (
+    <ReactFlowProvider>
+      <PortSemanticsDemoInner />
+    </ReactFlowProvider>
+  )
+}
+
+function PortSemanticsDemoInner() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
   const [connectionFeedback, setConnectionFeedback] = useState<string | null>(null)
@@ -165,7 +173,6 @@ export default function PortSemanticsDemo() {
       <div className="flex-1 flex">
         {/* Main diagram area */}
         <div className="flex-1 relative">
-          <ReactFlowProvider>
             <ReactFlow
               nodes={nodes}
               edges={edges}
@@ -174,14 +181,12 @@ export default function PortSemanticsDemo() {
               onConnect={onConnect}
               onNodeClick={onNodeClick}
               nodeTypes={nodeTypes}
-              connectionLineType="smoothstep"
               fitView
             >
               <Background color="#f1f1f1" gap={16} />
               <Controls />
               <MiniMap />
             </ReactFlow>
-          </ReactFlowProvider>
 
           {/* Connection feedback */}
           {connectionFeedback && (

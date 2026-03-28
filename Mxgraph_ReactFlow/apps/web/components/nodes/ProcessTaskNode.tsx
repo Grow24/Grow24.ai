@@ -43,12 +43,14 @@ export const ProcessTaskNode = memo((props: NodeProps<ProcessTaskNodeData>) => {
   };
 
   return (
-    <div className="relative">
+    <div
+      className="relative"
+      onMouseEnter={() => setShowEvents(true)}
+      onMouseLeave={() => setShowEvents(false)}
+    >
       <PortAwareNode 
         {...props}
         className={`${getStatusColor()}`}
-        onMouseEnter={() => setShowEvents(true)}
-        onMouseLeave={() => setShowEvents(false)}
       >
         <div className="flex items-center justify-between mt-2">
           <div className="flex items-center space-x-2">
