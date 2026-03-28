@@ -2,11 +2,15 @@
 /**
  * After `pnpm --filter @hbmp/web build`, copy Next standalone output + static assets
  * into ./mxgraph_standalone at repo root (used by Docker / Zeabur).
+ *
+ * Resolves repo root from this file — `build:mxgraph-reactflow` runs with cwd inside
+ * `Mxgraph_ReactFlow/`, so `process.cwd()` would wrongly double that segment.
  */
 import { cpSync, existsSync, mkdirSync, rmSync } from 'node:fs'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const root = process.cwd()
+const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const standalone = join(root, 'Mxgraph_ReactFlow/apps/web/.next/standalone')
 const dest = join(root, 'mxgraph_standalone')
 
