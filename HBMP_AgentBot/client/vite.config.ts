@@ -11,8 +11,14 @@ import { VitePWA } from 'vite-plugin-pwa';
 const backendPort = process.env.BACKEND_PORT && Number(process.env.BACKEND_PORT) || 3080;
 const backendURL = process.env.HOST ? `http://${process.env.HOST}:${backendPort}` : `http://localhost:${backendPort}`;
 
+const agentBotBase = process.env.AGENTBOT_BASE || '/';
+const agentBotBaseNormalized = agentBotBase.endsWith('/') ? agentBotBase : `${agentBotBase}/`;
+
 export default defineConfig(({ command }) => ({
-  base: process.env.AGENTBOT_BASE || '/',
+  base: agentBotBase,
+  transformIndexHtml(html) {
+    return html.replace(/%BASE_URL%/g, agentBotBaseNormalized);
+  },
   server: {
     allowedHosts: process.env.VITE_ALLOWED_HOSTS && process.env.VITE_ALLOWED_HOSTS.split(',') || [],
     host: process.env.HOST || 'localhost',
