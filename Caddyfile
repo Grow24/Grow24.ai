@@ -1,7 +1,7 @@
 :8080 {
 	root * /usr/share/caddy
 	@unsafePath {
-		path /.git/* /univer/.git/* /HBMP_One/.git/* /HBMP_DOCS_PLATFORM/.git/* /HBMP_AgentBot/.git/* /ivvychainv2/.git/* /OpenStreetMaps/.git/* /Microsoft/.git/* /ImageProcessing/.git/* /Google/.git/* /app_manager/.git/* /hbmp_form_manager/.git/* /mcp_server/.git/* /node_modules/* /vendor/* /.venv/*
+		path /.git/* /univer/.git/* /HBMP_One/.git/* /HBMP_DOCS_PLATFORM/.git/* /HBMP_AgentBot/.git/* /Mxgraph_ReactFlow/.git/* /ivvychainv2/.git/* /OpenStreetMaps/.git/* /Microsoft/.git/* /ImageProcessing/.git/* /Google/.git/* /app_manager/.git/* /hbmp_form_manager/.git/* /mcp_server/.git/* /node_modules/* /vendor/* /.venv/*
 	}
 	respond @unsafePath 404
 
@@ -217,6 +217,29 @@
 		root * /usr/share/caddy/HBMP_AgentBot
 		try_files {path} {path}/ /index.html
 		file_server
+	}
+
+	# --- Mxgraph_ReactFlow (Next.js standalone on 127.0.0.1:5191; Express API optional on MXGRAPH_API_UPSTREAM) ---
+	@mxgraphExact path /Mxgraph_ReactFlow
+	redir @mxgraphExact /Mxgraph_ReactFlow/ 308
+
+	# Express API (projects/diagrams/exports/flows); strip /Mxgraph_ReactFlow so upstream sees /api/...
+	@mxgraphApi path /Mxgraph_ReactFlow/api/projects* /Mxgraph_ReactFlow/api/diagrams* /Mxgraph_ReactFlow/api/exports* /Mxgraph_ReactFlow/api/flows*
+	handle @mxgraphApi {
+		uri strip_prefix /Mxgraph_ReactFlow
+		reverse_proxy {$MXGRAPH_API_UPSTREAM} {
+			header_up Host {host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	# Next.js (pages, RSC, /api/layout, _next static, etc.) — must match MXGRAPH_NEXT_PORT in docker-entrypoint.sh
+	handle /Mxgraph_ReactFlow* {
+		reverse_proxy 127.0.0.1:5191 {
+			header_up Host {host}
+			header_up X-Forwarded-Proto {scheme}
+			header_up X-Forwarded-For {remote_host}
+		}
 	}
 
 	# Main SPA routing at /

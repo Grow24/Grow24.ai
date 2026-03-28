@@ -25,6 +25,7 @@ export default defineConfig({
         '**/OpenStreetMaps/**',
         '**/ImageProcessing/**',
         '**/Google/**',
+        '**/Mxgraph_ReactFlow/**',
         '**/dist/**',
         '**/backend/**',
       ],
@@ -124,6 +125,33 @@ export default defineConfig({
         changeOrigin: true,
         ws: true,
       },
+      // Mxgraph_ReactFlow Express API (must be before the Next.js catch-all)
+      '/Mxgraph_ReactFlow/api/projects': {
+        target: `http://localhost:${process.env.MXGRAPH_SERVER_PORT || '3001'}`,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/Mxgraph_ReactFlow/, '') || '/',
+      },
+      '/Mxgraph_ReactFlow/api/diagrams': {
+        target: `http://localhost:${process.env.MXGRAPH_SERVER_PORT || '3001'}`,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/Mxgraph_ReactFlow/, '') || '/',
+      },
+      '/Mxgraph_ReactFlow/api/exports': {
+        target: `http://localhost:${process.env.MXGRAPH_SERVER_PORT || '3001'}`,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/Mxgraph_ReactFlow/, '') || '/',
+      },
+      '/Mxgraph_ReactFlow/api/flows': {
+        target: `http://localhost:${process.env.MXGRAPH_SERVER_PORT || '3001'}`,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/Mxgraph_ReactFlow/, '') || '/',
+      },
+      // Mxgraph_ReactFlow (Next.js) — keep /Mxgraph_ReactFlow prefix; app uses basePath
+      '/Mxgraph_ReactFlow': {
+        target: `http://localhost:${process.env.MXGRAPH_REACTFLOW_PORT || '5191'}`,
+        changeOrigin: true,
+        ws: true,
+      },
       // HBMP docs API (Express on 4000 by default)
       '/api': {
         target: `http://localhost:${process.env.HBMP_API_PORT || '4000'}`,
@@ -201,6 +229,12 @@ export default defineConfig({
           if (url === '/hbmp_form_manager') {
             res.statusCode = 302
             res.setHeader('Location', '/hbmp_form_manager/')
+            res.end()
+            return
+          }
+          if (url === '/Mxgraph_ReactFlow') {
+            res.statusCode = 302
+            res.setHeader('Location', '/Mxgraph_ReactFlow/')
             res.end()
             return
           }

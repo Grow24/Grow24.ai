@@ -1,0 +1,111 @@
+/* Table Node Styles */
+.table-node {
+  @apply relative;
+}
+
+.table-cell {
+  @apply cursor-pointer transition-all duration-150;
+}
+
+.table-cell:hover {
+  @apply fill-blue-50;
+}
+
+.table-cell.selected {
+  @apply stroke-blue-500 stroke-2;
+}
+
+.table-cell.header {
+  @apply fill-slate-50;
+}
+
+.table-text {
+  @apply pointer-events-none select-none;
+}
+
+.table-text.header {
+  @apply font-semibold;
+}
+
+.resize-handle {
+  @apply cursor-col-resize opacity-30 hover:opacity-100 transition-opacity duration-200;
+}
+
+.resize-handle.row {
+  @apply cursor-row-resize;
+}
+
+.resize-handle.active {
+  @apply opacity-100 fill-blue-500;
+}
+
+.table-grid-line {
+  @apply stroke-slate-300;
+}
+
+.table-border-solid {
+  stroke-dasharray: none;
+}
+
+.table-border-dashed {
+  stroke-dasharray: 4 4;
+}
+
+.table-border-none {
+  @apply stroke-transparent;
+}
+
+/* Smooth resize transitions */
+.table-cell,
+.table-text {
+  transition: width 0.1s ease, height 0.1s ease;
+}
+
+/* Context menu animations */
+.table-context-menu {
+  @apply opacity-0 scale-95 transition-all duration-200;
+}
+
+.table-context-menu[data-state="open"] {
+  @apply opacity-100 scale-100;
+}
+
+/* Container mode styles */
+.container-cell {
+  @apply cursor-pointer transition-all duration-200;
+}
+
+.container-cell:hover {
+  @apply stroke-blue-400;
+}
+
+/* Drop zone indicators */
+.drop-zone-active {
+  @apply stroke-blue-500 stroke-2 fill-blue-50;
+}
+
+/* Child shape styles */
+.table-child-shape {
+  @apply cursor-move transition-all duration-150;
+}
+
+.table-child-shape:hover {
+  @apply opacity-80;
+}
+
+/* Merged cell styles */
+.merged-cell {
+  @apply stroke-purple-300 stroke-2;
+}
+
+/* Accessibility */
+.table-node:focus-within .resize-handle {
+  @apply opacity-50;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+  .resize-handle {
+    @apply opacity-100 w-3 h-3;
+  }
+}

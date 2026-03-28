@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model FlowMaster {
+  id     Int      @id @default(autoincrement())
+  name   String
+  nodes  NodeMaster[]
+  edges  EdgeMaster[]
+}
+
+model NodeMaster {
+  id       Int    @id @default(autoincrement())
+  nodeId   String
+  flowId   Int
+  type     String
+  data     String
+  position String
+  flow     FlowMaster @relation(fields: [flowId], references: [id])
+}
+
+model EdgeMaster {
+  id       Int    @id @default(autoincrement())
+  edgeId   String
+  flowId   Int
+  source   String
+  target   String
+  data     String?
+  flow     FlowMaster @relation(fields: [flowId], references: [id])
+}

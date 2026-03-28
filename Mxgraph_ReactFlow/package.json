@@ -1,0 +1,31 @@
+{
+  "name": "hbmp-modeling-platform",
+  "version": "1.0.0",
+  "description": "HBMP (grow24.ai) modeling platform with React Flow editor and mxGraph engine",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"pnpm --filter web dev\" \"pnpm --filter server dev\"",
+    "build": "pnpm --filter shared-types build && pnpm --filter ui-tokens build && pnpm --filter engine build && pnpm --filter server build && pnpm --filter web build",
+    "test": "pnpm --recursive test",
+    "lint": "pnpm --recursive lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "typecheck": "pnpm --recursive typecheck",
+    "seed": "pnpm --filter server seed",
+    "studio": "pnpm --filter server studio",
+    "clean": "pnpm --recursive clean"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "concurrently": "^8.2.2",
+    "prettier": "^3.1.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}

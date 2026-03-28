@@ -77,7 +77,9 @@ export function vite404Plugin(): Plugin {
           pathname === '/Google' ||
           pathname.startsWith('/Google/') ||
           pathname === '/mcp_server' ||
-          pathname.startsWith('/mcp_server/')
+          pathname.startsWith('/mcp_server/') ||
+          pathname === '/Mxgraph_ReactFlow' ||
+          pathname.startsWith('/Mxgraph_ReactFlow/')
         ) {
           return next()
         }
