@@ -10,6 +10,8 @@
   "scripts": {
     "dev": "concurrently \"pnpm --filter web dev\" \"pnpm --filter server dev\"",
     "build": "pnpm --filter shared-types build && pnpm --filter ui-tokens build && pnpm --filter engine build && pnpm --filter server build && pnpm --filter web build",
+    "build:web": "pnpm --filter @hbmp/web build",
+    "build:from-root-site": "cd .. && npm run build:mxgraph-reactflow",
     "test": "pnpm --recursive test",
     "lint": "pnpm --recursive lint",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
