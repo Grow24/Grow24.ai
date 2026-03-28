@@ -60,7 +60,7 @@ export class SwimlaneLayoutEngine {
         laneNode.data = {
           ...laneNode.data,
           width,
-          height
+          height,
         }
       }
       
@@ -94,7 +94,7 @@ export class SwimlaneLayoutEngine {
           y: y + (index % 2 === 0 ? 0 : 60) // Alternate rows slightly
         }
         
-        // Ensure node has parent relationship
+        // Ensure node has parent relationship (React Flow / subflow fields)
         if (node.type !== 'lane') {
           node.parentNode = laneConfig.id
           node.extent = 'parent'

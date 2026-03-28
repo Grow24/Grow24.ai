@@ -47,6 +47,9 @@ export interface RFNodeData {
   status?: "ok" | "warn" | "error";
   /** Semantic metadata for the node */
   metadata?: any; // Type will be determined by NodeKind
+  /** Lane / container pixel size (swimlanes, resizable groups) */
+  width?: number;
+  height?: number;
 }
 
 /**
@@ -57,6 +60,10 @@ export interface RFNode {
   type: NodeKind;
   position: { x: number; y: number };
   data: RFNodeData;
+  /** Parent node id for nested graphs / subflows (React Flow) */
+  parentNode?: string;
+  /** Restrict dragging to parent bounds (React Flow) */
+  extent?: "parent" | string;
 }
 
 /**

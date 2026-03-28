@@ -35,7 +35,7 @@ const DATASET_NODE: NetworkNodeType = {
     }
   ],
   
-  allowedTargets: ['model', 'report', 'api', 'filter'],
+  allowedTargets: ['processTask', 'report', 'api', 'gateway'],
   allowedSources: [],
   
   validation: {
@@ -738,7 +738,49 @@ export const HBMP_NETWORK_REGISTRY: NetworkTypeRegistry = {
       ...REPORT_NODE,
       id: 'widget',
       name: 'UI Widget'
-    } as NetworkNodeType
+    } as NetworkNodeType,
+    flowStart: {
+      ...GATEWAY_NODE,
+      id: 'flowStart',
+      name: 'Flow Start',
+      description: 'Entry point for flow-builder diagrams',
+      category: 'control',
+    } as NetworkNodeType,
+    flowDecision: {
+      ...GATEWAY_NODE,
+      id: 'flowDecision',
+      name: 'Flow Decision',
+      description: 'Conditional branch in a flow',
+      category: 'control',
+    } as NetworkNodeType,
+    flowAction: {
+      ...MODEL_NODE,
+      id: 'flowAction',
+      name: 'Flow Action',
+      description: 'Executable action step',
+      category: 'process',
+    } as NetworkNodeType,
+    flowProcess: {
+      ...MODEL_NODE,
+      id: 'flowProcess',
+      name: 'Flow Process',
+      description: 'Processing step in a flow',
+      category: 'process',
+    } as NetworkNodeType,
+    flowEnd: {
+      ...GATEWAY_NODE,
+      id: 'flowEnd',
+      name: 'Flow End',
+      description: 'Terminal node for a flow',
+      category: 'control',
+    } as NetworkNodeType,
+    flowTable: {
+      ...DATASET_NODE,
+      id: 'flowTable',
+      name: 'Flow Table',
+      description: 'Tabular data within a flow',
+      category: 'data',
+    } as NetworkNodeType,
   },
   
   laneTypes: {
