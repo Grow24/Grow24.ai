@@ -9,6 +9,12 @@ export const metadata: Metadata = {
   description: 'React Flow editor with mxGraph engine for business process modeling',
 }
 
+/**
+ * Avoid static prerender for routes that rely on Radix/React Flow context during the build.
+ * Route segment config must live in a Server Component — do not add `dynamic` inside `'use client'` pages.
+ */
+export const dynamic = 'force-dynamic'
+
 export default function RootLayout({
   children,
 }: {
