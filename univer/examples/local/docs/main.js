@@ -15,7 +15,7 @@ import {
 } from "/univer/chunk-SKYS6W5P.js";
 import {
   UniverDebuggerPlugin
-} from "/univer/chunk-OKFLHAQP.js";
+} from "/univer/chunk-TLG3WHQQ.js";
 import {
   InsertDocImageCommand,
   UniverDocsDrawingUIPlugin
