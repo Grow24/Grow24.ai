@@ -11,6 +11,10 @@ COPY . .
 
 RUN corepack enable && corepack prepare pnpm@9 --activate
 
+# Avoid stale prebuilt Next artifacts from previous/local builds.
+# Zeabur should always build mxgraph output from current source.
+RUN rm -rf /src/mxgraph_standalone /src/Mxgraph_ReactFlow/apps/web/.next
+
 # Baked into HBMPONE client build (see npm run build → build:hbmpone).
 # On Zeabur: set to your HBMP API public URL, e.g. https://your-hbmp-service.zeabur.app/api
 ARG VITE_API_URL=/api

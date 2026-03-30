@@ -1,6 +1,6 @@
 {
   "build": {
-    "buildCommand": "npm run build",
+    "buildCommand": "rm -rf mxgraph_standalone Mxgraph_ReactFlow/apps/web/.next && npm run build",
     "outputDirectory": "dist",
     "installCommand": "npm install"
   },
