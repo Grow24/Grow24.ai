@@ -1,55 +1,55 @@
 import {
   UniverUniscriptPlugin
-} from "/univer/chunk-J2NZQGAY.js";
-import "/univer/chunk-72MI2KVK.js";
-import "/univer/chunk-7JWTWIUL.js";
-import "/univer/chunk-3K36HQZG.js";
+} from "./chunk-OR3E4XC3.js";
+import "./chunk-NYIU2LNW.js";
+import "./chunk-T4VQCJ7G.js";
+import "./chunk-UR3YKDTU.js";
 import {
   UniverDebuggerPlugin
-} from "/univer/chunk-R7XRYP4K.js";
-import "/univer/chunk-4EAWMATX.js";
-import "/univer/chunk-CGMM54DM.js";
-import "/univer/chunk-3RXJ4LZI.js";
+} from "./chunk-UJI7K6GU.js";
+import "./chunk-HFVM6MYW.js";
+import "./chunk-6W4YZ3HG.js";
+import "./chunk-JWXRDIU7.js";
 import {
   UNISCRIT_WORKBOOK_DATA_DEMO
-} from "/univer/chunk-2PJ3QCNN.js";
+} from "./chunk-VMFOP3F4.js";
 import {
   UniverSheetsNumfmtUIPlugin
-} from "/univer/chunk-RPHCUFXW.js";
+} from "./chunk-GGUDRFK6.js";
 import {
   UniverSheetsNumfmtPlugin
-} from "/univer/chunk-DSZZQHBJ.js";
-import "/univer/chunk-XXJESKVN.js";
+} from "./chunk-W2QCNNNM.js";
+import "./chunk-ZRJXDTFY.js";
 import {
   UniverSheetsUIPlugin
-} from "/univer/chunk-LXKHVO4Y.js";
+} from "./chunk-WPDJPIZN.js";
 import {
   UniverDocsPlugin,
   UniverDocsUIPlugin
-} from "/univer/chunk-4MI62PCK.js";
-import "/univer/chunk-YXIT6Q6A.js";
+} from "./chunk-IJAOVONG.js";
+import "./chunk-63AGE64E.js";
 import {
   UniverUIPlugin
-} from "/univer/chunk-XUI25LTE.js";
+} from "./chunk-R42OVMY4.js";
 import {
   zh_CN_default
-} from "/univer/chunk-Q3VLDO2L.js";
+} from "./chunk-J4OFPKRX.js";
 import {
   UniverSheetsFormulaPlugin
-} from "/univer/chunk-H5NJEYZ5.js";
+} from "./chunk-TOYW4IMU.js";
 import {
   UniverFormulaEnginePlugin,
   UniverSheetsPlugin
-} from "/univer/chunk-CDHET2WN.js";
+} from "./chunk-SV6SUIS4.js";
 import {
   UniverRenderEnginePlugin
-} from "/univer/chunk-7ZBW2CWY.js";
-import "/univer/chunk-SSSDKVVD.js";
+} from "./chunk-BPIUAXSQ.js";
+import "./chunk-G4UBMCOX.js";
 import {
   O,
   Univer
-} from "/univer/chunk-YLGQP2EX.js";
-import "/univer/chunk-AROCCXDN.js";
+} from "./chunk-DN46DLPI.js";
+import "./chunk-62WIURJL.js";
 
 // src/sheets-uniscript/main.ts
 var univer = new Univer({
@@ -82,3 +82,4 @@ univer.registerPlugin(UniverUniscriptPlugin, {
 });
 univer.createUnit(O.UNIVER_SHEET, UNISCRIT_WORKBOOK_DATA_DEMO);
 window.univer = univer;
+//# sourceMappingURL=sheets-uniscript/main.js.map

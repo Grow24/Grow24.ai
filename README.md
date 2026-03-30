@@ -89,7 +89,7 @@ npm run dev
 
 Open **http://localhost:5173/**
 
-**Main + Univer + HBMPONE together** (one browser origin — same pattern as Univer under `/univer/`):
+**Run all apps together on one origin** (`http://localhost:5173`):
 
 1. One-time: install Univer (pnpm) and HBMPONE client — see **[docs/LOCAL_DEV_UNIVER.md](./docs/LOCAL_DEV_UNIVER.md)**.
 2. Start everything:
@@ -103,9 +103,20 @@ Then open:
 | URL | App |
 |-----|-----|
 | http://localhost:5173/ | Main website |
-| http://localhost:5173/univer/ | Univer |
-| http://localhost:5173/HBMPONE/ | HBMPONE |
+| http://localhost:5173/app_manager/ | app_manager |
+| http://localhost:5173/Google/ | Google |
+| http://localhost:5173/HBMP_AgentBot/ | HBMP_AgentBot |
+| http://localhost:5173/HBMP_DOCS_PLATFORM/ | HBMP_DOCS_PLATFORM |
+| http://localhost:5173/hbmp_form_manager/ | hbmp_form_manager |
+| http://localhost:5173/HBMP_One/ | HBMP_One |
 | http://localhost:5173/ImageProcessing/ | ImageProcessing |
+| http://localhost:5173/ivvychainv2/ | ivvychainv2 |
+| http://localhost:5173/mcp_server/ | mcp_server |
+| http://localhost:5173/Microsoft/ | Microsoft |
+| http://localhost:5173/Mxgraph_ReactFlow/ | Mxgraph_ReactFlow |
+| http://localhost:5173/mxgraph_standalone/ | mxgraph_standalone |
+| http://localhost:5173/OpenStreetMaps/ | OpenStreetMaps |
+| http://localhost:5173/univer/ | univer |
 
 Optional: HBMP API on port **4000** — `cd HBMPONE/server && npm install && npm run dev`
 

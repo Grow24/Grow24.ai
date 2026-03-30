@@ -26,6 +26,7 @@ export default defineConfig({
         '**/ImageProcessing/**',
         '**/Google/**',
         '**/Mxgraph_ReactFlow/**',
+        '**/mxgraph_standalone/**',
         '**/dist/**',
         '**/backend/**',
       ],
@@ -152,6 +153,19 @@ export default defineConfig({
         changeOrigin: true,
         ws: true,
       },
+      // mxgraph_standalone static Next.js export server
+      '/mxgraph_standalone': {
+        target: `http://localhost:${process.env.MXGRAPH_STANDALONE_PORT || '5192'}`,
+        changeOrigin: true,
+        // Keep the full prefix so the standalone app receives `/mxgraph_standalone/...`
+        rewrite: (path) => path,
+      },
+      // Ensure base HTML route is also proxied when the request ends with `/`
+      '/mxgraph_standalone/': {
+        target: `http://localhost:${process.env.MXGRAPH_STANDALONE_PORT || '5192'}`,
+        changeOrigin: true,
+        rewrite: (path) => path,
+      },
       // HBMP docs API (Express on 4000 by default)
       '/api': {
         target: `http://localhost:${process.env.HBMP_API_PORT || '4000'}`,
@@ -170,8 +184,25 @@ export default defineConfig({
     {
       name: 'subapp-index-redirect',
       configureServer(server) {
+        // Ensure this alias runs before Vite's static middleware (which otherwise returns 404).
+        server.middlewares.stack.unshift({
+          // Empty route prefix matches all paths.
+          route: '',
+          handle: (req: any, res: any, next: any) => {
+            const url = (req.url || '').split('?')[0]
+            if (url === '/mxgraph_standalone' || url === '/mxgraph_standalone/') {
+              res.statusCode = 302
+              res.setHeader('Location', '/Mxgraph_ReactFlow')
+              res.end()
+              return
+            }
+            return next()
+          },
+        })
+
         server.middlewares.use((req, res, next) => {
-          const url = req.url || ''
+          // `req.url` may include query strings; we only want the pathname for matching.
+          const url = (req.url || '').split('?')[0]
           if (url === '/OpenStreetMaps' || url === '/OpenStreetMaps/') {
             res.statusCode = 302
             res.setHeader('Location', '/OpenStreetMaps/index.html')
@@ -232,12 +263,9 @@ export default defineConfig({
             res.end()
             return
           }
-          if (url === '/Mxgraph_ReactFlow') {
-            res.statusCode = 302
-            res.setHeader('Location', '/Mxgraph_ReactFlow/')
-            res.end()
-            return
-          }
+          // IMPORTANT: do NOT force trailing slashes for these Next.js apps.
+          // Next.js has its own canonical URLs; forcing `/.../` vs `/...` here can create redirect loops.
+          if (url === '/Mxgraph_ReactFlow') return next()
           next()
         })
       },
