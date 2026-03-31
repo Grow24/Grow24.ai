@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WhatWeOfferRouteImport } from './routes/what-we-offer'
+import { Route as ValueFrameworkRouteImport } from './routes/value-framework'
 import { Route as ValueDefinitionRouteImport } from './routes/value-definition'
 import { Route as SurveyRouteImport } from './routes/survey'
 import { Route as SolutionsRouteImport } from './routes/solutions'
@@ -26,6 +27,11 @@ import { Route as SolutionsSolutionIdRouteImport } from './routes/solutions.$sol
 const WhatWeOfferRoute = WhatWeOfferRouteImport.update({
   id: '/what-we-offer',
   path: '/what-we-offer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ValueFrameworkRoute = ValueFrameworkRouteImport.update({
+  id: '/value-framework',
+  path: '/value-framework',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ValueDefinitionRoute = ValueDefinitionRouteImport.update({
@@ -100,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/solutions': typeof SolutionsRouteWithChildren
   '/survey': typeof SurveyRoute
   '/value-definition': typeof ValueDefinitionRoute
+  '/value-framework': typeof ValueFrameworkRoute
   '/what-we-offer': typeof WhatWeOfferRoute
   '/solutions/$solutionId': typeof SolutionsSolutionIdRoute
   '/solutions/overview': typeof SolutionsOverviewRoute
@@ -115,6 +122,7 @@ export interface FileRoutesByTo {
   '/solutions': typeof SolutionsRouteWithChildren
   '/survey': typeof SurveyRoute
   '/value-definition': typeof ValueDefinitionRoute
+  '/value-framework': typeof ValueFrameworkRoute
   '/what-we-offer': typeof WhatWeOfferRoute
   '/solutions/$solutionId': typeof SolutionsSolutionIdRoute
   '/solutions/overview': typeof SolutionsOverviewRoute
@@ -131,6 +139,7 @@ export interface FileRoutesById {
   '/solutions': typeof SolutionsRouteWithChildren
   '/survey': typeof SurveyRoute
   '/value-definition': typeof ValueDefinitionRoute
+  '/value-framework': typeof ValueFrameworkRoute
   '/what-we-offer': typeof WhatWeOfferRoute
   '/solutions/$solutionId': typeof SolutionsSolutionIdRoute
   '/solutions/overview': typeof SolutionsOverviewRoute
@@ -148,6 +157,7 @@ export interface FileRouteTypes {
     | '/solutions'
     | '/survey'
     | '/value-definition'
+    | '/value-framework'
     | '/what-we-offer'
     | '/solutions/$solutionId'
     | '/solutions/overview'
@@ -163,6 +173,7 @@ export interface FileRouteTypes {
     | '/solutions'
     | '/survey'
     | '/value-definition'
+    | '/value-framework'
     | '/what-we-offer'
     | '/solutions/$solutionId'
     | '/solutions/overview'
@@ -178,6 +189,7 @@ export interface FileRouteTypes {
     | '/solutions'
     | '/survey'
     | '/value-definition'
+    | '/value-framework'
     | '/what-we-offer'
     | '/solutions/$solutionId'
     | '/solutions/overview'
@@ -194,6 +206,7 @@ export interface RootRouteChildren {
   SolutionsRoute: typeof SolutionsRouteWithChildren
   SurveyRoute: typeof SurveyRoute
   ValueDefinitionRoute: typeof ValueDefinitionRoute
+  ValueFrameworkRoute: typeof ValueFrameworkRoute
   WhatWeOfferRoute: typeof WhatWeOfferRoute
 }
 
@@ -204,6 +217,13 @@ declare module '@tanstack/react-router' {
       path: '/what-we-offer'
       fullPath: '/what-we-offer'
       preLoaderRoute: typeof WhatWeOfferRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/value-framework': {
+      id: '/value-framework'
+      path: '/value-framework'
+      fullPath: '/value-framework'
+      preLoaderRoute: typeof ValueFrameworkRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/value-definition': {
@@ -318,6 +338,7 @@ const rootRouteChildren: RootRouteChildren = {
   SolutionsRoute: SolutionsRouteWithChildren,
   SurveyRoute: SurveyRoute,
   ValueDefinitionRoute: ValueDefinitionRoute,
+  ValueFrameworkRoute: ValueFrameworkRoute,
   WhatWeOfferRoute: WhatWeOfferRoute,
 }
 export const routeTree = rootRouteImport
