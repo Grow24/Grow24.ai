@@ -22,6 +22,10 @@ ENV VITE_API_URL=${VITE_API_URL}
 
 RUN npm run build
 
+# Ensure optional mxgraph folder exists so COPY does not fail
+# when Mxgraph_ReactFlow is absent in this checkout.
+RUN mkdir -p /src/mxgraph_standalone/apps/web
+
 FROM node:22-alpine
 
 RUN apk add --no-cache caddy ca-certificates

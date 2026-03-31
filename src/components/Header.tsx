@@ -804,7 +804,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
         )}
 
         <div
-          className="no-blur-header transition-all duration-300 bg-white/95 dark:bg-slate-950/95 border-b border-slate-200/70 dark:border-slate-800/80 md:border-b-0"
+          className="no-blur-header transition-all duration-300 bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 md:border-b-0"
           style={{
             backdropFilter: 'none',
             WebkitBackdropFilter: 'none',

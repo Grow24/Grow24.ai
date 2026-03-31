@@ -6,7 +6,7 @@ export const Route = createFileRoute('/value-framework')({
 
 function ValueFrameworkPage() {
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-white text-black pt-24 sm:pt-28">
       <main className="max-w-[1700px] mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
         <section className="mb-8">
           <h1 className="text-4xl sm:text-5xl font-bold leading-[1.08] mb-4">
