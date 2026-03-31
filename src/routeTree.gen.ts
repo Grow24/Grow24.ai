@@ -14,6 +14,7 @@ import { Route as ValueFrameworkRouteImport } from './routes/value-framework'
 import { Route as ValueDefinitionRouteImport } from './routes/value-definition'
 import { Route as SurveyRouteImport } from './routes/survey'
 import { Route as SolutionsRouteImport } from './routes/solutions'
+import { Route as ProjectManagementRouteImport } from './routes/project-management'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as LibraryRouteImport } from './routes/library'
 import { Route as EchartsRouteImport } from './routes/echarts'
@@ -47,6 +48,11 @@ const SurveyRoute = SurveyRouteImport.update({
 const SolutionsRoute = SolutionsRouteImport.update({
   id: '/solutions',
   path: '/solutions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectManagementRoute = ProjectManagementRouteImport.update({
+  id: '/project-management',
+  path: '/project-management',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
@@ -103,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/echarts': typeof EchartsRoute
   '/library': typeof LibraryRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
+  '/project-management': typeof ProjectManagementRoute
   '/solutions': typeof SolutionsRouteWithChildren
   '/survey': typeof SurveyRoute
   '/value-definition': typeof ValueDefinitionRoute
@@ -119,6 +126,7 @@ export interface FileRoutesByTo {
   '/echarts': typeof EchartsRoute
   '/library': typeof LibraryRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
+  '/project-management': typeof ProjectManagementRoute
   '/solutions': typeof SolutionsRouteWithChildren
   '/survey': typeof SurveyRoute
   '/value-definition': typeof ValueDefinitionRoute
@@ -136,6 +144,7 @@ export interface FileRoutesById {
   '/echarts': typeof EchartsRoute
   '/library': typeof LibraryRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
+  '/project-management': typeof ProjectManagementRoute
   '/solutions': typeof SolutionsRouteWithChildren
   '/survey': typeof SurveyRoute
   '/value-definition': typeof ValueDefinitionRoute
@@ -154,6 +163,7 @@ export interface FileRouteTypes {
     | '/echarts'
     | '/library'
     | '/privacy-policy'
+    | '/project-management'
     | '/solutions'
     | '/survey'
     | '/value-definition'
@@ -170,6 +180,7 @@ export interface FileRouteTypes {
     | '/echarts'
     | '/library'
     | '/privacy-policy'
+    | '/project-management'
     | '/solutions'
     | '/survey'
     | '/value-definition'
@@ -186,6 +197,7 @@ export interface FileRouteTypes {
     | '/echarts'
     | '/library'
     | '/privacy-policy'
+    | '/project-management'
     | '/solutions'
     | '/survey'
     | '/value-definition'
@@ -203,6 +215,7 @@ export interface RootRouteChildren {
   EchartsRoute: typeof EchartsRoute
   LibraryRoute: typeof LibraryRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
+  ProjectManagementRoute: typeof ProjectManagementRoute
   SolutionsRoute: typeof SolutionsRouteWithChildren
   SurveyRoute: typeof SurveyRoute
   ValueDefinitionRoute: typeof ValueDefinitionRoute
@@ -245,6 +258,13 @@ declare module '@tanstack/react-router' {
       path: '/solutions'
       fullPath: '/solutions'
       preLoaderRoute: typeof SolutionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/project-management': {
+      id: '/project-management'
+      path: '/project-management'
+      fullPath: '/project-management'
+      preLoaderRoute: typeof ProjectManagementRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy-policy': {
@@ -335,6 +355,7 @@ const rootRouteChildren: RootRouteChildren = {
   EchartsRoute: EchartsRoute,
   LibraryRoute: LibraryRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
+  ProjectManagementRoute: ProjectManagementRoute,
   SolutionsRoute: SolutionsRouteWithChildren,
   SurveyRoute: SurveyRoute,
   ValueDefinitionRoute: ValueDefinitionRoute,

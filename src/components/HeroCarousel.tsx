@@ -267,7 +267,9 @@ function HeroCarousel() {
                               e.preventDefault()
                               e.stopPropagation()
                               // Route specific carousel cards to their dedicated pages.
-                              if (slide.title === 'Professional Value') {
+                              if (slide.title === 'Project Management') {
+                                navigate({ to: '/project-management' })
+                              } else if (slide.title === 'Professional Value') {
                                 navigate({ to: '/value-framework' })
                               } else if (slide.image === '/white_mode.jpeg') {
                                 navigate({ to: '/value-definition' })
