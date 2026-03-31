@@ -30,7 +30,7 @@ const SAMPLE_SLIDES = [
   { image: 'https://picsum.photos/seed/hero7/800/500', title: 'Strategy & Objectives', description: 'Define and align strategy with clear objectives.' },
   { image: 'https://picsum.photos/seed/hero8/800/500', title: 'Execution & Operations', description: 'Turn plans into results with effective execution.' },
   { image: 'https://picsum.photos/seed/hero9/800/500', title: 'Transformation', description: 'Drive sustainable change and growth.' },
-  { image: '/value-framework.png', title: 'Value Framework', description: 'A structured approach to creating and capturing value.' },
+  { image: '/value-framework-hero10.png', title: 'Professional Value', description: 'A structured approach to creating and capturing value.' },
 ]
 
 const SLIDE_COUNT = SAMPLE_SLIDES.length
@@ -266,10 +266,11 @@ function HeroCarousel() {
                             onClick={(e) => {
                               e.preventDefault()
                               e.stopPropagation()
-                              if (slide.title === 'Grow24 Overview') {
-                                navigate({ to: '/value-definition' })
-                              } else if (slide.title === 'Value Framework') {
+                              // Route specific carousel cards to their dedicated pages.
+                              if (slide.title === 'Professional Value') {
                                 navigate({ to: '/value-framework' })
+                              } else if (slide.image === '/white_mode.jpeg') {
+                                navigate({ to: '/value-definition' })
                               } else {
                                 handleLibraryClick()
                               }
