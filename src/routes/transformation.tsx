@@ -6,12 +6,27 @@ export const Route = createFileRoute('/transformation')({
 })
 
 const AUTHORS = [
-  { name: 'Lauren Wiener', title: 'Managing Director & Senior Partner', location: 'Boston', image: '/rishika_seth.jpg' },
-  { name: 'Fabrice Beaulieu', title: 'Senior Advisor', location: 'Chicago', image: '/sandeep_seth.png' },
-  { name: 'Matthew Kropp', title: 'Managing Director & Senior Partner', location: 'San Francisco', image: '/grow24_ai_icon_2.jpeg' },
-  { name: 'Leora Kelman', title: 'Managing Director & Partner', location: 'Philadelphia', image: '/grow24_ai_icon3.jpeg' },
-  { name: 'Alan Iny', title: 'Partner and Director, Creativity & Scenarios', location: 'New York', image: '/grow24_ai_icon_4.jpeg' },
-  { name: 'Vincent Ho', title: 'Partner', location: 'Brooklyn', image: '/grow24_ai_icon_5.jpeg' },
+  {
+    name: 'Sandeep Seth',
+    title: 'Co-founder • IIT Delhi • IIM Bangalore',
+    image: '/sandeep_seth.png',
+    points: [
+      'P&G experience across Sales analytics, Marketing analytics, and Supply Chain analytics.',
+      'Worked with P&G’s distributors (SMEs) to improve financial outcomes—extending capability beyond enterprise boundaries.',
+      'Outside P&G: delivered HR Analytics training initiatives alongside Dr. Dave Ulrich.',
+      'Led and contributed to digital transformation programs.',
+    ],
+  },
+  {
+    name: 'Rishika Seth',
+    title: 'Co-founder • MBA (Finance), Agra University • CFP',
+    image: '/rishika_seth.jpg',
+    points: [
+      'MBA (Finance major) from Agra University.',
+      'Certified Financial Planner (CFP).',
+      'Experience in Wealth Management in client advisory roles—bringing long-term financial discipline to personal and business decisions.',
+    ],
+  },
 ]
 
 const RELATED = [
@@ -33,7 +48,7 @@ function TransformationPage() {
         fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
       }}
     >
-      <main className="mx-auto w-full max-w-[1320px] px-6 md:px-10 pt-8 pb-16">
+      <main className="mx-auto w-full max-w-[1577px] px-2 md:px-4 pt-8 pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_220px] gap-8 relative">
           {!isActionsOpen && (
             <button
@@ -47,9 +62,11 @@ function TransformationPage() {
           )}
           <article className="relative space-y-10">
             <section className="relative pt-2">
-              <h1 className="text-[40px] md:text-[46px] leading-[1.06] font-light max-w-[980px] tracking-[-0.015em] text-slate-900 mb-5">Agentic Scenarios Every Marketer Must Prepare For</h1>
+              <h1 className="text-[40px] md:text-[46px] leading-[1.06] font-light max-w-[980px] tracking-[-0.015em] text-slate-900 mb-5">
+                Processes &amp; Workflows: How Lead2Order Really Gets Work Done.
+              </h1>
               <div className="overflow-hidden rounded-[2px] relative border border-slate-200/70">
-                <img src="/transformation/hero-visual.png" alt="Agentic scenarios hero visual" className="w-full h-[600px] md:h-[680px] block object-cover" />
+                <img src="/transformation/process.png" alt="Lead2Order process and workflow visual" className="w-full h-auto block object-contain bg-white" />
                 <div
                   className="absolute left-8 top-9 w-[440px] max-w-[92%] rounded-2xl p-5 md:p-6 text-slate-800 shadow-[0_10px_28px_rgba(0,0,0,0.2)] border"
                   style={{
@@ -60,106 +77,168 @@ function TransformationPage() {
                   }}
                 >
                   <p className="text-[12px] font-semibold tracking-wide text-slate-900 mb-3">KEY TAKEAWAYS</p>
-                  <p className="text-[16px] leading-[1.45] mb-4">
-                    No one knows what the agentic future will look like, but four marketing scenarios
-                    —an open agentic bazaar, a brand resurgence through data ecosystems, a super-app embrace,
-                    and a creator-led authenticity revival—seem most likely.
+                  <p className="text-[14px] leading-[1.45] mb-3">
+                    Growth does not come only from having more leads, more salespeople, or more systems. It comes from converting commercial intent into disciplined execution. That is why leaders need to understand the difference between a process and a workflow.
                   </p>
-                  <ul className="space-y-2.5 list-disc pl-4 text-[15px] leading-[1.45]">
-                    <li>Across all four agentic scenarios, two marketing principles will prove critical: discoverability and desirability.</li>
-                    <li>Brand equity, answer engine optimization, and marketing speed will prove critical in every scenario.</li>
-                    <li>Brands can build their own AI platforms, meet consumers inside existing ones, or integrate directly with AI agents.</li>
-                    <li>Retailers will have to choose between becoming destinations or turning into evaluators because it&apos;s tough to pursue both simultaneously.</li>
-                  </ul>
+                  <p className="text-[14px] leading-[1.45] mb-3">
+                    A process is the broader business structure that defines how an organization produces an outcome. A workflow is the specific movement of work through tasks, decisions, handoffs, and approvals inside that structure.
+                  </p>
+                  <p className="text-[14px] leading-[1.45] mb-3">
+                    The distinction sounds simple, but it is strategically important. Many organizations try to improve performance by automating individual steps while leaving the larger business design unclear. The result is faster activity, but not necessarily better outcomes.
+                  </p>
+                  <p className="text-[14px] leading-[1.45] mb-3">
+                    In the Lead2Order value stream, this distinction becomes very practical. The business is not trying merely to move leads around a CRM. It is trying to convert market interest into profitable, valid, bookable customer orders. That requires both a strong end-to-end process and well-designed workflows within it.
+                  </p>
+                  <p className="text-[14px] leading-[1.45]">
+                    This article explains the difference, shows how the two interact, and illustrates both through the Lead2Order example. For CXOs and their direct reports, the central message is this: a process gives structure to value creation; a workflow gives motion to execution. You need both to scale performance.
+                  </p>
                 </div>
               </div>
             </section>
 
-            <section className="relative space-y-6 text-[18px] leading-[1.42] text-slate-700 font-normal">
-              <p>It could result in a world in which AI agents independently manage your purchases, learning your preferences and completing transactions without you having to view a product page again. Amazon&apos;s Smart Reorders and Instacart&apos;s reordering flow offer early signals of this automation-first model.</p>
-              <p>Or it could be a market where AI agents act as intelligent advisors, surfacing all your options and facilitating payment while you retain the final decision. Platforms such as ChatGPT and Perplexity have recently launched shopping assistants that guide discovery and comparison without fully automating the purchase process.</p>
-              <p>Or it might be a marketplace where purchases flow through social networks, with recommendations from friends, influencers, and communities deciding what your AI agents consider. Agents could amplify creators, professionalizing taste and trust as commerce blends into social streams.</p>
-              <p>All these futures are plausible and likely to coexist in varying degrees. What is certain is that the rules of consumer discovery, trust, and purchase are being rewritten in ways marketing teams cannot ignore.</p>
+            <section className="relative space-y-6 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px]">
+              <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">Why This Topic Matters to Leadership</h2>
+              <p>In many boardrooms and management meetings, teams speak about &quot;fixing the process&quot; when what they are really discussing is a delay in approvals, a broken handoff, a CRM routing rule, or a missed task. In other cases, teams say they are &quot;automating workflows&quot; when the larger business process itself has not been defined clearly.</p>
+              <p>That confusion is costly.</p>
+              <p>When the distinction between processes and workflows is blurred, organizations typically face four problems. First, they optimize local activity while the end-to-end commercial result remains weak. Second, they automate fragmented steps without redesigning the broader operating model. Third, functions such as Marketing, Sales, Finance, Legal, and Operations work in sequence but not in alignment. Fourth, metrics become activity-heavy and outcome-light.</p>
+              <p>For an executive team, this matters because <strong>Lead2Order is not a technical flow alone; it is a commercial value stream.</strong> It influences growth, conversion, customer experience, margin quality, control, forecast reliability, and operational readiness.</p>
             </section>
 
-            <section className="relative">
-              <div className="rounded-2xl bg-[#e8e5e1] p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div>
-                  <p className="text-[10px] font-semibold tracking-wide text-slate-700 mb-2">WEEKLY INSIGHTS SUBSCRIPTION</p>
-                  <h3 className="text-[50px] leading-[1.02] font-light">Stay ahead with gro24.ai insights on marketing and sales</h3>
-                </div>
-                <div className="flex items-center rounded-xl bg-white border border-slate-300 overflow-hidden h-12 w-full md:w-[340px]">
-                  <input className="px-4 flex-1 text-sm outline-none" placeholder="Enter Email" />
-                  <button className="w-14 h-full bg-[#7cf267] text-slate-800 text-xl">→</button>
-                </div>
-              </div>
+            <section className="relative space-y-5 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px] border-t border-slate-300 pt-8">
+              <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">What Is a Process?</h2>
+              <p><strong>A process</strong> is a structured set of related activities designed to achieve a defined business outcome. It is broader than an individual task or transaction. It sets the business context within which work is performed.</p>
+              <p>A process typically defines:</p>
+              <ul className="list-disc pl-7 space-y-1">
+                <li>the business purpose</li>
+                <li>the start and end boundaries</li>
+                <li>the major stages</li>
+                <li>the participating roles or functions</li>
+                <li>the business rules and controls</li>
+                <li>the inputs and outputs</li>
+                <li>the metrics that indicate performance</li>
+              </ul>
+              <p>In Lead2Order, the process is the broader mechanism that takes market interest and converts it into a confirmed order.</p>
             </section>
 
-            <section className="relative">
-              <h2 className="text-5xl md:text-[72px] leading-[1.05] font-light mb-5">Why Scenarios Score Over Forecasts</h2>
-              <div className="space-y-5 text-[18px] leading-[1.42] text-slate-700 font-normal">
-                <p>Already, AI search is shifting traffic away from direct e-commerce even as conversational commerce reinvents online experiences. Most companies still ask forecasting questions about timing and adoption. Those are useful but incomplete.</p>
-                <p>The better question is this: <em>How do we build capabilities that work whether the market is 10% agent-driven or 90%?</em> Preparedness, not precision, creates advantage.</p>
-                <p>Scenario planning acknowledges uncertainty and builds robust strategic moves that hold up across outcomes. It forces marketers to identify which moves are no-regret and which ones are contingent on how ecosystems evolve.</p>
-              </div>
+            <section className="relative space-y-5 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px] border-t border-slate-300 pt-8">
+              <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">What Is a Workflow?</h2>
+              <p><strong>A workflow</strong> is the detailed movement of a specific unit of work through tasks, decisions, routing rules, handoffs, and completion points.</p>
+              <ul className="list-disc pl-7 space-y-1">
+                <li>what happens first</li>
+                <li>who acts next</li>
+                <li>what decision determines the next path</li>
+                <li>what approval is needed</li>
+                <li>what happens if the item is rejected, delayed, or incomplete</li>
+                <li>when is the work considered done</li>
+              </ul>
+              <p>If a process describes the business design, a workflow describes the <strong>execution path</strong> within that design.</p>
             </section>
 
-            <section className="relative space-y-6">
-              <p className="text-[18px] leading-[1.42] text-slate-700 font-normal">Because the existence of so many variables complicates decision making, we developed scenarios to identify those that would generate the most distinct futures.</p>
-              <img src="/transformation/05.png" alt="Exhibit 1" className="w-full rounded-md border border-slate-300" />
-              <h2 className="text-5xl md:text-[72px] leading-[1.05] font-light">Four Agentic AI Futures for Retail</h2>
-              <p className="text-[18px] leading-[1.42] text-slate-700 font-normal">These dimensions produce four distinct futures: The Open Agentic Bazaar, The Super-App Embrace, A Creator-Led Authenticity Revival, and Brand Resurgence Through Data Fortresses.</p>
-              <img src="/transformation/06.png" alt="Exhibit 2" className="w-full rounded-md border border-slate-300" />
+            <section className="relative space-y-5 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px] border-t border-slate-300 pt-8">
+              <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">The Difference Between a Process and a Workflow</h2>
+              <p><strong>A process is the business structure for achieving an outcome.</strong><br /><strong>A workflow is the execution flow that moves work through that structure.</strong></p>
+              <ol className="list-decimal pl-7 space-y-3">
+                <li><strong>Business outcome versus work movement</strong> - A process is defined by the outcome it is meant to produce. A workflow is defined by how a work item moves from one point to another.</li>
+                <li><strong>Broad scope versus narrow scope</strong> - A process is broader and spans multiple stages. A workflow is narrower and tied to a specific operational thread.</li>
+                <li><strong>Governance versus routing</strong> - A process includes rules, controls, ownership, policy context, and outcome measures. A workflow includes routing logic, decision points, task sequences, and status changes.</li>
+                <li><strong>End-to-end visibility versus operational detail</strong> - A process gives leadership the full view. A workflow gives teams practical execution guidance.</li>
+                <li><strong>Strategic performance versus transactional execution</strong> - A process is used to judge whether the commercial engine is healthy. A workflow is used to move work reliably and repeatedly.</li>
+              </ol>
             </section>
 
-            <section className="relative space-y-6 text-[18px] leading-[1.42] text-slate-700 font-normal">
-              <h3 className="text-4xl md:text-[56px] text-slate-900 font-light">The Super-App Embrace</h3>
-              <p>The global super-apps launched by major technology firms dominate agentic shopping in this future landscape. Consumers state needs, and the app&apos;s agents execute across retailers&apos; fulfillment systems for convenience, speed, and price.</p>
-              <h3 className="text-4xl md:text-[56px] text-slate-900 font-light">A Creator-Led Authenticity Revival</h3>
-              <p>In this scenario, consumers prefer human-trusted networks over algorithmic control. Discovery and purchases flow through creators and communities, while AI supports curation and personalization behind the scenes.</p>
+            <section className="relative space-y-5 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px] border-t border-slate-300 pt-8">
+              <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">Lead2Order as the Running Example</h2>
+              <p>At the highest level, the <strong>Lead2Order process</strong> may include stages such as lead capture, lead qualification, opportunity creation, discovery and needs analysis, solution configuration, proposal and pricing, negotiation, approval, and order booking.</p>
+              <p>Now take one part of that broader process: <strong>lead qualification</strong>. A lead qualification workflow might include entry, record creation, scoring, threshold-based routing, validation, and either opportunity creation or closure.</p>
+              <p>This is the relationship: <strong>Lead2Order</strong> is the broader value stream context; <strong>Lead2Order process</strong> is the structured business mechanism; <strong>lead qualification workflow and quote approval workflow</strong> are execution flows within it.</p>
             </section>
 
-            <section className="relative space-y-6">
-              <h2 className="text-5xl md:text-[72px] leading-[1.05] font-light">Marketing&apos;s Twin Imperatives for Agentic Worlds</h2>
-              <p className="text-[18px] leading-[1.42] text-slate-700 font-normal">Across all four scenarios, two priorities remain constant: discoverability and desirability.</p>
-              <img src="/transformation/08.png" alt="Exhibit 3" className="w-full rounded-md border border-slate-300" />
+            <section className="relative space-y-5 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px] border-t border-slate-300 pt-8">
+              <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">How Processes and Workflows Work Together</h2>
+              <p>A useful hierarchy is: <strong>Value Stream -&gt; Process -&gt; Workflow -&gt; Task</strong>.</p>
+              <ul className="list-disc pl-7 space-y-1">
+                <li>the value stream is Lead2Order</li>
+                <li>the process is the structured path from lead to order</li>
+                <li>the workflows include lead qualification, quote approval, and order creation</li>
+                <li>the tasks include assign, review, approve, update, and notify</li>
+              </ul>
+              <p>This hierarchy matters because leadership problems and operational problems do not always sit at the same level.</p>
             </section>
 
-            <section className="relative space-y-6 text-[18px] leading-[1.42] text-slate-700 font-normal">
-              <h2 className="text-5xl md:text-[72px] leading-[1.05] font-light text-slate-900">No-Regret Foundational Strategies for Any Agentic Future</h2>
-              <p>Based on our analysis of AI&apos;s role in marketing and retail, several foundational strategies are critical no matter which future emerges. Brand equity and trust become even more important as algorithmic intermediaries reshape discovery and conversion.</p>
-              <p>Answer Engine Optimization (AEO) is essential as AI systems evaluate content differently than traditional search. Brands need clear, context-rich information and consistent presence across trusted third-party sources.</p>
+            <section className="relative space-y-5 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px] border-t border-slate-300 pt-8">
+              <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">Why Leaders Need the Process View</h2>
+              <p>Leaders are accountable for outcomes, not just activity. A process view allows executives to ask if the company is converting the right leads, engaging the right functions at the right time, protecting value through controls, and aligning the end-to-end path with market goals.</p>
+              <p>These are business design questions, not workflow questions alone.</p>
             </section>
 
-            <section className="relative space-y-6 text-[18px] leading-[1.42] text-slate-700 font-normal">
-              <h2 className="text-5xl md:text-[72px] leading-[1.05] font-light text-slate-900">The Big Bets That Can Set the Stage for Agentic Success</h2>
-              <h3 className="text-4xl md:text-[56px] text-slate-900 font-light">Brands</h3>
-              <p>An agentic world offers brands several paths, including building proprietary assistants that strengthen direct customer relationships on their own platforms. The transition demands focused investments and clear strategic choices.</p>
-              <p>Companies that move decisively now can shape how value is captured in the next generation of commerce ecosystems.</p>
+            <section className="relative space-y-5 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px] border-t border-slate-300 pt-8">
+              <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">Why Teams Need the Workflow View</h2>
+              <p>Execution teams need operational clarity: what triggers work, what data is mandatory, who owns the next step, what rules determine progression, what happens when exceptions arise, and when the item is complete.</p>
+              <p>Workflows make work visible, repeatable, and governable. They reduce ambiguity, support accountability, and create the foundation for automation.</p>
+            </section>
+
+            <section className="relative space-y-5 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px] border-t border-slate-300 pt-8">
+              <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">Common Mistakes Organizations Make</h2>
+              <ol className="list-decimal pl-7 space-y-2">
+                <li><strong>They mistake workflow documentation for process design.</strong></li>
+                <li><strong>They define the process conceptually but do not operationalize it.</strong></li>
+                <li><strong>They automate before redesigning.</strong></li>
+              </ol>
+              <p>In all three cases, the organization appears busy, but performance remains inconsistent.</p>
+            </section>
+
+            <section className="relative space-y-5 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px] border-t border-slate-300 pt-8">
+              <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">Metrics: Process Metrics and Workflow Metrics</h2>
+              <p><strong>Process metrics</strong> tell leadership whether the business outcome is being achieved. <strong>Workflow metrics</strong> tell teams whether operational movement is efficient.</p>
+              <p>In Lead2Order, process metrics may include lead-to-order conversion rate, average sales cycle duration, win rate, average deal value, and order accuracy. Workflow metrics may include lead response time, quote approval turnaround, rework rate, exception volume, and task aging.</p>
+            </section>
+
+            <section className="relative space-y-5 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px] border-t border-slate-300 pt-8">
+              <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">Process Improvement versus Workflow Automation</h2>
+              <p>Process improvement asks whether the overall design is right. Workflow automation asks whether routing, approvals, notifications, and escalations can be executed systematically.</p>
+              <p>The right order is usually: clarify the outcome, define the process, simplify the design, standardize the workflows, and automate where appropriate.</p>
+            </section>
+
+            <section className="relative space-y-5 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px] border-t border-slate-300 pt-8">
+              <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">A PBMP View of Processes and Workflows</h2>
+              <p>From a PBMP perspective, processes and workflows are not isolated operational artifacts. They sit inside a broader management logic that connects intent to value: Goals, Strategy, Objectives, Plans, Processes, Workflows, and Operations.</p>
+              <p>In a commercial value stream such as Lead2Order, the process is a strategic asset. It shapes growth quality, conversion discipline, speed, customer confidence, and operational readiness.</p>
+            </section>
+
+            <section className="relative space-y-5 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px] border-t border-b border-slate-300 pt-8 pb-8">
+              <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">Closing Thought</h2>
+              <p>A process and a workflow are not the same thing, and that is precisely why both matter.</p>
+              <p>The <strong>process</strong> gives the business an end-to-end structure for creating an outcome. The <strong>workflow</strong> gives work a defined path through tasks, decisions, and handoffs.</p>
+              <p>Organizations that focus only on workflows often become locally efficient but strategically fragmented. Organizations that focus only on processes may sound coherent at the top but remain weak in execution.</p>
             </section>
 
             <section className="relative">
               <h2 className="text-5xl md:text-[72px] leading-[1.05] font-light mb-6">Authors</h2>
-              <div className="grid md:grid-cols-3 gap-4">
+              <div className="grid md:grid-cols-2 gap-4">
                 {AUTHORS.map((author) => (
-                  <article key={author.name} className="rounded-2xl border border-slate-300 bg-white p-4 flex gap-3">
-                    <img
-                      src={author.image}
-                      alt={author.name}
-                      className="w-20 h-20 rounded-xl bg-slate-200 object-cover"
-                    />
-                    <div>
-                      <h3 className="text-lg font-light text-slate-900">{author.name}</h3>
-                      <p className="text-xs text-slate-600">{author.title}</p>
-                      <p className="text-xs text-slate-500 mt-1">{author.location}</p>
-                      <p className="text-xs mt-2">✉</p>
+                  <article key={author.name} className="rounded-2xl border border-slate-300 bg-white p-4">
+                    <div className="flex gap-3 mb-3">
+                      <img
+                        src={author.image}
+                        alt={author.name}
+                        className="w-14 h-14 rounded-xl bg-slate-200 object-cover"
+                      />
+                      <div>
+                        <h3 className="text-[32px] leading-[1.05] font-semibold text-slate-900">{author.name}</h3>
+                        <p className="text-sm text-slate-600">{author.title}</p>
+                      </div>
+                    </div>
+                    <div className="space-y-2 text-[15px] leading-[1.45] text-slate-700">
+                      {author.points.map((point) => (
+                        <p key={point}>{point}</p>
+                      ))}
                     </div>
                   </article>
                 ))}
               </div>
             </section>
 
-            <section className="relative rounded-2xl bg-[#2f3034] px-6 py-8">
+            <section className="relative rounded-2xl bg-[#2f3034] px-6 py-8 max-w-[980px]">
               <h2 className="text-5xl md:text-[64px] leading-[1.05] font-light text-white mb-6">Related Content</h2>
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {RELATED.map((item) => (
