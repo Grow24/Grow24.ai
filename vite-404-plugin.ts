@@ -10,10 +10,16 @@ const VALID_PATHS = [
   '/become-partner',
   '/dashboard',
   '/echarts',
+  '/problem',
+  '/project-management',
   '/survey',
   '/library',
   '/privacy-policy',
+  '/toolsets',
+  '/transformation',
+  '/transformaltion',
   '/value-definition',
+  '/value-framework',
   '/what-we-offer',
 ]
 const VALID_PREFIX = '/solutions/' // /solutions/overview, /solutions/anything

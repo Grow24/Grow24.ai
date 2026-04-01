@@ -12,6 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as WhatWeOfferRouteImport } from './routes/what-we-offer'
 import { Route as ValueFrameworkRouteImport } from './routes/value-framework'
 import { Route as ValueDefinitionRouteImport } from './routes/value-definition'
+import { Route as TransformationRouteImport } from './routes/transformation'
+import { Route as TransformaltionRouteImport } from './routes/transformaltion'
+import { Route as ToolsetsRouteImport } from './routes/toolsets'
 import { Route as SurveyRouteImport } from './routes/survey'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as ProjectManagementRouteImport } from './routes/project-management'
@@ -39,6 +42,21 @@ const ValueFrameworkRoute = ValueFrameworkRouteImport.update({
 const ValueDefinitionRoute = ValueDefinitionRouteImport.update({
   id: '/value-definition',
   path: '/value-definition',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TransformationRoute = TransformationRouteImport.update({
+  id: '/transformation',
+  path: '/transformation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TransformaltionRoute = TransformaltionRouteImport.update({
+  id: '/transformaltion',
+  path: '/transformaltion',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ToolsetsRoute = ToolsetsRouteImport.update({
+  id: '/toolsets',
+  path: '/toolsets',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SurveyRoute = SurveyRouteImport.update({
@@ -119,6 +137,9 @@ export interface FileRoutesByFullPath {
   '/project-management': typeof ProjectManagementRoute
   '/solutions': typeof SolutionsRouteWithChildren
   '/survey': typeof SurveyRoute
+  '/toolsets': typeof ToolsetsRoute
+  '/transformaltion': typeof TransformaltionRoute
+  '/transformation': typeof TransformationRoute
   '/value-definition': typeof ValueDefinitionRoute
   '/value-framework': typeof ValueFrameworkRoute
   '/what-we-offer': typeof WhatWeOfferRoute
@@ -137,6 +158,9 @@ export interface FileRoutesByTo {
   '/project-management': typeof ProjectManagementRoute
   '/solutions': typeof SolutionsRouteWithChildren
   '/survey': typeof SurveyRoute
+  '/toolsets': typeof ToolsetsRoute
+  '/transformaltion': typeof TransformaltionRoute
+  '/transformation': typeof TransformationRoute
   '/value-definition': typeof ValueDefinitionRoute
   '/value-framework': typeof ValueFrameworkRoute
   '/what-we-offer': typeof WhatWeOfferRoute
@@ -156,6 +180,9 @@ export interface FileRoutesById {
   '/project-management': typeof ProjectManagementRoute
   '/solutions': typeof SolutionsRouteWithChildren
   '/survey': typeof SurveyRoute
+  '/toolsets': typeof ToolsetsRoute
+  '/transformaltion': typeof TransformaltionRoute
+  '/transformation': typeof TransformationRoute
   '/value-definition': typeof ValueDefinitionRoute
   '/value-framework': typeof ValueFrameworkRoute
   '/what-we-offer': typeof WhatWeOfferRoute
@@ -176,6 +203,9 @@ export interface FileRouteTypes {
     | '/project-management'
     | '/solutions'
     | '/survey'
+    | '/toolsets'
+    | '/transformaltion'
+    | '/transformation'
     | '/value-definition'
     | '/value-framework'
     | '/what-we-offer'
@@ -194,6 +224,9 @@ export interface FileRouteTypes {
     | '/project-management'
     | '/solutions'
     | '/survey'
+    | '/toolsets'
+    | '/transformaltion'
+    | '/transformation'
     | '/value-definition'
     | '/value-framework'
     | '/what-we-offer'
@@ -212,6 +245,9 @@ export interface FileRouteTypes {
     | '/project-management'
     | '/solutions'
     | '/survey'
+    | '/toolsets'
+    | '/transformaltion'
+    | '/transformation'
     | '/value-definition'
     | '/value-framework'
     | '/what-we-offer'
@@ -231,6 +267,9 @@ export interface RootRouteChildren {
   ProjectManagementRoute: typeof ProjectManagementRoute
   SolutionsRoute: typeof SolutionsRouteWithChildren
   SurveyRoute: typeof SurveyRoute
+  ToolsetsRoute: typeof ToolsetsRoute
+  TransformaltionRoute: typeof TransformaltionRoute
+  TransformationRoute: typeof TransformationRoute
   ValueDefinitionRoute: typeof ValueDefinitionRoute
   ValueFrameworkRoute: typeof ValueFrameworkRoute
   WhatWeOfferRoute: typeof WhatWeOfferRoute
@@ -257,6 +296,27 @@ declare module '@tanstack/react-router' {
       path: '/value-definition'
       fullPath: '/value-definition'
       preLoaderRoute: typeof ValueDefinitionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/transformation': {
+      id: '/transformation'
+      path: '/transformation'
+      fullPath: '/transformation'
+      preLoaderRoute: typeof TransformationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/transformaltion': {
+      id: '/transformaltion'
+      path: '/transformaltion'
+      fullPath: '/transformaltion'
+      preLoaderRoute: typeof TransformaltionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/toolsets': {
+      id: '/toolsets'
+      path: '/toolsets'
+      fullPath: '/toolsets'
+      preLoaderRoute: typeof ToolsetsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/survey': {
@@ -379,6 +439,9 @@ const rootRouteChildren: RootRouteChildren = {
   ProjectManagementRoute: ProjectManagementRoute,
   SolutionsRoute: SolutionsRouteWithChildren,
   SurveyRoute: SurveyRoute,
+  ToolsetsRoute: ToolsetsRoute,
+  TransformaltionRoute: TransformaltionRoute,
+  TransformationRoute: TransformationRoute,
   ValueDefinitionRoute: ValueDefinitionRoute,
   ValueFrameworkRoute: ValueFrameworkRoute,
   WhatWeOfferRoute: WhatWeOfferRoute,

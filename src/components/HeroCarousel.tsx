@@ -271,6 +271,10 @@ function HeroCarousel() {
                                 navigate({ to: '/project-management' })
                               } else if (slide.title === 'Problem') {
                                 navigate({ to: '/problem' })
+                              } else if (slide.title === 'Toolsets') {
+                                navigate({ to: '/toolsets' })
+                              } else if (slide.title === 'Transformation') {
+                                navigate({ to: '/transformation' })
                               } else if (slide.title === 'Professional Value') {
                                 navigate({ to: '/value-framework' })
                               } else if (slide.image === '/white_mode.jpeg') {
