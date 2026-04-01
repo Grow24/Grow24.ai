@@ -22,8 +22,8 @@ function useIsMobile() {
 
 const SAMPLE_SLIDES = [
   { image: '/white_mode.jpeg', title: 'Grow24 Overview', description: 'Personal & Professional management in one unified platform.' },
-  { image: 'https://picsum.photos/seed/hero2/800/500', title: 'Project Management', description: 'Plan, execute, and deliver projects effectively.' },
-  { image: 'https://picsum.photos/seed/hero3/800/500', title: 'Value Cycle', description: 'Understand and maximize your personal and professional value.' },
+  { image: '/solution-hero2.png', title: 'Solution', description: 'Plan, execute, and deliver projects effectively.' },
+  { image: '/problem-hero3.png', title: 'Problem', description: 'Understand and maximize your personal and professional value.' },
   { image: 'https://picsum.photos/seed/hero4/800/500', title: 'Lead-to-Cash', description: 'Streamline your pipeline from lead generation to revenue.' },
   { image: 'https://picsum.photos/seed/hero5/800/500', title: 'Change Management', description: 'Navigate and lead organizational transformation.' },
   { image: 'https://picsum.photos/seed/hero6/800/500', title: 'Solutions', description: 'Discover solutions tailored to your goals and context.' },
@@ -267,8 +267,10 @@ function HeroCarousel() {
                               e.preventDefault()
                               e.stopPropagation()
                               // Route specific carousel cards to their dedicated pages.
-                              if (slide.title === 'Project Management') {
+                              if (slide.title === 'Solution') {
                                 navigate({ to: '/project-management' })
+                              } else if (slide.title === 'Problem') {
+                                navigate({ to: '/problem' })
                               } else if (slide.title === 'Professional Value') {
                                 navigate({ to: '/value-framework' })
                               } else if (slide.image === '/white_mode.jpeg') {
