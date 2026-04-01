@@ -24,7 +24,7 @@ const SAMPLE_SLIDES = [
   { image: '/white_mode.jpeg', title: 'Grow24 Overview', description: 'Personal & Professional management in one unified platform.' },
   { image: '/solution-hero2.png', title: 'Solution', description: 'Plan, execute, and deliver projects effectively.' },
   { image: '/problem-hero3.png', title: 'Problem', description: 'Understand and maximize your personal and professional value.' },
-  { image: 'https://picsum.photos/seed/hero4/800/500', title: 'Lead-to-Cash', description: 'Streamline your pipeline from lead generation to revenue.' },
+  { image: '/toolsets-hero4.png', title: 'Toolsets', description: 'Frameworks to clarify needs, articulate problems, and align before solutions.' },
   { image: 'https://picsum.photos/seed/hero5/800/500', title: 'Change Management', description: 'Navigate and lead organizational transformation.' },
   { image: 'https://picsum.photos/seed/hero6/800/500', title: 'Solutions', description: 'Discover solutions tailored to your goals and context.' },
   { image: 'https://picsum.photos/seed/hero7/800/500', title: 'Strategy & Objectives', description: 'Define and align strategy with clear objectives.' },
