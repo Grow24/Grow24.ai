@@ -86,7 +86,7 @@ function TransformationPage() {
               <div className="rounded-2xl bg-[#e8e5e1] p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
                   <p className="text-[10px] font-semibold tracking-wide text-slate-700 mb-2">WEEKLY INSIGHTS SUBSCRIPTION</p>
-                  <h3 className="text-[50px] leading-[1.02] font-light">Stay ahead with BCG insights on marketing and sales</h3>
+                  <h3 className="text-[50px] leading-[1.02] font-light">Stay ahead with gro24.ai insights on marketing and sales</h3>
                 </div>
                 <div className="flex items-center rounded-xl bg-white border border-slate-300 overflow-hidden h-12 w-full md:w-[340px]">
                   <input className="px-4 flex-1 text-sm outline-none" placeholder="Enter Email" />
@@ -237,7 +237,7 @@ function TransformationPage() {
                       ×
                     </button>
                   </div>
-                  <p className="text-xs text-slate-600 mb-2">Stay ahead with BCG insights on marketing and sales</p>
+                  <p className="text-xs text-slate-600 mb-2">Stay ahead with gro24.ai insights on marketing and sales</p>
                   <div className="flex items-center rounded-lg bg-white border border-slate-300 overflow-hidden h-9">
                     <input className="px-3 flex-1 text-xs outline-none" placeholder="Enter Email" />
                     <button className="w-10 h-full bg-[#7cf267]">→</button>
