@@ -29,7 +29,7 @@ const SAMPLE_SLIDES = [
   { image: 'https://picsum.photos/seed/hero6/800/500', title: 'Solutions', description: 'Discover solutions tailored to your goals and context.' },
   { image: 'https://picsum.photos/seed/hero7/800/500', title: 'Strategy & Objectives', description: 'Define and align strategy with clear objectives.' },
   { image: 'https://picsum.photos/seed/hero8/800/500', title: 'Execution & Operations', description: 'Turn plans into results with effective execution.' },
-  { image: 'https://picsum.photos/seed/hero9/800/500', title: 'Transformation', description: 'Drive sustainable change and growth.' },
+  { image: '/process-hero9.png', title: 'Process', description: 'Design structured execution to create outcomes.' },
   { image: '/value-framework-hero10.png', title: 'Professional Value', description: 'A structured approach to creating and capturing value.' },
 ]
 
@@ -273,7 +273,7 @@ function HeroCarousel() {
                                 navigate({ to: '/problem' })
                               } else if (slide.title === 'Toolsets') {
                                 navigate({ to: '/toolsets' })
-                              } else if (slide.title === 'Transformation') {
+                              } else if (slide.title === 'Process') {
                                 navigate({ to: '/transformation' })
                               } else if (slide.title === 'Professional Value') {
                                 navigate({ to: '/value-framework' })
