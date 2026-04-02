@@ -12,7 +12,10 @@
     { "source": "/about", "destination": "/index.html" },
     { "source": "/become-partner", "destination": "/index.html" },
     { "source": "/dashboard", "destination": "/index.html" },
+    { "source": "/project", "destination": "/index.html" },
     { "source": "/library", "destination": "/index.html" },
+    { "source": "/portfolio", "destination": "/index.html" },
+    { "source": "/toolset", "destination": "/index.html" },
     { "source": "/privacy-policy", "destination": "/index.html" },
     { "source": "/what-we-offer", "destination": "/index.html" },
     { "source": "/solutions/:path*", "destination": "/index.html" }

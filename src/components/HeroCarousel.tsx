@@ -24,11 +24,11 @@ const SAMPLE_SLIDES = [
   { image: '/white_mode.jpeg', title: 'Grow24 Overview', description: 'Personal & Professional management in one unified platform.' },
   { image: '/solution-hero2.png', title: 'Solution', description: 'Plan, execute, and deliver projects effectively.' },
   { image: '/problem-hero3.png', title: 'Problem', description: 'Understand and maximize your personal and professional value.' },
-  { image: '/toolsets-hero4.png', title: 'Toolsets', description: 'Frameworks to clarify needs, articulate problems, and align before solutions.' },
-  { image: 'https://picsum.photos/seed/hero5/800/500', title: 'Change Management', description: 'Navigate and lead organizational transformation.' },
-  { image: 'https://picsum.photos/seed/hero6/800/500', title: 'Solutions', description: 'Discover solutions tailored to your goals and context.' },
+  { image: '/toolsets-hero4.png', title: 'Skills', description: 'Frameworks to clarify needs, articulate problems, and align before solutions.' },
+  { image: '/toolsetslider1.png', title: 'Toolset', description: 'Navigate and lead organizational transformation.' },
+  { image: '/portfolio-hero6.png', title: 'Portfolio', description: 'Discover solutions tailored to your goals and context.' },
   { image: 'https://picsum.photos/seed/hero7/800/500', title: 'Strategy & Objectives', description: 'Define and align strategy with clear objectives.' },
-  { image: 'https://picsum.photos/seed/hero8/800/500', title: 'Execution & Operations', description: 'Turn plans into results with effective execution.' },
+  { image: '/project-hero8.png', title: 'Project', description: 'Turn plans into results with effective execution.' },
   { image: '/process-hero9.png', title: 'Process', description: 'Design structured execution to create outcomes.' },
   { image: '/value-framework-hero10.png', title: 'Professional Value', description: 'A structured approach to creating and capturing value.' },
 ]
@@ -271,8 +271,14 @@ function HeroCarousel() {
                                 navigate({ to: '/project-management' })
                               } else if (slide.title === 'Problem') {
                                 navigate({ to: '/problem' })
-                              } else if (slide.title === 'Toolsets') {
+                              } else if (slide.title === 'Skills') {
                                 navigate({ to: '/toolsets' })
+                              } else if (slide.title === 'Toolset') {
+                                navigate({ to: '/toolset' })
+                              } else if (slide.title === 'Portfolio') {
+                                navigate({ to: '/portfolio' })
+                              } else if (slide.title === 'Project') {
+                                navigate({ to: '/project' })
                               } else if (slide.title === 'Process') {
                                 navigate({ to: '/transformation' })
                               } else if (slide.title === 'Professional Value') {

@@ -15,11 +15,14 @@ import { Route as ValueDefinitionRouteImport } from './routes/value-definition'
 import { Route as TransformationRouteImport } from './routes/transformation'
 import { Route as TransformaltionRouteImport } from './routes/transformaltion'
 import { Route as ToolsetsRouteImport } from './routes/toolsets'
+import { Route as ToolsetRouteImport } from './routes/toolset'
 import { Route as SurveyRouteImport } from './routes/survey'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as ProjectManagementRouteImport } from './routes/project-management'
+import { Route as ProjectRouteImport } from './routes/project'
 import { Route as ProblemRouteImport } from './routes/problem'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
+import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as LibraryRouteImport } from './routes/library'
 import { Route as EchartsRouteImport } from './routes/echarts'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -59,6 +62,11 @@ const ToolsetsRoute = ToolsetsRouteImport.update({
   path: '/toolsets',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ToolsetRoute = ToolsetRouteImport.update({
+  id: '/toolset',
+  path: '/toolset',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SurveyRoute = SurveyRouteImport.update({
   id: '/survey',
   path: '/survey',
@@ -74,6 +82,11 @@ const ProjectManagementRoute = ProjectManagementRouteImport.update({
   path: '/project-management',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProjectRoute = ProjectRouteImport.update({
+  id: '/project',
+  path: '/project',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProblemRoute = ProblemRouteImport.update({
   id: '/problem',
   path: '/problem',
@@ -82,6 +95,11 @@ const ProblemRoute = ProblemRouteImport.update({
 const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
   id: '/privacy-policy',
   path: '/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortfolioRoute = PortfolioRouteImport.update({
+  id: '/portfolio',
+  path: '/portfolio',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LibraryRoute = LibraryRouteImport.update({
@@ -132,11 +150,14 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/echarts': typeof EchartsRoute
   '/library': typeof LibraryRoute
+  '/portfolio': typeof PortfolioRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/problem': typeof ProblemRoute
+  '/project': typeof ProjectRoute
   '/project-management': typeof ProjectManagementRoute
   '/solutions': typeof SolutionsRouteWithChildren
   '/survey': typeof SurveyRoute
+  '/toolset': typeof ToolsetRoute
   '/toolsets': typeof ToolsetsRoute
   '/transformaltion': typeof TransformaltionRoute
   '/transformation': typeof TransformationRoute
@@ -153,11 +174,14 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/echarts': typeof EchartsRoute
   '/library': typeof LibraryRoute
+  '/portfolio': typeof PortfolioRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/problem': typeof ProblemRoute
+  '/project': typeof ProjectRoute
   '/project-management': typeof ProjectManagementRoute
   '/solutions': typeof SolutionsRouteWithChildren
   '/survey': typeof SurveyRoute
+  '/toolset': typeof ToolsetRoute
   '/toolsets': typeof ToolsetsRoute
   '/transformaltion': typeof TransformaltionRoute
   '/transformation': typeof TransformationRoute
@@ -175,11 +199,14 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/echarts': typeof EchartsRoute
   '/library': typeof LibraryRoute
+  '/portfolio': typeof PortfolioRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/problem': typeof ProblemRoute
+  '/project': typeof ProjectRoute
   '/project-management': typeof ProjectManagementRoute
   '/solutions': typeof SolutionsRouteWithChildren
   '/survey': typeof SurveyRoute
+  '/toolset': typeof ToolsetRoute
   '/toolsets': typeof ToolsetsRoute
   '/transformaltion': typeof TransformaltionRoute
   '/transformation': typeof TransformationRoute
@@ -198,11 +225,14 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/echarts'
     | '/library'
+    | '/portfolio'
     | '/privacy-policy'
     | '/problem'
+    | '/project'
     | '/project-management'
     | '/solutions'
     | '/survey'
+    | '/toolset'
     | '/toolsets'
     | '/transformaltion'
     | '/transformation'
@@ -219,11 +249,14 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/echarts'
     | '/library'
+    | '/portfolio'
     | '/privacy-policy'
     | '/problem'
+    | '/project'
     | '/project-management'
     | '/solutions'
     | '/survey'
+    | '/toolset'
     | '/toolsets'
     | '/transformaltion'
     | '/transformation'
@@ -240,11 +273,14 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/echarts'
     | '/library'
+    | '/portfolio'
     | '/privacy-policy'
     | '/problem'
+    | '/project'
     | '/project-management'
     | '/solutions'
     | '/survey'
+    | '/toolset'
     | '/toolsets'
     | '/transformaltion'
     | '/transformation'
@@ -262,11 +298,14 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   EchartsRoute: typeof EchartsRoute
   LibraryRoute: typeof LibraryRoute
+  PortfolioRoute: typeof PortfolioRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   ProblemRoute: typeof ProblemRoute
+  ProjectRoute: typeof ProjectRoute
   ProjectManagementRoute: typeof ProjectManagementRoute
   SolutionsRoute: typeof SolutionsRouteWithChildren
   SurveyRoute: typeof SurveyRoute
+  ToolsetRoute: typeof ToolsetRoute
   ToolsetsRoute: typeof ToolsetsRoute
   TransformaltionRoute: typeof TransformaltionRoute
   TransformationRoute: typeof TransformationRoute
@@ -319,6 +358,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ToolsetsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/toolset': {
+      id: '/toolset'
+      path: '/toolset'
+      fullPath: '/toolset'
+      preLoaderRoute: typeof ToolsetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/survey': {
       id: '/survey'
       path: '/survey'
@@ -340,6 +386,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectManagementRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/project': {
+      id: '/project'
+      path: '/project'
+      fullPath: '/project'
+      preLoaderRoute: typeof ProjectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/problem': {
       id: '/problem'
       path: '/problem'
@@ -352,6 +405,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy-policy'
       fullPath: '/privacy-policy'
       preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portfolio': {
+      id: '/portfolio'
+      path: '/portfolio'
+      fullPath: '/portfolio'
+      preLoaderRoute: typeof PortfolioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/library': {
@@ -434,11 +494,14 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   EchartsRoute: EchartsRoute,
   LibraryRoute: LibraryRoute,
+  PortfolioRoute: PortfolioRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   ProblemRoute: ProblemRoute,
+  ProjectRoute: ProjectRoute,
   ProjectManagementRoute: ProjectManagementRoute,
   SolutionsRoute: SolutionsRouteWithChildren,
   SurveyRoute: SurveyRoute,
+  ToolsetRoute: ToolsetRoute,
   ToolsetsRoute: ToolsetsRoute,
   TransformaltionRoute: TransformaltionRoute,
   TransformationRoute: TransformationRoute,
