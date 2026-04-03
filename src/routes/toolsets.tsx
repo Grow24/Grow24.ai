@@ -50,22 +50,32 @@ function ToolsetsPage() {
                     WebkitBackdropFilter: 'blur(2px)',
                   }}
                 >
-                  <p className="text-[12px] font-semibold tracking-wide text-slate-900 mb-3">KEY TAKEAWAYS</p>
-                  <p className="text-[14px] leading-[1.45] mb-3">
-                    High-performing organizations do not rely on isolated tools or disconnected talent discussions.
-                    They align enterprise <strong>capabilities</strong>, role-level <strong>competencies</strong>, and
-                    individual <strong>skills</strong> across the full growth cycle.
-                  </p>
-                  <p className="text-[14px] leading-[1.45] mb-3">
-                    A capability defines what the organization must consistently be able to do. A competency defines the
-                    readiness a role needs to perform in context. Skills are the practical abilities that make that
-                    readiness real.
-                  </p>
-                  <p className="text-[14px] leading-[1.45]">
-                    When these three are mapped together, leaders gain clearer execution visibility, stronger
-                    cross-functional alignment, and better decisions across problem framing, planning, projects,
-                    operations, and change management.
-                  </p>
+                  <p className="text-[12px] font-semibold tracking-wide text-slate-900 mb-3">EXECUTIVE SUMMARY</p>
+                  <ul className="list-disc pl-5 space-y-2 text-[14px] leading-[1.45]">
+                    <li>
+                      The Professional Growth Cycle works through connected stages: Problem Statement, Goals, Strategy,
+                      Objectives, Plan, Projects, and Operations, with Change Management acting across all.
+                    </li>
+                    <li>
+                      Capabilities define what the enterprise must be able to do; competencies define what roles and
+                      teams must be able to perform well; skills are the specific abilities that support those
+                      competencies.
+                    </li>
+                    <li>
+                      This logic applies across the whole organization, including the Board, CEO, CXOs, function heads,
+                      program leaders, support specialists, and operations leaders.
+                    </li>
+                    <li>
+                      Using a common capability such as Customer Onboarding Management, different roles such as Business
+                      Analyst and Operations Manager require different competency maps because they contribute in
+                      different ways.
+                    </li>
+                    <li>
+                      When leaders connect skills, competencies, and capabilities clearly, they improve role design,
+                      workforce planning, learning priorities, execution readiness, and operational performance across
+                      the full cycle.
+                    </li>
+                  </ul>
                 </div>
               </div>
             </section>
@@ -76,27 +86,62 @@ function ToolsetsPage() {
                 Every organization moves through a Professional Growth Cycle: <strong>Problem Statement</strong>,
                 <strong> Goals</strong>, <strong>Strategy</strong>, <strong>Objectives</strong>, <strong>Plan</strong>,
                 <strong> Projects</strong>, and <strong>Operations</strong>, with <strong>Change Management</strong> acting across all of them.
+                To perform that cycle well, the enterprise needs the right capabilities at the organization level, the right competencies at the role level, and the right skills at the individual level.
+                A capability is what the enterprise must be able to do. A competency is the integrated readiness a role needs to perform effectively. Skills are the specific abilities that make that competency real.
+                When leaders map these properly, they get a much clearer view of execution readiness, hiring priorities, role design, learning needs, and operational strength.
+                BIZBOK&apos;s business architecture view is useful here because it connects capabilities with organization, value delivery, information, and change.
               </p>
               <p>
-                To perform that cycle well, the enterprise needs the right <strong>capabilities</strong> at the organization level,
-                the right <strong>competencies</strong> at the role level, and the right <strong>skills</strong> at the individual level.
+                Organizations usually spend a great deal of effort discussing growth, performance, execution, transformation, and talent.
+                Yet many of these discussions happen in separate rooms, with separate vocabularies.
+                Strategy may be discussed at the Board and CEO level. Projects may be discussed in PMO reviews. Operations may be discussed in service reviews.
+                Talent may be discussed by HR and line leaders. Process issues may be discussed elsewhere.
+                The result is often fragmentation, not because any one part is missing, but because the relationships between them are not explicit enough.
+              </p>
+              <p>That is where skills, capabilities, and competencies become foundational.</p>
+              <p>They provide a practical language for answering three connected questions:</p>
+              <p>
+                What must the enterprise be able to do?
+                <br />
+                What must specific roles and teams be able to perform well?
+                <br />
+                What individual abilities make that performance possible?
               </p>
               <p>
-                A capability is what the enterprise must be able to do. A competency is the integrated readiness a role
-                needs to perform effectively. Skills are the specific abilities that make that competency real.
+                These questions matter across the entire Professional Growth Cycle:
+                <br />
+                <span className="font-semibold text-slate-900">
+                  Problem Statement -&gt; Goals -&gt; Strategy -&gt; Objectives -&gt; Plan -&gt; Projects -&gt; Operations
+                </span>
               </p>
+              <p>And because no enterprise stands still, Change Management must work across all of these stages.</p>
               <p>
-                When leaders map these properly, they gain a clearer view of execution readiness, hiring priorities,
-                role design, learning needs, and operational strength.
+                This is not just a topic for HR. It is relevant to the Board, CEO, CXOs, Function Heads, Program Leaders, Support Leaders, and Operations Leaders.
+                It is also highly relevant to the CHRO, because workforce readiness becomes far more valuable when it is tied directly to enterprise capabilities and execution needs.
               </p>
+              <img
+                src="/skills-growth-cycle-image.png"
+                alt="Professional growth cycle with change management and skill-competency-capability flow"
+                className="w-full h-auto rounded-sm border border-slate-300"
+                loading="lazy"
+                draggable={false}
+              />
             </section>
 
             <section className="relative space-y-5 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px] border-t border-slate-300 pt-8">
               <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">What is a capability?</h2>
               <p>
-                A <strong>capability</strong> is what the enterprise must be able to do. It is not the same as a department,
-                a job title, a software application, a single process, or a current org chart box.
+                A capability is what the enterprise must be able to do. TOGAF defines capability broadly as an ability an organization, person, or system possesses,
+                and BIZBOK treats capabilities as stable business abilities that can be mapped to organization and change.
               </p>
+              <p>A capability is not the same as:</p>
+              <ul className="list-disc pl-7 space-y-1">
+                <li>a department</li>
+                <li>a job title</li>
+                <li>a software application</li>
+                <li>a single process</li>
+                <li>a current org chart box</li>
+              </ul>
               <p>
                 Capabilities are more enduring than those structures. Systems may change, reporting lines may change,
                 but the enterprise still needs certain abilities to function and grow.
@@ -111,14 +156,29 @@ function ToolsetsPage() {
                 <li>Business Analysis</li>
                 <li>Process Management</li>
               </ul>
+              <p>
+                Seen this way, capabilities help leadership describe the enterprise in terms of what it must consistently be able to do, rather than how it happens to be arranged today.
+              </p>
+              <p>
+                That is why capability maps are useful. They create a common language across corporate, functions, programs, support areas, projects, and operations.
+                They also create a stable reference point for change.
+              </p>
+              <img
+                src="/skills-capability-map-image.png"
+                alt="Enterprise capability map across the professional growth cycle"
+                className="w-full h-auto rounded-sm border border-slate-300"
+                loading="lazy"
+                draggable={false}
+              />
             </section>
 
             <section className="relative space-y-5 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px] border-t border-slate-300 pt-8">
               <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">What is a competency?</h2>
               <p>
-                A <strong>competency</strong> is the integrated readiness needed to perform effectively in a given role
-                or context. It is broader than knowledge and usually includes:
+                A competency is the integrated readiness needed to perform effectively in a given role or context.
+                BIZBOK describes Competency Management as the ability to define, design, profile, rate, and validate the skills and knowledge necessary to do something.
               </p>
+              <p>Competency is broader than just knowledge. It usually includes some mix of:</p>
               <ul className="list-disc pl-7 space-y-1">
                 <li>knowledge</li>
                 <li>judgment</li>
@@ -127,11 +187,34 @@ function ToolsetsPage() {
                 <li>decision quality</li>
                 <li>ability to perform consistently in context</li>
               </ul>
+              <p>
+                This is important because competencies are not limited to junior or mid-level staff. Senior leadership roles also require competencies, though they are of a different kind.
+              </p>
+              <p>For example:</p>
+              <ul className="list-disc pl-7 space-y-1">
+                <li>the Board may require governance, oversight, and strategic judgment competencies</li>
+                <li>the CEO may require enterprise prioritization, capital allocation, and performance steering competencies</li>
+                <li>a CXO may require function strategy, cross-functional alignment, and execution governance competencies</li>
+                <li>a Program Leader may require orchestration, dependency management, and benefits tracking competencies</li>
+                <li>an Operations Manager may require service level management, escalation handling, and continuous improvement competencies</li>
+                <li>a Business Analyst may require requirements analysis, process analysis, and acceptance design competencies</li>
+              </ul>
+              <p>
+                Competencies therefore help the organization move from a broad enterprise ability to the readiness expected of specific role groups.
+              </p>
+              <img
+                src="/skills-competency-map-image.png"
+                alt="Enterprise competency map for role groups and required competencies"
+                className="w-full h-auto rounded-sm border border-slate-300"
+                loading="lazy"
+                draggable={false}
+              />
             </section>
 
             <section className="relative space-y-5 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px] border-t border-slate-300 pt-8">
               <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">What are skills?</h2>
-              <p>Skills are the granular abilities that support a competency.</p>
+              <p>Skills are the more granular abilities that contribute to a competency.</p>
+              <p>Examples of skills include:</p>
               <ul className="list-disc pl-7 space-y-1">
                 <li>interviewing</li>
                 <li>workshop facilitation</li>
@@ -146,8 +229,19 @@ function ToolsetsPage() {
                 <li>data interpretation</li>
               </ul>
               <p>
-                Capability is what the enterprise must do. Competency is what a role must do well.
-                Skills are the individual abilities that support that competency.
+                Skills are the building blocks. Competencies are the integrated role-readiness built from those blocks.
+                Capabilities are the higher-level enterprise abilities those roles and teams help deliver.
+              </p>
+              <p>In simple terms:</p>
+              <p className="font-semibold text-slate-900">
+                Capability = what the enterprise must be able to do
+                <br />
+                Competency = what a role or team must be able to perform well
+                <br />
+                Skills = the specific individual abilities that support that competency
+              </p>
+              <p>
+                This distinction is simple, but very powerful. It helps leaders avoid a common problem: discussing talent, process, and execution without a shared structure.
               </p>
             </section>
 
@@ -155,30 +249,41 @@ function ToolsetsPage() {
               <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">
                 Why all three matter across the full Professional Growth Cycle
               </h2>
-              <p>These distinctions matter across:</p>
-              <p className="font-semibold text-slate-900">
-                Problem Statement -&gt; Goals -&gt; Strategy -&gt; Objectives -&gt; Plan -&gt; Projects -&gt; Operations
+              <p>The Professional Growth Cycle is not one decision or one document. It is a connected system of management and execution.</p>
+              <p>At the Problem Statement stage, the organization needs the capability to frame issues well, and the people involved need competencies in analysis, clarification, and stakeholder understanding.</p>
+              <p>At the Goals stage, the organization needs the capability to set direction, and leaders need competencies in prioritization, judgment, and measurement thinking.</p>
+              <p>At the Strategy stage, the organization needs the capability to choose where to play and how to win, and leaders need competencies in strategic reasoning, market interpretation, and resource choice.</p>
+              <p>At the Objectives stage, the organization needs the capability to translate direction into measurable targets, and managers need competencies in alignment, decomposition, and metric design.</p>
+              <p>At the Plan stage, the organization needs the capability to convert intent into actionable work, and teams need competencies in planning, sequencing, dependency handling, and estimation.</p>
+              <p>At the Projects stage, the organization needs the capability to create or improve solutions, and teams need competencies in requirements, design, build, testing, rollout, and governance.</p>
+              <p>At the Operations stage, the organization needs the capability to run consistently and improve steadily, and leaders need competencies in service management, issue handling, performance review, and continuous improvement.</p>
+              <p>
+                Across all of this, Change Management is essential. Every change in goals, rules, process, technology, roles, data, or service levels places new demands on enterprise capabilities and on the competencies of the people involved.
               </p>
               <p>
-                At each stage, the organization needs the right capability and people need the right competencies.
-                Across all stages, change management is essential because every change in policy, process, technology,
-                or organization places new competency demands.
+                The point is not that one stage matters more than another. Each has its place. The real question is whether the organization has the right combination of capabilities, competencies, and skills to perform each stage well.
               </p>
             </section>
 
             <section className="relative space-y-5 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px] border-t border-slate-300 pt-8">
               <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">The enterprise-wide scope</h2>
-              <p>Capability and competency should be modeled across the enterprise, not one function only:</p>
+              <p>Capability and competency must be considered across the whole enterprise, not only inside one function.</p>
+              <p>That means covering:</p>
               <ul className="list-disc pl-7 space-y-1">
                 <li>Corporate</li>
                 <li>Functional</li>
                 <li>Program</li>
                 <li>Support</li>
-                <li>Projects and Operations execution chain</li>
+                <li>and the full execution chain into Projects and Operations</li>
               </ul>
+              <p>At the Corporate level, this includes the Board, CEO, and CXOs.</p>
+              <p>At the Functional level, it includes Sales, Marketing, Finance, HR, IT, Supply Chain, R&amp;D, Customer, and other business functions.</p>
+              <p>At the Program level, it includes transformation, ESG, cross-functional initiatives, and other coordinated change efforts.</p>
               <p>
-                This helps leadership connect business architecture, value delivery, organization, and information
-                into one coherent decision framework.
+                At the Support level, it includes areas such as Business Analysis, Process Modeling, Portfolio/Project/Program Management, Solution Management, Operations Management, and Change Management.
+              </p>
+              <p>
+                This is where BIZBOK is especially helpful. It treats business architecture as a connected view of capabilities, organization, value delivery, and information, and uses those relationships to improve transparency for decision-making and change.
               </p>
             </section>
 
@@ -187,14 +292,35 @@ function ToolsetsPage() {
                 Customer Onboarding Management example
               </h2>
               <p>
-                Consider one enterprise capability: <strong>Customer Onboarding Management</strong>.
-                It is usually cross-functional and can involve Sales, Operations, Product, Customer Service,
-                Risk/Compliance, Support Services, and Technology teams.
+                To make the distinction practical, consider one enterprise capability: <strong>Customer Onboarding Management</strong>.
               </p>
+              <p>
+                BIZBOK itself uses customer onboarding as a useful example because onboarding often cuts across multiple business units and requires a coordinated approach across several supporting capabilities.
+              </p>
+              <p>
+                Customer onboarding is a good example because it is rarely owned by one team alone. It can involve:
+              </p>
+              <ul className="list-disc pl-7 space-y-1">
+                <li>Sales or Front Office</li>
+                <li>Operations</li>
+                <li>Product</li>
+                <li>Customer Service</li>
+                <li>Risk or Compliance</li>
+                <li>Support Services</li>
+                <li>Technology teams</li>
+              </ul>
+              <p>The capability, at the enterprise level, is straightforward:</p>
               <p className="font-semibold text-slate-900">
-                The organization must be able to take a customer from initial commitment to successful activation
-                in a controlled, efficient, and compliant manner.
+                The organization must be able to take a customer from initial commitment to successful activation in a controlled, efficient, and compliant manner.
               </p>
+              <p>But once we move below that capability, different roles require different competencies.</p>
+              <img
+                src="/skills-customer-onboarding-map-image.png"
+                alt="Customer onboarding management cross-functional enterprise capability map"
+                className="w-full h-auto rounded-sm border border-slate-300"
+                loading="lazy"
+                draggable={false}
+              />
             </section>
 
             <section className="relative space-y-5 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px] border-t border-slate-300 pt-8">
@@ -218,6 +344,32 @@ function ToolsetsPage() {
                 <li>identifying gaps</li>
                 <li>clarifying rules</li>
               </ul>
+              <p>A simple competency map for the Business Analyst might look like this in prose:</p>
+              <p className="font-semibold text-slate-900">
+                Capability: Customer Onboarding Management
+                <br />
+                Role: Business Analyst
+                <br />
+                Competencies: Requirements Analysis, Process Analysis, Stakeholder Alignment, Rules Definition, Acceptance Design
+                <br />
+                Skills: Interviewing, workshop facilitation, process modeling, requirements writing, traceability management, gap analysis
+              </p>
+              <p>The Business Analyst is especially relevant in the earlier and change-heavy stages of the Growth Cycle:</p>
+              <ul className="list-disc pl-7 space-y-1">
+                <li>Problem Statement</li>
+                <li>Objectives</li>
+                <li>Plan</li>
+                <li>Projects</li>
+                <li>Change Management</li>
+              </ul>
+              <p>The BA helps define and improve how onboarding should work.</p>
+              <img
+                src="/skills-ba-competency-map-image.png"
+                alt="Business Analyst competency map under customer onboarding management"
+                className="w-full h-auto rounded-sm border border-slate-300"
+                loading="lazy"
+                draggable={false}
+              />
             </section>
 
             <section className="relative space-y-5 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px] border-t border-slate-300 pt-8">
@@ -242,12 +394,55 @@ function ToolsetsPage() {
                 <li>workload allocation</li>
                 <li>operational review</li>
               </ul>
+              <p>A simple competency map for the Operations Manager might look like this:</p>
+              <p className="font-semibold text-slate-900">
+                Capability: Customer Onboarding Management
+                <br />
+                Role: Operations Manager
+                <br />
+                Competencies: Workflow Execution Management, SLA Management, Issue Resolution, Team Supervision, Continuous Improvement
+                <br />
+                Skills: Queue management, escalation handling, KPI review, root-cause analysis, coaching, SOP management
+              </p>
+              <p>The Operations Manager is especially relevant in:</p>
+              <ul className="list-disc pl-7 space-y-1">
+                <li>Plan</li>
+                <li>Projects transition</li>
+                <li>Operations</li>
+                <li>Change Management</li>
+              </ul>
+              <p>The Operations Manager helps run onboarding reliably and at scale.</p>
+            </section>
+
+            <section className="relative space-y-5 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px] border-t border-slate-300 pt-8">
+              <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">Why this distinction matters</h2>
+              <p>Both the Business Analyst and the Operations Manager support the same capability. But their competency maps are different because their contribution is different.</p>
+              <p>The Business Analyst is more focused on:</p>
+              <ul className="list-disc pl-7 space-y-1">
+                <li>defining</li>
+                <li>structuring</li>
+                <li>analyzing</li>
+                <li>clarifying</li>
+                <li>improving design logic</li>
+              </ul>
+              <p>The Operations Manager is more focused on:</p>
+              <ul className="list-disc pl-7 space-y-1">
+                <li>running</li>
+                <li>stabilizing</li>
+                <li>supervising</li>
+                <li>measuring</li>
+                <li>improving live execution</li>
+              </ul>
+              <p>
+                This is exactly why one generic competency model is not enough. The organization needs role-specific competency maps under a shared capability architecture.
+              </p>
             </section>
 
             <section className="relative space-y-5 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px] border-t border-slate-300 pt-8">
               <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">
                 Four competency families to model
               </h2>
+              <p>For practical use, most enterprises should explicitly model at least four competency families.</p>
               <p><strong>1. Common enterprise competencies</strong></p>
               <ul className="list-disc pl-7 space-y-1">
                 <li>business analysis</li>
@@ -296,38 +491,77 @@ function ToolsetsPage() {
                 <li>Assess current versus required state.</li>
                 <li>Convert gaps into action.</li>
               </ol>
+              <p>Those actions may include:</p>
+              <ul className="list-disc pl-7 space-y-1">
+                <li>hiring</li>
+                <li>role redesign</li>
+                <li>training</li>
+                <li>coaching</li>
+                <li>process simplification</li>
+                <li>tooling improvements</li>
+                <li>governance changes</li>
+                <li>centralizing expertise</li>
+                <li>outsourcing selected work</li>
+              </ul>
+              <p>
+                This last point matters. Not every competency gap should be solved by training alone. Sometimes the right response is better tools, better process design, clearer governance, or different role structure.
+              </p>
+              <img
+                src="/skills-how-to-build-competency-map-image.png"
+                alt="How to build a competency map: practical enterprise method"
+                className="w-full h-auto rounded-sm border border-slate-300"
+                loading="lazy"
+                draggable={false}
+              />
             </section>
 
             <section className="relative space-y-5 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px] border-t border-slate-300 pt-8">
               <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">
                 Why this matters to CEO, CXOs, and CHRO
               </h2>
-              <p>For leadership, this model clarifies execution readiness and supports better enterprise decisions.</p>
+              <p>For the CEO and Board, this approach creates a clearer picture of execution readiness. It becomes easier to ask:</p>
               <ul className="list-disc pl-7 space-y-1">
                 <li>Which enterprise abilities matter most now?</li>
                 <li>Where are the real constraints?</li>
-                <li>Are leaders and teams ready for required changes?</li>
+                <li>Are our leaders and teams ready for the changes we are asking them to make?</li>
+              </ul>
+              <p>For CXOs and Function Heads, it improves cross-functional alignment and makes it easier to connect growth ambitions to actual readiness in teams, roles, projects, and operations.</p>
+              <p>For the CHRO, it creates a stronger bridge between:</p>
+              <ul className="list-disc pl-7 space-y-1">
+                <li>workforce planning</li>
+                <li>role design</li>
+                <li>leadership development</li>
+                <li>learning investment</li>
+                <li>succession planning</li>
+                <li>readiness for transformation</li>
               </ul>
               <p>
-                It also strengthens the bridge between workforce planning, role design, leadership development,
-                learning investment, succession planning, and transformation readiness.
+                This is why capability and competency should not be treated as separate from business architecture. When connected properly, they help leadership move from general ambition to structured enterprise readiness.
               </p>
             </section>
 
             <section className="relative space-y-5 text-[17px] leading-[1.48] text-slate-700 font-normal max-w-[980px] border-t border-b border-slate-300 pt-8 pb-8">
               <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">Common mistakes to avoid</h2>
-              <ul className="list-disc pl-7 space-y-1">
-                <li>Confusing capabilities with the org chart</li>
-                <li>Treating competency only as a training topic</li>
-                <li>Listing skills without linking them to capabilities</li>
-                <li>Using one generic competency map for all roles</li>
-                <li>Ignoring operations in favor of only strategy/projects</li>
-                <li>Ignoring change management</li>
-              </ul>
+              <p>A few mistakes appear frequently.</p>
+              <p>One is confusing capabilities with the org chart. A capability is an enterprise ability, not a department name.</p>
+              <p>Another is treating competency as only a training topic. Competency is broader; it concerns effective performance in role and context.</p>
+              <p>Another is listing skills without linking them back to capabilities. That often produces a fragmented skill catalog instead of a useful readiness model.</p>
+              <p>Another is creating one generic competency map for all roles. As the customer onboarding example shows, different roles under the same capability need different competency maps.</p>
+              <p>Another is ignoring operations. Competency work that focuses only on strategy or projects but not on steady-state execution will miss a large part of enterprise reality.</p>
+              <p>Another is ignoring change management. Changes in process, policy, technology, or organization place new demands on competencies.</p>
               <h2 className="text-[42px] leading-[1.1] font-semibold text-slate-900">Closing thought</h2>
               <p>
-                The Professional Growth Cycle works best when the enterprise knows clearly what capabilities it needs,
-                what competencies each role requires, and what skills make those competencies real.
+                The Professional Growth Cycle works best when the enterprise knows three things clearly:
+                what capabilities it needs, what competencies each role requires, and what skills make those competencies real.
+              </p>
+              <p>
+                That clarity matters from Problem Statement through Operations, and across Corporate, Functional, Program, Support, and Change Management.
+              </p>
+              <p>
+                Capabilities tell you what the enterprise must do. Competencies tell you what specific roles and teams must be able to perform well. Skills tell you what individual abilities support that performance.
+              </p>
+              <p>
+                When those three are connected well, growth becomes more structured, execution becomes more realistic, and readiness becomes easier to see and improve.
               </p>
             </section>
           </article>

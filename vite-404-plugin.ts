@@ -18,6 +18,7 @@ const VALID_PATHS = [
   '/library',
   '/privacy-policy',
   '/portfolio',
+  '/Skills',
   '/toolsets',
   '/toolset',
   '/transformation',

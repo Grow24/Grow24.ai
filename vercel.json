@@ -16,6 +16,7 @@
     { "source": "/project", "destination": "/index.html" },
     { "source": "/library", "destination": "/index.html" },
     { "source": "/portfolio", "destination": "/index.html" },
+    { "source": "/Skills", "destination": "/index.html" },
     { "source": "/toolset", "destination": "/index.html" },
     { "source": "/privacy-policy", "destination": "/index.html" },
     { "source": "/what-we-offer", "destination": "/index.html" },

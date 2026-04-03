@@ -29,6 +29,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as BusinessArchitectureRouteImport } from './routes/business-architecture'
 import { Route as BecomePartnerRouteImport } from './routes/become-partner'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as SkillsRouteImport } from './routes/Skills'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SolutionsOverviewRouteImport } from './routes/solutions.overview'
 import { Route as SolutionsSolutionIdRouteImport } from './routes/solutions.$solutionId'
@@ -133,6 +134,11 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SkillsRoute = SkillsRouteImport.update({
+  id: '/Skills',
+  path: '/Skills',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -151,6 +157,7 @@ const SolutionsSolutionIdRoute = SolutionsSolutionIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/Skills': typeof SkillsRoute
   '/about': typeof AboutRoute
   '/become-partner': typeof BecomePartnerRoute
   '/business-architecture': typeof BusinessArchitectureRoute
@@ -176,6 +183,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/Skills': typeof SkillsRoute
   '/about': typeof AboutRoute
   '/become-partner': typeof BecomePartnerRoute
   '/business-architecture': typeof BusinessArchitectureRoute
@@ -202,6 +210,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/Skills': typeof SkillsRoute
   '/about': typeof AboutRoute
   '/become-partner': typeof BecomePartnerRoute
   '/business-architecture': typeof BusinessArchitectureRoute
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/Skills'
     | '/about'
     | '/become-partner'
     | '/business-architecture'
@@ -254,6 +264,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/Skills'
     | '/about'
     | '/become-partner'
     | '/business-architecture'
@@ -279,6 +290,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/Skills'
     | '/about'
     | '/become-partner'
     | '/business-architecture'
@@ -305,6 +317,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SkillsRoute: typeof SkillsRoute
   AboutRoute: typeof AboutRoute
   BecomePartnerRoute: typeof BecomePartnerRoute
   BusinessArchitectureRoute: typeof BusinessArchitectureRoute
@@ -469,6 +482,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/Skills': {
+      id: '/Skills'
+      path: '/Skills'
+      fullPath: '/Skills'
+      preLoaderRoute: typeof SkillsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -509,6 +529,7 @@ const SolutionsRouteWithChildren = SolutionsRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SkillsRoute: SkillsRoute,
   AboutRoute: AboutRoute,
   BecomePartnerRoute: BecomePartnerRoute,
   BusinessArchitectureRoute: BusinessArchitectureRoute,

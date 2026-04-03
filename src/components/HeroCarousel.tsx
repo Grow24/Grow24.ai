@@ -274,7 +274,7 @@ function HeroCarousel() {
                               } else if (slide.title === 'Problem') {
                                 navigate({ to: '/problem' })
                               } else if (slide.title === 'Skills') {
-                                navigate({ to: '/toolsets' })
+                                navigate({ to: '/Skills' })
                               } else if (slide.title === 'Toolset') {
                                 navigate({ to: '/toolset' })
                               } else if (slide.title === 'Portfolio') {
