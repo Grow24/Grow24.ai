@@ -27,7 +27,9 @@ const SAMPLE_SLIDES = [
   { image: '/toolsets-hero4.png', title: 'Skills', description: 'Frameworks to clarify needs, articulate problems, and align before solutions.' },
   { image: '/toolsetslider1.png', title: 'Toolset', description: 'Navigate and lead organizational transformation.' },
   { image: '/portfolio-hero6.png', title: 'Portfolio', description: 'Discover solutions tailored to your goals and context.' },
-  { image: 'https://picsum.photos/seed/hero7/800/500', title: 'Strategy & Objectives', description: 'Define and align strategy with clear objectives.' },
+  { image: '/knowledge-hero7.png', title: 'Knowledge', description: 'Define and align strategy with clear objectives.' },
+  { image: '/wisdom-hero.png', title: 'Wisdom', description: 'Apply insight and judgment to guide decisions and action.' },
+  { image: '/business-architecture-hero.png', title: 'Business Architecture', description: 'See how capabilities, information, and outcomes connect across the enterprise.' },
   { image: '/project-hero8.png', title: 'Project', description: 'Turn plans into results with effective execution.' },
   { image: '/process-hero9.png', title: 'Process', description: 'Design structured execution to create outcomes.' },
   { image: '/value-framework-hero10.png', title: 'Professional Value', description: 'A structured approach to creating and capturing value.' },
@@ -277,6 +279,8 @@ function HeroCarousel() {
                                 navigate({ to: '/toolset' })
                               } else if (slide.title === 'Portfolio') {
                                 navigate({ to: '/portfolio' })
+                              } else if (slide.title === 'Business Architecture') {
+                                navigate({ to: '/business-architecture' })
                               } else if (slide.title === 'Project') {
                                 navigate({ to: '/project' })
                               } else if (slide.title === 'Process') {

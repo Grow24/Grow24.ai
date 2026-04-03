@@ -26,6 +26,7 @@ import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as LibraryRouteImport } from './routes/library'
 import { Route as EchartsRouteImport } from './routes/echarts'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as BusinessArchitectureRouteImport } from './routes/business-architecture'
 import { Route as BecomePartnerRouteImport } from './routes/become-partner'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -117,6 +118,11 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BusinessArchitectureRoute = BusinessArchitectureRouteImport.update({
+  id: '/business-architecture',
+  path: '/business-architecture',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BecomePartnerRoute = BecomePartnerRouteImport.update({
   id: '/become-partner',
   path: '/become-partner',
@@ -147,6 +153,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/become-partner': typeof BecomePartnerRoute
+  '/business-architecture': typeof BusinessArchitectureRoute
   '/dashboard': typeof DashboardRoute
   '/echarts': typeof EchartsRoute
   '/library': typeof LibraryRoute
@@ -171,6 +178,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/become-partner': typeof BecomePartnerRoute
+  '/business-architecture': typeof BusinessArchitectureRoute
   '/dashboard': typeof DashboardRoute
   '/echarts': typeof EchartsRoute
   '/library': typeof LibraryRoute
@@ -196,6 +204,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/become-partner': typeof BecomePartnerRoute
+  '/business-architecture': typeof BusinessArchitectureRoute
   '/dashboard': typeof DashboardRoute
   '/echarts': typeof EchartsRoute
   '/library': typeof LibraryRoute
@@ -222,6 +231,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/become-partner'
+    | '/business-architecture'
     | '/dashboard'
     | '/echarts'
     | '/library'
@@ -246,6 +256,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/become-partner'
+    | '/business-architecture'
     | '/dashboard'
     | '/echarts'
     | '/library'
@@ -270,6 +281,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/become-partner'
+    | '/business-architecture'
     | '/dashboard'
     | '/echarts'
     | '/library'
@@ -295,6 +307,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   BecomePartnerRoute: typeof BecomePartnerRoute
+  BusinessArchitectureRoute: typeof BusinessArchitectureRoute
   DashboardRoute: typeof DashboardRoute
   EchartsRoute: typeof EchartsRoute
   LibraryRoute: typeof LibraryRoute
@@ -435,6 +448,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/business-architecture': {
+      id: '/business-architecture'
+      path: '/business-architecture'
+      fullPath: '/business-architecture'
+      preLoaderRoute: typeof BusinessArchitectureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/become-partner': {
       id: '/become-partner'
       path: '/become-partner'
@@ -491,6 +511,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   BecomePartnerRoute: BecomePartnerRoute,
+  BusinessArchitectureRoute: BusinessArchitectureRoute,
   DashboardRoute: DashboardRoute,
   EchartsRoute: EchartsRoute,
   LibraryRoute: LibraryRoute,
