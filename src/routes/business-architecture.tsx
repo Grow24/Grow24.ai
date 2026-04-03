@@ -45,6 +45,13 @@ function BusinessArchitecturePage() {
                   alt="Business architecture hero visual"
                   className="w-full h-auto block object-contain bg-slate-950"
                 />
+                <div className="absolute left-8 top-8 w-[440px] max-w-[92%] z-20">
+                  <img
+                    src="/business-architecture-left-overlay.png"
+                    alt="Key takeaways visual"
+                    className="w-full h-auto rounded-lg"
+                  />
+                </div>
               </div>
             </section>
 
