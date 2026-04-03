@@ -43,7 +43,7 @@ function BusinessArchitecturePage() {
                 <img
                   src="/business-architecture-page-hero.png"
                   alt="Business architecture hero visual"
-                  className="w-full h-auto block object-contain bg-white"
+                  className="w-full h-auto block object-contain bg-slate-950"
                 />
               </div>
             </section>
