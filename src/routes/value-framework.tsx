@@ -13,7 +13,7 @@ const sections = [
 
 function ValueFrameworkPage() {
   return (
-    <div className="min-h-screen bg-[#efefef] text-[#111] mt-[-70px]">
+    <div className="min-h-screen bg-white text-[#111] mt-[-70px]">
       <main className="mx-auto w-full max-w-[1400px] px-2 md:px-3 lg:px-4 py-8">
         <section className="space-y-6">
           <h1 className="text-4xl md:text-6xl font-bold leading-tight">

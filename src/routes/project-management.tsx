@@ -110,7 +110,7 @@ function UberSolutionOutcomesMap() {
 
 function ProjectManagementPage() {
   return (
-    <div className="min-h-screen bg-[#efefef] text-[#111] mt-[-70px]">
+    <div className="min-h-screen bg-white text-[#111] mt-[-70px]">
       <main className="mx-auto w-full max-w-[1400px] px-2 md:px-3 lg:px-4 py-8 space-y-12">
         <section className="space-y-6">
           <h1 className="text-5xl font-bold">What Is a Solution?</h1>

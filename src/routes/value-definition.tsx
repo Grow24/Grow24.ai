@@ -6,7 +6,7 @@ export const Route = createFileRoute('/value-definition')({
 
 function ValueDefinitionPage() {
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 mt-[-70px]">
+    <div className="min-h-screen bg-white text-slate-900 mt-[-70px]">
       <main className="max-w-6xl mx-auto px-4 lg:px-6 pt-0 lg:pt-0 pb-10 lg:pb-14">
         <div className="bg-white rounded-3xl shadow-sm border border-slate-200 px-6 sm:px-8 lg:px-10 py-8 lg:py-10 grid grid-cols-1 lg:grid-cols-[minmax(0,2.1fr)_minmax(0,1.5fr)] gap-10 lg:gap-14">
           {/* Left column */}
