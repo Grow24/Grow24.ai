@@ -7,7 +7,7 @@ export const Route = createFileRoute('/problem')({
 
 function TextColumn({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <div className={`mx-auto w-full max-w-[42rem] px-6 py-12 md:py-14 ${className}`}>
+    <div className={`mx-auto w-full max-w-[1200px] px-2 md:px-3 lg:px-4 py-12 md:py-14 ${className}`}>
       {children}
     </div>
   )
@@ -23,6 +23,40 @@ function ProblemPage() {
       {/* 1 — What Is a Problem? (intro) */}
       <TextColumn>
         <h1 className="text-3xl md:text-4xl font-bold mb-8">What Is a Problem?</h1>
+        <div className="overflow-hidden rounded-[2px] relative border border-slate-200/70 mb-8">
+          <img
+            src="/problem/problem-key-takeaways.png"
+            alt="Problem key takeaways visual"
+            className="w-full h-auto block object-contain bg-white"
+          />
+          <div
+            className="absolute left-8 top-9 w-[440px] max-w-[92%] rounded-2xl p-5 md:p-6 text-slate-800 shadow-[0_10px_28px_rgba(0,0,0,0.2)] border"
+            style={{
+              backgroundColor: 'rgba(245, 245, 246, 0.78)',
+              borderColor: 'rgba(255, 255, 255, 0.46)',
+              backdropFilter: 'blur(2px)',
+              WebkitBackdropFilter: 'blur(2px)',
+            }}
+          >
+            <p className="text-[12px] font-semibold tracking-wide text-slate-900 mb-3">KEY TAKEAWAYS</p>
+            <p className="text-[14px] leading-[1.45] mb-3">
+              A problem is not just a visible complaint, delay, or inefficiency. It is the underlying gap between what
+              a target audience needs and wants, and what the current solution is actually able to deliver.
+            </p>
+            <p className="text-[14px] leading-[1.45] mb-3">
+              Strong problem definition starts with audience context: who is affected, what matters to them, how aware
+              they are of their needs, and where the As-Is process fails to meet those expectations.
+            </p>
+            <p className="text-[14px] leading-[1.45] mb-3">
+              The gap can be about downside (friction, risk, decline) or upside (missed opportunity from new
+              capabilities). Both should be explicit in a disciplined problem statement.
+            </p>
+            <p className="text-[14px] leading-[1.45]">
+              When the problem is defined clearly, solution design becomes much stronger because teams can connect
+              audience need, process gap, and business outcomes.
+            </p>
+          </div>
+        </div>
         <div className="space-y-6 text-base md:text-lg leading-relaxed text-black">
           <p>Most people begin too late.</p>
           <p>
@@ -36,7 +70,7 @@ function ProblemPage() {
             clearly, the path to a better solution becomes much easier to see.
           </p>
           <p>
-            This page explains what a problem really is, what makes a strong problem statement, and why this matters. We use Uber
+            This blog explains what a problem really is, what makes a strong problem statement, and why this matters. We use Uber
             throughout as the main example.
           </p>
         </div>
@@ -84,7 +118,7 @@ function ProblemPage() {
 
       {/* 4 — Understanding Needs and Wants (infographic) */}
       <section className="border-t border-slate-200 bg-[#fdfbf7] px-4 py-12 md:py-16">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-[1200px]">
           <h2 className="text-center text-2xl md:text-3xl font-bold text-black mb-2">Understanding Needs and Wants</h2>
           <p className="text-center text-base md:text-lg text-slate-800 mb-8">
             How to classify requirements before defining a Problem.
@@ -243,7 +277,7 @@ function ProblemPage() {
 
       {/* 6 — Awareness infographic */}
       <section className="border-t border-slate-200 bg-[#f5f2e9] px-4 py-12 md:py-16">
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-[1280px]">
           <div className="rounded-xl bg-slate-100 border border-slate-300 p-6 mb-4 text-center">
             <h2 className="text-2xl md:text-3xl font-bold">Awareness of Needs and Wants</h2>
             <p className="mt-2 text-slate-800">Why some problems are obvious only after a better solution appears.</p>
@@ -349,7 +383,7 @@ function ProblemPage() {
 
       {/* 7 — Concept: What Is a Problem? (infographic) */}
       <section className="border-t border-slate-200 bg-slate-100 px-4 py-12 md:py-16">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-[1200px]">
           <h2 className="text-center text-2xl md:text-3xl font-bold">What Is a Problem?</h2>
           <p className="text-center text-slate-800 mt-2 mb-8">
             Understanding the Concept of a Problem and a Problem Statement
@@ -484,6 +518,10 @@ function ProblemPage() {
             On the downside side, the current solution may expose the audience to weaknesses, diminishing strengths, threats, or diminishing
             opportunities. In plain language, things may be fragile, declining, risky, or increasingly insufficient.
           </p>
+          <p>
+            On the upside side, the current solution may be too weak to capture new strengths, new opportunities, and new forms of value
+            made possible by changing technology, behavior, or market structure.
+          </p>
         </div>
       </TextColumn>
 
@@ -571,9 +609,26 @@ function ProblemPage() {
         </div>
       </TextColumn>
 
+      {/* 14 — Problem statement for Uber (text) */}
+      <TextColumn className="border-t border-slate-200">
+        <SectionHeading>Problem statement for Uber</SectionHeading>
+        <div className="space-y-6 text-base md:text-lg leading-relaxed">
+          <p>Here is a strong problem statement for Uber, based on the logic above:</p>
+          <p>
+            Urban commuters, travelers, and time-sensitive riders had needs and wants for transport that was reliable, convenient,
+            transparent, safe, and easy to complete. However, the current solution for accessing rides did not adequately meet those needs
+            and wants because the As-Is transport-access process was fragmented, uncertain, weak in visibility, inconvenient in payment,
+            and inconsistent in trust. This created downside in the form of friction, lost rides, poor predictability, and weaker
+            repeatability, while also failing to capture the upside made possible by mobile connectivity, real-time matching, digital
+            payments, and scalable trust mechanisms. As a result, a meaningful gap existed between what riders needed and what the current
+            solution could reliably deliver.
+          </p>
+        </div>
+      </TextColumn>
+
       {/* 14 — Filled template */}
       <section className="border-t border-slate-200 bg-slate-50 px-4 py-12 md:py-16">
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-[1200px]">
           <h2 className="text-2xl md:text-3xl font-bold text-[#2c3e50] mb-6">Filled Problem Statement Template</h2>
 
           <div className="flex flex-col sm:flex-row rounded-lg overflow-hidden border border-slate-400 mb-8">
@@ -647,7 +702,35 @@ function ProblemPage() {
         </div>
       </section>
 
-      {/* 15 — PBMP */}
+      {/* 15 — What a problem is not */}
+      <TextColumn className="border-t border-slate-200">
+        <SectionHeading>What a problem is not</SectionHeading>
+        <div className="space-y-6 text-base md:text-lg leading-relaxed">
+          <p>It is also helpful to be clear about what a problem is not.</p>
+          <p>
+            A problem is not just a feature request. &quot;We need an app&quot; is not a problem statement.
+          </p>
+          <p>
+            A problem is not just a complaint. Complaints may point toward problems, but they are not the full thing.
+          </p>
+          <p>
+            A problem is not just a document title or a project name.
+          </p>
+          <p>
+            A problem is not merely &quot;we need innovation&quot; or &quot;we need a system.&quot;
+          </p>
+          <p>
+            And a problem is not always a visible pain point. Sometimes it is a hidden gap that only becomes obvious after a better
+            solution appears.
+          </p>
+          <p>
+            This matters because many teams mistake the visible symptom for the underlying problem. They solve too shallowly and then
+            wonder why the result feels incomplete.
+          </p>
+        </div>
+      </TextColumn>
+
+      {/* 16 — PBMP */}
       <TextColumn className="border-t border-slate-200">
         <SectionHeading>Why this matters in PBMP</SectionHeading>
         <div className="space-y-6 text-base md:text-lg leading-relaxed">
@@ -666,7 +749,7 @@ function ProblemPage() {
         </div>
       </TextColumn>
 
-      {/* 16 — Final thought */}
+      {/* 17 — Final thought */}
       <TextColumn className="border-t border-slate-200 pb-20">
         <SectionHeading>Final thought</SectionHeading>
         <div className="space-y-6 text-base md:text-lg leading-relaxed">
