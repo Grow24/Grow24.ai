@@ -1,5 +1,9 @@
 node_modules
+**/node_modules
 dist
+**/dist
+build
+**/build
 .git
 .github
 .cursor
@@ -7,6 +11,12 @@ dist
 .DS_Store
 *.log
 *.tsbuildinfo
+coverage
+**/coverage
+.next
+**/.next
+.cache
+**/.cache
 n8n/n8n-tesseract/data
 **/.env
 **/.env.local
