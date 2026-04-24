@@ -24,6 +24,9 @@ export default defineConfig({
         '**/Microsoft/**',
         '**/OpenStreetMaps/**',
         '**/ImageProcessing/**',
+        '**/whatsappchat/**',
+        '**/project/**',
+        '**/n8n/**',
         '**/Google/**',
         '**/Mxgraph_ReactFlow/**',
         '**/mxgraph_standalone/**',
@@ -78,6 +81,27 @@ export default defineConfig({
         target: `http://localhost:${process.env.IMAGE_PROCESSING_PORT || '5182'}`,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/ImageProcessing/, '') || '/',
+      },
+      // WhatsAppChat (CRA dev server) — strip /whatsappchat prefix
+      '/whatsappchat': {
+        target: `http://localhost:${process.env.WHATSAPPCHAT_PORT || '5193'}`,
+        changeOrigin: true,
+        ws: true,
+        rewrite: (path) => path.replace(/^\/whatsappchat/, '') || '/',
+      },
+      // Project app (Vite) — expose under /Project to avoid conflict with site /project route
+      '/Project': {
+        target: `http://localhost:${process.env.PROJECT_APP_PORT || '5194'}`,
+        changeOrigin: true,
+        ws: true,
+        rewrite: (path) => path.replace(/^\/Project/, '') || '/',
+      },
+      // n8n Docker app — keep /n8n prefix (n8n runs with N8N_PATH=/n8n/)
+      '/n8n': {
+        target: `http://localhost:${process.env.N8N_PORT || '5678'}`,
+        changeOrigin: true,
+        ws: true,
+        rewrite: (path) => path.replace(/^\/n8n/, '') || '/',
       },
       // Google app (Vite) — keep /Google prefix; app uses base: /Google/
       '/Google': {
@@ -218,6 +242,24 @@ export default defineConfig({
           if (url === '/ImageProcessing' || url === '/ImageProcessing/') {
             res.statusCode = 302
             res.setHeader('Location', '/ImageProcessing/index.html')
+            res.end()
+            return
+          }
+          if (url === '/whatsappchat') {
+            res.statusCode = 302
+            res.setHeader('Location', '/whatsappchat/')
+            res.end()
+            return
+          }
+          if (url === '/Project') {
+            res.statusCode = 302
+            res.setHeader('Location', '/Project/')
+            res.end()
+            return
+          }
+          if (url === '/n8n') {
+            res.statusCode = 302
+            res.setHeader('Location', '/n8n/')
             res.end()
             return
           }

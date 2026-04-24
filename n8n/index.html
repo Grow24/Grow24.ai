@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Document Processor - Receipt & Invoice Scanner</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .header {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    .config-section {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .config-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: #fff;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .upload-area {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border: 3px dashed #d1d5db;
+      border-radius: 20px;
+      padding: 48px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-area::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1;
+    }
+
+    .upload-area:hover::before {
+      opacity: 1;
+    }
+
+    .upload-area:hover {
+      border-color: #667eea;
+      transform: translateY(-2px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    .upload-area.dragover {
+      border-color: #667eea;
+      background: rgba(102, 126, 234, 0.05);
+      transform: scale(1.02);
+    }
+
+    .upload-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .upload-text {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .upload-subtext {
+      color: #6b7280;
+      font-size: 0.95rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    #fileInput {
+      display: none;
+    }
+
+    .preview-container {
+      display: none;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .preview-image {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      margin-bottom: 20px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .file-info {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .file-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .file-info-item {
+      background: #fff;
+      padding: 16px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e5e7eb;
+    }
+
+    .file-info-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .file-info-value {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #374151;
+      word-break: break-all;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 160px;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.9);
+      color: #374151;
+      border: 2px solid #e5e7eb;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-secondary:hover {
+      background: #f9fafb;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .loading {
+      display: none;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #f3f4f6;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 16px;
+    }
+
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 25px;
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    .status-processing {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fcd34d;
+    }
+
+    .status-success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #34d399;
+    }
+
+    .status-error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #f87171;
+    }
+
+    .result-container {
+      display: none;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .result-success,
+    .result-error {
+      padding: 32px;
+    }
+
+    .result-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+
+    .result-success .result-title {
+      color: #065f46;
+    }
+
+    .result-error .result-title {
+      color: #991b1b;
+    }
+
+    .result-message {
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
+    .result-data {
+      background: #1f2937;
+      color: #f9fafb;
+      padding: 20px;
+      border-radius: 12px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      margin-top: 20px;
+      border: 1px solid #374151;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 16px;
+        gap: 20px;
+      }
+
+      .header {
+        padding: 24px 20px;
+      }
+
+      .header h1 {
+        font-size: 2rem;
+      }
+
+      .config-section,
+      .loading,
+      .preview-container {
+        padding: 20px;
+      }
+
+      .upload-area {
+        padding: 32px 20px;
+      }
+
+      .upload-icon {
+        font-size: 2.5rem;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .btn {
+        min-width: auto;
+      }
+
+      .file-info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .result-success,
+      .result-error {
+        padding: 24px;
+      }
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(102, 126, 234, 0.3);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(102, 126, 234, 0.5);
+    }
+
+    /* Animations */
+    .container > * {
+      animation: fadeInUp 0.6s ease-out forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .container > *:nth-child(1) { animation-delay: 0.1s; }
+    .container > *:nth-child(2) { animation-delay: 0.2s; }
+    .container > *:nth-child(3) { animation-delay: 0.3s; }
+    .container > *:nth-child(4) { animation-delay: 0.4s; }
+    .container > *:nth-child(5) { animation-delay: 0.5s; }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    /* --- STYLES FOR THE NEW PRETTY RESULTS --- */
+
+/* Keyframe animation for items fading in */
+@keyframes itemFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header for the details section */
+.details-header {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #4b5563;
+  margin-top: 28px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+/* Main display for the total amount */
+.result-total-display {
+  background: linear-gradient(135deg, #f5f3ff, #eef2ff);
+  border: 1px solid #c7d2fe;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  margin-top: 24px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
+}
+
+.result-total-label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #6d28d9;
+  margin-bottom: 4px;
+}
+
+.result-total-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #4c1d95;
+  line-height: 1.2;
+}
+
+/* Grid container for all other data */
+.result-data-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+/* Individual data item in the grid */
+.result-data-item {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  /* Link to the animation */
+  opacity: 0; /* Start hidden */
+  animation: itemFadeInUp 0.5s ease forwards;
+}
+
+.result-data-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Icon container */
+.result-data-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eef2ff;
+  color: #6366f1;
+  border-radius: 50%;
+}
+
+/* Text content (label and value) */
+.result-data-content {
+  flex-grow: 1;
+}
+
+.result-data-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+
+.result-data-value {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #1f2937;
+  word-break: break-word;
+}
+
+/* Renaming your old raw data class for clarity */
+.result-data-raw {
+  background: #1f2937;
+  color: #f9fafb;
+  padding: 20px;
+  border-radius: 12px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+  overflow-x: auto;
+  margin-top: 20px;
+}
+
+/* --- STYLES FOR THE NEW DATA TABLE --- */
+
+.result-table-container {
+    width: 100%;
+    overflow-x: auto; /* Ensures table is responsive on small screens */
+    margin-top: 24px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.result-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.result-table th,
+.result-table td {
+    padding: 14px 18px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.result-table thead {
+    background-color: #f9fafb;
+}
+
+.result-table th {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.result-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.result-table tbody tr:hover {
+    background-color: #f8f8ff;
+}
+
+.result-table td {
+    font-size: 0.95rem;
+    color: #374151;
+}
+
+.result-table td:nth-child(2),
+.result-table td:nth-child(3),
+.result-table td:nth-child(4) {
+    text-align: right;
+    font-family: 'Menlo', 'Monaco', monospace;
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📄 Document Processor</h1>
+      <p class="subtitle">AI-powered receipt and invoice processing</p>
+    </div>
+
+    <div class="config-section">
+      <div class="config-title">⚙️ Configuration</div>
+      <div class="form-group">
+        <label for="webhookUrl" class="form-label">N8N Webhook URL</label>
+        <input
+          type="url"
+          id="webhookUrl"
+          class="form-input"
+          placeholder="http://localhost:5678/webhook/document-processor"
+          value="http://localhost:5678/webhook-test/bc7e87f9-c710-4b1f-a635-fa6811985db1"
+        />
+      </div>
+      <div class="form-group">
+        <label for="bearerToken" class="form-label">Bearer Token</label>
+        <input
+          type="password"
+          id="bearerToken"
+          class="form-input"
+          placeholder="Enter your secure bearer token"
+          value="autodocx"
+        />
+      </div>
+    </div>
+
+    <div class="upload-area" id="uploadArea">
+      <div class="upload-icon">📁</div>
+      <div class="upload-text">Drop your document here</div>
+      <div class="upload-subtext">or click to browse • Supports PNG, JPG, PDF • Max 10MB</div>
+    </div>
+
+    <input type="file" id="fileInput" accept="image/*,.pdf" />
+
+    <div class="preview-container" id="previewContainer">
+      <img id="previewImage" class="preview-image" alt="Document Preview" />
+      <div class="file-info" id="fileInfo">
+        <div class="file-info-grid"></div>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <button class="btn btn-primary" id="submitBtn" disabled>🚀 Process Document</button>
+      <button class="btn btn-secondary" id="resetBtn">🔄 Reset</button>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <div class="loading-text">Processing your document...</div>
+      <div class="status-indicator status-processing" id="loadingStatus">
+        <span>⏳</span> Initializing...
+      </div>
+    </div>
+
+    <div class="result-container" id="resultContainer">
+      <div id="resultContent"></div>
+    </div>
+  </div>
+
+  <script>
+    class DocumentProcessor {
+      constructor() {
+        this.sessionId = this.generateSessionId();
+        this.selectedFile = null;
+        this.processingSteps = [
+          "Uploading document...",
+          "Extracting text with OCR...",
+          "Analyzing with AI...",
+          "Processing results...",
+          "Finalizing...",
+        ];
+        this.currentStep = 0;
+
+        this.initializeElements();
+        this.setupEventListeners();
+        this.displaySessionId();
+      }
+
+      generateSessionId() {
+        const timestamp = Date.now();
+        const random = Math.random().toString(36).substr(2, 9);
+        return `session_${timestamp}_${random}`;
+      }
+
+      initializeElements() {
+        this.uploadArea = document.getElementById("uploadArea");
+        this.fileInput = document.getElementById("fileInput");
+        this.previewContainer = document.getElementById("previewContainer");
+        this.previewImage = document.getElementById("previewImage");
+        this.fileInfo = document.getElementById("fileInfo");
+        this.submitBtn = document.getElementById("submitBtn");
+        this.resetBtn = document.getElementById("resetBtn");
+        this.loading = document.getElementById("loading");
+        this.loadingStatus = document.getElementById("loadingStatus");
+        this.resultContainer = document.getElementById("resultContainer");
+        this.sessionIdSpan = document.getElementById("sessionId");
+        this.webhookUrlInput = document.getElementById("webhookUrl");
+        this.bearerTokenInput = document.getElementById("bearerToken");
+      }
+
+      displaySessionId() {
+        if (this.sessionIdSpan) {
+          this.sessionIdSpan.textContent = this.sessionId;
+        }
+      }
+
+      setupEventListeners() {
+        this.uploadArea.addEventListener("click", () => this.fileInput.click());
+        this.fileInput.addEventListener("change", (e) =>
+          this.handleFileSelect(e.target.files[0])
+        );
+
+        this.uploadArea.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          this.uploadArea.classList.add("dragover");
+        });
+
+        this.uploadArea.addEventListener("dragleave", () => {
+          this.uploadArea.classList.remove("dragover");
+        });
+
+        this.uploadArea.addEventListener("drop", (e) => {
+          e.preventDefault();
+          this.uploadArea.classList.remove("dragover");
+          if (e.dataTransfer.files.length > 0) {
+            this.handleFileSelect(e.dataTransfer.files[0]);
+          }
+        });
+
+        this.submitBtn.addEventListener("click", () => this.processDocument());
+        this.resetBtn.addEventListener("click", () => this.resetForm());
+      }
+
+      handleFileSelect(file) {
+        if (!file) return;
+
+        const validTypes = [
+          "image/jpeg",
+          "image/jpg",
+          "image/png",
+          "image/webp",
+          "application/pdf",
+        ];
+        if (!validTypes.includes(file.type)) {
+          this.showError(
+            "Please select a valid image (PNG, JPG, WebP) or PDF file."
+          );
+          return;
+        }
+
+        const maxSize = 10 * 1024 * 1024;
+        if (file.size > maxSize) {
+          this.showError("File size must be less than 10MB.");
+          return;
+        }
+
+        this.selectedFile = file;
+        this.displayPreview(file);
+        this.submitBtn.disabled = false;
+        this.hideResult();
+      }
+
+      displayPreview(file) {
+        const fileInfoGrid = this.fileInfo.querySelector(".file-info-grid");
+        fileInfoGrid.innerHTML = `
+          <div class="file-info-item">
+            <div class="file-info-label">File Name</div>
+            <div class="file-info-value">${file.name}</div>
+          </div>
+          <div class="file-info-item">
+            <div class="file-info-label">File Size</div>
+            <div class="file-info-value">${this.formatFileSize(file.size)}</div>
+          </div>
+          <div class="file-info-item">
+            <div class="file-info-label">File Type</div>
+            <div class="file-info-value">${file.type}</div>
+          </div>
+          <div class="file-info-item">
+            <div class="file-info-label">Last Modified</div>
+            <div class="file-info-value">${new Date(
+              file.lastModified
+            ).toLocaleDateString()}</div>
+          </div>
+        `;
+
+        if (file.type.startsWith("image/")) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            this.previewImage.src = e.target.result;
+            this.previewImage.style.display = "block";
+          };
+          reader.readAsDataURL(file);
+        } else {
+          this.previewImage.style.display = "none";
+        }
+
+        this.previewContainer.style.display = "block";
+      }
+
+      formatFileSize(bytes) {
+        if (bytes === 0) return "0 Bytes";
+        const k = 1024;
+        const sizes = ["Bytes", "KB", "MB", "GB"];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+      }
+
+      async processDocument() {
+        if (!this.selectedFile) {
+          this.showError("Please select a file first.");
+          return;
+        }
+
+        const webhookUrl = this.webhookUrlInput.value.trim();
+        const bearerToken = this.bearerTokenInput.value.trim();
+
+        if (!webhookUrl) {
+          this.showError("Please enter the N8N webhook URL.");
+          return;
+        }
+
+        if (!bearerToken) {
+          this.showError("Please enter the bearer token.");
+          return;
+        }
+
+        this.showLoading();
+        this.submitBtn.disabled = true;
+        this.hideResult();
+
+        try {
+          const formData = new FormData();
+          formData.append("data", this.selectedFile); // 'data' matches n8n binary property
+          formData.append("sessionId", this.sessionId);
+          formData.append("timestamp", new Date().toISOString());
+
+          const response = await fetch(webhookUrl, {
+            method: "POST",
+            mode: "cors", // Explicitly set CORS mode
+            headers: {
+              Authorization: `Bearer ${bearerToken}`,
+              // DO NOT set Content-Type header for FormData
+            },
+            body: formData,
+          });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP ${response.status}: ${response.statusText}\n${errorText}`);
+          }
+
+          const result = await response.json();
+          this.displayResult(result, true);
+        } catch (error) {
+          console.error("Processing error:", error);
+          
+          // More specific error handling
+          let errorMessage = error.message;
+          if (error.message.includes("Failed to fetch") || error.message.includes("CORS")) {
+            errorMessage = "CORS Error: Please configure N8N webhook to allow your domain. Set 'Allowed Origins (CORS)' to '*' or 'http://127.0.0.1:5500' in your webhook node.";
+          }
+          
+          this.displayResult(
+            {
+              error: errorMessage,
+              sessionId: this.sessionId,
+              timestamp: new Date().toISOString(),
+              details: "Check console for more details",
+              solution: "Configure CORS in N8N webhook node settings"
+            },
+            false
+          );
+        } finally {
+          this.hideLoading();
+          this.submitBtn.disabled = false;
+        }
+      }
+
+      displayResult(result, isSuccess) {
+    const resultContent = document.getElementById("resultContent");
+
+    if (isSuccess) {
+        // --- Part 1: Always build the "Pretty Grid" for the main details ---
+        const fieldLabels = {
+            document_type: "Document Type", document_number: "Document Number", date: "Date",
+            due_date: "Due Date", vendor_name: "Vendor", vendor_address: "Vendor Address",
+            customer_name: "Customer", customer_address: "Customer Address", subtotal: "Subtotal",
+            tax_rate: "Tax Rate (%)", tax_amount: "Tax Amount", payment_method: "Payment Method",
+            cash_paid: "Cash Paid", change_due: "Change Due", total: "Total"
+        };
+        const icons = {
+            document_type: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`,
+            vendor_name: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle></svg>`,
+            customer_name: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle></svg>`,
+            date: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>`,
+            total: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>`,
+            default: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`
+        };
+
+        let totalDisplayHtml = '';
+        if (result.total !== undefined && result.total !== null) {
+            totalDisplayHtml = `
+                <div class="result-total-display">
+                    <div class="result-total-label">Total Amount</div>
+                    <div class="result-total-value">$${Number(result.total).toFixed(2)}</div>
+                </div>
+            `;
+        }
+
+        let dataGridHtml = '';
+        let animationDelay = 0;
+        // Check if there are any main details to display before creating the grid
+        const mainDetailsExist = Object.keys(fieldLabels).some(key => key !== 'total' && result[key]);
+        if (mainDetailsExist) {
+            dataGridHtml = '<div class="result-data-grid">';
+            for (const key in fieldLabels) {
+                if (key === 'total' || !result[key]) {
+                    continue;
+                }
+                dataGridHtml += `
+                    <div class="result-data-item" style="animation-delay: ${animationDelay}ms;">
+                        <div class="result-data-icon">${icons[key] || icons.default}</div>
+                        <div class="result-data-content">
+                            <div class="result-data-label">${fieldLabels[key]}</div>
+                            <div class="result-data-value">${result[key]}</div>
+                        </div>
+                    </div>
+                `;
+                animationDelay += 50;
+            }
+            dataGridHtml += '</div>';
+        }
+        
+        // --- Part 2: If line_items exist, build the table ---
+        let tableHtml = '';
+        if (result.line_items && Array.isArray(result.line_items) && result.line_items.length > 0) {
+            tableHtml = `
+                <h3 class="details-header">Line Items</h3>
+                <div class="result-table-container">
+                    <table class="result-table">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            result.line_items.forEach(item => {
+                const description = item.description ?? '';
+                const quantity = item.quantity ?? '';
+                const unitPrice = item.unit_price ? `$${Number(item.unit_price).toFixed(2)}` : '';
+                const amount = item.amount ? `$${Number(item.amount).toFixed(2)}` : '';
+                tableHtml += `
+                    <tr>
+                        <td>${description}</td>
+                        <td>${quantity}</td>
+                        <td>${unitPrice}</td>
+                        <td>${amount}</td>
+                    </tr>
+                `;
+            });
+            tableHtml += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // --- Part 3: Assemble the final HTML ---
+        resultContent.innerHTML = `
+          <div class="result-success">
+            <div class="result-title"><span>✅</span> Processing Successful!</div>
+            <div class="result-message">We've successfully extracted the following data from your document.</div>
+            ${totalDisplayHtml}
+            ${mainDetailsExist ? `<h3 class="details-header">Document Details</h3>${dataGridHtml}` : ''}
+            ${tableHtml}
+          </div>
+        `;
+
+    } else {
+        // Error display remains the same
+        resultContent.innerHTML = `
+          <div class="result-error">
+            <div class="result-title"><span>❌</span> Processing Failed</div>
+            <div class="result-message">There was an error processing your document. Please check the details below.</div>
+            <div class="result-data-raw">${JSON.stringify(result, null, 2)}</div>
+          </div>
+        `;
+    }
+
+    this.showResult();
+}
+
+      showLoading() {
+        this.loading.style.display = "block";
+        this.updateLoadingStatus("Initializing...");
+      }
+
+      hideLoading() {
+        this.loading.style.display = "none";
+      }
+
+      showResult() {
+        this.resultContainer.style.display = "block";
+      }
+
+      hideResult() {
+        this.resultContainer.style.display = "none";
+      }
+
+      sshowError(message) {
+        // NOTE: You will need to add the 'toast-notification' class to your CSS
+        // Remove any existing toast to prevent stacking
+        const existingToast = document.querySelector('.toast-notification');
+        if (existingToast) {
+            existingToast.remove();
+        }
+
+        // Create the toast element
+        const toast = document.createElement('div');
+        toast.className = 'toast-notification';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        // Animate it in
+        setTimeout(() => {
+            toast.classList.add('show');
+        }, 10);
+
+        // Remove it after 5 seconds
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.parentElement.removeChild(toast);
+                }
+            }, 300); // Wait for animation to finish
+        }, 5000);
+      }
+      resetForm() {
+        this.selectedFile = null;
+        this.fileInput.value = "";
+        this.previewContainer.style.display = "none";
+        this.submitBtn.disabled = true;
+        this.hideLoading();
+        this.hideResult();
+        this.sessionId = this.generateSessionId();
+        this.displaySessionId();
+      }
+
+      updateLoadingStatus(message) {
+        if (this.loadingStatus) {
+          this.loadingStatus.innerHTML = `<span>⏳</span> ${message}`;
+        }
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      new DocumentProcessor();
+    });
+  </script>
+</body>
+</html>

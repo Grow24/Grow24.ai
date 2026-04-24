@@ -116,11 +116,14 @@ Then open:
 | http://localhost:5173/Mxgraph_ReactFlow/ | Mxgraph_ReactFlow |
 | http://localhost:5173/mxgraph_standalone/ | mxgraph_standalone |
 | http://localhost:5173/OpenStreetMaps/ | OpenStreetMaps |
+| http://localhost:5173/whatsappchat/ | whatsappchat |
+| http://localhost:5173/Project/ | project |
+| http://localhost:5173/n8n/ | n8n |
 | http://localhost:5173/univer/ | univer |
 
 Optional: HBMP API on port **4000** — `cd HBMPONE/server && npm install && npm run dev`
 
-**Deploy (GitHub → Zeabur / Docker):** use the root **`Dockerfile`** (Caddy serves `/`, `/univer/`, `/HBMPONE/`). See **[DEPLOY_ZEABUR.md](./DEPLOY_ZEABUR.md)**. Pushes to `main`/`master` run **`.github/workflows/build.yml`** to verify `npm run build`.
+**Deploy (GitHub → Zeabur / Docker):** use the root **`Dockerfile`** (Caddy serves `/`, `/univer/`, `/HBMPONE/`, `/n8n/`). Deploy n8n as a separate Zeabur service from `n8n/n8n-tesseract` and set `N8N_UPSTREAM` on the frontend service. See **[DEPLOY_ZEABUR.md](./DEPLOY_ZEABUR.md)**. Pushes to `main`/`master` run **`.github/workflows/build.yml`** to verify `npm run build`.
 
 ### 4. Build for Production
 

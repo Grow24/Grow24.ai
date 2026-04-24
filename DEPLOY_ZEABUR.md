@@ -1,9 +1,10 @@
 # Zeabur Deployment Guide (Frontend + Backend)
 
-This project should run as **two or more Zeabur services**:
+This project should run as **three or more Zeabur services**:
 
-- `web-frontend`: static app + `/univer/*` + `/HBMPONE/*` + `/ivvychainv2/*` served by Caddy (root `Dockerfile`)
+- `web-frontend`: static app + routed sub-apps (including `/n8n/*`) served by Caddy (root `Dockerfile`)
 - `web-backend`: Express API in `backend/` (`backend/Dockerfile`)
+- `web-n8n`: n8n service from `n8n/n8n-tesseract/` (`n8n/n8n-tesseract/Dockerfile`)
 - **Optional** `hbmp-api`: HBMPONE API in `HBMPONE/server` (`HBMPONE/server/Dockerfile`) — required for the HBMPONE app to load/save data
 
 ## 0) CRITICAL: Docker vs Zeabur static (`zeabur.json`)
@@ -16,6 +17,7 @@ The root **`Dockerfile`** runs `npm run build` (main + HBMPONE + ivvychainv2 + U
 - `/univer/` → Univer + chunks under `/univer/*`
 - `/HBMPONE/` → HBMPONE + assets under `/HBMPONE/*`
 - `/ivvychainv2/` → ivvychainv2 + assets under `/ivvychainv2/*`
+- `/n8n/` → proxied to the n8n service (configured by `N8N_UPSTREAM`)
 
 In Zeabur → frontend → **Dockerfile** build, port **8080**.
 
@@ -40,6 +42,8 @@ If you edited the platform Caddyfile manually, add the same **`/HBMPONE/`** hand
    - `VITE_API_ENDPOINT=https://<backend-domain>/api/chat`
    - Optional: `VITE_SEND_EMAIL_ENDPOINT=https://<backend-domain>/api/send-email`
    - Optional: `VITE_WHATSAPP_NUMBER=+919370239600`
+   - `N8N_UPSTREAM=<internal_n8n_host:5678>` (runtime)  
+     Example internal address: `web-n8n.zeabur.internal:5678`
    - **HBMPONE (build-time):** `VITE_API_URL` — public URL of the HBMP API including `/api`, e.g. `https://<hbmp-service>.zeabur.app/api`. If you omit it, the client is built with `/api` (same-origin); that only works if you terminate `/api` on the same host (not configured in the default Caddyfile — use a full URL unless you add your own reverse proxy).
 4. Deploy.
 
@@ -70,6 +74,28 @@ If you edited the platform Caddyfile manually, add the same **`/HBMPONE/`** hand
    - Google OAuth / other secrets as needed for `HBMPONE/server`.
 5. Deploy. Use the service’s public HTTPS origin as **`VITE_API_URL`** on the **frontend** Docker build (see §1).
 
+## 2c) n8n service (required for `/n8n/`)
+
+1. Create another Zeabur service from the same repo.
+2. Set service root to **`n8n/n8n-tesseract`** so Zeabur uses `n8n/n8n-tesseract/Dockerfile`.
+3. Expose port **5678**.
+4. Add environment variables:
+   - `N8N_BASIC_AUTH_ACTIVE=true`
+   - `N8N_BASIC_AUTH_USER=<your_username>`
+   - `N8N_BASIC_AUTH_PASSWORD=<your_strong_password>`
+   - `N8N_PORT=5678`
+   - `N8N_PROTOCOL=https`
+   - `N8N_HOST=<frontend-domain-without-protocol>`  
+     Example: `myapp.zeabur.app`
+   - `N8N_EDITOR_BASE_URL=https://<frontend-domain>/n8n/`
+   - `WEBHOOK_URL=https://<frontend-domain>/n8n/`
+   - `N8N_PATH=/n8n/`
+   - `N8N_COMMUNITY_PACKAGES_ENABLED=true`
+   - `N8N_CUSTOM_EXTENSIONS=/data/community_nodes`
+   - `N8N_USER_FOLDER=/data`
+5. Attach a persistent volume mounted at **`/data`** (to keep workflows/executions across redeploys).
+6. Deploy.
+
 ## 3) Validate integration
 
 After both services are live:
@@ -78,6 +104,7 @@ After both services are live:
   - `/` should load main app
   - `/univer/` should load Univer app
   - `/HBMPONE/` should load the HBMPONE app (static assets must be JS/CSS, not HTML)
+  - `/n8n/` should load n8n login/editor through the frontend domain
 - API from frontend:
   - Chat should call `https://<backend-domain>/api/chat`
   - Leads should call `https://<backend-domain>/api/leads`
