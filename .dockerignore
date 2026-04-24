@@ -1,0 +1,13 @@
+node_modules
+dist
+.git
+.github
+.cursor
+.tanstack
+.DS_Store
+*.log
+*.tsbuildinfo
+n8n/n8n-tesseract/data
+**/.env
+**/.env.local
+**/.env.*.local
