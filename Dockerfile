@@ -29,6 +29,8 @@ RUN mkdir -p /src/mxgraph_standalone/apps/web
 FROM node:22-alpine
 
 RUN apk add --no-cache caddy ca-certificates
+RUN npm install -g --no-audit --no-fund n8n
+RUN mkdir -p /app/n8n-community && npm install --prefix /app/n8n-community --no-audit --no-fund n8n-nodes-tesseractjs
 
 WORKDIR /app
 

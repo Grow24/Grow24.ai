@@ -242,12 +242,12 @@
 		}
 	}
 
-	# --- n8n (external service) ---
+	# --- n8n (internal by default; override with N8N_UPSTREAM) ---
 	@n8nExact path /n8n
 	redir @n8nExact /n8n/ 308
 	handle /n8n* {
 		uri strip_prefix /n8n
-		reverse_proxy {$N8N_UPSTREAM} {
+		reverse_proxy {$N8N_UPSTREAM:127.0.0.1:5678} {
 			header_up Host {host}
 			header_up X-Forwarded-Proto {scheme}
 			header_up X-Forwarded-For {remote_host}
