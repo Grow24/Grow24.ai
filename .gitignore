@@ -25,3 +25,6 @@ Google/**/backend/tokens.json
 
 # n8n runtime data (sqlite, logs, execution binaries)
 n8n/n8n-tesseract/data/
+
+# Generated Univer local build artifacts
+univer/examples/local/
