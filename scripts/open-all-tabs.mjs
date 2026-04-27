@@ -16,7 +16,6 @@ const appPaths = [
   '/ivvychainv2/',
   '/mcp_server/',
   '/Microsoft/',
-  '/n8n/',
   '/OpenStreetMaps/',
   '/univer/',
 ]

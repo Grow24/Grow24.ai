@@ -26,7 +26,6 @@ export default defineConfig({
         '**/ImageProcessing/**',
         '**/whatsappchat/**',
         '**/project/**',
-        '**/n8n/**',
         '**/Google/**',
         '**/Mxgraph_ReactFlow/**',
         '**/mxgraph_standalone/**',
@@ -95,13 +94,6 @@ export default defineConfig({
         changeOrigin: true,
         ws: true,
         rewrite: (path) => path.replace(/^\/Project/, '') || '/',
-      },
-      // n8n Docker app — keep /n8n prefix (n8n runs with N8N_PATH=/n8n/)
-      '/n8n': {
-        target: `http://localhost:${process.env.N8N_PORT || '5678'}`,
-        changeOrigin: true,
-        ws: true,
-        rewrite: (path) => path.replace(/^\/n8n/, '') || '/',
       },
       // Google app (Vite) — keep /Google prefix; app uses base: /Google/
       '/Google': {
@@ -254,12 +246,6 @@ export default defineConfig({
           if (url === '/Project') {
             res.statusCode = 302
             res.setHeader('Location', '/Project/')
-            res.end()
-            return
-          }
-          if (url === '/n8n') {
-            res.statusCode = 302
-            res.setHeader('Location', '/n8n/')
             res.end()
             return
           }

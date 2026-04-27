@@ -87,8 +87,6 @@ export function vite404Plugin(): Plugin {
           pathname.startsWith('/ImageProcessing/') ||
           pathname === '/Google' ||
           pathname.startsWith('/Google/') ||
-          pathname === '/n8n' ||
-          pathname.startsWith('/n8n/') ||
           pathname === '/mcp_server' ||
           pathname.startsWith('/mcp_server/') ||
           pathname === '/Mxgraph_ReactFlow' ||
