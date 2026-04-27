@@ -206,6 +206,25 @@
 	@agentBotExact path /HBMP_AgentBot
 	redir @agentBotExact /HBMP_AgentBot/ 308
 
+	# AgentBot backend API and OAuth endpoints.
+	# Strip /HBMP_AgentBot so upstream receives /api/* and /oauth/*.
+	handle /HBMP_AgentBot/api* {
+		uri strip_prefix /HBMP_AgentBot
+		reverse_proxy {$AGENTBOT_API_UPSTREAM} {
+			header_up Host {host}
+			header_up X-Forwarded-Proto {scheme}
+			header_up X-Forwarded-For {remote_host}
+		}
+	}
+	handle /HBMP_AgentBot/oauth* {
+		uri strip_prefix /HBMP_AgentBot
+		reverse_proxy {$AGENTBOT_API_UPSTREAM} {
+			header_up Host {host}
+			header_up X-Forwarded-Proto {scheme}
+			header_up X-Forwarded-For {remote_host}
+		}
+	}
+
 	@agentBotAssets path_regexp agentbot_assets ^/HBMP_AgentBot/.*\.(js|mjs|css|map|json|wasm|ttf|woff|woff2|svg|png|jpg|jpeg|gif|webp|ico)$
 	handle @agentBotAssets {
 		root * /usr/share/caddy
