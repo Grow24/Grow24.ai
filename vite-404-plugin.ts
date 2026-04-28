@@ -81,6 +81,8 @@ export function vite404Plugin(): Plugin {
           pathname.startsWith('/ivvychainv2/') ||
           pathname === '/camunda-bpmn' ||
           pathname.startsWith('/camunda-bpmn/') ||
+          pathname === '/Dataflow-IOT' ||
+          pathname.startsWith('/Dataflow-IOT/') ||
           pathname === '/Microsoft' ||
           pathname.startsWith('/Microsoft/') ||
           pathname === '/OpenStreetMaps' ||

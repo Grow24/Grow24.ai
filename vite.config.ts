@@ -27,6 +27,7 @@ export default defineConfig({
         '**/whatsappchat/**',
         '**/project/**',
         '**/camunda-mern-bpmn-setup/**',
+        '**/Dataflow-IOT/**',
         '**/Google/**',
         '**/Mxgraph_ReactFlow/**',
         '**/mxgraph_standalone/**',
@@ -95,6 +96,26 @@ export default defineConfig({
         changeOrigin: true,
         ws: true,
         rewrite: (path) => path.replace(/^\/Project/, '') || '/',
+      },
+      // Dataflow-IOT backend API (Express)
+      '/Dataflow-IOT/api': {
+        target: `http://localhost:${process.env.DATAFLOW_API_PORT || '5197'}`,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/Dataflow-IOT/, '') || '/',
+      },
+      // Dataflow-IOT backend WebSocket stream
+      '/Dataflow-IOT/ws': {
+        target: `ws://localhost:${process.env.DATAFLOW_API_PORT || '5197'}`,
+        changeOrigin: true,
+        ws: true,
+        rewrite: (path) => path.replace(/^\/Dataflow-IOT/, '') || '/',
+      },
+      // Dataflow-IOT frontend (Vite) served under /Dataflow-IOT
+      '/Dataflow-IOT': {
+        target: `http://localhost:${process.env.DATAFLOW_FRONTEND_PORT || '5198'}`,
+        changeOrigin: true,
+        ws: true,
+        rewrite: (path) => path,
       },
       // Camunda MERN backend API (Express)
       '/camunda-bpmn/api': {
@@ -260,6 +281,12 @@ export default defineConfig({
           if (url === '/Project') {
             res.statusCode = 302
             res.setHeader('Location', '/Project/')
+            res.end()
+            return
+          }
+          if (url === '/Dataflow-IOT') {
+            res.statusCode = 302
+            res.setHeader('Location', '/Dataflow-IOT/')
             res.end()
             return
           }
