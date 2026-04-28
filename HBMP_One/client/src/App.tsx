@@ -47,9 +47,11 @@ function ProtectedRoute() {
 }
 
 function App() {
+  const routerBase = import.meta.env.BASE_URL || '/';
+
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+      <BrowserRouter basename={routerBase}>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route element={<ProtectedRoute />}>

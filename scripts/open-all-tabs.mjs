@@ -14,6 +14,7 @@ const appPaths = [
   '/HBMP_One/',
   '/ImageProcessing/',
   '/ivvychainv2/',
+  '/camunda-bpmn/',
   '/mcp_server/',
   '/Microsoft/',
   '/OpenStreetMaps/',

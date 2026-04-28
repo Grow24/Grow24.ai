@@ -116,13 +116,14 @@ Then open:
 | http://localhost:5173/Mxgraph_ReactFlow/ | Mxgraph_ReactFlow |
 | http://localhost:5173/mxgraph_standalone/ | mxgraph_standalone |
 | http://localhost:5173/OpenStreetMaps/ | OpenStreetMaps |
+| http://localhost:5173/camunda-bpmn/ | camunda-mern-bpmn-setup |
 | http://localhost:5173/whatsappchat/ | whatsappchat |
 | http://localhost:5173/Project/ | project |
 | http://localhost:5173/univer/ | univer |
 
 Optional: HBMP API on port **4000** — `cd HBMPONE/server && npm install && npm run dev`
 
-**Deploy (GitHub → Zeabur / Docker):** use the root **`Dockerfile`** (Caddy serves `/`, `/univer/`, `/HBMPONE/`). See **[DEPLOY_ZEABUR.md](./DEPLOY_ZEABUR.md)**. Pushes to `main`/`master` run **`.github/workflows/build.yml`** to verify `npm run build`.
+**Deploy (GitHub → Zeabur / Docker):** use the root **`Dockerfile`** (Caddy serves `/`, `/univer/`, `/HBMPONE/`, `/camunda-bpmn/`). See **[DEPLOY_ZEABUR.md](./DEPLOY_ZEABUR.md)**. Pushes to `main`/`master` run **`.github/workflows/build.yml`** to verify `npm run build`.
 
 ### 4. Build for Production
 

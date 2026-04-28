@@ -26,6 +26,7 @@ export default defineConfig({
         '**/ImageProcessing/**',
         '**/whatsappchat/**',
         '**/project/**',
+        '**/camunda-mern-bpmn-setup/**',
         '**/Google/**',
         '**/Mxgraph_ReactFlow/**',
         '**/mxgraph_standalone/**',
@@ -94,6 +95,19 @@ export default defineConfig({
         changeOrigin: true,
         ws: true,
         rewrite: (path) => path.replace(/^\/Project/, '') || '/',
+      },
+      // Camunda MERN backend API (Express)
+      '/camunda-bpmn/api': {
+        target: `http://localhost:${process.env.CAMUNDA_BACKEND_PORT || '4001'}`,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/camunda-bpmn/, '') || '/',
+      },
+      // Camunda MERN frontend (CRA) served under /camunda-bpmn
+      '/camunda-bpmn': {
+        target: `http://localhost:${process.env.CAMUNDA_FRONTEND_PORT || '5196'}`,
+        changeOrigin: true,
+        ws: true,
+        rewrite: (path) => path,
       },
       // Google app (Vite) — keep /Google prefix; app uses base: /Google/
       '/Google': {
@@ -246,6 +260,12 @@ export default defineConfig({
           if (url === '/Project') {
             res.statusCode = 302
             res.setHeader('Location', '/Project/')
+            res.end()
+            return
+          }
+          if (url === '/camunda-bpmn') {
+            res.statusCode = 302
+            res.setHeader('Location', '/camunda-bpmn/')
             res.end()
             return
           }

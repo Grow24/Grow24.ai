@@ -1,10 +1,16 @@
-# Zeabur Deployment Guide (Frontend + Backend)
+# Zeabur Deployment Guide (Frontend + Backend + Camunda)
 
-This project should run as **two or more Zeabur services**:
+This project should run as **multiple Zeabur services**:
 
 - `web-frontend`: static app + routed sub-apps served by Caddy (root `Dockerfile`).
 - `web-backend`: Express API in `backend/` (`backend/Dockerfile`)
 - **Optional** `hbmp-api`: HBMPONE API in `HBMPONE/server` (`HBMPONE/server/Dockerfile`) — required for the HBMPONE app to load/save data
+- **Camunda stack (recommended as separate services):**
+  - `camunda-engine` (Camunda 7, port `8080`)
+  - `camunda-mongo` (MongoDB)
+  - `camunda-backend` (`camunda-mern-bpmn-setup/backend`)
+  - `camunda-workers` (`camunda-mern-bpmn-setup/workers`)
+  - `camunda-frontend` (`camunda-mern-bpmn-setup/frontend`)
 
 ## 0) CRITICAL: Use Docker deployment only
 
@@ -32,6 +38,9 @@ If you edited the platform Caddyfile manually, add the same **`/HBMPONE/`** hand
    - Optional: `VITE_SEND_EMAIL_ENDPOINT=https://<backend-domain>/api/send-email`
    - Optional: `VITE_WHATSAPP_NUMBER=+919370239600`
    - **HBMPONE (build-time):** `VITE_API_URL` — public URL of the HBMP API including `/api`, e.g. `https://<hbmp-service>.zeabur.app/api`. If you omit it, the client is built with `/api` (same-origin); that only works if you terminate `/api` on the same host (not configured in the default Caddyfile — use a full URL unless you add your own reverse proxy).
+   - **Camunda reverse proxy targets (runtime):**
+     - `CAMUNDA_FRONTEND_UPSTREAM=https://<camunda-frontend-domain>`
+     - `CAMUNDA_BACKEND_UPSTREAM=https://<camunda-backend-domain>`
 4. Deploy.
 
 ## 2) Backend service
@@ -63,16 +72,59 @@ If you edited the platform Caddyfile manually, add the same **`/HBMPONE/`** hand
 
 ## 3) Validate integration
 
-After both services are live:
+After services are live:
 
 - Frontend URL:
   - `/` should load main app
   - `/univer/` should load Univer app
   - `/HBMPONE/` should load the HBMPONE app (static assets must be JS/CSS, not HTML)
+  - `/camunda-bpmn/` should load the Camunda BPMN app through the main domain
 - API from frontend:
   - Chat should call `https://<backend-domain>/api/chat`
   - Leads should call `https://<backend-domain>/api/leads`
   - Send Email should call `https://<backend-domain>/api/send-email`
+  - Camunda UI should call `/camunda-bpmn/api/*` and receive backend responses via Caddy proxy
+
+## 3b) Camunda service setup (Zeabur)
+
+Create these services and set the following:
+
+1. **`camunda-engine` service**
+   - Image: `camunda/camunda-bpm-platform:run-latest`
+   - Port: `8080`
+   - Verify: `https://<camunda-engine-domain>/camunda`
+
+2. **`camunda-mongo` service**
+   - Use Zeabur MongoDB service (recommended) or your own Mongo container.
+   - Keep connection string ready for backend.
+
+3. **`camunda-backend` service** (repo path: `camunda-mern-bpmn-setup/backend`)
+   - Build/start from that folder (Node service)
+   - Port: `4001` (or your chosen value)
+   - Env:
+     - `PORT=4001`
+     - `MONGO_URI=<camunda-mongo-connection-string>`
+     - `CAMUNDA_BASE_URL=https://<camunda-engine-domain>`
+     - optional: `ALLOWED_TOPICS=checkInventory,chargeCard,shipOrder`
+
+4. **`camunda-workers` service** (repo path: `camunda-mern-bpmn-setup/workers`)
+   - Env:
+     - `CAMUNDA_BASE_URL=https://<camunda-engine-domain>`
+   - Start command: `npm start`
+
+5. **`camunda-frontend` service** (repo path: `camunda-mern-bpmn-setup/frontend`)
+   - Port: `5196` (or your chosen value)
+   - Env:
+     - `PUBLIC_URL=/camunda-bpmn`
+     - `REACT_APP_API_BASE=/camunda-bpmn/api`
+     - `BROWSER=none`
+   - Start command: `npm start`
+
+6. **Link Camunda to main frontend**
+   - In `web-frontend` env, set:
+     - `CAMUNDA_FRONTEND_UPSTREAM=https://<camunda-frontend-domain>`
+     - `CAMUNDA_BACKEND_UPSTREAM=https://<camunda-backend-domain>`
+   - Redeploy `web-frontend`.
 
 ## 4) Recommended CORS
 
@@ -81,7 +133,7 @@ After both services are live:
 ## 5) Push commands
 
 ```bash
-git add Dockerfile Caddyfile .env.example backend/.env.example backend/Dockerfile DEPLOY_ZEABUR.md
-git commit -m "chore: add complete Zeabur frontend/backend deployment setup"
+git add Caddyfile DEPLOY_ZEABUR.md
+git commit -m "chore: add Zeabur Camunda proxy and deployment steps"
 git push origin main
 ```

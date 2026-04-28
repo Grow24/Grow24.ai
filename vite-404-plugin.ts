@@ -79,6 +79,8 @@ export function vite404Plugin(): Plugin {
           pathname.startsWith('/hbmp_form_manager/') ||
           pathname === '/ivvychainv2' ||
           pathname.startsWith('/ivvychainv2/') ||
+          pathname === '/camunda-bpmn' ||
+          pathname.startsWith('/camunda-bpmn/') ||
           pathname === '/Microsoft' ||
           pathname.startsWith('/Microsoft/') ||
           pathname === '/OpenStreetMaps' ||
