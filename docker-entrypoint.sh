@@ -1,14 +1,12 @@
 #!/bin/sh
 set -e
 export MXGRAPH_API_UPSTREAM="${MXGRAPH_API_UPSTREAM:-127.0.0.1:3001}"
-export CAMUNDA_FRONTEND_UPSTREAM="${CAMUNDA_FRONTEND_UPSTREAM:-127.0.0.1:5196}"
-export CAMUNDA_BACKEND_UPSTREAM="${CAMUNDA_BACKEND_UPSTREAM:-127.0.0.1:4001}"
 
-if [ "${CAMUNDA_FRONTEND_UPSTREAM}" = "127.0.0.1:5196" ]; then
-  echo "CAMUNDA_FRONTEND_UPSTREAM not set; defaulting to ${CAMUNDA_FRONTEND_UPSTREAM}"
+if [ -z "${CAMUNDA_FRONTEND_UPSTREAM}" ]; then
+  echo "CAMUNDA_FRONTEND_UPSTREAM not set; /camunda-bpmn will return a configuration error until this env is set"
 fi
-if [ "${CAMUNDA_BACKEND_UPSTREAM}" = "127.0.0.1:4001" ]; then
-  echo "CAMUNDA_BACKEND_UPSTREAM not set; defaulting to ${CAMUNDA_BACKEND_UPSTREAM}"
+if [ -z "${CAMUNDA_BACKEND_UPSTREAM}" ]; then
+  echo "CAMUNDA_BACKEND_UPSTREAM not set; /camunda-bpmn/api will return a configuration error until this env is set"
 fi
 
 if [ -f /app/mxgraph/apps/web/server.js ]; then

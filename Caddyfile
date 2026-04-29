@@ -267,17 +267,25 @@
 
 	# API: strip /camunda-bpmn so backend receives /api/*
 	handle /camunda-bpmn/api* {
-		uri strip_prefix /camunda-bpmn
-		reverse_proxy {$CAMUNDA_BACKEND_UPSTREAM:127.0.0.1:4001} {
-			header_up Host {host}
+		@camundaBackendConfigured expression `{env.CAMUNDA_BACKEND_UPSTREAM} != ""`
+		handle @camundaBackendConfigured {
+			uri strip_prefix /camunda-bpmn
+			reverse_proxy {$CAMUNDA_BACKEND_UPSTREAM} {
+				header_up Host {host}
+			}
 		}
+		respond 503 "Camunda backend is not configured. Set CAMUNDA_BACKEND_UPSTREAM in web-frontend environment."
 	}
 
 	# Frontend: keep /camunda-bpmn prefix for PUBLIC_URL-based routing/assets
 	handle /camunda-bpmn* {
-		reverse_proxy {$CAMUNDA_FRONTEND_UPSTREAM:127.0.0.1:5196} {
-			header_up Host {host}
+		@camundaFrontendConfigured expression `{env.CAMUNDA_FRONTEND_UPSTREAM} != ""`
+		handle @camundaFrontendConfigured {
+			reverse_proxy {$CAMUNDA_FRONTEND_UPSTREAM} {
+				header_up Host {host}
+			}
 		}
+		respond 503 "Camunda frontend is not configured. Set CAMUNDA_FRONTEND_UPSTREAM in web-frontend environment."
 	}
 
 	# Main SPA routing at /
