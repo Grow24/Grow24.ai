@@ -268,19 +268,15 @@
 	# API: strip /camunda-bpmn so backend receives /api/*
 	handle /camunda-bpmn/api* {
 		uri strip_prefix /camunda-bpmn
-		reverse_proxy {$CAMUNDA_BACKEND_UPSTREAM} {
+		reverse_proxy {$CAMUNDA_BACKEND_UPSTREAM:127.0.0.1:4001} {
 			header_up Host {host}
-			header_up X-Forwarded-Proto {scheme}
-			header_up X-Forwarded-For {remote_host}
 		}
 	}
 
 	# Frontend: keep /camunda-bpmn prefix for PUBLIC_URL-based routing/assets
 	handle /camunda-bpmn* {
-		reverse_proxy {$CAMUNDA_FRONTEND_UPSTREAM} {
+		reverse_proxy {$CAMUNDA_FRONTEND_UPSTREAM:127.0.0.1:5196} {
 			header_up Host {host}
-			header_up X-Forwarded-Proto {scheme}
-			header_up X-Forwarded-For {remote_host}
 		}
 	}
 

@@ -125,6 +125,7 @@ Create these services and set the following:
      - `CAMUNDA_FRONTEND_UPSTREAM=https://<camunda-frontend-domain>`
      - `CAMUNDA_BACKEND_UPSTREAM=https://<camunda-backend-domain>`
    - Redeploy `web-frontend`.
+   - Note: if these vars are missing, Caddy now falls back to `127.0.0.1:5196` and `127.0.0.1:4001` to avoid "no upstreams available", but those localhost targets only work if Camunda is running inside the same container (not the standard Zeabur multi-service setup).
 
 ## 4) Recommended CORS
 
