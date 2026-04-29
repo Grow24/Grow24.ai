@@ -24,6 +24,8 @@ RUN test -f /src/Caddyfile || (echo "Missing required file: /src/Caddyfile" && e
 RUN test -f /src/docker-entrypoint.sh || (echo "Missing required file: /src/docker-entrypoint.sh" && exit 1)
 RUN test -f /src/scripts/build-ci.sh || (echo "Missing required file: /src/scripts/build-ci.sh" && exit 1)
 RUN chmod +x /src/scripts/build-ci.sh
+RUN test -f /src/scripts/build-zeabur-profile.sh || (echo "Missing required file: /src/scripts/build-zeabur-profile.sh" && exit 1)
+RUN chmod +x /src/scripts/build-zeabur-profile.sh
 
 RUN corepack enable && corepack prepare pnpm@9 --activate
 
@@ -35,8 +37,9 @@ RUN rm -rf /src/mxgraph_standalone /src/Mxgraph_ReactFlow/apps/web/.next
 # On Zeabur: set to your HBMP API public URL, e.g. https://your-hbmp-service.zeabur.app/api
 ARG VITE_API_URL=/api
 ENV VITE_API_URL=${VITE_API_URL}
+ARG BUILD_PROFILE=full
 
-RUN sh scripts/build-ci.sh
+RUN sh scripts/build-zeabur-profile.sh "${BUILD_PROFILE}"
 
 # Ensure optional mxgraph folder exists so COPY does not fail
 # when Mxgraph_ReactFlow is absent in this checkout.
