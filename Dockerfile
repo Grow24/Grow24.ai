@@ -9,6 +9,7 @@ RUN apk add --no-cache python3 make g++ cairo-dev jpeg-dev pango-dev giflib-dev 
 
 # Improve npm reliability on intermittent networks and sharp install behavior.
 ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1 \
+    NODE_OPTIONS=--max-old-space-size=4096 \
     NPM_CONFIG_FETCH_RETRIES=5 \
     NPM_CONFIG_FETCH_RETRY_FACTOR=2 \
     NPM_CONFIG_FETCH_TIMEOUT=120000 \
@@ -19,6 +20,10 @@ COPY package*.json ./
 RUN sh -c 'for i in 1 2 3; do npm ci --no-audit --no-fund && exit 0; echo "npm ci failed (attempt $i), retrying..."; sleep 8; done; exit 1'
 
 COPY . .
+RUN test -f /src/Caddyfile || (echo "Missing required file: /src/Caddyfile" && exit 1)
+RUN test -f /src/docker-entrypoint.sh || (echo "Missing required file: /src/docker-entrypoint.sh" && exit 1)
+RUN test -f /src/scripts/build-ci.sh || (echo "Missing required file: /src/scripts/build-ci.sh" && exit 1)
+RUN chmod +x /src/scripts/build-ci.sh
 
 RUN corepack enable && corepack prepare pnpm@9 --activate
 
@@ -31,7 +36,7 @@ RUN rm -rf /src/mxgraph_standalone /src/Mxgraph_ReactFlow/apps/web/.next
 ARG VITE_API_URL=/api
 ENV VITE_API_URL=${VITE_API_URL}
 
-RUN npm run build
+RUN sh scripts/build-ci.sh
 
 # Ensure optional mxgraph folder exists so COPY does not fail
 # when Mxgraph_ReactFlow is absent in this checkout.
