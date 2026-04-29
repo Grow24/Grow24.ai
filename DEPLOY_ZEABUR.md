@@ -105,7 +105,7 @@ Create these services and set the following:
      - `PORT=4001`
      - `MONGO_URI=<camunda-mongo-connection-string>`
      - `CAMUNDA_BASE_URL=https://<camunda-engine-domain>`
-     - optional: `ALLOWED_TOPICS=checkInventory,chargeCard,shipOrder`
+    - optional: `ALLOWED_TOPICS=checkInventory,sendEmail,httpRequest`
 
 4. **`camunda-workers` service** (repo path: `camunda-mern-bpmn-setup/workers`)
    - Env:

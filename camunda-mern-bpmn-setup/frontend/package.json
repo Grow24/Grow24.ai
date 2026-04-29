@@ -15,7 +15,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "HOST=${HOST:-0.0.0.0} PORT=${PORT:-5196} BROWSER=${BROWSER:-none} react-scripts start",
+    "start": "HOST=${HOST:-0.0.0.0} PORT=${PORT:-5196} WDS_SOCKET_PORT=${WDS_SOCKET_PORT:-5196} BROWSER=${BROWSER:-none} PUBLIC_URL=${PUBLIC_URL:-/camunda-bpmn} REACT_APP_API_BASE=${REACT_APP_API_BASE:-/camunda-bpmn/api} react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

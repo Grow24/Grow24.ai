@@ -1,71 +1,120 @@
-# MERN + bpmn.io + Camunda 7 Starter
+# Camunda MERN BPMN Setup
 
-This repo contains:
-- `docker-compose.yml` to run **Camunda 7** (port 8080) and **MongoDB** (port 27017)
-- `backend/` (Express + Mongo) to store/validate/deploy BPMN
-- `workers/` (Node external-task workers) to execute safe tasks
-- `frontend-template/` (React + bpmn.io editor) - copy into a CRA app
+This folder contains a complete local + cloud setup:
+- `docker-compose.yml` for Camunda 7 + MongoDB (local infra)
+- `backend/` Express + Mongo API for draft/publish/start
+- `workers/` Camunda external task workers
+- `frontend/` CRA + bpmn.io editor
 
 ## Prerequisites
-- Docker & Docker Compose
+- Docker Desktop (or Docker Engine + Compose)
 - Node.js 18+ and npm
-- (Optional) MongoDB local OR use the docker Mongo
 
-## 1) Start Camunda 7 + MongoDB
+## Local Run (same as root scripts)
+
+### Option A: from repo root (recommended)
 ```bash
-docker compose up -d
-# Camunda Web Apps: http://localhost:8080/camunda  (user: demo/demo if present)
-# Camunda REST:     http://localhost:8080/engine-rest
-# MongoDB:          mongodb://127.0.0.1:27017
+cd /home/bappu/websitenew/web
+npm run dev:camunda
 ```
 
-## 2) Backend
+This starts:
+- Camunda engine on `http://localhost:8080`
+- Mongo on `mongodb://127.0.0.1:27018`
+- Backend on `http://localhost:4001`
+- Frontend through root proxy at `http://localhost:5173/camunda-bpmn/`
+
+### Option B: manual per service
+
+1) Start infra:
+```bash
+cd camunda-mern-bpmn-setup
+docker compose up -d
+```
+
+2) Start backend:
 ```bash
 cd backend
 cp .env.example .env
 npm install
-npm run start
-# Backend on http://localhost:4000
+PORT=4001 MONGO_URI=mongodb://127.0.0.1:27018/flows CAMUNDA_BASE_URL=http://localhost:8080 npm start
 ```
 
-## 3) Workers (External Task Worker)
+3) Start workers:
 ```bash
-cd workers
+cd ../workers
 cp .env.example .env
 npm install
-npm start
+CAMUNDA_BASE_URL=http://localhost:8080 npm start
 ```
 
-## 4) Frontend (React + bpmn.io)
-Create a React app and copy the template:
+4) Start frontend:
 ```bash
-npx create-react-app frontend
-cd frontend
-npm i bpmn-js camunda-bpmn-moddle
-# in another terminal:
-cp -r ../frontend-template/src/* ./src/
-npm start
+cd ../frontend
+npm install
+HOST=0.0.0.0 PORT=5196 WDS_SOCKET_PORT=5196 BROWSER=none PUBLIC_URL=/camunda-bpmn REACT_APP_API_BASE=/camunda-bpmn/api npm start
 ```
 
-## 5) Use It
-1. Open the frontend (http://localhost:3000).
-2. Select the **Service Task** → choose topic (e.g., `checkInventory`).
-3. Click **Save Draft** (key = `order_flow`, name any).
-4. Click **Publish Latest Draft** (deploys to Camunda).
-5. Start an instance:
-   ```bash
-   curl -X POST http://localhost:4000/api/workflows/order_flow/start      -H "Content-Type: application/json"      -d '{"variables":{"sku":{"value":"ABC-123","type":"String"}}}'
-   ```
-6. Watch the worker terminal (`checkInventory` completes).
+5) Keep root Vite running for proxy path:
+```bash
+cd /home/bappu/websitenew/web
+npm run dev
+```
 
-## Safety Notes
-- Backend validates BPMN: only allows **external** service tasks with whitelisted topics.
-- Blocks `scriptTask` and `callActivity` by default.
-- Extend whitelist in `backend/.env` `ALLOWED_TOPICS=...` and implement workers accordingly.
+## Quick Functional Test
+1. Open `http://localhost:5173/camunda-bpmn/`
+2. Save Draft
+3. Publish Latest Draft
+4. Start process:
+```bash
+curl -X POST "http://localhost:4001/api/workflows/order_flow/start" \
+  -H "Content-Type: application/json" \
+  -d '{"variables":{"sku":{"value":"ABC-123","type":"String"}}}'
+```
+5. Confirm worker terminal handles `checkInventory`
 
-## Customization
-- Add RBAC/JWT to `requireAdmin` in backend.
-- Implement real logic in workers (email, DB, HTTP) and restrict domains.
-- Add bpmn-js properties panel for advanced editing.
+## Zeabur Deployment (match local behavior)
 
-Enjoy!
+Create separate Zeabur services:
+1. **camunda-engine**  
+   - image: `camunda/camunda-bpm-platform:run-latest`
+   - port: `8080`
+
+2. **camunda-mongo**  
+   - managed MongoDB service (recommended)
+
+3. **camunda-backend**  
+   - service root: `camunda-mern-bpmn-setup/backend`
+   - Dockerfile: `camunda-mern-bpmn-setup/backend/Dockerfile`
+   - env:
+     - `PORT=4001`
+     - `MONGO_URI=<mongodb-connection-string>`
+     - `CAMUNDA_BASE_URL=https://<camunda-engine-domain>`
+     - `ALLOWED_TOPICS=checkInventory,sendEmail,httpRequest`
+
+4. **camunda-workers**  
+   - service root: `camunda-mern-bpmn-setup/workers`
+   - Dockerfile: `camunda-mern-bpmn-setup/workers/Dockerfile`
+   - env:
+     - `CAMUNDA_BASE_URL=https://<camunda-engine-domain>`
+
+5. **camunda-frontend**  
+   - service root: `camunda-mern-bpmn-setup/frontend`
+   - Dockerfile: `camunda-mern-bpmn-setup/frontend/Dockerfile`
+   - env:
+     - `PORT=5196`
+     - `PUBLIC_URL=/camunda-bpmn`
+     - `REACT_APP_API_BASE=/camunda-bpmn/api`
+
+6. **web-frontend (main Caddy service)**  
+   set:
+   - `CAMUNDA_FRONTEND_UPSTREAM=https://<camunda-frontend-domain>`
+   - `CAMUNDA_BACKEND_UPSTREAM=https://<camunda-backend-domain>`
+
+Then open:
+- `https://<main-domain>/camunda-bpmn/`
+
+## Notes
+- Backend validates BPMN and blocks unsafe elements (`scriptTask`, `callActivity`).
+- Allowed topics are controlled by `ALLOWED_TOPICS`.
+- Keep Camunda backend/workers running whenever you publish/start workflows.
