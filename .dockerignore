@@ -21,3 +21,8 @@ n8n/n8n-tesseract/data
 **/.env
 **/.env.local
 **/.env.*.local
+
+# Exclude local-only subprojects not needed by root Docker image build
+Dataflow-IOT/
+camunda-mern-bpmn-setup/
+n8n/
