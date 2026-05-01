@@ -29,6 +29,7 @@ export default defineConfig({
         '**/camunda-mern-bpmn-setup/**',
         '**/Dataflow-IOT/**',
         '**/Google/**',
+        '**/testing-responsiveness/**',
         '**/Mxgraph_ReactFlow/**',
         '**/mxgraph_standalone/**',
         '**/dist/**',
@@ -133,6 +134,12 @@ export default defineConfig({
       // Google app (Vite) — keep /Google prefix; app uses base: /Google/
       '/Google': {
         target: `http://localhost:${process.env.GOOGLE_PORT || '5179'}`,
+        changeOrigin: true,
+        ws: true,
+      },
+      // testing-responsiveness (Vite) mounted under /testing-responsiveness/
+      '/testing-responsiveness': {
+        target: `http://localhost:${process.env.TESTING_RESPONSIVENESS_PORT || '5290'}`,
         changeOrigin: true,
         ws: true,
       },
@@ -305,6 +312,12 @@ export default defineConfig({
           if (url === '/Google') {
             res.statusCode = 302
             res.setHeader('Location', '/Google/')
+            res.end()
+            return
+          }
+          if (url === '/testing-responsiveness') {
+            res.statusCode = 302
+            res.setHeader('Location', '/testing-responsiveness/')
             res.end()
             return
           }

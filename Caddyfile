@@ -1,7 +1,7 @@
 :8080 {
 	root * /usr/share/caddy
 	@unsafePath {
-		path /.git/* /univer/.git/* /HBMP_One/.git/* /HBMP_DOCS_PLATFORM/.git/* /HBMP_AgentBot/.git/* /Mxgraph_ReactFlow/.git/* /ivvychainv2/.git/* /OpenStreetMaps/.git/* /Microsoft/.git/* /ImageProcessing/.git/* /Google/.git/* /app_manager/.git/* /hbmp_form_manager/.git/* /mcp_server/.git/* /node_modules/* /vendor/* /.venv/*
+		path /.git/* /univer/.git/* /HBMP_One/.git/* /HBMP_DOCS_PLATFORM/.git/* /HBMP_AgentBot/.git/* /Mxgraph_ReactFlow/.git/* /ivvychainv2/.git/* /testing-responsiveness/.git/* /OpenStreetMaps/.git/* /Microsoft/.git/* /ImageProcessing/.git/* /Google/.git/* /app_manager/.git/* /hbmp_form_manager/.git/* /mcp_server/.git/* /node_modules/* /vendor/* /.venv/*
 	}
 	respond @unsafePath 404
 
@@ -86,6 +86,23 @@
 
 	handle_path /ivvychainv2/* {
 		root * /usr/share/caddy/ivvychainv2
+		try_files {path} {path}/ /index.html
+		file_server
+	}
+
+	# --- testing-responsiveness (Vite base: /testing-responsiveness/) ---
+	@testingResponsivenessExact path /testing-responsiveness
+	redir @testingResponsivenessExact /testing-responsiveness/ 308
+
+	@testingResponsivenessAssets path_regexp testing_responsiveness_assets ^/testing-responsiveness/.*\.(js|mjs|css|map|json|wasm|ttf|woff|woff2|svg|png|jpg|jpeg|gif|webp|ico)$
+	handle @testingResponsivenessAssets {
+		root * /usr/share/caddy
+		try_files {path} =404
+		file_server
+	}
+
+	handle_path /testing-responsiveness/* {
+		root * /usr/share/caddy/testing-responsiveness
 		try_files {path} {path}/ /index.html
 		file_server
 	}

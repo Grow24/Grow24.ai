@@ -14,12 +14,13 @@ This project should run as **multiple Zeabur services**:
 
 ## 0) CRITICAL: Use Docker deployment only
 
-The root **`Dockerfile`** runs `npm run build` (main + HBMPONE + ivvychainv2 + Univer) and serves **`dist/`** with the repo **`Caddyfile`**:
+The root **`Dockerfile`** runs `npm run build` (main + HBMPONE + ivvychainv2 + Univer + testing-responsiveness) and serves **`dist/`** with the repo **`Caddyfile`**:
 
 - `/` → main SPA
 - `/univer/` → Univer + chunks under `/univer/*`
 - `/HBMPONE/` → HBMPONE + assets under `/HBMPONE/*`
 - `/ivvychainv2/` → ivvychainv2 + assets under `/ivvychainv2/*`
+- `/testing-responsiveness/` → testing-responsiveness app + assets under `/testing-responsiveness/*`
 
 In Zeabur → frontend → **Dockerfile** build, port **8080**.
 Do **not** deploy this repo as a static-site build, because sub-app route handling requires runtime Caddy config from the Docker image.
@@ -78,6 +79,7 @@ After services are live:
   - `/` should load main app
   - `/univer/` should load Univer app
   - `/HBMPONE/` should load the HBMPONE app (static assets must be JS/CSS, not HTML)
+  - `/testing-responsiveness/` should load the testing-responsiveness app
   - `/camunda-bpmn/` should load the Camunda BPMN app through the main domain
 - API from frontend:
   - Chat should call `https://<backend-domain>/api/chat`

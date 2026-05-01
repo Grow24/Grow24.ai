@@ -91,6 +91,8 @@ export function vite404Plugin(): Plugin {
           pathname.startsWith('/ImageProcessing/') ||
           pathname === '/Google' ||
           pathname.startsWith('/Google/') ||
+          pathname === '/testing-responsiveness' ||
+          pathname.startsWith('/testing-responsiveness/') ||
           pathname === '/mcp_server' ||
           pathname.startsWith('/mcp_server/') ||
           pathname === '/Mxgraph_ReactFlow' ||
