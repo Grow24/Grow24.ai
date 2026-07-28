@@ -104,7 +104,7 @@ if (!GEMINI_API_KEY) {
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({
-  model: "gemini-2.0-flash",
+  model: "gemini-2.5-flash",
   generationConfig: {
     temperature: 0.6,        // Controls randomness (0.0-1.0, lower = more focused)
     topP: 0.90,              // Nucleus sampling (0.0-1.0)
