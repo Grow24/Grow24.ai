@@ -387,7 +387,7 @@ const MeetingBooking = ({ onComplete }: MeetingBookingProps) => {
     setIsSubmitting(true)
 
     try {
-      const chatEndpoint = import.meta.env.VITE_API_ENDPOINT || 'http://localhost:3000/api/chat'
+      const chatEndpoint = import.meta.env.VITE_API_ENDPOINT || 'https://pbmpchatbotbackend.zeabur.app/api/chat'
       const baseUrl = chatEndpoint.replace('/api/chat', '')
       const leadsEndpoint = `${baseUrl}/api/leads`
 
