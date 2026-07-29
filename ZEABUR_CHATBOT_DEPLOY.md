@@ -64,6 +64,7 @@ Port: **8080**
 Vite bakes `VITE_*` at **build** time. Runtime-only vars will **not** update the chatbot URL.
 
 ```env
+BUILD_PROFILE=core
 VITE_API_ENDPOINT=https://pbmpchatbotbackend.zeabur.app/api/chat
 VITE_WHATSAPP_NUMBER=+919370239600
 # Optional:
@@ -72,13 +73,18 @@ VITE_WHATSAPP_NUMBER=+919370239600
 # VITE_API_URL=https://<hbmp-api>.zeabur.app/api
 ```
 
+`BUILD_PROFILE=core` skips Univer and prevents `@univerjs/core#build` OOM failures on Zeabur Dev (2 vCPU / 4 GB).
+
 ### Deploy steps
 
-1. Push latest `main` from this repo (includes Gemini fix + Dockerfile `ARG VITE_API_ENDPOINT`).
-2. Zeabur → frontend service → **Variables** → set `VITE_API_ENDPOINT` as above.
-3. **Rebuild / Redeploy** the frontend (Restart is not enough).
-4. Open site → DevTools → Network → chat request must go to  
-   `pbmpchatbotbackend.zeabur.app/api/chat`.
+1. Push latest `main` from this repo.
+2. Zeabur → **grow24.ai** → **Settings** → Dockerfile section → **Load from GitHub** → **Save**  
+   (Old override that runs `npm run build` rebuilds Univer and fails.)
+3. **Variable** tab → set:
+   - `BUILD_PROFILE=core`
+   - `VITE_API_ENDPOINT=https://pbmpchatbotbackend.zeabur.app/api/chat`
+4. **Overview** → **Redeploy**
+5. Open `https://www.grow24.ai` → hard refresh → Network: chat must hit `pbmpchatbotbackend.zeabur.app`
 
 ---
 

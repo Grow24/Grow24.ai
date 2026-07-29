@@ -9,7 +9,7 @@ RUN apk add --no-cache python3 make g++ cairo-dev jpeg-dev pango-dev giflib-dev 
 
 # Improve npm reliability on intermittent networks and sharp install behavior.
 ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1 \
-    NODE_OPTIONS=--max-old-space-size=4096 \
+    NODE_OPTIONS=--max-old-space-size=8192 \
     NPM_CONFIG_FETCH_RETRIES=5 \
     NPM_CONFIG_FETCH_RETRY_FACTOR=2 \
     NPM_CONFIG_FETCH_TIMEOUT=120000 \
@@ -49,7 +49,8 @@ ENV VITE_WHATSAPP_NUMBER=${VITE_WHATSAPP_NUMBER}
 ARG VITE_CLERK_PUBLISHABLE_KEY=
 ENV VITE_CLERK_PUBLISHABLE_KEY=${VITE_CLERK_PUBLISHABLE_KEY}
 
-ARG BUILD_PROFILE=full
+ARG BUILD_PROFILE=core
+ENV BUILD_PROFILE=${BUILD_PROFILE}
 
 RUN sh scripts/build-zeabur-profile.sh "${BUILD_PROFILE}"
 

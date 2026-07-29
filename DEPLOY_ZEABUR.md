@@ -14,13 +14,13 @@ This project should run as **multiple Zeabur services**:
 
 ## 0) CRITICAL: Use Docker deployment only
 
-The root **`Dockerfile`** runs `npm run build` (main + HBMPONE + ivvychainv2 + Univer + testing-responsiveness) and serves **`dist/`** with the repo **`Caddyfile`**:
+The root **`Dockerfile`** builds via `scripts/build-zeabur-profile.sh` and serves **`dist/`** with the repo **`Caddyfile`**.
 
-- `/` → main SPA
-- `/univer/` → Univer + chunks under `/univer/*`
-- `/HBMPONE/` → HBMPONE + assets under `/HBMPONE/*`
-- `/ivvychainv2/` → ivvychainv2 + assets under `/ivvychainv2/*`
-- `/testing-responsiveness/` → testing-responsiveness app + assets under `/testing-responsiveness/*`
+**Default build profile is `core`** (skips Univer / AgentBot / Mxgraph / ivvychain — avoids OOM on Zeabur Dev 2vCPU/4GB).
+
+Set Zeabur Variable `BUILD_PROFILE=full` only if you need `/univer/` and those heavy apps (use a larger build machine).
+
+Also: if **Settings → Dockerfile** was customized, click **Load from GitHub** then **Save**. An old override that runs `npm run build` will rebuild Univer and often fail with `@univerjs/core#build`.
 
 In Zeabur → frontend → **Dockerfile** build, port **8080**.
 Do **not** deploy this repo as a static-site build, because sub-app route handling requires runtime Caddy config from the Docker image.
@@ -34,6 +34,7 @@ If you edited the platform Caddyfile manually, add the same **`/HBMPONE/`** hand
 1. In Zeabur, create a service from this repo using the root `Dockerfile`.
 2. Ensure port is `8080`.
 3. Add environment variables (build-time where noted):
+   - `BUILD_PROFILE=core` (recommended on Zeabur Dev; skips Univer so build does not fail)
    - `VITE_CLERK_PUBLISHABLE_KEY=<your_key>`
    - `VITE_API_ENDPOINT=https://pbmpchatbotbackend.zeabur.app/api/chat`
    - Optional: `VITE_SEND_EMAIL_ENDPOINT=https://pbmpchatbotbackend.zeabur.app/api/send-email`
