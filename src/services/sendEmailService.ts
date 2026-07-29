@@ -29,7 +29,7 @@ function getSendEmailEndpoint(): string {
   const chatEndpoint =
     typeof window !== 'undefined' && (window as any).PBMP_CHAT_API_ENDPOINT
       ? (window as any).PBMP_CHAT_API_ENDPOINT
-      : import.meta.env.VITE_API_ENDPOINT || 'http://localhost:3000/api/chat'
+      : import.meta.env.VITE_API_ENDPOINT || 'https://pbmpchatbotbackend.zeabur.app/api/chat'
   const base = chatEndpoint.replace(/\/api\/chat\/?$/, '').replace(/\/$/, '') ||
     (typeof window !== 'undefined' ? window.location.origin : '')
   return `${base}/api/send-email`

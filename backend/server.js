@@ -102,9 +102,11 @@ if (!GEMINI_API_KEY) {
 }
 
 // Initialize Gemini
+// Override via Zeabur Variable: GEMINI_MODEL=gemini-2.5-flash
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({
-  model: "gemini-2.5-flash",
+  model: GEMINI_MODEL,
   generationConfig: {
     temperature: 0.6,        // Controls randomness (0.0-1.0, lower = more focused)
     topP: 0.90,              // Nucleus sampling (0.0-1.0)

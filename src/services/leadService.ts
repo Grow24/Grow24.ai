@@ -20,7 +20,8 @@ const getApiEndpoint = () => {
     const chatEndpoint = (window as any).PBMP_CHAT_API_ENDPOINT
     return chatEndpoint.replace('/api/chat', '/api/leads')
   }
-  const chatEndpoint = import.meta.env.VITE_API_ENDPOINT || 'http://localhost:3000/api/chat'
+  const chatEndpoint =
+    import.meta.env.VITE_API_ENDPOINT || 'https://pbmpchatbotbackend.zeabur.app/api/chat'
   return chatEndpoint.replace('/api/chat', '/api/leads')
 }
 

@@ -37,6 +37,18 @@ RUN rm -rf /src/mxgraph_standalone /src/Mxgraph_ReactFlow/apps/web/.next
 # On Zeabur: set to your HBMP API public URL, e.g. https://your-hbmp-service.zeabur.app/api
 ARG VITE_API_URL=/api
 ENV VITE_API_URL=${VITE_API_URL}
+
+# Main site chatbot / leads / contact email (build-time — Vite bakes these in).
+# Zeabur frontend Variables must set these BEFORE rebuild.
+ARG VITE_API_ENDPOINT=https://pbmpchatbotbackend.zeabur.app/api/chat
+ENV VITE_API_ENDPOINT=${VITE_API_ENDPOINT}
+ARG VITE_SEND_EMAIL_ENDPOINT=
+ENV VITE_SEND_EMAIL_ENDPOINT=${VITE_SEND_EMAIL_ENDPOINT}
+ARG VITE_WHATSAPP_NUMBER=+919370239600
+ENV VITE_WHATSAPP_NUMBER=${VITE_WHATSAPP_NUMBER}
+ARG VITE_CLERK_PUBLISHABLE_KEY=
+ENV VITE_CLERK_PUBLISHABLE_KEY=${VITE_CLERK_PUBLISHABLE_KEY}
+
 ARG BUILD_PROFILE=full
 
 RUN sh scripts/build-zeabur-profile.sh "${BUILD_PROFILE}"

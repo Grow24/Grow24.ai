@@ -35,8 +35,8 @@ If you edited the platform Caddyfile manually, add the same **`/HBMPONE/`** hand
 2. Ensure port is `8080`.
 3. Add environment variables (build-time where noted):
    - `VITE_CLERK_PUBLISHABLE_KEY=<your_key>`
-   - `VITE_API_ENDPOINT=https://<backend-domain>/api/chat`
-   - Optional: `VITE_SEND_EMAIL_ENDPOINT=https://<backend-domain>/api/send-email`
+   - `VITE_API_ENDPOINT=https://pbmpchatbotbackend.zeabur.app/api/chat`
+   - Optional: `VITE_SEND_EMAIL_ENDPOINT=https://pbmpchatbotbackend.zeabur.app/api/send-email`
    - Optional: `VITE_WHATSAPP_NUMBER=+919370239600`
    - **HBMPONE (build-time):** `VITE_API_URL` — public URL of the HBMP API including `/api`, e.g. `https://<hbmp-service>.zeabur.app/api`. If you omit it, the client is built with `/api` (same-origin); that only works if you terminate `/api` on the same host (not configured in the default Caddyfile — use a full URL unless you add your own reverse proxy).
    - **Camunda reverse proxy targets (runtime):**
@@ -50,7 +50,8 @@ If you edited the platform Caddyfile manually, add the same **`/HBMPONE/`** hand
 2. Set the service root to `backend/` so Zeabur uses `backend/Dockerfile`.
 3. Ensure port is `3000`.
 4. Add backend environment variables:
-   - `GEMINI_API_KEY`
+   - `GEMINI_API_KEY` (required)
+   - `GEMINI_MODEL=gemini-2.5-flash` (required until default is deployed; `gemini-2.0-flash` is dead)
    - `ASTRA_DB_API_ENDPOINT` (optional but recommended)
    - `ASTRA_DB_APPLICATION_TOKEN` (optional but recommended)
    - `PBMP_ASTRA_DB_COLLECTION` (optional; default is used if missing)
@@ -59,6 +60,8 @@ If you edited the platform Caddyfile manually, add the same **`/HBMPONE/`** hand
    - `EMAIL_LOGO_URL` (optional)
    - `PORT=3000`
 5. Deploy and verify `https://<backend-domain>/` returns backend status JSON.
+
+> Chatbot-focused steps: see **[ZEABUR_CHATBOT_DEPLOY.md](./ZEABUR_CHATBOT_DEPLOY.md)**.
 
 ## 2b) HBMPONE API service (optional)
 
@@ -82,9 +85,9 @@ After services are live:
   - `/testing-responsiveness/` should load the testing-responsiveness app
   - `/camunda-bpmn/` should load the Camunda BPMN app through the main domain
 - API from frontend:
-  - Chat should call `https://<backend-domain>/api/chat`
-  - Leads should call `https://<backend-domain>/api/leads`
-  - Send Email should call `https://<backend-domain>/api/send-email`
+  - Chat should call `https://pbmpchatbotbackend.zeabur.app/api/chat`
+  - Leads should call `https://pbmpchatbotbackend.zeabur.app/api/leads`
+  - Send Email should call `https://pbmpchatbotbackend.zeabur.app/api/send-email`
   - Camunda UI should call `/camunda-bpmn/api/*` and receive backend responses via Caddy proxy
 
 ## 3b) Camunda service setup (Zeabur)

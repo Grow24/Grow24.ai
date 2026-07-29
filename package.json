@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING:-1} CHOKIDAR_INTERVAL=${CHOKIDAR_INTERVAL:-1000} vite",
+    "dev:chatbot-api": "cd backend && ([ -d node_modules ] || npm install) && PORT=${CHATBOT_API_PORT:-3000} npm start",
+    "dev:with-chatbot": "concurrently -k -n main,chatbot -c cyan,magenta \"npm run dev\" \"npm run dev:chatbot-api\"",
     "dev:both": "concurrently -k -n main,univer -c cyan,magenta \"UNIVER_PORT=${UNIVER_PORT:-3002} npm run dev\" \"UNIVER_PORT=${UNIVER_PORT:-3002} npm run dev:univer\"",
     "dev:hbmp-one": "cd HBMP_One/client && CHOKIDAR_USEPOLLING=1 CHOKIDAR_INTERVAL=1000 HBMP_ONE_PORT=${HBMP_ONE_PORT:-5175} HBMP_ONE_BASE=/HBMP_One/ VITE_API_URL=/api npx vite",
     "dev:hbmp-docs-platform": "cd HBMP_DOCS_PLATFORM/client && CHOKIDAR_USEPOLLING=1 CHOKIDAR_INTERVAL=1000 HBMP_DOCS_PORT=${HBMP_DOCS_PORT:-5177} HBMP_DOCS_BASE=/HBMP_DOCS_PLATFORM/ VITE_API_URL=/api npx vite",

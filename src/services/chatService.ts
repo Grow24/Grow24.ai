@@ -10,7 +10,7 @@ const getApiEndpoint = () => {
   if (typeof window !== 'undefined' && (window as any).PBMP_CHAT_API_ENDPOINT) {
     return (window as any).PBMP_CHAT_API_ENDPOINT;
   }
-  return import.meta.env.VITE_API_ENDPOINT || 'http://localhost:3000/api/chat';
+  return import.meta.env.VITE_API_ENDPOINT || 'https://pbmpchatbotbackend.zeabur.app/api/chat';
 };
 
 export async function sendMessage(messages: Message[]): Promise<string> {

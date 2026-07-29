@@ -42,11 +42,11 @@ npm run build
 **Frontend** (`VITE_*` prefix):
 
 ```env
-VITE_API_ENDPOINT=https://your-backend.zeabur.app/api/chat
+VITE_API_ENDPOINT=https://pbmpchatbotbackend.zeabur.app/api/chat
 # HBMPONE client (build-time): full URL of HBMP API, e.g. https://your-hbmp-api.zeabur.app/api
 # VITE_API_URL=https://your-hbmp-api.zeabur.app/api
 # Optional: set explicitly for Contact Us → Send Email (defaults to same host as above)
-# VITE_SEND_EMAIL_ENDPOINT=https://your-backend.zeabur.app/api/send-email
+# VITE_SEND_EMAIL_ENDPOINT=https://pbmpchatbotbackend.zeabur.app/api/send-email
 VITE_WHATSAPP_NUMBER=+91 9370239600
 ```
 
