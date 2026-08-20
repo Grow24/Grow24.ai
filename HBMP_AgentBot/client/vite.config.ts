@@ -13,6 +13,30 @@ const backendURL = process.env.HOST ? `http://${process.env.HOST}:${backendPort}
 
 const agentBotBase = process.env.AGENTBOT_BASE || '/';
 const agentBotBaseNormalized = agentBotBase.endsWith('/') ? agentBotBase : `${agentBotBase}/`;
+const agentBotBasePath =
+  agentBotBase === '/' || agentBotBase === '' ? '' : agentBotBase.replace(/\/$/, '');
+
+const backendProxy = {
+  target: backendURL,
+  changeOrigin: true,
+};
+
+const prefixedBackendProxy = agentBotBasePath
+  ? {
+      ...backendProxy,
+      rewrite: (path: string) => path.replace(agentBotBasePath, '') || '/',
+    }
+  : backendProxy;
+
+const devProxy: Record<string, typeof backendProxy | typeof prefixedBackendProxy> = {
+  '/api': backendProxy,
+  '/oauth': backendProxy,
+};
+
+if (agentBotBasePath) {
+  devProxy[`${agentBotBasePath}/api`] = prefixedBackendProxy;
+  devProxy[`${agentBotBasePath}/oauth`] = prefixedBackendProxy;
+}
 
 export default defineConfig(({ command }) => ({
   base: agentBotBase,
@@ -24,16 +48,7 @@ export default defineConfig(({ command }) => ({
     host: process.env.HOST || 'localhost',
     port: process.env.PORT && Number(process.env.PORT) || 3090,
     strictPort: false,
-    proxy: {
-      '/api': {
-        target: backendURL,
-        changeOrigin: true,
-      },
-      '/oauth': {
-        target: backendURL,
-        changeOrigin: true,
-      },
-    },
+    proxy: devProxy,
   },
   // Set the directory where environment variables are loaded from and restrict prefixes
   envDir: '../',

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { ThemeSelector } from '@librechat/client';
 import { TStartupConfig } from 'librechat-data-provider';
 import { ErrorMessage } from '~/components/Auth/ErrorMessage';
@@ -39,9 +40,9 @@ function AuthLayout({
         <div className="mx-auto sm:max-w-sm">
           <ErrorMessage>
             {localize('com_auth_error_invalid_reset_token')}{' '}
-            <a className="font-semibold text-green-600 hover:underline" href="/forgot-password">
+            <Link className="font-semibold text-green-600 hover:underline" to="/forgot-password">
               {localize('com_auth_click_here')}
-            </a>{' '}
+            </Link>{' '}
             {localize('com_auth_to_try_again')}
           </ErrorMessage>
         </div>
