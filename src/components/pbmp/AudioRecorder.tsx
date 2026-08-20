@@ -17,9 +17,13 @@ const AudioRecorder = ({ onAudioRecorded, disabled }: AudioRecorderProps) => {
     const [isRecording, setIsRecording] = useState(false);
     const [recordingTime, setRecordingTime] = useState(0);
     const [transcribedText, setTranscribedText] = useState('');
+    const [voiceHint, setVoiceHint] = useState('');
   const recognitionRef = useRef<any>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isRecordingRef = useRef(false); // Track recording state without causing re-renders
+  const transcribedTextRef = useRef('');
+  const onAudioRecordedRef = useRef(onAudioRecorded);
+  onAudioRecordedRef.current = onAudioRecorded;
 
     useEffect(() => {
         // Check if browser supports Speech Recognition
@@ -33,7 +37,7 @@ const AudioRecorder = ({ onAudioRecorded, disabled }: AudioRecorderProps) => {
         const recognition = new SpeechRecognition();
         recognition.continuous = true;
         recognition.interimResults = true;
-        recognition.lang = 'en-US';
+        recognition.lang = 'en-IN';
 
         recognition.onresult = (event: any) => {
             let interimTranscript = '';
@@ -48,12 +52,9 @@ const AudioRecorder = ({ onAudioRecorded, disabled }: AudioRecorderProps) => {
                 }
             }
 
-      // Only show the latest result, don't accumulate
-      if (finalTranscript) {
-        setTranscribedText(finalTranscript.trim());
-      } else {
-        setTranscribedText(interimTranscript);
-      }
+      const next = (finalTranscript || interimTranscript).trim();
+      transcribedTextRef.current = next;
+      setTranscribedText(next);
         };
 
         recognition.onerror = (event: any) => {
@@ -181,6 +182,8 @@ const AudioRecorder = ({ onAudioRecorded, disabled }: AudioRecorderProps) => {
             // Reset state
             setRecordingTime(0);
             setTranscribedText('');
+            transcribedTextRef.current = '';
+            setVoiceHint('');
             isRecordingRef.current = true;
             setIsRecording(true);
 
@@ -228,16 +231,20 @@ const AudioRecorder = ({ onAudioRecorded, disabled }: AudioRecorderProps) => {
         }
 
         setIsRecording(false);
-
-        // Send transcribed text
-        if (transcribedText.trim()) {
-            onAudioRecorded(transcribedText.trim());
-            setTranscribedText('');
-        } else {
-            alert('No speech detected. Please try again.');
-        }
-
         setRecordingTime(0);
+
+        // Chrome often delivers the final transcript after stop()
+        window.setTimeout(() => {
+            const text = transcribedTextRef.current.trim();
+            transcribedTextRef.current = '';
+            setTranscribedText('');
+            if (text) {
+                onAudioRecordedRef.current(text);
+            } else {
+                setVoiceHint('No speech detected. Speak clearly, then tap the mic to stop.');
+                window.setTimeout(() => setVoiceHint(''), 4000);
+            }
+        }, 450);
     };
 
     const formatTime = (seconds: number) => {
@@ -320,6 +327,23 @@ const AudioRecorder = ({ onAudioRecorded, disabled }: AudioRecorderProps) => {
                     </svg>
                 )}
             </button>
+            {voiceHint && !isRecording && (
+                <div style={{
+                    position: 'fixed',
+                    bottom: '100px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    padding: '12px 20px',
+                    background: 'rgba(15, 23, 42, 0.95)',
+                    borderRadius: '12px',
+                    zIndex: 1000,
+                    color: 'white',
+                    fontSize: '14px',
+                    maxWidth: '90vw'
+                }}>
+                    {voiceHint}
+                </div>
+            )}
             {isRecording && (
                 <div style={{
                     position: 'fixed',
