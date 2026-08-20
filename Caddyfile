@@ -234,44 +234,22 @@
 	redir @agentBotExact /HBMP_AgentBot/ 308
 
 	# AgentBot backend API and OAuth endpoints.
-	# Strip /HBMP_AgentBot so upstream receives /api/* and /oauth/*.
-	@agentbotApiConfigured {
-		path /HBMP_AgentBot/api*
-		expression `{env.AGENTBOT_API_UPSTREAM} != ""`
-	}
-	@agentbotApiMissing {
-		path /HBMP_AgentBot/api*
-		expression `{env.AGENTBOT_API_UPSTREAM} == ""`
-	}
-	handle @agentbotApiConfigured {
+	# Strip /HBMP_AgentBot so the local stub (or real API on 5188) receives /api/* and /oauth/*.
+	handle /HBMP_AgentBot/api* {
 		uri strip_prefix /HBMP_AgentBot
-		reverse_proxy {env.AGENTBOT_API_UPSTREAM} {
+		reverse_proxy 127.0.0.1:5188 {
 			header_up Host {host}
 			header_up X-Forwarded-Proto {scheme}
 			header_up X-Forwarded-For {remote_host}
 		}
 	}
-	handle @agentbotApiMissing {
-		respond 503 "AgentBot API is not configured. Set AGENTBOT_API_UPSTREAM on web-frontend."
-	}
-	@agentbotOauthConfigured {
-		path /HBMP_AgentBot/oauth*
-		expression `{env.AGENTBOT_API_UPSTREAM} != ""`
-	}
-	@agentbotOauthMissing {
-		path /HBMP_AgentBot/oauth*
-		expression `{env.AGENTBOT_API_UPSTREAM} == ""`
-	}
-	handle @agentbotOauthConfigured {
+	handle /HBMP_AgentBot/oauth* {
 		uri strip_prefix /HBMP_AgentBot
-		reverse_proxy {env.AGENTBOT_API_UPSTREAM} {
+		reverse_proxy 127.0.0.1:5188 {
 			header_up Host {host}
 			header_up X-Forwarded-Proto {scheme}
 			header_up X-Forwarded-For {remote_host}
 		}
-	}
-	handle @agentbotOauthMissing {
-		respond 503 "AgentBot API is not configured. Set AGENTBOT_API_UPSTREAM on web-frontend."
 	}
 
 	@agentBotAssets path_regexp agentbot_assets ^/HBMP_AgentBot/.*\.(js|mjs|css|map|json|wasm|ttf|woff|woff2|svg|png|jpg|jpeg|gif|webp|ico)$

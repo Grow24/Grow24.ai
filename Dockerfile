@@ -75,9 +75,11 @@ COPY --from=builder /src/dist /usr/share/caddy
 COPY --from=builder /src/Caddyfile /etc/caddy/Caddyfile
 COPY --from=builder /src/mxgraph_standalone /app/mxgraph
 COPY --from=builder /src/HBMP_DOCS_PLATFORM/server /app/docs-api
+COPY --from=builder /src/scripts/start-all.cjs /app/start-all.cjs
+COPY --from=builder /src/scripts/agentbot-stub.cjs /app/agentbot-stub.cjs
 COPY --from=builder /src/docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh && mkdir -p /app/data
 
 EXPOSE 8080
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["node", "/app/start-all.cjs"]
