@@ -13,16 +13,31 @@ if [ -z "${AGENTBOT_API_UPSTREAM}" ]; then
   echo "AGENTBOT_API_UPSTREAM not set; /HBMP_AgentBot/api will return 503 until this env is set"
 fi
 
-if [ -f /app/docs-api/src/index.ts ]; then
+start_docs_api() {
+  if [ ! -f /app/docs-api/src/index.ts ]; then
+    echo "docs-api source not found at /app/docs-api/src/index.ts; skipping"
+    return 0
+  fi
+
   mkdir -p /app/data
   cd /app/docs-api
   export PORT="${HBMP_DOCS_API_PORT:-4000}"
   export DATABASE_URL="${DATABASE_URL:-file:/app/data/docs.db}"
   export CORS_ORIGIN="${CORS_ORIGIN:-https://www.grow24.ai}"
+
+  echo "Starting HBMP Docs API on 0.0.0.0:${PORT} (DATABASE_URL=${DATABASE_URL})"
   npx prisma migrate deploy || npx prisma db push --skip-generate || echo "docs db migrate failed; continuing"
-  npx tsx src/index.ts &
+
+  if [ -x ./node_modules/.bin/tsx ]; then
+    ./node_modules/.bin/tsx src/index.ts &
+  else
+    echo "tsx binary missing; trying node --experimental-strip-types"
+    node --experimental-strip-types src/index.ts &
+  fi
   cd /app
-fi
+}
+
+start_docs_api || echo "docs API failed to start; Caddy will still run"
 
 if [ -f /app/mxgraph/apps/web/server.js ]; then
   cd /app/mxgraph

@@ -63,7 +63,7 @@
 	# Docs API: strip /HBMP_DOCS_PLATFORM so upstream receives /api/*
 	handle /HBMP_DOCS_PLATFORM/api* {
 		uri strip_prefix /HBMP_DOCS_PLATFORM
-		reverse_proxy {$HBMP_DOCS_API_UPSTREAM} {
+		reverse_proxy 127.0.0.1:4000 {
 			header_up Host {host}
 			header_up X-Forwarded-Proto {scheme}
 			header_up X-Forwarded-For {remote_host}
@@ -235,28 +235,42 @@
 
 	# AgentBot backend API and OAuth endpoints.
 	# Strip /HBMP_AgentBot so upstream receives /api/* and /oauth/*.
-	handle /HBMP_AgentBot/api* {
-		@agentbotApiConfigured expression `{env.AGENTBOT_API_UPSTREAM} != ""`
-		handle @agentbotApiConfigured {
-			uri strip_prefix /HBMP_AgentBot
-			reverse_proxy {$AGENTBOT_API_UPSTREAM} {
-				header_up Host {host}
-				header_up X-Forwarded-Proto {scheme}
-				header_up X-Forwarded-For {remote_host}
-			}
+	@agentbotApiConfigured {
+		path /HBMP_AgentBot/api*
+		expression `{env.AGENTBOT_API_UPSTREAM} != ""`
+	}
+	@agentbotApiMissing {
+		path /HBMP_AgentBot/api*
+		expression `{env.AGENTBOT_API_UPSTREAM} == ""`
+	}
+	handle @agentbotApiConfigured {
+		uri strip_prefix /HBMP_AgentBot
+		reverse_proxy {env.AGENTBOT_API_UPSTREAM} {
+			header_up Host {host}
+			header_up X-Forwarded-Proto {scheme}
+			header_up X-Forwarded-For {remote_host}
 		}
+	}
+	handle @agentbotApiMissing {
 		respond 503 "AgentBot API is not configured. Set AGENTBOT_API_UPSTREAM on web-frontend."
 	}
-	handle /HBMP_AgentBot/oauth* {
-		@agentbotOauthConfigured expression `{env.AGENTBOT_API_UPSTREAM} != ""`
-		handle @agentbotOauthConfigured {
-			uri strip_prefix /HBMP_AgentBot
-			reverse_proxy {$AGENTBOT_API_UPSTREAM} {
-				header_up Host {host}
-				header_up X-Forwarded-Proto {scheme}
-				header_up X-Forwarded-For {remote_host}
-			}
+	@agentbotOauthConfigured {
+		path /HBMP_AgentBot/oauth*
+		expression `{env.AGENTBOT_API_UPSTREAM} != ""`
+	}
+	@agentbotOauthMissing {
+		path /HBMP_AgentBot/oauth*
+		expression `{env.AGENTBOT_API_UPSTREAM} == ""`
+	}
+	handle @agentbotOauthConfigured {
+		uri strip_prefix /HBMP_AgentBot
+		reverse_proxy {env.AGENTBOT_API_UPSTREAM} {
+			header_up Host {host}
+			header_up X-Forwarded-Proto {scheme}
+			header_up X-Forwarded-For {remote_host}
 		}
+	}
+	handle @agentbotOauthMissing {
 		respond 503 "AgentBot API is not configured. Set AGENTBOT_API_UPSTREAM on web-frontend."
 	}
 
