@@ -60,6 +60,16 @@
 	@hbmpDocsExact path /HBMP_DOCS_PLATFORM
 	redir @hbmpDocsExact /HBMP_DOCS_PLATFORM/ 308
 
+	# Docs API: strip /HBMP_DOCS_PLATFORM so upstream receives /api/*
+	handle /HBMP_DOCS_PLATFORM/api* {
+		uri strip_prefix /HBMP_DOCS_PLATFORM
+		reverse_proxy {$HBMP_DOCS_API_UPSTREAM} {
+			header_up Host {host}
+			header_up X-Forwarded-Proto {scheme}
+			header_up X-Forwarded-For {remote_host}
+		}
+	}
+
 	@hbmpDocsAssets path_regexp hbmp_docs_assets ^/HBMP_DOCS_PLATFORM/.*\.(js|mjs|css|map|json|wasm|ttf|woff|woff2|svg|png|jpg|jpeg|gif|webp|ico)$
 	handle @hbmpDocsAssets {
 		root * /usr/share/caddy
@@ -226,20 +236,28 @@
 	# AgentBot backend API and OAuth endpoints.
 	# Strip /HBMP_AgentBot so upstream receives /api/* and /oauth/*.
 	handle /HBMP_AgentBot/api* {
-		uri strip_prefix /HBMP_AgentBot
-		reverse_proxy {$AGENTBOT_API_UPSTREAM} {
-			header_up Host {host}
-			header_up X-Forwarded-Proto {scheme}
-			header_up X-Forwarded-For {remote_host}
+		@agentbotApiConfigured expression `{env.AGENTBOT_API_UPSTREAM} != ""`
+		handle @agentbotApiConfigured {
+			uri strip_prefix /HBMP_AgentBot
+			reverse_proxy {$AGENTBOT_API_UPSTREAM} {
+				header_up Host {host}
+				header_up X-Forwarded-Proto {scheme}
+				header_up X-Forwarded-For {remote_host}
+			}
 		}
+		respond 503 "AgentBot API is not configured. Set AGENTBOT_API_UPSTREAM on web-frontend."
 	}
 	handle /HBMP_AgentBot/oauth* {
-		uri strip_prefix /HBMP_AgentBot
-		reverse_proxy {$AGENTBOT_API_UPSTREAM} {
-			header_up Host {host}
-			header_up X-Forwarded-Proto {scheme}
-			header_up X-Forwarded-For {remote_host}
+		@agentbotOauthConfigured expression `{env.AGENTBOT_API_UPSTREAM} != ""`
+		handle @agentbotOauthConfigured {
+			uri strip_prefix /HBMP_AgentBot
+			reverse_proxy {$AGENTBOT_API_UPSTREAM} {
+				header_up Host {host}
+				header_up X-Forwarded-Proto {scheme}
+				header_up X-Forwarded-For {remote_host}
+			}
 		}
+		respond 503 "AgentBot API is not configured. Set AGENTBOT_API_UPSTREAM on web-frontend."
 	}
 
 	@agentBotAssets path_regexp agentbot_assets ^/HBMP_AgentBot/.*\.(js|mjs|css|map|json|wasm|ttf|woff|woff2|svg|png|jpg|jpeg|gif|webp|ico)$

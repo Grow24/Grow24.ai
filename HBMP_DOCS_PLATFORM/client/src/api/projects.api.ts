@@ -23,7 +23,11 @@ export interface Docket {
 export const projectsApi = {
   getAll: async (): Promise<{ projects: Project[] }> => {
     const response = await httpClient.get('/projects');
-    return response.data;
+    const payload = response.data;
+    if (!payload || typeof payload !== 'object' || !Array.isArray(payload.projects)) {
+      throw new Error('Docs API did not return projects. Is the backend running?');
+    }
+    return payload;
   },
 
   getById: async (projectId: string): Promise<Project> => {

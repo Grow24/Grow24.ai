@@ -16,6 +16,7 @@ if [ "${PROFILE}" = "core" ]; then
   run_step "build:main" npm run build:main
   run_step "build:hbmp-one" npm run build:hbmp-one
   run_step "build:hbmp-docs-platform" npm run build:hbmp-docs-platform
+  run_step "build:hbmp-agentbot" npm run build:hbmp-agentbot
   run_step "build:google" npm run build:google
   run_step "build:app-manager" npm run build:app-manager
   run_step "build:hbmp-form-manager" npm run build:hbmp-form-manager

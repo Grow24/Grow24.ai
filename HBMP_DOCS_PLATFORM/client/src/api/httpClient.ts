@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+const API_URL = import.meta.env.VITE_API_URL || '/HBMP_DOCS_PLATFORM/api';
 
 export const httpClient = axios.create({
   baseURL: API_URL,
@@ -22,7 +22,16 @@ httpClient.interceptors.request.use(
 
 // Response interceptor for error handling
 httpClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const contentType = String(response.headers?.['content-type'] || '');
+    if (contentType.includes('text/html')) {
+      return Promise.reject({
+        message: 'Docs API is not reachable (received HTML instead of JSON).',
+        response,
+      });
+    }
+    return response;
+  },
   async (error) => {
     // Ensure we always return a proper error object
     if (error.response) {

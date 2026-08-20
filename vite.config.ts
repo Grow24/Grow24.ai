@@ -54,6 +54,11 @@ export default defineConfig({
         changeOrigin: true,
         ws: true,
       },
+      '/HBMP_DOCS_PLATFORM/api': {
+        target: `http://localhost:${process.env.HBMP_API_PORT || '4000'}`,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/HBMP_DOCS_PLATFORM/, '') || '/',
+      },
       '/HBMP_DOCS_PLATFORM': {
         target: `http://localhost:${process.env.HBMP_DOCS_PORT || '5177'}`,
         changeOrigin: true,

@@ -5,7 +5,8 @@ LABEL "framework"="vite"
 WORKDIR /src
 
 # Build deps used by sharp if prebuilt binary download fails.
-RUN apk add --no-cache python3 make g++ cairo-dev jpeg-dev pango-dev giflib-dev pixman-dev
+# openssl is required to generate the Prisma client for the docs API.
+RUN apk add --no-cache python3 make g++ cairo-dev jpeg-dev pango-dev giflib-dev pixman-dev openssl
 
 # Improve npm reliability on intermittent networks and sharp install behavior.
 ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1 \
@@ -54,21 +55,28 @@ ENV BUILD_PROFILE=${BUILD_PROFILE}
 
 RUN sh scripts/build-zeabur-profile.sh "${BUILD_PROFILE}"
 
+# Docs Platform API (Express + Prisma/SQLite) — served from this same container.
+WORKDIR /src/HBMP_DOCS_PLATFORM/server
+RUN sh -c 'for i in 1 2 3; do npm ci --no-audit --no-fund && exit 0; echo "docs-api npm ci failed (attempt $i), retrying..."; sleep 8; done; exit 1'
+RUN npx prisma generate
+WORKDIR /src
+
 # Ensure optional mxgraph folder exists so COPY does not fail
 # when Mxgraph_ReactFlow is absent in this checkout.
 RUN mkdir -p /src/mxgraph_standalone/apps/web
 
 FROM node:22-alpine
 
-RUN apk add --no-cache caddy ca-certificates
+RUN apk add --no-cache caddy ca-certificates openssl
 
 WORKDIR /app
 
 COPY --from=builder /src/dist /usr/share/caddy
 COPY --from=builder /src/Caddyfile /etc/caddy/Caddyfile
 COPY --from=builder /src/mxgraph_standalone /app/mxgraph
+COPY --from=builder /src/HBMP_DOCS_PLATFORM/server /app/docs-api
 COPY --from=builder /src/docker-entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN chmod +x /entrypoint.sh && mkdir -p /app/data
 
 EXPOSE 8080
 

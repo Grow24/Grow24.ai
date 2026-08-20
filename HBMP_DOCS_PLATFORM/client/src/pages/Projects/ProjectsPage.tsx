@@ -68,9 +68,15 @@ export default function ProjectsPage() {
   if (error) {
     return (
       <div className="p-6">
-        <div className="text-red-500">Error loading projects: {error instanceof Error ? error.message : 'Unknown error'}</div>
+        <div className="text-red-500">
+          Error loading projects:{' '}
+          {error instanceof Error
+            ? error.message
+            : (error as { message?: string })?.message || 'Unknown error'}
+        </div>
         <div className="mt-2 text-sm text-muted-foreground">
-          Make sure the backend server is running on http://localhost:4000
+          Make sure the Docs Platform API is running. In production this is
+          {' '}<code>/HBMP_DOCS_PLATFORM/api</code>; locally it is port 4000.
         </div>
       </div>
     );
@@ -131,7 +137,7 @@ export default function ProjectsPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {data?.projects.map((project) => {
+        {(data?.projects ?? []).map((project) => {
           const progress = getProgress(project);
           return (
             <Card key={project.id} className="hover:shadow-lg transition-shadow">
@@ -160,7 +166,7 @@ export default function ProjectsPage() {
             </Card>
           );
         })}
-        {data?.projects.length === 0 && (
+        {(data?.projects ?? []).length === 0 && (
           <div className="col-span-full text-center py-12 text-muted-foreground">
             No projects found. Create your first project to get started.
           </div>
