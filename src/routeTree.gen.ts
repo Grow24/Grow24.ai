@@ -23,6 +23,7 @@ import { Route as ProjectRouteImport } from './routes/project'
 import { Route as ProblemRouteImport } from './routes/problem'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as LibraryRouteImport } from './routes/library'
 import { Route as EchartsRouteImport } from './routes/echarts'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -104,6 +105,11 @@ const PortfolioRoute = PortfolioRouteImport.update({
   path: '/portfolio',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LibraryRoute = LibraryRouteImport.update({
   id: '/library',
   path: '/library',
@@ -164,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/echarts': typeof EchartsRoute
   '/library': typeof LibraryRoute
+  '/login': typeof LoginRoute
   '/portfolio': typeof PortfolioRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/problem': typeof ProblemRoute
@@ -190,6 +197,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/echarts': typeof EchartsRoute
   '/library': typeof LibraryRoute
+  '/login': typeof LoginRoute
   '/portfolio': typeof PortfolioRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/problem': typeof ProblemRoute
@@ -217,6 +225,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/echarts': typeof EchartsRoute
   '/library': typeof LibraryRoute
+  '/login': typeof LoginRoute
   '/portfolio': typeof PortfolioRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/problem': typeof ProblemRoute
@@ -245,6 +254,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/echarts'
     | '/library'
+    | '/login'
     | '/portfolio'
     | '/privacy-policy'
     | '/problem'
@@ -271,6 +281,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/echarts'
     | '/library'
+    | '/login'
     | '/portfolio'
     | '/privacy-policy'
     | '/problem'
@@ -297,6 +308,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/echarts'
     | '/library'
+    | '/login'
     | '/portfolio'
     | '/privacy-policy'
     | '/problem'
@@ -324,6 +336,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   EchartsRoute: typeof EchartsRoute
   LibraryRoute: typeof LibraryRoute
+  LoginRoute: typeof LoginRoute
   PortfolioRoute: typeof PortfolioRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   ProblemRoute: typeof ProblemRoute
@@ -440,6 +453,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortfolioRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/library': {
       id: '/library'
       path: '/library'
@@ -536,6 +556,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   EchartsRoute: EchartsRoute,
   LibraryRoute: LibraryRoute,
+  LoginRoute: LoginRoute,
   PortfolioRoute: PortfolioRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   ProblemRoute: ProblemRoute,

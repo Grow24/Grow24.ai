@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from '@tanstack/react-router'
 import { useComingSoon } from '../contexts/ComingSoonContext'
 import { useTheme } from '../contexts/ThemeContext'
 import { isValidSolutionId } from '../constants/solutions'
-import { useLoginModal } from '../contexts/LoginModalContext'
+import { useAuth } from '../contexts/AuthContext'
 // SVG Icons - Hamburger menu icon (3 horizontal lines)
 const HamburgerIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -409,7 +409,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
   const [isDesktop, setIsDesktop] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [isSurveyPaused, setIsSurveyPaused] = useState(false)
-  const { openLoginModal } = useLoginModal()
+  const { isAuthenticated, logout } = useAuth()
   const { showComingSoon } = useComingSoon()
   const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
@@ -864,7 +864,14 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                 >
                 {/* Login */}
                 <motion.button
-                  onClick={() => openLoginModal()}
+                  onClick={() => {
+                    if (isAuthenticated) {
+                      logout()
+                      navigate({ to: '/' })
+                      return
+                    }
+                    navigate({ to: '/login' })
+                  }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-sm font-semibold transition-colors ${
@@ -872,9 +879,9 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                       ? 'text-white hover:bg-white/10 border border-white/20'
                       : 'text-gray-900 hover:bg-gray-100 border border-gray-300'
                   }`}
-                  aria-label="Open login"
+                  aria-label={isAuthenticated ? 'Log out' : 'Open login'}
                 >
-                  Login
+                  {isAuthenticated ? 'Logout' : 'Login'}
                 </motion.button>
                 {/* Theme Toggle */}
                 <motion.button
