@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /**
  * PID 1 for the Grow24 web image. Zeabur sometimes skips shell entrypoints;
- * this Node supervisor always starts Caddy plus local API stubs.
+ * this Node supervisor always starts Caddy plus local APIs.
  */
-const { spawn } = require('child_process');
+const { spawn, execSync } = require('child_process');
 const fs = require('fs');
+const path = require('path');
 
 function run(name, command, args, options = {}) {
   console.log(`[start-all] starting ${name}: ${command} ${args.join(' ')}`);
@@ -23,18 +24,56 @@ function run(name, command, args, options = {}) {
 
 fs.mkdirSync('/app/data', { recursive: true });
 
-if (fs.existsSync('/app/docs-api/fallback.cjs')) {
-  run('docs-api', 'node', ['/app/docs-api/fallback.cjs'], {
-    cwd: '/app/docs-api',
-    env: {
-      ...process.env,
-      PORT: process.env.HBMP_DOCS_API_PORT || '4000',
-      DATABASE_URL: process.env.DATABASE_URL || 'file:/app/data/docs.db',
-      CORS_ORIGIN: process.env.CORS_ORIGIN || 'https://www.grow24.ai',
-    },
-  });
+const docsDir = '/app/docs-api';
+const docsEnv = {
+  ...process.env,
+  PORT: process.env.HBMP_DOCS_API_PORT || '4000',
+  HOST: '0.0.0.0',
+  DATABASE_URL: process.env.DATABASE_URL || 'file:/app/data/docs.db',
+  CORS_ORIGIN: process.env.CORS_ORIGIN || 'https://www.grow24.ai',
+};
+const tsxCli = path.join(docsDir, 'node_modules/tsx/dist/cli.mjs');
+
+function runQuiet(command) {
+  execSync(command, { cwd: docsDir, env: docsEnv, stdio: 'inherit' });
+}
+
+if (fs.existsSync(docsDir)) {
+  try {
+    runQuiet('npx prisma migrate deploy');
+  } catch {
+    try {
+      runQuiet('npx prisma db push --skip-generate --accept-data-loss');
+    } catch (error) {
+      console.error('[start-all] docs prisma migrate failed', error.message);
+    }
+  }
+  if (fs.existsSync(path.join(docsDir, 'prisma/seed.ts')) && fs.existsSync(tsxCli)) {
+    try {
+      execSync(`node "${tsxCli}" prisma/seed.ts`, {
+        cwd: docsDir,
+        env: docsEnv,
+        stdio: 'inherit',
+      });
+    } catch (error) {
+      console.error('[start-all] docs seed failed', error.message);
+    }
+  }
+
+  const distEntry = path.join(docsDir, 'dist/index.js');
+  const srcEntry = path.join(docsDir, 'src/index.ts');
+  const fallback = path.join(docsDir, 'fallback.cjs');
+  if (fs.existsSync(distEntry)) {
+    run('docs-api', 'node', [distEntry], { cwd: docsDir, env: docsEnv });
+  } else if (fs.existsSync(srcEntry) && fs.existsSync(tsxCli)) {
+    run('docs-api', 'node', [tsxCli, srcEntry], { cwd: docsDir, env: docsEnv });
+  } else if (fs.existsSync(fallback)) {
+    run('docs-api', 'node', [fallback], { cwd: docsDir, env: docsEnv });
+  } else {
+    console.error('[start-all] docs API entry missing');
+  }
 } else {
-  console.error('[start-all] /app/docs-api/fallback.cjs missing');
+  console.error('[start-all] /app/docs-api missing');
 }
 
 run('agentbot-stub', 'node', ['/app/agentbot-stub.cjs'], {

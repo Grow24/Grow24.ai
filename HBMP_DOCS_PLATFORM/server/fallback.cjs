@@ -71,12 +71,112 @@ app.post('/api/projects', async (req, res) => {
         name: String(req.body?.name || '').trim() || 'Untitled project',
         description: req.body?.description || '',
         clientName: req.body?.clientName || '',
+        dockets: {
+          create: [
+            { name: 'Business Case Docket', type: 'BUSINESS_CASE', level: 'C' },
+            { name: 'Business Requirements Docket', type: 'BUSINESS_REQUIREMENTS', level: 'C' },
+            { name: 'Test Docket', type: 'TEST', level: 'I' },
+          ],
+        },
       },
+      include: { dockets: true },
     });
-    res.json(project);
+    res.status(201).json(project);
   } catch (error) {
     console.error('[docs-api] create project failed', error);
     res.status(500).json({ error: { message: error.message || 'Failed to create project' } });
+  }
+});
+
+app.patch('/api/projects/:projectId', async (req, res) => {
+  try {
+    if (!prisma) {
+      res.status(503).json({ error: { message: 'Database is not ready' } });
+      return;
+    }
+    const data = {};
+    if (typeof req.body?.name === 'string' && req.body.name.trim()) data.name = req.body.name.trim();
+    if (typeof req.body?.description === 'string') data.description = req.body.description;
+    if (typeof req.body?.clientName === 'string') data.clientName = req.body.clientName;
+    const project = await prisma.project.update({
+      where: { id: req.params.projectId },
+      data,
+      include: { dockets: true },
+    });
+    res.json(project);
+  } catch (error) {
+    console.error('[docs-api] update project failed', error);
+    res.status(500).json({ error: { message: error.message || 'Failed to update project' } });
+  }
+});
+
+app.get('/api/projects/:projectId/documents', async (req, res) => {
+  try {
+    if (!prisma) {
+      res.json({ documents: [] });
+      return;
+    }
+    const documents = await prisma.documentInstance.findMany({
+      where: { projectId: req.params.projectId },
+      include: { template: true, docket: true },
+      orderBy: { updatedAt: 'desc' },
+    });
+    res.json({
+      documents: documents.map((doc) => ({
+        id: doc.id,
+        title: doc.title,
+        templateId: doc.templateId,
+        templateName: doc.template?.name || '',
+        templateCode: doc.template?.code || '',
+        docketId: doc.docketId,
+        docketName: doc.docket?.name || '',
+        status: doc.status,
+        level: doc.level,
+        version: doc.version,
+        updatedAt: doc.updatedAt,
+      })),
+    });
+  } catch (error) {
+    console.error('[docs-api] list documents failed', error);
+    res.json({ documents: [] });
+  }
+});
+
+app.get('/api/templates/:id', async (req, res) => {
+  try {
+    if (!prisma) {
+      res.status(404).json({ error: { message: 'Template not found' } });
+      return;
+    }
+    const template = await prisma.documentTemplate.findUnique({
+      where: { id: req.params.id },
+      include: { sections: { include: { fields: true }, orderBy: { order: 'asc' } } },
+    });
+    if (!template) {
+      res.status(404).json({ error: { message: 'Template not found' } });
+      return;
+    }
+    res.json(template);
+  } catch (error) {
+    console.error('[docs-api] get template failed', error);
+    res.status(500).json({ error: { message: error.message || 'Failed to fetch template' } });
+  }
+});
+
+app.get('/api/templates', async (req, res) => {
+  try {
+    if (!prisma) {
+      res.json({ templates: [] });
+      return;
+    }
+    const templates = await prisma.documentTemplate.findMany({
+      where: { isActive: true },
+      orderBy: { name: 'asc' },
+    });
+    res.json({ templates });
+  } catch (error) {
+    console.error('[docs-api] list templates failed', error);
+    res.json({ templates: [] });
   }
 });
 
@@ -92,6 +192,21 @@ app.get('/api/projects/:projectId', async (req, res) => {
     });
     if (!project) {
       res.status(404).json({ error: { message: 'Project not found' } });
+      return;
+    }
+    if (!project.dockets || project.dockets.length === 0) {
+      await prisma.docket.createMany({
+        data: [
+          { projectId: project.id, name: 'Business Case Docket', type: 'BUSINESS_CASE', level: 'C' },
+          { projectId: project.id, name: 'Business Requirements Docket', type: 'BUSINESS_REQUIREMENTS', level: 'C' },
+          { projectId: project.id, name: 'Test Docket', type: 'TEST', level: 'I' },
+        ],
+      });
+      const withDockets = await prisma.project.findUnique({
+        where: { id: project.id },
+        include: { dockets: true, documents: true },
+      });
+      res.json(withDockets);
       return;
     }
     res.json(project);

@@ -34,7 +34,11 @@ export interface TemplateDetail extends Template {
 export const templatesApi = {
   getAll: async (params?: { level?: string; code?: string }): Promise<{ templates: Template[] }> => {
     const response = await httpClient.get('/templates', { params });
-    return response.data;
+    const payload = response.data;
+    if (!payload || !Array.isArray(payload.templates)) {
+      return { templates: [] };
+    }
+    return payload;
   },
 
   getById: async (id: string): Promise<TemplateDetail> => {

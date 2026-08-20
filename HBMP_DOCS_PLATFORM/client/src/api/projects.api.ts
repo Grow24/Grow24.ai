@@ -39,5 +39,13 @@ export const projectsApi = {
     const response = await httpClient.post('/projects', data);
     return response.data;
   },
+
+  update: async (
+    projectId: string,
+    data: { name?: string; description?: string; clientName?: string; status?: 'ACTIVE' | 'ARCHIVED' }
+  ): Promise<Project> => {
+    const response = await httpClient.patch(`/projects/${projectId}`, data);
+    return response.data;
+  },
 };
 

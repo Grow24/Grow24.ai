@@ -59,6 +59,7 @@ RUN sh scripts/build-zeabur-profile.sh "${BUILD_PROFILE}"
 WORKDIR /src/HBMP_DOCS_PLATFORM/server
 RUN sh -c 'for i in 1 2 3; do npm ci --no-audit --no-fund && exit 0; echo "docs-api npm ci failed (attempt $i), retrying..."; sleep 8; done; exit 1'
 RUN npx prisma generate
+RUN ./node_modules/.bin/tsc -p tsconfig.json || echo "docs-api tsc failed; runtime will use tsx"
 WORKDIR /src
 
 # Ensure optional mxgraph folder exists so COPY does not fail

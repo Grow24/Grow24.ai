@@ -42,6 +42,7 @@ export interface DocumentListItem {
   title: string;
   templateId: string;
   templateName: string;
+  templateCode?: string;
   docketId: string;
   docketName: string;
   status: string;
@@ -107,7 +108,11 @@ export const documentsApi = {
 
   getByProject: async (projectId: string): Promise<{ documents: DocumentListItem[] }> => {
     const response = await httpClient.get(`/projects/${projectId}/documents`);
-    return response.data;
+    const payload = response.data;
+    if (!payload || !Array.isArray(payload.documents)) {
+      return { documents: [] };
+    }
+    return payload;
   },
 
   export: async (documentId: string, format: 'docx' | 'pdf' | 'xlsx'): Promise<Blob> => {

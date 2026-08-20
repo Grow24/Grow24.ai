@@ -4,7 +4,10 @@ import { Toaster } from '@/components/ui/toaster';
 import LoginPage from './pages/Login/LoginPage';
 import ProjectsPage from './pages/Projects/ProjectsPage';
 import ProjectDashboardPage from './pages/ProjectDashboard/ProjectDashboardPage';
+import ProjectTemplatesPage from './pages/ProjectTemplates/ProjectTemplatesPage';
+import ProjectSettingsPage from './pages/ProjectSettings/ProjectSettingsPage';
 import DocumentEditorPage from './pages/DocumentEditor/DocumentEditorPage';
+import NotFoundPage from './pages/NotFound/NotFoundPage';
 import AppShell from './components/layout/AppShell';
 
 const queryClient = new QueryClient({
@@ -55,11 +58,14 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/projects" element={<ProjectsPage />} />
             <Route path="/projects/:projectId" element={<ProjectDashboardPage />} />
+            <Route path="/projects/:projectId/templates" element={<ProjectTemplatesPage />} />
+            <Route path="/projects/:projectId/settings" element={<ProjectSettingsPage />} />
             <Route
               path="/projects/:projectId/dockets/:docketId/documents/:documentId"
               element={<DocumentEditorPage />}
             />
             <Route path="/" element={<Navigate to="/projects" replace />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
         <Toaster />

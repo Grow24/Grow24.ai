@@ -298,6 +298,7 @@ export const getProjectDocuments = async (req: Request, res: Response) => {
       title: doc.title,
       templateId: doc.templateId,
       templateName: doc.template.name,
+      templateCode: doc.template.code,
       docketId: doc.docketId,
       docketName: doc.docket.name,
       status: doc.status,

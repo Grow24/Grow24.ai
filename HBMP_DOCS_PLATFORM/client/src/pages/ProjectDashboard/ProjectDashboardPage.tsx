@@ -60,31 +60,33 @@ export default function ProjectDashboardPage() {
   const businessReqDocket = project.dockets?.find((d) => d.type === 'BUSINESS_REQUIREMENTS');
   const testDocket = project.dockets?.find((d) => d.type === 'TEST');
 
-  const businessCaseTemplate = templatesData?.templates.find((t) => t.code === 'BUSINESS_CASE');
-  const brdTemplate = templatesData?.templates.find((t) => t.code === 'BRD');
-  // const srsTemplate = templatesData?.templates.find((t) => t.code === 'SRS'); // Hidden for now
-  const uatpTemplate = templatesData?.templates.find((t) => t.code === 'UATP');
+  const templates = templatesData?.templates ?? [];
+  const documents = documentsData?.documents ?? [];
+  const businessCaseTemplate = templates.find((t) => t.code === 'BUSINESS_CASE');
+  const brdTemplate = templates.find((t) => t.code === 'BRD');
+  const uatpTemplate = templates.find((t) => t.code === 'UATP');
 
   // Check if Business Case is approved (for BRD gating)
-  const businessCaseDoc = documentsData?.documents.find(
-    (d) => d.templateName === 'Business Case' || d.templateName.includes('BUSINESS_CASE')
+  const businessCaseDoc = documents.find(
+    (d) => d.templateName === 'Business Case' || (d.templateName || '').includes('BUSINESS_CASE')
   );
   const isBusinessCaseApproved = businessCaseDoc?.status === 'APPROVED';
 
-  // Compute dashboard state
-  const documents = documentsData?.documents || [];
   const dockets = project.dockets || [];
   const nextAction = computeNextAction(documents, dockets);
   const blockers = computeBlockers(documents, dockets);
   const phaseCounts = computePhaseCounts(documents);
-  
-  // Compute phase unlock status
+
   const hasApprovedBRD = documents.some(
-    (d) => (d.templateName.includes('BRD') || d.templateName.includes('Business Requirements')) && d.status === 'APPROVED'
+    (d) =>
+      ((d.templateName || '').includes('BRD') || (d.templateName || '').includes('Business Requirements')) &&
+      d.status === 'APPROVED'
   );
-  // UATP is completed when it exists (regardless of status, just needs to be created/filled)
   const hasUATP = documents.some(
-    (d) => d.templateName === 'User Acceptance Test Plan' || d.templateName.includes('UATP') || d.templateCode === 'UATP'
+    (d) =>
+      d.templateName === 'User Acceptance Test Plan' ||
+      (d.templateName || '').includes('UATP') ||
+      d.templateCode === 'UATP'
   );
   // const hasApprovedSRS = documents.some(
   //   (d) => (d.templateName === 'SRS' || d.templateName === 'System Requirements Specification') && d.status === 'APPROVED'
@@ -240,7 +242,7 @@ export default function ProjectDashboardPage() {
   // TEMPORARY FOR TESTING: Auto-approve BRD function
   const handleAutoApproveBRD = async () => {
     const brdDocs = documents.filter((d) => 
-      (d.templateName.includes('BRD') || d.templateName.includes('Business Requirements')) && d.status === 'UNDER_REVIEW'
+      ((d.templateName || '').includes('BRD') || (d.templateName || '').includes('Business Requirements')) && d.status === 'UNDER_REVIEW'
     );
     if (brdDocs.length > 0) {
       const latestBRD = brdDocs[brdDocs.length - 1];
@@ -276,7 +278,7 @@ export default function ProjectDashboardPage() {
     } else if (action.action === 'submit' && action.documentId && action.docketId) {
       // TEMPORARY FOR TESTING: Auto-approve BRD if it's UNDER_REVIEW
       const doc = documents.find((d) => d.id === action.documentId);
-      if (doc && (doc.templateName.includes('BRD') || doc.templateName.includes('Business Requirements')) && doc.status === 'UNDER_REVIEW') {
+      if (doc && ((doc.templateName || '').includes('BRD') || (doc.templateName || '').includes('Business Requirements')) && doc.status === 'UNDER_REVIEW') {
         await handleAutoApproveBRD();
         return;
       }
@@ -316,7 +318,7 @@ export default function ProjectDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-semibold text-slate-900">
-              {documentsData?.documents.filter((d) => d.templateName === 'Business Case').length || 0}
+              {documents.filter((d) => d.templateName === 'Business Case').length}
             </div>
           </CardContent>
         </Card>
@@ -326,7 +328,7 @@ export default function ProjectDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-semibold text-slate-900">
-              {documentsData?.documents.filter((d) => d.templateName.includes('BRD')).length || 0}
+              {documents.filter((d) => (d.templateName || '').includes('BRD')).length}
             </div>
           </CardContent>
         </Card>
@@ -336,7 +338,7 @@ export default function ProjectDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-semibold text-slate-900">
-              {documentsData?.documents.filter((d) => d.templateName === 'User Acceptance Test Plan' || d.templateName.includes('UATP') || d.templateCode === 'UATP').length || 0}
+              {documents.filter((d) => d.templateName === 'User Acceptance Test Plan' || (d.templateName || '').includes('UATP') || d.templateCode === 'UATP').length}
             </div>
           </CardContent>
         </Card>
@@ -348,7 +350,7 @@ export default function ProjectDashboardPage() {
           <div id="business-case">
             <DocketCard
               docket={businessCaseDocket}
-              documents={documentsData?.documents.filter((d) => d.docketId === businessCaseDocket.id) || []}
+              documents={documents.filter((d) => d.docketId === businessCaseDocket.id)}
               onCreateDocument={handleCreateBusinessCase}
               projectId={projectId!}
             />
@@ -358,7 +360,7 @@ export default function ProjectDashboardPage() {
           <div id="business-requirements">
             <DocketCard
               docket={businessReqDocket}
-              documents={documentsData?.documents.filter((d) => d.docketId === businessReqDocket.id) || []}
+              documents={documents.filter((d) => d.docketId === businessReqDocket.id)}
               onCreateDocument={handleCreateBRD}
               // onCreateSRS={handleCreateSRS} // Hidden for now
               onCreateUATP={handleCreateUATP}
@@ -375,7 +377,7 @@ export default function ProjectDashboardPage() {
           <div id="test">
             <DocketCard
               docket={testDocket}
-              documents={documentsData?.documents.filter((d) => d.docketId === testDocket.id) || []}
+              documents={documents.filter((d) => d.docketId === testDocket.id)}
               projectId={projectId!}
             />
           </div>

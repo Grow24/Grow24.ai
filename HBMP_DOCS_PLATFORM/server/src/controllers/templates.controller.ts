@@ -38,7 +38,7 @@ export const getTemplateById = async (req: Request, res: Response) => {
         sections: {
           orderBy: { order: 'asc' },
           include: {
-            template: {
+            fields: {
               orderBy: { order: 'asc' },
             },
           },
