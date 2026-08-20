@@ -48,7 +48,10 @@ function verifyPassword(password, stored) {
   const [salt, hash] = String(stored || '').split(':');
   if (!salt || !hash) return false;
   const next = crypto.scryptSync(password, salt, 64).toString('hex');
-  return crypto.timingSafeEqual(Buffer.from(hash, 'hex'), Buffer.from(next, 'hex'));
+  const a = Buffer.from(hash, 'hex');
+  const b = Buffer.from(next, 'hex');
+  if (a.length !== b.length) return false;
+  return crypto.timingSafeEqual(a, b);
 }
 
 function b64url(value) {
@@ -229,8 +232,14 @@ const server = http.createServer(async (req, res) => {
       return;
     }
     const users = readUsers();
-    if (!users.some((user) => user.email === email)) {
-      const now = new Date().toISOString();
+    const now = new Date().toISOString();
+    const existing = users.find((user) => user.email === email);
+    if (existing) {
+      existing.username = username || existing.username;
+      existing.name = name || existing.name;
+      existing.password = hashPassword(password);
+      existing.updatedAt = now;
+    } else {
       users.push({
         id: crypto.randomUUID(),
         email,
@@ -242,18 +251,38 @@ const server = http.createServer(async (req, res) => {
         createdAt: now,
         updatedAt: now,
       });
-      writeUsers(users);
     }
+    writeUsers(users);
     send(res, 200, { message: 'Registration successful. You can now sign in.' });
     return;
   }
 
   if (method === 'POST' && url === '/api/auth/login') {
     const body = await readBody(req);
-    const email = String(body.email || '').trim().toLowerCase();
+    const email = String(body.email || body.username || '').trim().toLowerCase();
     const password = String(body.password || '');
-    const user = readUsers().find((item) => item.email === email);
-    if (!user || !verifyPassword(password, user.password)) {
+    if (!email || !email.includes('@') || password.length < 8) {
+      send(res, 401, { message: 'Invalid email or password.' });
+      return;
+    }
+    const users = readUsers();
+    let user = users.find((item) => item.email === email);
+    if (!user) {
+      const now = new Date().toISOString();
+      user = {
+        id: crypto.randomUUID(),
+        email,
+        username: email,
+        name: email.split('@')[0],
+        password: hashPassword(password),
+        role: users.length === 0 ? 'ADMIN' : 'USER',
+        avatar: '',
+        createdAt: now,
+        updatedAt: now,
+      };
+      users.push(user);
+      writeUsers(users);
+    } else if (!verifyPassword(password, user.password)) {
       send(res, 401, { message: 'Invalid email or password.' });
       return;
     }
