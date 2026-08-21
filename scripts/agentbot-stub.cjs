@@ -4,6 +4,7 @@
  * Stores users on disk so register/login work without MongoDB.
  */
 const http = require('http');
+const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
@@ -14,6 +15,8 @@ const serverDomain = process.env.DOMAIN_CLIENT || 'https://www.grow24.ai';
 const dataDir = process.env.AGENTBOT_DATA_DIR || '/app/data';
 const usersFile = path.join(dataDir, 'agentbot-users.json');
 const secretFile = path.join(dataDir, 'agentbot-secret.txt');
+const convosFile = path.join(dataDir, 'agentbot-convos.json');
+const NO_PARENT = '00000000-0000-0000-0000-000000000000';
 
 fs.mkdirSync(dataDir, { recursive: true });
 
@@ -201,6 +204,78 @@ function authHeaders(token) {
   };
 }
 
+function geminiKey() {
+  return String(process.env.GOOGLE_KEY || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || '').trim();
+}
+
+function readConvos() {
+  try {
+    return JSON.parse(fs.readFileSync(convosFile, 'utf8'));
+  } catch {
+    return { conversations: {}, messages: {} };
+  }
+}
+
+function writeConvos(store) {
+  fs.writeFileSync(convosFile, JSON.stringify(store));
+}
+
+function httpsJson(url, body) {
+  return new Promise((resolve, reject) => {
+    const data = JSON.stringify(body);
+    const req = https.request(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(data),
+      },
+    }, (incoming) => {
+      const chunks = [];
+      incoming.on('data', (chunk) => chunks.push(chunk));
+      incoming.on('end', () => {
+        const raw = Buffer.concat(chunks).toString('utf8');
+        try {
+          resolve({ status: incoming.statusCode || 500, json: JSON.parse(raw), raw });
+        } catch {
+          resolve({ status: incoming.statusCode || 500, json: null, raw });
+        }
+      });
+    });
+    req.on('error', reject);
+    req.write(data);
+    req.end();
+  });
+}
+
+function sseStart(res) {
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream; charset=utf-8',
+    'Cache-Control': 'no-cache, no-transform',
+    Connection: 'keep-alive',
+    'X-Accel-Buffering': 'no',
+  });
+}
+
+function sseWrite(res, event) {
+  res.write(`event: message\ndata: ${JSON.stringify(event)}\n\n`);
+}
+
+function toGeminiContents(history, latestText) {
+  const contents = [];
+  for (const item of history) {
+    const part = String(item.text || '').trim();
+    if (!part) continue;
+    contents.push({
+      role: item.isCreatedByUser ? 'user' : 'model',
+      parts: [{ text: part }],
+    });
+  }
+  if (!contents.length || contents[contents.length - 1].role !== 'user') {
+    contents.push({ role: 'user', parts: [{ text: latestText || 'Hello' }] });
+  }
+  return contents;
+}
+
 const server = http.createServer(async (req, res) => {
   const url = (req.url || '/').split('?')[0];
   const method = req.method || 'GET';
@@ -344,8 +419,155 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  if (method === 'GET' && url.startsWith('/api/convos')) {
-    send(res, 200, { conversations: [], pageNumber: '1', pageSize: 25, pages: 1 });
+  if (method === 'GET' && url === '/api/convos') {
+    const user = userFromReq(req);
+    const store = readConvos();
+    const conversations = Object.values(store.conversations)
+      .filter((item) => !user || item.user === user.id)
+      .sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)));
+    send(res, 200, { conversations, nextCursor: null });
+    return;
+  }
+
+  if (method === 'GET' && url.startsWith('/api/convos/')) {
+    const id = url.slice('/api/convos/'.length);
+    const store = readConvos();
+    const conversation = store.conversations[id];
+    if (!conversation) {
+      send(res, 404, { message: 'Conversation not found' });
+      return;
+    }
+    send(res, 200, conversation);
+    return;
+  }
+
+  if (method === 'POST' && url === '/api/convos/gen_title') {
+    const body = await readBody(req);
+    const store = readConvos();
+    const conversation = store.conversations[body.conversationId];
+    send(res, 200, { title: conversation?.title || 'New Chat' });
+    return;
+  }
+
+  if (method === 'GET' && url.startsWith('/api/messages/')) {
+    const conversationId = decodeURIComponent(url.slice('/api/messages/'.length).split('/')[0]);
+    const store = readConvos();
+    send(res, 200, store.messages[conversationId] || []);
+    return;
+  }
+
+  if (method === 'POST' && url.startsWith('/api/agents/chat/')) {
+    const body = await readBody(req);
+    const user = userFromReq(req);
+    if (!user) {
+      send(res, 401, { text: 'Unauthorized. Please sign in again.', error: true });
+      return;
+    }
+
+    const key = geminiKey();
+    const text = String(body.text || '').trim();
+    const model = String(body.model || body.modelOptions?.model || 'gemini-2.0-flash').replace(/^google\//, '');
+    const endpoint = String(body.endpoint || url.split('/').pop() || 'google');
+    let conversationId = body.conversationId;
+    if (!conversationId || conversationId === 'new') {
+      conversationId = crypto.randomUUID();
+    }
+    const parentMessageId = body.parentMessageId || NO_PARENT;
+    const userMessageId = body.messageId || crypto.randomUUID();
+    const responseMessageId = crypto.randomUUID();
+    const now = new Date().toISOString();
+    const userMessage = {
+      messageId: userMessageId,
+      conversationId,
+      parentMessageId,
+      text,
+      sender: 'User',
+      isCreatedByUser: true,
+      endpoint,
+      model,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    sseStart(res);
+    sseWrite(res, { created: true, message: userMessage });
+
+    const finish = (reply, isError) => {
+      const responseMessage = {
+        messageId: responseMessageId,
+        conversationId,
+        parentMessageId: userMessageId,
+        text: reply,
+        sender: 'Gemini',
+        isCreatedByUser: false,
+        endpoint,
+        model,
+        unfinished: false,
+        error: !!isError,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      const title = (text || 'New Chat').slice(0, 48);
+      const conversation = {
+        conversationId,
+        title,
+        endpoint,
+        model,
+        createdAt: now,
+        updatedAt: new Date().toISOString(),
+        user: user.id,
+      };
+      if (!isError) {
+        const store = readConvos();
+        store.conversations[conversationId] = conversation;
+        store.messages[conversationId] = [...(store.messages[conversationId] || []), userMessage, responseMessage];
+        writeConvos(store);
+      }
+      sseWrite(res, {
+        message: true,
+        text: reply,
+        messageId: responseMessageId,
+        conversationId,
+        parentMessageId: userMessageId,
+      });
+      sseWrite(res, {
+        final: true,
+        title,
+        conversation,
+        requestMessage: userMessage,
+        responseMessage,
+      });
+      res.end();
+    };
+
+    if (!key) {
+      finish(
+        'Gemini API key is missing. Set GEMINI_API_KEY or GOOGLE_KEY on the grow24.ai Zeabur service, then redeploy.',
+        true,
+      );
+      return;
+    }
+
+    try {
+      const store = readConvos();
+      const history = store.messages[conversationId] || [];
+      const result = await httpsJson(
+        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`,
+        { contents: toGeminiContents(history, text) },
+      );
+      const reply = (result.json?.candidates?.[0]?.content?.parts || [])
+        .map((part) => part.text || '')
+        .join('')
+        .trim();
+      if (result.status >= 400 || !reply) {
+        const apiMessage = result.json?.error?.message || result.raw.slice(0, 400) || 'Gemini returned an empty response.';
+        finish(apiMessage, true);
+        return;
+      }
+      finish(reply, false);
+    } catch (error) {
+      finish(error.message || 'Failed to reach Gemini.', true);
+    }
     return;
   }
 
@@ -359,7 +581,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  send(res, 404, { message: `Route ${method} ${url} not found` });
+  send(res, 404, { text: `Route ${method} ${url} not found`, message: `Route ${method} ${url} not found` });
 });
 
 server.listen(PORT, HOST, () => {
