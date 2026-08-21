@@ -194,9 +194,28 @@ const endpoints = {
 };
 
 const models = {
-  google: ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'],
+  google: [
+    'gemini-2.5-flash',
+    'gemini-2.5-flash-lite',
+    'gemini-2.0-flash',
+    'gemini-1.5-flash-lite',
+    'gemini-1.5-flash',
+    'gemini-1.5-pro',
+  ],
   agents: ['gemini-2.5-flash'],
 };
+
+function resolveGeminiModel(model) {
+  const aliases = {
+    'gemini-1.5-flash-lite': 'gemini-2.0-flash',
+    'gemini-1.5-flash': 'gemini-2.0-flash',
+    'gemini-1.5-pro': 'gemini-2.5-flash',
+    'gemini-2.0-flash-lite': 'gemini-2.0-flash',
+  };
+  return aliases[model] || model;
+}
+
+const emptyList = { object: 'list', data: [], first_id: '', last_id: '', has_more: false };
 
 function authHeaders(token) {
   return {
@@ -414,6 +433,36 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (method === 'GET' && url === '/api/files') {
+    send(res, 200, []);
+    return;
+  }
+
+  if (method === 'GET' && url === '/api/files/config') {
+    send(res, 200, { endpoints: {} });
+    return;
+  }
+
+  if (method === 'GET' && url === '/api/presets') {
+    send(res, 200, []);
+    return;
+  }
+
+  if (method === 'GET' && url === '/api/agents') {
+    send(res, 200, emptyList);
+    return;
+  }
+
+  if (method === 'GET' && url.startsWith('/api/assistants')) {
+    send(res, 200, emptyList);
+    return;
+  }
+
+  if (method === 'GET' && url === '/api/user/plugins') {
+    send(res, 200, []);
+    return;
+  }
+
   if (method === 'GET' && url === '/api/models') {
     send(res, 200, models);
     return;
@@ -432,11 +481,14 @@ const server = http.createServer(async (req, res) => {
   if (method === 'GET' && url.startsWith('/api/convos/')) {
     const id = url.slice('/api/convos/'.length);
     const store = readConvos();
-    const conversation = store.conversations[id];
-    if (!conversation) {
-      send(res, 404, { message: 'Conversation not found' });
-      return;
-    }
+    const conversation = store.conversations[id] || {
+      conversationId: id,
+      title: 'New Chat',
+      endpoint: 'google',
+      model: 'gemini-2.0-flash',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
     send(res, 200, conversation);
     return;
   }
@@ -466,7 +518,9 @@ const server = http.createServer(async (req, res) => {
 
     const key = geminiKey();
     const text = String(body.text || '').trim();
-    const model = String(body.model || body.modelOptions?.model || 'gemini-2.0-flash').replace(/^google\//, '');
+    const model = resolveGeminiModel(
+      String(body.model || body.modelOptions?.model || 'gemini-2.0-flash').replace(/^google\//, ''),
+    );
     const endpoint = String(body.endpoint || url.split('/').pop() || 'google');
     let conversationId = body.conversationId;
     if (!conversationId || conversationId === 'new') {
@@ -517,12 +571,10 @@ const server = http.createServer(async (req, res) => {
         updatedAt: new Date().toISOString(),
         user: user.id,
       };
-      if (!isError) {
-        const store = readConvos();
-        store.conversations[conversationId] = conversation;
-        store.messages[conversationId] = [...(store.messages[conversationId] || []), userMessage, responseMessage];
-        writeConvos(store);
-      }
+      const store = readConvos();
+      store.conversations[conversationId] = conversation;
+      store.messages[conversationId] = [...(store.messages[conversationId] || []), userMessage, responseMessage];
+      writeConvos(store);
       sseWrite(res, {
         message: true,
         text: reply,
