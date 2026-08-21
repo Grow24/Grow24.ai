@@ -53,15 +53,8 @@
     <script defer type="module" src="/src/main.jsx"></script>
     <script>
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          const baseHref = document.querySelector('base')?.getAttribute('href') || '/';
-          navigator.serviceWorker.register(`${baseHref}sw.js`)
-            .then((registration) => {
-              console.log('SW registered: ', registration);
-            })
-            .catch((registrationError) => {
-              console.log('SW registration failed: ', registrationError);
-            });
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          registrations.forEach((registration) => registration.unregister());
         });
       }
     </script>
