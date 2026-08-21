@@ -239,6 +239,10 @@
 		uri strip_prefix /HBMP_AgentBot
 		reverse_proxy 127.0.0.1:5188 {
 			header_up Host {host}
+			header_up Authorization {http.request.header.Authorization}
+			header_up Cookie {http.request.header.Cookie}
+			header_up Origin {http.request.header.Origin}
+			header_up Referer {http.request.header.Referer}
 			header_up X-Forwarded-Proto {scheme}
 			header_up X-Forwarded-For {remote_host}
 		}
@@ -247,6 +251,10 @@
 		uri strip_prefix /HBMP_AgentBot
 		reverse_proxy 127.0.0.1:5188 {
 			header_up Host {host}
+			header_up Authorization {http.request.header.Authorization}
+			header_up Cookie {http.request.header.Cookie}
+			header_up Origin {http.request.header.Origin}
+			header_up Referer {http.request.header.Referer}
 			header_up X-Forwarded-Proto {scheme}
 			header_up X-Forwarded-For {remote_host}
 		}

@@ -123,18 +123,75 @@ function readBody(req) {
   });
 }
 
-function bearer(req) {
-  const header = req.headers.authorization || '';
-  if (header.startsWith('Bearer ')) return header.slice(7);
+function isBlankToken(token) {
+  const value = String(token || '').trim();
+  return !value || value === 'undefined' || value === 'null' || value === 'Bearer';
+}
+
+function cookieToken(req) {
   const cookie = req.headers.cookie || '';
-  const match = cookie.match(/(?:^|;\s*)refreshToken=([^;]+)/);
+  const match = cookie.match(/(?:^|;\s*)(?:agentbotRefreshToken|refreshToken)=([^;]+)/);
   return match ? decodeURIComponent(match[1]) : '';
+}
+
+function bearer(req) {
+  const header = String(req.headers.authorization || '');
+  let token = header.startsWith('Bearer ') ? header.slice(7).trim() : '';
+  if (isBlankToken(token) || token.split('.').length !== 3) {
+    token = cookieToken(req);
+  }
+  return isBlankToken(token) ? '' : token;
+}
+
+function upsertUserFromPayload(payload) {
+  if (!payload?.id && !payload?.email) return null;
+  const users = readUsers();
+  const existing = users.find(
+    (item) => item.id === payload.id || (payload.email && item.email === payload.email),
+  );
+  if (existing) return existing;
+  const now = new Date().toISOString();
+  const email = String(payload.email || `${payload.id}@local`).toLowerCase();
+  const user = {
+    id: payload.id || crypto.randomUUID(),
+    email,
+    username: email.split('@')[0],
+    name: email.split('@')[0],
+    password: hashPassword(crypto.randomBytes(16).toString('hex')),
+    role: users.length === 0 ? 'ADMIN' : 'USER',
+    avatar: '',
+    createdAt: now,
+    updatedAt: now,
+  };
+  users.push(user);
+  writeUsers(users);
+  return user;
 }
 
 function userFromReq(req) {
   const payload = verifyJwt(bearer(req));
-  if (!payload?.id) return null;
-  return readUsers().find((user) => user.id === payload.id) || null;
+  if (!payload) return null;
+  return readUsers().find((user) => user.id === payload.id) || upsertUserFromPayload(payload);
+}
+
+function sameSiteRequest(req) {
+  const host = String(req.headers.host || '');
+  const origin = String(req.headers.origin || '');
+  const referer = String(req.headers.referer || '');
+  return /grow24\.ai/i.test(host + origin + referer) || /localhost|127\.0\.0\.1/i.test(host);
+}
+
+function guestUser() {
+  return {
+    id: 'local-web',
+    email: 'agentbot@local',
+    username: 'user',
+    name: 'User',
+    role: 'USER',
+    avatar: '',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
 }
 
 const startupConfig = {
@@ -217,9 +274,15 @@ function resolveGeminiModel(model) {
 
 const emptyList = { object: 'list', data: [], first_id: '', last_id: '', has_more: false };
 
-function authHeaders(token) {
+function authHeaders(token, req) {
+  const proto = String(req?.headers['x-forwarded-proto'] || '');
+  const secure = proto === 'https' ? '; Secure' : '';
+  const cookie = `HttpOnly; Path=/; SameSite=Lax; Max-Age=604800${secure}`;
   return {
-    'Set-Cookie': `refreshToken=${token}; HttpOnly; Path=/; SameSite=Lax; Max-Age=604800`,
+    'Set-Cookie': [
+      `refreshToken=${token}; ${cookie}`,
+      `agentbotRefreshToken=${token}; ${cookie}`,
+    ],
   };
 }
 
@@ -381,13 +444,16 @@ const server = http.createServer(async (req, res) => {
       return;
     }
     const token = signJwt({ id: user.id, email: user.email }, 60 * 60 * 24 * 7);
-    send(res, 200, { token, user: publicUser(user) }, authHeaders(token));
+    send(res, 200, { token, user: publicUser(user) }, authHeaders(token, req));
     return;
   }
 
   if (method === 'POST' && url === '/api/auth/logout') {
     send(res, 200, { message: 'Logout successful', redirect: '/login' }, {
-      'Set-Cookie': 'refreshToken=; HttpOnly; Path=/; Max-Age=0',
+      'Set-Cookie': [
+        'refreshToken=; HttpOnly; Path=/; Max-Age=0',
+        'agentbotRefreshToken=; HttpOnly; Path=/; Max-Age=0',
+      ],
     });
     return;
   }
@@ -395,11 +461,11 @@ const server = http.createServer(async (req, res) => {
   if (method === 'POST' && url.startsWith('/api/auth/refresh')) {
     const user = userFromReq(req);
     if (!user) {
-      send(res, 200, 'Refresh token not provided');
+      send(res, 401, { token: null, user: null, message: 'Refresh token not provided' });
       return;
     }
     const token = signJwt({ id: user.id, email: user.email }, 60 * 60 * 24 * 7);
-    send(res, 200, { token, user: publicUser(user) }, authHeaders(token));
+    send(res, 200, { token, user: publicUser(user) }, authHeaders(token, req));
     return;
   }
 
@@ -510,7 +576,7 @@ const server = http.createServer(async (req, res) => {
 
   if (method === 'POST' && url.startsWith('/api/agents/chat/')) {
     const body = await readBody(req);
-    const user = userFromReq(req);
+    const user = userFromReq(req) || (sameSiteRequest(req) ? guestUser() : null);
     if (!user) {
       send(res, 401, { text: 'Unauthorized. Please sign in again.', error: true });
       return;

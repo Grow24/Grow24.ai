@@ -57,8 +57,9 @@ export default defineConfig(({ command }) => ({
     react(),
     nodePolyfills(),
     VitePWA({
-      injectRegister: 'auto', // 'auto' | 'manual' | 'disabled'
+      injectRegister: agentBotBasePath ? false : 'auto', // 'auto' | 'manual' | 'disabled'
       registerType: 'autoUpdate', // 'prompt' | 'autoUpdate'
+      selfDestroying: Boolean(agentBotBasePath),
       devOptions: {
         enabled: false, // disable service worker registration in development mode
       },
@@ -74,9 +75,9 @@ export default defineConfig(({ command }) => ({
           'manifest.webmanifest',
         ],
         globIgnores: ['images/**/*', '**/*.map'],
-        navigateFallback: '/index.html',
+        navigateFallback: `${agentBotBaseNormalized}index.html`,
         maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // Increased to 10MB to accommodate large vendor chunks
-        navigateFallbackDenylist: [/^\/oauth/, /^\/api/],
+        navigateFallbackDenylist: [/^\/oauth/, /^\/api/, /\/api\//, /\/oauth\//],
       },
       includeAssets: [],
       manifest: {
