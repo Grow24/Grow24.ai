@@ -64,6 +64,10 @@ export const router = createBrowserRouter(
       errorElement: <RouteErrorBoundary />,
       children: [
         {
+          index: true,
+          element: <Navigate to="/c/new" replace={true} />,
+        },
+        {
           path: 'register',
           element: <Registration />,
         },
