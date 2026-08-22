@@ -11,9 +11,9 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { GoogleGenerativeAIEmbeddings } = require('@langchain/google-genai');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const nodemailer = require('nodemailer');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const whatsappService = require('./whatsapp-service');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { createMailTransporter, getMailFrom, isEmailConfigured } = require('./mail');
 
 dotenv.config();
 
@@ -133,28 +133,18 @@ if (ASTRA_DB_API_ENDPOINT && ASTRA_DB_APPLICATION_TOKEN) {
   console.log('⚠️  AstraDB not configured - running without database');
 }
 
-// Initialize email transporter with SendGrid
-const transporter = nodemailer.createTransport({
-  host: 'smtp.sendgrid.net',
-  port: 587,
-  secure: false, // Use TLS
-  auth: {
-    user: 'apikey', // This is literally the string 'apikey'
-    pass: process.env.SENDGRID_API_KEY, // Your SendGrid API key
-  },
-});
-
-// Verify email configuration
-if (process.env.SENDGRID_API_KEY) {
-  transporter.verify(function (error, _success) {
+// Initialize email transporter (Gmail / SMTP first, SendGrid only as fallback)
+const { name: mailProviderName, transporter } = createMailTransporter();
+if (transporter) {
+  transporter.verify(function (error) {
     if (error) {
-      console.log('⚠️  SendGrid configuration error:', error.message);
+      console.log(`⚠️  Email (${mailProviderName}) configuration error:`, error.message);
     } else {
-      console.log('✅ SendGrid email server is ready to send messages');
+      console.log(`✅ ${mailProviderName} email server is ready to send messages`);
     }
   });
 } else {
-  console.log('⚠️  Email not configured - SENDGRID_API_KEY not set');
+  console.log('⚠️  Email not configured - set EMAIL_SERVICE=gmail + EMAIL_USER/EMAIL_PASSWORD, or SMTP_HOST/SMTP_USER/SMTP_PASS');
 }
 
 // Detect if a chat message is asking about personal or professional management cycles
@@ -229,10 +219,10 @@ app.post('/api/send-email', async (req, res) => {
       });
     }
 
-    if (!process.env.SENDGRID_API_KEY) {
+    if (!isEmailConfigured() || !transporter) {
       return res.status(500).json({
         success: false,
-        message: 'SENDGRID_API_KEY is not configured on the backend',
+        message: 'Email is not configured on the backend. Set Gmail (EMAIL_SERVICE=gmail, EMAIL_USER, EMAIL_PASSWORD) or SMTP_HOST/SMTP_USER/SMTP_PASS.',
       });
     }
 
@@ -254,7 +244,7 @@ app.post('/api/send-email', async (req, res) => {
       : [];
 
     const mailOptions = {
-      from: process.env.EMAIL_FROM || 'noreply@grow24.ai',
+      from: getMailFrom(),
       to: toList,
       subject: subject.trim(),
       html: typeof html === 'string' ? html : undefined,
@@ -632,7 +622,7 @@ app.post('/api/leads', async (req, res) => {
     }
 
     // Send welcome email to subscriber
-    if (process.env.SENDGRID_API_KEY) {
+    if (isEmailConfigured() && transporter) {
       try {
         const emailHtml = `
 <!DOCTYPE html>
@@ -681,7 +671,7 @@ app.post('/api/leads', async (req, res) => {
 </html>`;
 
         const mailOptions = {
-          from: process.env.EMAIL_FROM || 'noreply@grow24.ai', // Use verified sender email
+          from: getMailFrom(),
           to: normalizedEmail,
           subject: 'Welcome to Grow24.ai - Thank You for Your Interest!',
           html: emailHtml,
