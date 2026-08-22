@@ -32,11 +32,24 @@ export default function PBMPChatbot({ position = 'right', hideFab = false }: PBM
   const [isInBookingFlow, setIsInBookingFlow] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const { isVisible: isCTABarVisible } = useGlobalCTABar()
-  const { registerOpener } = useChatbotContext()
+  const { registerOpener, setChatOpen } = useChatbotContext()
 
   useEffect(() => {
-    return registerOpener(() => setIsOpen(true))
-  }, [registerOpener])
+    return registerOpener(() => {
+      setIsOpen(true)
+      setChatOpen(true)
+    })
+  }, [registerOpener, setChatOpen])
+
+  const openChat = () => {
+    setIsOpen(true)
+    setChatOpen(true)
+  }
+
+  const closeChat = () => {
+    setIsOpen(false)
+    setChatOpen(false)
+  }
 
   const noMessages = messages.length === 0
 
@@ -217,24 +230,31 @@ export default function PBMPChatbot({ position = 'right', hideFab = false }: PBM
       {/* Toggle Button - hidden on mobile when radial menu is used */}
       <AnimatePresence>
         {!hideFab && !isOpen && (
-          <motion.button
+          <motion.div
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setIsOpen(true)}
-            className={`fixed ${bottomClass} ${positionClass} z-50 w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 text-white transition-all duration-300 flex items-center justify-center`}
+            className={`fixed ${bottomClass} ${positionClass} z-50 flex flex-col items-center gap-1`}
           >
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-            </svg>
-            <motion.span
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="absolute inset-0 rounded-full border-2 border-purple-300 opacity-30"
-            />
-          </motion.button>
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-purple-700 dark:text-purple-300 bg-white/90 dark:bg-slate-800/90 px-2 py-0.5 rounded-full shadow-sm">
+              Beta
+            </span>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={openChat}
+              className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 text-white transition-all duration-300 flex items-center justify-center relative"
+            >
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+              </svg>
+              <motion.span
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="absolute inset-0 rounded-full border-2 border-purple-300 opacity-30"
+              />
+            </motion.button>
+          </motion.div>
         )}
       </AnimatePresence>
 
@@ -257,12 +277,13 @@ export default function PBMPChatbot({ position = 'right', hideFab = false }: PBM
                   </svg>
                 </div>
                 <div>
+                  <p className="text-[10px] uppercase tracking-wider text-purple-200 font-semibold mb-0.5">Beta</p>
                   <h3 className="font-bold text-base">Grow24.ai Assistant</h3>
                   <p className="text-xs text-purple-100">PBMP Chatbot</p>
                 </div>
               </div>
               <button
-                onClick={() => setIsOpen(false)}
+                onClick={closeChat}
                 className="text-white hover:bg-white/20 rounded-lg p-1.5 transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

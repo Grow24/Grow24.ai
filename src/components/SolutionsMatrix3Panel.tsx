@@ -534,11 +534,11 @@ export default function SolutionsMatrix3Panel() {
                         transition={{ duration: 0.5 }}
                     >
                         <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-900 via-emerald-700 to-slate-900 dark:from-white dark:via-emerald-400 dark:to-white bg-clip-text text-transparent mb-2">
-                            Map of Solutions
+                            Map of Products
                         </h1>
                         <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 font-medium">
-                            <span className="block"><strong>For Professional Life Cycle:</strong> Explore solutions by Functions (Marketing, Sales, Corporate, etc.) / Support (Structure, System, Process), by Lifecycle Stage.</span>
-                            <span className="block mt-2"><strong>For Personal Life Cycle:</strong> Explore solutions by Lifecycle Stage.</span>
+                            <span className="block"><strong>For Professional Life Cycle:</strong> Explore products by Functions (Marketing, Sales, Corporate, etc.) / Support (Structure, System, Process), by Lifecycle Stage.</span>
+                            <span className="block mt-2"><strong>For Personal Life Cycle:</strong> Explore products by Lifecycle Stage.</span>
                         </p>
                     </motion.div>
                 </div>
@@ -747,7 +747,7 @@ export default function SolutionsMatrix3Panel() {
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
-                                Solution Summary
+                                Product Summary
                             </h3>
                         </div>
                         <AnimatePresence mode="wait">
@@ -821,10 +821,10 @@ export default function SolutionsMatrix3Panel() {
                                         </svg>
                                     </div>
                                     <p className="text-base font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                                        No Solution Selected
+                                        No Product Selected
                                     </p>
                                     <p className="text-sm text-slate-500 dark:text-slate-500">
-                                        Click on a solution card to view details
+                                        Click on a product card to view details
                                     </p>
                                 </motion.div>
                             )}

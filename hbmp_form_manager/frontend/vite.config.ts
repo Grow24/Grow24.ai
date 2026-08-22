@@ -14,6 +14,11 @@ export default defineConfig({
         target: `http://localhost:${process.env.HBMP_FORM_MANAGER_API_PORT || 5187}`,
         changeOrigin: true,
       },
+      '/hbmp_form_manager/api': {
+        target: `http://localhost:${process.env.HBMP_FORM_MANAGER_API_PORT || 5187}`,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/hbmp_form_manager/, ''),
+      },
     },
   },
 })

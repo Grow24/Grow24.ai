@@ -23,21 +23,21 @@ const AudioRecorder = ({ onAudioRecorded, disabled }: AudioRecorderProps) => {
   const isRecordingRef = useRef(false); // Track recording state without causing re-renders
   const transcribedTextRef = useRef('');
   const onAudioRecordedRef = useRef(onAudioRecorded);
+  const restartTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   onAudioRecordedRef.current = onAudioRecorded;
 
-    useEffect(() => {
-        // Check if browser supports Speech Recognition
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const isMobileDevice = () =>
+        typeof navigator !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-        if (!SpeechRecognition) {
-            console.warn('Speech Recognition not supported in this browser');
-            return;
-        }
+    const createRecognition = () => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) return null;
 
         const recognition = new SpeechRecognition();
-        recognition.continuous = true;
+        recognition.continuous = !isMobileDevice();
         recognition.interimResults = true;
         recognition.lang = 'en-IN';
+        recognition.maxAlternatives = 1;
 
         recognition.onresult = (event: any) => {
             let interimTranscript = '';
@@ -52,19 +52,19 @@ const AudioRecorder = ({ onAudioRecorded, disabled }: AudioRecorderProps) => {
                 }
             }
 
-      const next = (finalTranscript || interimTranscript).trim();
-      transcribedTextRef.current = next;
-      setTranscribedText(next);
+            const next = (finalTranscript || interimTranscript).trim();
+            if (next) {
+                transcribedTextRef.current = next;
+                setTranscribedText(next);
+            }
         };
 
         recognition.onerror = (event: any) => {
             console.error('Speech recognition error:', event.error);
 
-            if (event.error === 'no-speech') {
-                // User stopped speaking, continue - don't stop recording
+            if (event.error === 'no-speech' || event.error === 'aborted') {
                 return;
             } else if (event.error === 'not-allowed') {
-                // Microphone permission denied
                 isRecordingRef.current = false;
                 setIsRecording(false);
                 setRecordingTime(0);
@@ -72,67 +72,62 @@ const AudioRecorder = ({ onAudioRecorded, disabled }: AudioRecorderProps) => {
                     clearInterval(timerRef.current);
                     timerRef.current = null;
                 }
-                alert('Microphone access denied. Please:\n\n1. Click the lock/camera icon in your browser\'s address bar\n2. Allow microphone access\n3. Refresh the page and try again');
-            } else if (event.error === 'aborted') {
-                // Recording was aborted (user stopped it)
-                isRecordingRef.current = false;
-                setIsRecording(false);
-                setRecordingTime(0);
-                if (timerRef.current) {
-                    clearInterval(timerRef.current);
-                    timerRef.current = null;
-                }
+                setVoiceHint('Microphone access denied. Allow mic in browser settings and try again.');
             } else {
-                // Other errors - stop recording
-                isRecordingRef.current = false;
-                setIsRecording(false);
-                setRecordingTime(0);
-                if (timerRef.current) {
-                    clearInterval(timerRef.current);
-                    timerRef.current = null;
-                }
                 console.warn('Speech recognition error:', event.error);
             }
         };
 
         recognition.onend = () => {
-            // Only restart if we're still supposed to be recording
-            if (isRecordingRef.current) {
+            if (!isRecordingRef.current) return;
+            if (restartTimerRef.current) clearTimeout(restartTimerRef.current);
+            restartTimerRef.current = setTimeout(() => {
+                if (!isRecordingRef.current || !recognitionRef.current) return;
                 try {
-                    recognition.start();
-                } catch (e) {
-                    // Already started or error - ignore
+                    recognitionRef.current.start();
+                } catch {
+                    try {
+                        const next = createRecognition();
+                        if (next) {
+                            recognitionRef.current = next;
+                            next.start();
+                        }
+                    } catch {
+                        // ignore
+                    }
                 }
-            }
+            }, isMobileDevice() ? 250 : 80);
         };
 
-        recognitionRef.current = recognition;
+        return recognition;
+    };
+
+    useEffect(() => {
+        recognitionRef.current = createRecognition();
 
         return () => {
-            // Cleanup on unmount
+            isRecordingRef.current = false;
             if (timerRef.current) {
                 clearInterval(timerRef.current);
+            }
+            if (restartTimerRef.current) {
+                clearTimeout(restartTimerRef.current);
             }
             if (recognitionRef.current) {
                 try {
                     recognitionRef.current.stop();
-                } catch (e) {
+                } catch {
                     // Already stopped
                 }
             }
         };
-    }, []); // Only run once on mount
+    }, []);
 
     const startRecording = async () => {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
         if (!SpeechRecognition) {
             alert('Speech Recognition is not supported in your browser. Please use Chrome or Edge.');
-            return;
-        }
-
-        if (!recognitionRef.current) {
-            alert('Speech Recognition not initialized. Please refresh the page.');
             return;
         }
 
@@ -152,9 +147,11 @@ const AudioRecorder = ({ onAudioRecorded, disabled }: AudioRecorderProps) => {
             // Continue anyway - might work without enumeration
         }
 
-        // Request microphone permission first
+        // Request microphone permission, then immediately release the stream so
+        // SpeechRecognition can use the mic again (mobile browsers lock it otherwise).
         try {
-            await navigator.mediaDevices.getUserMedia({ audio: true });
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            stream.getTracks().forEach((track) => track.stop());
         } catch (permissionError: any) {
             console.error('Microphone permission error:', permissionError);
             if (permissionError.name === 'NotAllowedError' || permissionError.name === 'PermissionDeniedError') {
@@ -187,8 +184,23 @@ const AudioRecorder = ({ onAudioRecorded, disabled }: AudioRecorderProps) => {
             isRecordingRef.current = true;
             setIsRecording(true);
 
-            // Start recognition
-            recognitionRef.current.start();
+            // Recreate recognition each start — mobile browsers often cannot reuse the first instance.
+            if (recognitionRef.current) {
+                try {
+                    recognitionRef.current.stop();
+                } catch {
+                    // ignore
+                }
+            }
+            const recognition = createRecognition();
+            if (!recognition) {
+                alert('Speech Recognition is not supported in your browser. Please use Chrome or Edge.');
+                isRecordingRef.current = false;
+                setIsRecording(false);
+                return;
+            }
+            recognitionRef.current = recognition;
+            recognition.start();
 
             // Start timer - use a fresh interval
             timerRef.current = setInterval(() => {
@@ -216,6 +228,10 @@ const AudioRecorder = ({ onAudioRecorded, disabled }: AudioRecorderProps) => {
     const stopRecording = () => {
         // Stop recognition
         isRecordingRef.current = false;
+        if (restartTimerRef.current) {
+            clearTimeout(restartTimerRef.current);
+            restartTimerRef.current = null;
+        }
         if (recognitionRef.current) {
             try {
                 recognitionRef.current.stop();

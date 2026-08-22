@@ -3,13 +3,14 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate, useLocation } from '@tanstack/react-router'
 import { useTheme } from '../contexts/ThemeContext'
 
-// Hamburger Icon (3 lines) - uses currentColor to match button text
-const HamburgerIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-    <line x1="3" y1="6" x2="21" y2="6" />
-    <line x1="3" y1="12" x2="21" y2="12" />
-    <line x1="3" y1="18" x2="21" y2="18" />
-  </svg>
+const InfinityMenuIcon = () => (
+  <img
+    src="/menu-infinity.png"
+    alt=""
+    draggable={false}
+    aria-hidden="true"
+    className="w-12 h-12 object-contain select-none pointer-events-none"
+  />
 )
 
 // Close/X Icon - BCG style (white when in green background)
@@ -19,39 +20,6 @@ const CloseIcon = () => (
     <line x1="6" y1="6" x2="18" y2="18" />
   </svg>
 )
-
-// Menu Icon - BCG style (separate icons, no overlap)
-const MenuIcon = ({ isOpen }: { isOpen: boolean }) => {
-  return (
-    <div className="relative w-6 h-6 flex items-center justify-center">
-      <AnimatePresence mode="wait" initial={false}>
-        {isOpen ? (
-          <motion.div
-            key="close"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="absolute inset-0 flex items-center justify-center"
-          >
-            <CloseIcon />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="menu"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="absolute inset-0 flex items-center justify-center"
-          >
-            <HamburgerIcon />
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  )
-}
 
 const OfferIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -218,7 +186,7 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   { label: 'Home', href: '#home', icon: HomeIcon },
   { label: 'Concept', href: '#concept', icon: OfferIcon, badge: 'PBMP' },
-  { label: 'Solutions', href: '#solutions', icon: SolutionsIcon },
+  { label: 'Products', href: '#solutions', icon: SolutionsIcon },
   { label: 'Library', href: '#library', icon: LibraryIcon },
   { label: 'Get Support', href: '#support', icon: SupportIcon },
   { label: 'Engage', href: '#engage', icon: EngageIcon },
@@ -310,10 +278,10 @@ export default function Sidebar() {
         <motion.button
           type="button"
           onClick={() => setIsOpen(true)}
-          className={`hidden md:flex fixed top-6 left-6 mt-[7px] z-[70] w-12 h-12 rounded-lg items-center justify-center transition-all duration-200 cursor-pointer border ${
+          className={`hidden md:flex fixed top-6 left-6 mt-[7px] z-[70] w-12 h-12 rounded-lg items-center justify-center overflow-hidden p-0 cursor-pointer border ${
             theme === 'dark'
-              ? 'bg-slate-950/95 border-slate-800/80 text-white hover:bg-slate-800/95'
-              : 'bg-white/95 border-slate-200/70 text-gray-800 hover:bg-gray-100'
+              ? 'bg-slate-950/95 border-slate-800/80 hover:bg-slate-800/95'
+              : 'bg-white/95 border-slate-200/70 hover:bg-gray-100'
           }`}
           style={{
             backdropFilter: 'none',
@@ -324,7 +292,7 @@ export default function Sidebar() {
           whileTap={{ scale: 0.98 }}
           aria-label="Open menu"
         >
-          <MenuIcon isOpen={isOpen} />
+          <InfinityMenuIcon />
         </motion.button>
       )}
 

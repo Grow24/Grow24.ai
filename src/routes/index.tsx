@@ -1,14 +1,15 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useState, useRef, useEffect } from 'react'
-import SolutionsMatrix3Panel from '../components/SolutionsMatrix3Panel'
-import LibraryPage from '../components/Library'
-import EmailTemplateBuilder from '../components/EmailTemplateBuilder'
+import { useState, useRef, useEffect, lazy, Suspense } from 'react'
 import { useComingSoon } from '../contexts/ComingSoonContext'
 import { useTheme } from '../contexts/ThemeContext'
 import { use3DRotation } from '../lib/use3DRotation'
 import HeroCarousel from '../components/HeroCarousel'
+
+const SolutionsMatrix3Panel = lazy(() => import('../components/SolutionsMatrix3Panel'))
+const LibraryPage = lazy(() => import('../components/Library'))
+const EmailTemplateBuilder = lazy(() => import('../components/EmailTemplateBuilder'))
 
 // SVG Icons for WhatWeOffer section
 const SunIcon = () => (
@@ -195,7 +196,7 @@ function ConceptUnlockStack() {
       </section>
       <section id="concept-how" className="scroll-mt-24">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="max-w-6xl lg:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
-          <img src="/how_tab.jpg" alt="How PBMP—Solutions cover Personal & Professional needs" className="w-full rounded-xl" />
+          <img src="/how_tab.jpg" alt="How PBMP—Products cover Personal & Professional needs" className="w-full rounded-xl" />
         </motion.div>
       </section>
     </>
@@ -371,7 +372,7 @@ function IndexPage() {
       {/* Hero Section - Home (first viewport: header + hero + carousel arrows) */}
       <motion.section
         id="home"
-        initial={{ opacity: 0 }}
+        initial={{ opacity: 1 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
         className="flex items-start justify-center -mt-16 sm:-mt-20 md:-mt-24 pt-0 sm:pt-1 md:pt-2 pb-0 sm:pb-10 md:pb-16 px-4 sm:px-6 md:px-8 scroll-mt-header overflow-visible"
@@ -396,10 +397,10 @@ function IndexPage() {
               Personal &amp; Business Management Platform
             </p>
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-800 dark:text-slate-100 mb-1 sm:mb-4 max-w-4xl mx-auto leading-tight">
-              Unlocking Potential in Business and Life.
+              Identify, Develop &amp; Enjoy Potential in Personal &amp; Business Life
             </h2>
-            <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm md:text-base max-w-2xl mx-auto mb-1 sm:mb-4">
-              A unified system to identify goals, craft plans, and execute with precision across personal and professional domains.
+            <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm md:text-base max-w-4xl mx-auto mb-1 sm:mb-4">
+              A system which unifies identifying Goal, making Strategic Choices to meet the Goals, crafting Plans to achieve the Strategy, delivering them through Projects, and enjoying the benefits — for both Personal &amp; Professional domains.
             </p>
           </motion.div>
 
@@ -698,7 +699,7 @@ function IndexPage() {
               >
                 <img
                   src="/how_tab.jpg"
-                  alt="How PBMP—Solutions cover Personal & Professional needs"
+                  alt="How PBMP—Products cover Personal & Professional needs"
                   className="w-full rounded-xl"
                 />
               </motion.div>
@@ -720,7 +721,9 @@ function IndexPage() {
         viewport={{ once: true, amount: 0.3 }}
         className="min-h-screen py-20 px-8"
       >
-        <SolutionsMatrix3Panel />
+        <Suspense fallback={<div className="min-h-[50vh]" />}>
+          <SolutionsMatrix3Panel />
+        </Suspense>
       </motion.section>
 
       {/* Library Section - use initial opacity 1 so content is always visible on mobile when navigating via #library */}
@@ -729,7 +732,9 @@ function IndexPage() {
         initial={{ opacity: 1 }}
         className="min-h-screen"
       >
-        <LibraryPage />
+        <Suspense fallback={<div className="min-h-[40vh]" />}>
+          <LibraryPage />
+        </Suspense>
       </motion.section>
 
       {/* Contact Us Section - Email template builder */}
@@ -746,7 +751,7 @@ function IndexPage() {
             Contact Us
           </h2>
           <p className="text-lg mb-8 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Create and send rich emails with subject, HTML body, attachments, audio, video, and buttons—all from here.
+            Your suggestions, comments, ideas on how we can collaborate etc, are welcome.
           </p>
           <motion.button
             onClick={() => setShowEmailTemplateBuilder(true)}
@@ -757,7 +762,7 @@ function IndexPage() {
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
-            Create email template
+            Create email
           </motion.button>
         </div>
       </motion.section>
@@ -840,7 +845,11 @@ function IndexPage() {
         )}
       </AnimatePresence>
 
-      <EmailTemplateBuilder isOpen={showEmailTemplateBuilder} onClose={() => setShowEmailTemplateBuilder(false)} />
+      {showEmailTemplateBuilder && (
+        <Suspense fallback={null}>
+          <EmailTemplateBuilder isOpen={showEmailTemplateBuilder} onClose={() => setShowEmailTemplateBuilder(false)} />
+        </Suspense>
+      )}
     </div>
   )
 }

@@ -22,7 +22,7 @@ function useIsMobile() {
 
 const SAMPLE_SLIDES = [
   { image: '/white_mode.jpeg', title: 'Grow24 Overview', description: 'Personal & Professional management in one unified platform.' },
-  { image: '/solution-hero2.png', title: 'Solution', description: 'Plan, execute, and deliver projects effectively.' },
+  { image: '/solution-hero2.png', title: 'Product', description: 'Plan, execute, and deliver projects effectively.' },
   { image: '/problem-hero3.png', title: 'Problem', description: 'Understand and maximize your personal and professional value.' },
   { image: '/toolsets-hero4.png', title: 'Skills', description: 'Frameworks to clarify needs, articulate problems, and align before solutions.' },
   { image: '/toolsetslider1.png', title: 'Toolset', description: 'Navigate and lead organizational transformation.' },
@@ -244,7 +244,8 @@ function HeroCarousel() {
                         src={slide.image}
                         alt={slide.title}
                         className="absolute inset-0 w-full h-full object-cover"
-                        loading="lazy"
+                        loading={index === selectedIndex ? 'eager' : 'lazy'}
+                        fetchPriority={index === selectedIndex ? 'high' : 'low'}
                         draggable={false}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
@@ -269,7 +270,7 @@ function HeroCarousel() {
                               e.preventDefault()
                               e.stopPropagation()
                               // Route specific carousel cards to their dedicated pages.
-                              if (slide.title === 'Solution') {
+                              if (slide.title === 'Product') {
                                 navigate({ to: '/project-management' })
                               } else if (slide.title === 'Problem') {
                                 navigate({ to: '/problem' })
@@ -287,8 +288,17 @@ function HeroCarousel() {
                                 navigate({ to: '/transformation' })
                               } else if (slide.title === 'Professional Value') {
                                 navigate({ to: '/value-framework' })
-                              } else if (slide.image === '/white_mode.jpeg') {
-                                navigate({ to: '/value-definition' })
+                              } else if (slide.title === 'Grow24 Overview' || slide.image === '/white_mode.jpeg') {
+                                const scrollToSolutions = () => {
+                                  document.getElementById('concept')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                                }
+                                if (typeof window !== 'undefined' && window.location.pathname === '/') {
+                                  scrollToSolutions()
+                                } else {
+                                  navigate({ to: '/' }).then(() => {
+                                    setTimeout(scrollToSolutions, 200)
+                                  })
+                                }
                               } else {
                                 handleLibraryClick()
                               }

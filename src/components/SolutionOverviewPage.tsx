@@ -134,9 +134,9 @@ export default function SolutionOverviewPage() {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
-                Map of Solutions
+                Map of Products
               </Link>
-              <h1 className="text-xl md:text-2xl font-bold">1. Solution Overview</h1>
+              <h1 className="text-xl md:text-2xl font-bold">1. Product Overview</h1>
             </div>
             {/* Horizontal tabs - compact on small screens */}
             <nav className="flex overflow-x-auto gap-1 pb-1 scrollbar-thin" style={{ scrollbarWidth: 'thin' }}>
@@ -189,7 +189,7 @@ export default function SolutionOverviewPage() {
             <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.05\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-80" />
             <div className="relative">
               <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center">
-                Accelerate Growth with Our Corporate Strategy Solution
+                Accelerate Growth with Our Corporate Strategy Product
               </h2>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {HERO_CARDS.map((card) => {
@@ -409,7 +409,7 @@ export default function SolutionOverviewPage() {
           {/* Solutions summary grid + CTA */}
           <div className="bg-slate-800 dark:bg-slate-900 text-white rounded-2xl p-6 md:p-8 space-y-6">
             <div className="max-w-5xl mx-auto">
-              <h3 className="text-lg font-semibold mb-4 text-left md:text-center">Solutions</h3>
+              <h3 className="text-lg font-semibold mb-4 text-left md:text-center">Products</h3>
               <p className="text-sm text-slate-100/90 mb-4 text-left md:text-center">
                 Integrated platform to accelerate business strategy development.
               </p>

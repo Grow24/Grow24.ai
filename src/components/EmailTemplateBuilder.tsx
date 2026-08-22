@@ -29,12 +29,12 @@ export interface EmailTemplateState {
 }
 
 const defaultTemplate: EmailTemplateState = {
-  to: '',
+  to: 'privacy@grow24.ai',
   cc: '',
   bcc: '',
   subject: '',
-  bodyHtml: '<p>Write your message here. Use the toolbar for formatting.</p>',
-  bodyPlain: 'Write your message here.',
+  bodyHtml: '<p></p>',
+  bodyPlain: '',
   attachments: [],
   audioFile: null,
   audioUrl: '',
@@ -62,6 +62,7 @@ export default function EmailTemplateBuilder({
   const [isSending, setIsSending] = useState(false)
   const [sendStatus, setSendStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
   const [fileError, setFileError] = useState<string | null>(null)
+  const [showMoreOptions, setShowMoreOptions] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const audioInputRef = useRef<HTMLInputElement>(null)
   const videoInputRef = useRef<HTMLInputElement>(null)
@@ -256,7 +257,7 @@ export default function EmailTemplateBuilder({
         >
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Create email template</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Create email</h2>
             <button
               type="button"
               onClick={onClose}
@@ -290,18 +291,61 @@ export default function EmailTemplateBuilder({
           <div className="flex-1 overflow-y-auto p-6">
             {activeTab === 'compose' ? (
               <div className="space-y-6">
-                {/* To, CC, BCC */}
                 <div className="grid gap-3">
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-                    To (recipients, comma-separated)
+                    To
                   </label>
                   <input
                     type="text"
                     value={template.to}
                     onChange={(e) => update({ to: e.target.value })}
-                    placeholder="email@example.com, another@example.com"
+                    placeholder="privacy@grow24.ai"
                     className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Subject</label>
+                  <input
+                    type="text"
+                    value={template.subject}
+                    onChange={(e) => update({ subject: e.target.value })}
+                    placeholder="What is this about?"
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Your message</label>
+                  <textarea
+                    value={template.bodyPlain}
+                    onChange={(e) => {
+                      const text = e.target.value
+                      const html = `<p>${text
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/\n/g, '<br/>')}</p>`
+                      update({ bodyPlain: text, bodyHtml: html })
+                    }}
+                    rows={8}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm"
+                    placeholder="Share your suggestions, comments, or ideas..."
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setShowMoreOptions((v) => !v)}
+                  className="text-sm text-teal-600 dark:text-teal-400 hover:underline"
+                >
+                  {showMoreOptions ? 'Hide extra options' : 'More options (CC, attachments, formatting)'}
+                </button>
+
+                {showMoreOptions && (
+                <div className="space-y-6 pt-2 border-t border-gray-200 dark:border-slate-700">
+                {/* To, CC, BCC extras */}
+                <div className="grid gap-3">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-sm font-medium text-slate-600 dark:text-slate-400">CC</label>
@@ -322,18 +366,6 @@ export default function EmailTemplateBuilder({
                       />
                     </div>
                   </div>
-                </div>
-
-                {/* Subject */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Subject</label>
-                  <input
-                    type="text"
-                    value={template.subject}
-                    onChange={(e) => update({ subject: e.target.value })}
-                    placeholder="Email subject"
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
-                  />
                 </div>
 
                 {/* Body: Visual / HTML */}
@@ -589,6 +621,8 @@ export default function EmailTemplateBuilder({
                     </p>
                   )}
                 </div>
+                </div>
+                )}
               </div>
             ) : (
               /* Preview tab */

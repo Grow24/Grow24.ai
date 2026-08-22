@@ -215,10 +215,10 @@ export const SolutionsGrid: React.FC = () => {
       <div className="max-w-7xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 text-gradient">
-            Solutions
+            Products
           </h2>
           <p className="text-xl text-slate-600 mb-12">
-            Comprehensive solutions across Goals, Strategy, Planning, Projects, and Operations
+            Comprehensive products across Goals, Strategy, Planning, Projects, and Operations
           </p>
         </motion.div>
 

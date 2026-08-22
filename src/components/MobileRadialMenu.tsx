@@ -58,7 +58,7 @@ export function MobileRadialMenu() {
   const [isOpen, setIsOpen] = useState(false)
   const [socialPanelOpen, setSocialPanelOpen] = useState(false)
   const [plusTop, setPlusTop] = useState<number | null>(null)
-  const { openChatbot } = useChatbotContext()
+  const { openChatbot, isChatOpen } = useChatbotContext()
   const { setIsVisible: setCtaVisible } = useGlobalCTABar()
 
   // Mobile: position plus icon to the left of the carousel nav row
@@ -97,9 +97,13 @@ export function MobileRadialMenu() {
     <>
       <div
         className={`md:hidden fixed left-4 z-50 transition-all duration-300 ${
-          plusTop == null ? fallbackBottomClass : ''
+          isChatOpen
+            ? 'bottom-6 z-[60]'
+            : plusTop == null
+              ? fallbackBottomClass
+              : ''
         }`}
-        style={plusTop != null ? { top: plusTop } : undefined}
+        style={isChatOpen ? undefined : plusTop != null ? { top: plusTop } : undefined}
         aria-label="Quick actions"
       >
         <div className="relative flex items-center">

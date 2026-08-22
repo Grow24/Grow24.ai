@@ -22,9 +22,14 @@ app.use(session({
 // Serve static files
 app.use(express.static('public'));
 
+const PORT = process.env.PORT || 5173;
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const REDIRECT_URI = process.env.REDIRECT_URI;
+// Localhost redirect must match the port the server actually listens on (avoids 5180 vs 5173 OAuth loops)
+const REDIRECT_URI =
+  process.env.REDIRECT_URI && !process.env.REDIRECT_URI.includes("localhost")
+    ? process.env.REDIRECT_URI
+    : `http://localhost:${PORT}/auth/callback`;
 const SCOPES = "openid profile email User.Read Files.Read.All Files.ReadWrite.All Team.ReadBasic.All Channel.ReadBasic.All ChannelMessage.Read.All TeamMember.Read.All Notes.Read offline_access";
 
 // Middleware to check if user is authenticated
@@ -177,7 +182,10 @@ app.get('/api/auth/status', (req, res) => {
   }
 });
 
-app.listen(process.env.PORT || 5173, () => console.log(`🚀 Server running on http://localhost:${process.env.PORT || 5173}`));
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🔗 OAuth redirect URI: ${REDIRECT_URI}`);
+});
 
 // API Endpoints for testing
 

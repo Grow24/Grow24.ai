@@ -17,22 +17,15 @@ const STORAGE_KEY = 'grow24-auth'
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null)
-  const [isHydrated, setIsHydrated] = useState(false)
 
   useEffect(() => {
+    // Marketing site should show Login by default. Do not restore a previous
+    // placeholder session from localStorage (that made the header say Logout).
     try {
       if (typeof window === 'undefined') return
-      const stored = window.localStorage.getItem(STORAGE_KEY)
-      if (stored) {
-        const parsed = JSON.parse(stored) as AuthUser
-        if (parsed?.email) {
-          setUser({ email: parsed.email })
-        }
-      }
+      window.localStorage.removeItem(STORAGE_KEY)
     } catch {
-      // ignore hydration errors
-    } finally {
-      setIsHydrated(true)
+      // ignore
     }
   }, [])
 
@@ -80,11 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     logout,
   }
 
-  // Avoid flashing unauthenticated state before hydration
-  if (!isHydrated) {
-    return <>{children}</>
-  }
-
+  // Always provide context — skipping Provider before hydration breaks LoginModal/useAuth.
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 

@@ -5,13 +5,15 @@ import { useComingSoon } from '../contexts/ComingSoonContext'
 import { useTheme } from '../contexts/ThemeContext'
 import { isValidSolutionId } from '../constants/solutions'
 import { useAuth } from '../contexts/AuthContext'
-// SVG Icons - Hamburger menu icon (3 horizontal lines)
-const HamburgerIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="3" y1="12" x2="21" y2="12" />
-    <line x1="3" y1="6" x2="21" y2="6" />
-    <line x1="3" y1="18" x2="21" y2="18" />
-  </svg>
+// Menu icon — prepared infinity image, same 48px rounded tile as the previous menu button
+const InfinityMenuIcon = ({ className = 'w-12 h-12' }: { className?: string }) => (
+  <img
+    src="/menu-infinity.png"
+    alt=""
+    draggable={false}
+    aria-hidden="true"
+    className={`${className} object-contain select-none pointer-events-none`}
+  />
 )
 
 const CloseIcon = () => (
@@ -261,7 +263,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { label: 'Home', href: '#home', icon: HomeIcon },
   { label: 'Concept', href: '#concept', icon: OfferIcon, badge: 'PBMP' },
-  { label: 'Solutions', href: '#solutions', icon: SolutionsIcon },
+  { label: 'Products', href: '#solutions', icon: SolutionsIcon },
   { label: 'Library', href: '#library', icon: LibraryIcon },
   { label: 'Get Support', href: '#support', icon: SupportIcon },
   { label: 'Engage', href: '#engage', icon: EngageIcon },
@@ -281,6 +283,49 @@ const navItems: NavItem[] = [
   { label: 'Cookie Settings', href: '#cookies', icon: CookieIcon },
   { label: 'Sitemap', href: '#sitemap', icon: SitemapIcon },
   { label: 'Pressroom', href: '#pressroom', icon: PressroomIcon },
+]
+
+type BannerAnnouncement = {
+  id: string
+  text: string
+  href: string
+  linkLabel: string
+  action?: 'demo' | 'newsletter'
+}
+
+const SURVEY_ANNOUNCEMENTS: BannerAnnouncement[] = [
+  {
+    id: 'survey',
+    text: 'Help us shape the future of Grow24.ai website.',
+    href: '/survey',
+    linkLabel: 'Take the short survey',
+  },
+  {
+    id: 'demo',
+    text: 'Want to see Grow24.ai in action?',
+    href: '#demo',
+    linkLabel: 'Sign up for a demo',
+    action: 'demo',
+  },
+  {
+    id: 'newsletter',
+    text: 'Stay current with AI & digitalization.',
+    href: '#newsletter',
+    linkLabel: 'Subscribe to monthly newsletter',
+    action: 'newsletter',
+  },
+  {
+    id: 'value',
+    text: 'New: Explore our Value Definition journey.',
+    href: '/value-definition',
+    linkLabel: 'Start here',
+  },
+  {
+    id: 'library',
+    text: 'Library updated with the latest AI & digitalization concepts.',
+    href: '#library',
+    linkLabel: 'Visit the Library',
+  },
 ]
 
 // Helper function to scroll to section
@@ -369,7 +414,7 @@ const searchIndex = [
   // Pages (only include pages that actually exist as sections on the site)
   { type: 'page', title: 'Home', description: 'Welcome to Grow24.ai', href: '#home', keywords: ['home', 'main', 'landing'] },
   { type: 'page', title: 'Concept', description: 'Learn about PBMP methodology', href: '#concept', keywords: ['concept', 'pbmp', 'methodology', 'plan', 'build', 'measure', 'progress'] },
-  { type: 'page', title: 'Solutions', description: 'Explore our solutions', href: '#solutions', keywords: ['solutions', 'dashboard', 'corporate', 'sales', 'marketing'] },
+  { type: 'page', title: 'Products', description: 'Explore our products', href: '#solutions', keywords: ['products', 'solutions', 'dashboard', 'corporate', 'sales', 'marketing'] },
   { type: 'page', title: 'Library', description: 'Access curated information and training resources', href: '#library', keywords: ['library', 'information', 'training', 'resources', 'content'] },
   { type: 'page', title: 'About Us', description: 'Learn about Grow24.ai and our mission', href: '/about', keywords: ['about', 'company', 'mission', 'team'] },
   // Note: Pages like 'Get Support', 'Contact Us', 'Engage', etc. are excluded 
@@ -409,6 +454,7 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
   const [isDesktop, setIsDesktop] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [isSurveyPaused, setIsSurveyPaused] = useState(false)
+  const [isSurveyHovered, setIsSurveyHovered] = useState(false)
   const { isAuthenticated, logout } = useAuth()
   const { showComingSoon } = useComingSoon()
   const { theme, toggleTheme } = useTheme()
@@ -750,53 +796,51 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
               >
                 {isSurveyPaused ? <SurveyPlayIcon /> : <SurveyPauseIcon />}
               </button>
-              <div className="flex flex-1 min-w-0 overflow-hidden">
+              <div
+                className="flex flex-1 min-w-0 overflow-hidden"
+                onMouseEnter={() => setIsSurveyHovered(true)}
+                onMouseLeave={() => setIsSurveyHovered(false)}
+              >
                 <div
                   className="inline-flex items-center gap-0 whitespace-nowrap survey-marquee"
-                  style={{ animationPlayState: isSurveyPaused ? 'paused' : 'running' }}
+                  style={{ animationPlayState: isSurveyPaused || isSurveyHovered ? 'paused' : 'running' }}
                 >
-                  {/* Announcement 1 */}
-                  <div className="inline-flex items-center gap-1 mr-24">
-                    <span className="opacity-90">
-                      Help us shape the future of Grow24.ai website.&nbsp;
-                    </span>
+                  {[...SURVEY_ANNOUNCEMENTS, ...SURVEY_ANNOUNCEMENTS].map((item, index) => (
                     <a
-                      href="/survey"
-                      className="font-semibold underline underline-offset-2 hover:text-emerald-100"
-                    >
-                      Take the short survey
-                    </a>
-                  </div>
-
-                  {/* Announcement 2 */}
-                  <div className="inline-flex items-center gap-1 mr-24">
-                    <span className="opacity-90">
-                      New: Explore our Value Definition journey.&nbsp;
-                    </span>
-                    <a
-                      href="/value-definition"
-                      className="font-semibold underline underline-offset-2 hover:text-emerald-100"
-                    >
-                      Start here
-                    </a>
-                  </div>
-
-                  {/* Announcement 3 */}
-                  <div className="inline-flex items-center gap-1 mr-24">
-                    <span className="opacity-90">
-                      Library updated with the latest AI &amp; digitalization concepts.&nbsp;
-                    </span>
-                    <a
-                      href="#library"
+                      key={`${item.id}-${index}`}
+                      href={item.href}
                       onClick={(e) => {
                         e.preventDefault()
-                        scrollToSection('#library', navigate, location)
+                        if (item.action === 'demo') {
+                          showComingSoon(
+                            'get-demo',
+                            'Sign up for a demo',
+                            'Enter your details to schedule a personalized demo and learn how Grow24.ai can transform your growth journey.',
+                          )
+                          return
+                        }
+                        if (item.action === 'newsletter') {
+                          showComingSoon(
+                            'cta-bar',
+                            'Subscribe to our monthly newsletter',
+                            'Enter your email to receive monthly updates on AI, digitalization, and Grow24.ai.',
+                          )
+                          return
+                        }
+                        if (item.href.startsWith('#')) {
+                          scrollToSection(item.href, navigate, location)
+                          return
+                        }
+                        navigate({ to: item.href })
                       }}
-                      className="font-semibold underline underline-offset-2 hover:text-emerald-100"
+                      className="inline-flex items-center gap-1 mr-24 cursor-pointer relative z-[1] hover:text-emerald-100"
                     >
-                      Visit the Library
+                      <span className="opacity-90">{item.text}&nbsp;</span>
+                      <span className="font-semibold underline underline-offset-2">
+                        {item.linkLabel}
+                      </span>
                     </a>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -827,12 +871,10 @@ export const Header: React.FC<HeaderProps> = ({ onMegaMenuToggle }) => {
                   onClick={() => setSideMenuOpen(true)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`inline-flex items-center justify-center p-0 bg-transparent hover:bg-transparent border-0 shadow-none outline-none focus:outline-none focus:ring-0 md:hidden cursor-pointer ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-800'
-                  }`}
+                  className="inline-flex items-center justify-center p-0 bg-transparent hover:bg-transparent border-0 shadow-none outline-none focus:outline-none focus:ring-0 md:hidden cursor-pointer"
                   aria-label="Open menu"
                 >
-                  <HamburgerIcon />
+                  <InfinityMenuIcon className="w-10 h-10" />
                 </motion.button>
 
                 {/* MegaMenu trigger removed per design request */}

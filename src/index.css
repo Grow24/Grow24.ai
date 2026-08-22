@@ -121,10 +121,10 @@ main.pt-header {
 
 /* Survey banner marquee animation */
 .survey-marquee {
-  display: inline-block;
+  display: inline-flex;
   white-space: nowrap;
-  padding-left: 100%;
-  animation: survey-marquee 15s linear infinite;
+  animation: survey-marquee 45s linear infinite;
+  will-change: transform;
 }
 
 @keyframes survey-marquee {
@@ -132,7 +132,7 @@ main.pt-header {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-100%);
+    transform: translateX(-50%);
   }
 }
 

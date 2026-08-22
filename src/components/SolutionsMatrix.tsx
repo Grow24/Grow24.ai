@@ -281,10 +281,10 @@ export default function SolutionsMatrix() {
                   </svg>
                   <div>
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                      Discover Our Solutions
+                      Discover Our Products
                     </h3>
                     <p className="text-gray-600 dark:text-gray-400 text-sm">
-                      Hover over or click any solution card to see detailed information
+                      Hover over or click any product card to see detailed information
                     </p>
                   </div>
                 </motion.div>

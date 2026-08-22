@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, lazy, Suspense } from 'react'
 import { Outlet, useLocation } from '@tanstack/react-router'
 import { AnimatePresence } from 'framer-motion'
 import { Header } from './Header'
 import { FloatingLeftWidgets } from './FloatingWidgets'
-import PBMPChatbot from './PBMPChatbot'
 import { MobileRadialMenu } from './MobileRadialMenu'
 import Sidebar from './Sidebar'
 import MegaMenu from './MegaMenu'
 import GlobalCTABar from './GlobalCTABar'
 import CookieConsentBanner from './CookieConsentBanner'
+
+const PBMPChatbot = lazy(() => import('./PBMPChatbot'))
 
 export const RootLayout: React.FC = () => {
   const [megaMenuOpen, setMegaMenuOpen] = useState(false)
@@ -64,7 +65,9 @@ export const RootLayout: React.FC = () => {
 
       {/* Desktop: floating widgets. Mobile: radial menu */}
       <FloatingLeftWidgets />
-      <PBMPChatbot position="right" hideFab={isMobile} />
+      <Suspense fallback={null}>
+        <PBMPChatbot position="right" hideFab={isMobile} />
+      </Suspense>
       <MobileRadialMenu />
 
       {/* Global CTA Bar */}

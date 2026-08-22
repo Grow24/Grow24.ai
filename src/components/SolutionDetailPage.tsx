@@ -610,10 +610,10 @@ export default function SolutionDetailPage() {
         return (
             <div className="min-h-screen pt-16 sm:pt-20 md:pt-24 pb-10 sm:pb-12 md:pb-16 flex items-center justify-center">
                 <div className="text-center">
-                    <h1 className="text-4xl font-bold mb-4">Solution Not Found</h1>
+                    <h1 className="text-4xl font-bold mb-4">Product Not Found</h1>
                     <p className="text-gray-600 mb-4">Solution ID: {solutionId}</p>
                     <Link to="/solutions" className="text-emerald-600 hover:underline">
-                        Back to Solutions
+                        Back to Products
                     </Link>
                 </div>
             </div>
@@ -727,7 +727,7 @@ export default function SolutionDetailPage() {
                         </div>
                         <div className="space-y-4">
                             <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-5 border border-gray-200 dark:border-gray-700">
-                                <h3 className="font-bold text-gray-900 dark:text-white mb-3 text-sm">Solution Details</h3>
+                                <h3 className="font-bold text-gray-900 dark:text-white mb-3 text-sm">Product Details</h3>
                                 <ul className="space-y-2 text-xs text-gray-600 dark:text-gray-300">
                                     {solution.overviewCards.slice(0, 3).map((card, idx) => (
                                         <li key={idx} className="flex items-start gap-2">
@@ -831,7 +831,7 @@ export default function SolutionDetailPage() {
                                 <div className={`${colors.primary} text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold`}>
                                     0%
                                 </div>
-                                <h3 className="font-bold text-gray-900 dark:text-white mb-2">Solution Summary</h3>
+                                <h3 className="font-bold text-gray-900 dark:text-white mb-2">Product Summary</h3>
                             </div>
                             <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 text-center">
                                 {solution.description}

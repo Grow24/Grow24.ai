@@ -6,54 +6,162 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HBMP Map</title>
 
-    <!-- css-->
     <link rel="stylesheet" href="style.css">
-
-    <!-- Mapbox GL JS -->
-    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
-    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
-
-    <!-- Mapbox GL Directions Plugin -->
-    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.css" type="text/css">
-    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.js"></script>
-
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.css">
 </head>
 
 <body>
-    <div id='map'></div>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.js"></script>
 
     <script>
-        // Replace with your Mapbox public token (account.mapbox.com) — never commit real tokens
-        mapboxgl.accessToken = 'YOUR_MAPBOX_PUBLIC_TOKEN';
+        const START_ADDRESS = 'Wagholi, Pune, Maharashtra, India';
+        const END_ADDRESS = 'Mumbai, Maharashtra, India';
+        const FALLBACK_START = [18.5793, 73.9782];
+        const FALLBACK_END = [19.076, 72.8777];
+        const DEFAULT_CENTER = [20.5937, 78.9629];
+        const DEFAULT_ZOOM = 5;
 
-        navigator.geolocation.getCurrentPosition(successLocation, errorLocation, { enableHighAccuracy: true });
+        const map = L.map('map');
+        const geocoder = L.Control.Geocoder.nominatim();
+        const routeMarkers = L.layerGroup().addTo(map);
+        let routingControl = null;
+        let userMarker = null;
 
-        function successLocation(position) {
-            console.log(position);
-            setupMap([position.coords.longitude, position.coords.latitude]);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }).addTo(map);
+
+        const startIcon = L.divIcon({
+            className: 'custom-marker',
+            html: '<div class="marker-wrap"><div class="marker-pin marker-start"><span>A</span></div><div class="marker-label">Start</div></div>',
+            iconSize: [60, 60],
+            iconAnchor: [30, 42],
+            popupAnchor: [0, -42],
+        });
+
+        const endIcon = L.divIcon({
+            className: 'custom-marker',
+            html: '<div class="marker-wrap"><div class="marker-pin marker-end"><span>B</span></div><div class="marker-label">End</div></div>',
+            iconSize: [60, 60],
+            iconAnchor: [30, 42],
+            popupAnchor: [0, -42],
+        });
+
+        const userIcon = L.divIcon({
+            className: 'custom-marker',
+            html: '<div class="marker-wrap"><div class="marker-pin marker-user"><span>📍</span></div><div class="marker-label">You</div></div>',
+            iconSize: [60, 60],
+            iconAnchor: [30, 30],
+            popupAnchor: [0, -30],
+        });
+
+        function geocodeAddress(query) {
+            return new Promise((resolve, reject) => {
+                geocoder.geocode(query, (results) => {
+                    if (results && results.length > 0) {
+                        resolve(results[0]);
+                    } else {
+                        reject(new Error(`No results for: ${query}`));
+                    }
+                });
+            });
         }
 
-        function errorLocation() {
-            // Handle error if needed
+        function setRouteMarkers(waypoints) {
+            routeMarkers.clearLayers();
+
+            if (waypoints[0]) {
+                L.marker(waypoints[0].latLng, { icon: startIcon, zIndexOffset: 1000 })
+                    .bindPopup(`<b>Start (A)</b><br>${waypoints[0].name || START_ADDRESS}`)
+                    .addTo(routeMarkers)
+                    .openPopup();
+            }
+
+            if (waypoints[1]) {
+                L.marker(waypoints[1].latLng, { icon: endIcon, zIndexOffset: 1000 })
+                    .bindPopup(`<b>End (B)</b><br>${waypoints[1].name || END_ADDRESS}`)
+                    .addTo(routeMarkers);
+            }
         }
 
-        function setupMap(center) {
-            const map = new mapboxgl.Map({
-                container: 'map',
-                style: 'mapbox://styles/mapbox/streets-v11',
-                center: center,
-                zoom: 12
+        function initRouting(waypoints) {
+            if (routingControl) {
+                map.removeControl(routingControl);
+            }
+
+            routingControl = L.Routing.control({
+                waypoints,
+                routeWhileDragging: true,
+                showAlternatives: true,
+                fitSelectedRoutes: true,
+                addWaypoints: true,
+                draggableWaypoints: true,
+                lineOptions: { styles: [{ color: '#3388ff', weight: 5 }] },
+                router: L.Routing.osrmv1({
+                    serviceUrl: 'https://router.project-osrm.org/route/v1',
+                    profile: 'driving',
+                }),
+                geocoder,
+                createMarker: () => null,
+            }).addTo(map);
+
+            routingControl.on('waypointschanged', (event) => {
+                setRouteMarkers(event.waypoints);
             });
 
-            const nav = new mapboxgl.NavigationControl();
-            map.addControl(nav, 'top-right');
-
-            var directions = new MapboxDirections({
-                accessToken: mapboxgl.accessToken,
-            });
-
-            map.addControl(directions, 'top-left');
+            setRouteMarkers(waypoints);
         }
+
+        async function loadDefaultRoute() {
+            try {
+                const [start, end] = await Promise.all([
+                    geocodeAddress(START_ADDRESS),
+                    geocodeAddress(END_ADDRESS),
+                ]);
+
+                const waypoints = [
+                    L.Routing.waypoint(start.center, start.name || START_ADDRESS),
+                    L.Routing.waypoint(end.center, end.name || END_ADDRESS),
+                ];
+
+                initRouting(waypoints);
+                map.fitBounds(L.latLngBounds(waypoints.map((w) => w.latLng)), { padding: [80, 80] });
+            } catch (error) {
+                console.warn('Geocoding failed, using fallback coordinates:', error);
+                const waypoints = [
+                    L.Routing.waypoint(L.latLng(FALLBACK_START), START_ADDRESS),
+                    L.Routing.waypoint(L.latLng(FALLBACK_END), END_ADDRESS),
+                ];
+                initRouting(waypoints);
+                map.fitBounds(L.latLngBounds(waypoints.map((w) => w.latLng)), { padding: [80, 80] });
+            }
+        }
+
+        loadDefaultRoute();
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+                if (userMarker) {
+                    map.removeLayer(userMarker);
+                }
+                userMarker = L.marker([latitude, longitude], { icon: userIcon, zIndexOffset: 900 })
+                    .addTo(map)
+                    .bindPopup('<b>You are here</b><br>Your current location')
+                    .openPopup();
+            },
+            () => {
+                map.setView(DEFAULT_CENTER, DEFAULT_ZOOM);
+            },
+            { enableHighAccuracy: true },
+        );
     </script>
 </body>
 
