@@ -12,15 +12,16 @@
 Add these to your Zeabur deployment environment variables:
 
 ```
-EMAIL_USER=grow24.ai.collaboration@gmail.com
-EMAIL_PASSWORD=jytl vbuy ugeh xbqr
+EMAIL_SERVICE=zoho
+EMAIL_USER=your-zoho@grow24.ai
+EMAIL_PASSWORD=your-zoho-app-password
+EMAIL_FROM=Grow24 <your-zoho@grow24.ai>
+ZOHO_REGION=com
 ```
 
-Optional (defaults to EMAIL_USER if not set):
+`EMAIL_FROM` should be the same Zoho mailbox (or an allowed alias). Do not use a Gmail address.
 
-```
-EMAIL_FROM=noreply@grow24.ai
-```
+If the mailbox is on Zoho India, set `ZOHO_REGION=in`. For Zoho Workplace / Mail Plus custom domain, also set `ZOHO_SMTP_PRO=true`.
 
 ## 🔧 Zeabur Deployment Steps
 
@@ -30,9 +31,11 @@ EMAIL_FROM=noreply@grow24.ai
 2. **Go to your PBMP Backend service** (pbmpchatbotbackend.zeabur.app)
 3. **Navigate to Environment Variables**
 4. **Add the email variables**:
-   - `EMAIL_USER` = `grow24.ai.collaboration@gmail.com`
-   - `EMAIL_PASSWORD` = `jytl vbuy ugeh xbqr`
-   - `EMAIL_FROM` = `noreply@grow24.ai` (optional)
+   - `EMAIL_SERVICE` = `zoho`
+   - `EMAIL_USER` = company Zoho mailbox (full address)
+   - `EMAIL_PASSWORD` = Zoho app password
+   - `EMAIL_FROM` = same Zoho mailbox (or allowed alias)
+   - `ZOHO_REGION` = `com` (or `in` / `eu` / `au`)
 5. **Redeploy** your service
 
 ### Option 2: Using Git Push
@@ -122,18 +125,19 @@ After deployment, check logs for:
 
 ## ⚠️ Important Notes
 
-- **Gmail App Password**: The provided password is a Gmail App Password (not regular password)
-- **Rate Limits**: Gmail has sending limits (~500 emails/day for free accounts)
-- **Production**: Consider using SendGrid or AWS SES for production use
-- **Testing**: Test the endpoint after deployment to verify email delivery
+- **Zoho App Password**: Use a Zoho Mail app password if 2FA is enabled (not the regular login password)
+- **From address**: Must match the authenticated Zoho mailbox or an alias on that account
+- **Rate Limits**: Zoho Mail has daily sending limits based on the plan
+- **Testing**: Test `/api/send-email` and `/api/leads` after deployment to verify delivery
 
 ## 🆘 Troubleshooting
 
 ### Email not sending:
 
-1. Check environment variables are set correctly
-2. Verify Gmail credentials are valid
-3. Check Zeabur logs for errors: `⚠️ Email sending error:`
+1. Check environment variables are set correctly (`EMAIL_USER`, `EMAIL_PASSWORD`, `ZOHO_REGION`)
+2. Verify Zoho SMTP is allowed for that mailbox (IMAP/SMTP access + app password)
+3. Confirm `EMAIL_FROM` matches the Zoho account
+4. Check Zeabur logs for errors: `⚠️ Email sending error:`
 
 ### Database not saving:
 

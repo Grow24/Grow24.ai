@@ -126,7 +126,7 @@ if (ASTRA_DB_API_ENDPOINT && ASTRA_DB_APPLICATION_TOKEN) {
   console.log('⚠️  AstraDB not configured - running without database');
 }
 
-// Initialize email transporter (Gmail / SMTP first, SendGrid only as fallback)
+// Initialize email transporter (Zoho Mail SMTP; SendGrid only as fallback)
 const { name: mailProviderName, transporter } = createMailTransporter();
 if (transporter) {
   transporter.verify(function (error) {
@@ -137,7 +137,7 @@ if (transporter) {
     }
   });
 } else {
-  console.log('⚠️  Email not configured - set EMAIL_SERVICE=gmail + EMAIL_USER/EMAIL_PASSWORD, or SMTP_HOST/SMTP_USER/SMTP_PASS');
+  console.log('⚠️  Email not configured - set EMAIL_SERVICE=zoho + EMAIL_USER/EMAIL_PASSWORD for the company Zoho mailbox');
 }
 
 // Health check endpoint
@@ -181,7 +181,7 @@ app.post('/api/send-email', async (req, res) => {
     if (!isEmailConfigured() || !transporter) {
       return res.status(500).json({
         success: false,
-        message: 'Email is not configured on the backend. Set Gmail (EMAIL_SERVICE=gmail, EMAIL_USER, EMAIL_PASSWORD) or SMTP_HOST/SMTP_USER/SMTP_PASS.',
+        message: 'Email is not configured on the backend. Set Zoho Mail (EMAIL_SERVICE=zoho, EMAIL_USER, EMAIL_PASSWORD).',
       });
     }
 

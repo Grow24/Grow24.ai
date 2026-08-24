@@ -35,8 +35,11 @@ GEMINI_MODEL=gemini-2.5-flash
 ASTRA_DB_API_ENDPOINT=<optional>
 ASTRA_DB_APPLICATION_TOKEN=<optional>
 PBMP_ASTRA_DB_COLLECTION=<optional>
-SENDGRID_API_KEY=<optional; email only>
 EMAIL_FROM=noreply@grow24.ai
+EMAIL_SERVICE=zoho
+EMAIL_USER=<company-zoho-mailbox>
+EMAIL_PASSWORD=<zoho-app-password>
+ZOHO_REGION=com
 NODE_ENV=production
 ```
 
@@ -103,7 +106,11 @@ ASTRA_DB_API_ENDPOINT=...
 ASTRA_DB_APPLICATION_TOKEN=...
 PBMP_ASTRA_DB_COLLECTION=pbmp_chat
 SENDGRID_API_KEY=...
+EMAIL_SERVICE=zoho
+EMAIL_USER=<company-zoho-mailbox>
+EMAIL_PASSWORD=<zoho-app-password>
 EMAIL_FROM=noreply@grow24.ai
+ZOHO_REGION=com
 PORT=3000
 ```
 

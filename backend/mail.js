@@ -17,41 +17,62 @@ function getMailFrom() {
   return env('EMAIL_FROM') || getSmtpUser() || 'noreply@grow24.ai';
 }
 
+function inferZohoRegion(user) {
+  const explicit = (env('ZOHO_REGION') || '').toLowerCase();
+  if (explicit) return explicit;
+
+  const email = String(user || '').toLowerCase();
+  if (email.endsWith('@zohomail.in') || email.endsWith('@zoho.in') || email.endsWith('.zoho.in')) {
+    return 'in';
+  }
+  if (email.endsWith('@zohomail.eu') || email.endsWith('@zoho.eu')) return 'eu';
+  if (email.endsWith('@zohomail.com.au') || email.endsWith('@zoho.com.au')) return 'au';
+  return 'com';
+}
+
+function getZohoHost(user) {
+  const explicit = env('SMTP_HOST') || env('EMAIL_HOST');
+  if (explicit) return explicit;
+
+  const region = inferZohoRegion(user);
+  const prefix = env('ZOHO_SMTP_PRO').toLowerCase() === 'true' ? 'smtppro' : 'smtp';
+  if (region === 'in') return `${prefix}.zoho.in`;
+  if (region === 'eu') return `${prefix}.zoho.eu`;
+  if (region === 'au') return `${prefix}.zoho.com.au`;
+  return `${prefix}.zoho.com`;
+}
+
 function isEmailConfigured() {
   const user = getSmtpUser();
   const pass = getSmtpPass();
-  const service = (env('SMTP_SERVICE') || env('EMAIL_SERVICE')).toLowerCase();
-  const host = env('SMTP_HOST') || env('EMAIL_HOST');
-  if (user && pass && (host || service === 'gmail')) return true;
+  if (user && pass) return true;
   return Boolean(env('SENDGRID_API_KEY'));
+}
+
+function createZohoTransporter(user, pass) {
+  const host = getZohoHost(user);
+  const port = Number(env('SMTP_PORT') || env('EMAIL_PORT') || 465);
+  const secure = env('SMTP_SECURE')
+    ? env('SMTP_SECURE').toLowerCase() === 'true'
+    : port === 465;
+
+  return nodemailer.createTransport({
+    host,
+    port,
+    secure,
+    requireTLS: !secure,
+    auth: { user, pass },
+  });
 }
 
 function createMailTransporter() {
   const user = getSmtpUser();
   const pass = getSmtpPass();
-  const service = (env('SMTP_SERVICE') || env('EMAIL_SERVICE')).toLowerCase();
-  const host = env('SMTP_HOST') || env('EMAIL_HOST');
 
-  // Prefer explicit SMTP / Gmail so an old blocked SendGrid key is not used.
-  if (service === 'gmail' && user && pass) {
+  if (user && pass) {
     return {
-      name: 'Gmail',
-      transporter: nodemailer.createTransport({
-        service: 'gmail',
-        auth: { user, pass },
-      }),
-    };
-  }
-
-  if (host && user && pass) {
-    return {
-      name: host,
-      transporter: nodemailer.createTransport({
-        host,
-        port: Number(env('SMTP_PORT') || env('EMAIL_PORT') || 587),
-        secure: (env('SMTP_SECURE') || 'false').toLowerCase() === 'true',
-        auth: { user, pass },
-      }),
+      name: 'Zoho',
+      transporter: createZohoTransporter(user, pass),
     };
   }
 
