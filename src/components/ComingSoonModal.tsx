@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { submitLead } from '../services/leadService'
+import ConceptVideoModal from './ConceptVideoModal'
 
 interface ComingSoonModalProps {
   isOpen: boolean
@@ -26,30 +27,11 @@ const ComingSoonModal: React.FC<ComingSoonModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitMessage, setSubmitMessage] = useState('')
   const [isSuccess, setIsSuccess] = useState(false)
-  const videoRef = useRef<HTMLVideoElement>(null)
 
   // Check if this is the watch-concept modal
   const isWatchConcept = source === 'watch-concept'
   // Check if this is the free trial form
   const isFreeTrialForm = source === 'start-free-trial'
-
-  // Cleanup video when modal closes or component unmounts
-  useEffect(() => {
-    if (!isOpen && videoRef.current) {
-      videoRef.current.pause()
-      videoRef.current.currentTime = 0
-    }
-  }, [isOpen])
-
-  // Cleanup on component unmount
-  useEffect(() => {
-    return () => {
-      if (videoRef.current) {
-        videoRef.current.pause()
-        videoRef.current.currentTime = 0
-      }
-    }
-  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -130,12 +112,6 @@ const ComingSoonModal: React.FC<ComingSoonModalProps> = ({
   }
 
   const handleClose = () => {
-    // Pause and reset video when closing modal
-    if (videoRef.current) {
-      videoRef.current.pause()
-      videoRef.current.currentTime = 0
-    }
-    
     if (!isSubmitting) {
       setEmail('')
       setName('')
@@ -147,69 +123,8 @@ const ComingSoonModal: React.FC<ComingSoonModalProps> = ({
     }
   }
 
-  // For Watch Concept - render video player
   if (isWatchConcept) {
-    return (
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={handleClose}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100]"
-            />
-            
-            {/* Video Modal */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed inset-0 z-[101] flex items-center justify-center p-4"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-4xl w-full p-4 relative">
-                {/* Close Button */}
-                <button
-                  onClick={handleClose}
-                  className="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
-                  aria-label="Close"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-
-                {/* Video Player */}
-                <div className="aspect-video w-full bg-black rounded-lg overflow-hidden">
-                  <video 
-                    ref={videoRef}
-                    controls 
-                    className="w-full h-full"
-                    poster="/video-thumbnail.jpg"
-                  >
-                    <source src="/WhatsApp Video 2026-02-05 at 12.42.46 PM.mp4" type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
-                </div>
-                
-                <div className="text-center mt-4">
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                    Grow24.ai Concept
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Discover how our platform transforms personal and business management
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-    )
+    return <ConceptVideoModal open={isOpen} onClose={handleClose} />
   }
 
   return (

@@ -6,6 +6,7 @@ import { useComingSoon } from '../contexts/ComingSoonContext'
 import { useTheme } from '../contexts/ThemeContext'
 import { use3DRotation } from '../lib/use3DRotation'
 import HeroCarousel from '../components/HeroCarousel'
+import ConceptVideoModal from '../components/ConceptVideoModal'
 
 const SolutionsMatrix3Panel = lazy(() => import('../components/SolutionsMatrix3Panel'))
 const LibraryPage = lazy(() => import('../components/Library'))
@@ -216,7 +217,6 @@ function IndexPage() {
   const [professionalBgWhite, setProfessionalBgWhite] = useState(false)
   const [showVideoModal, setShowVideoModal] = useState(false)
   const [showEmailTemplateBuilder, setShowEmailTemplateBuilder] = useState(false)
-  const videoRef = useRef<HTMLVideoElement>(null)
   const conceptTabsBarRef = useRef<HTMLDivElement>(null)
   const conceptSectionRef = useRef<HTMLElement>(null)
   const conceptBarTopRef = useRef<number>(0)
@@ -257,24 +257,6 @@ function IndexPage() {
     
     return () => {
       window.removeEventListener('hashchange', handleHashNavigation)
-    }
-  }, [])
-
-  // Cleanup video when modal closes
-  useEffect(() => {
-    if (!showVideoModal && videoRef.current) {
-      videoRef.current.pause()
-      videoRef.current.currentTime = 0
-    }
-  }, [showVideoModal])
-
-  // Cleanup on component unmount
-  useEffect(() => {
-    return () => {
-      if (videoRef.current) {
-        videoRef.current.pause()
-        videoRef.current.currentTime = 0
-      }
     }
   }, [])
 
@@ -793,57 +775,7 @@ function IndexPage() {
         </div>
       </motion.section>
 
-      {/* Video Modal - at root so it overlays the full viewport when open */}
-      <AnimatePresence>
-        {showVideoModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
-            onClick={() => {
-              if (videoRef.current) {
-                videoRef.current.pause()
-                videoRef.current.currentTime = 0
-              }
-              setShowVideoModal(false)
-            }}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="relative w-full max-w-5xl bg-slate-900 rounded-2xl overflow-hidden shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                onClick={() => {
-                  if (videoRef.current) {
-                    videoRef.current.pause()
-                    videoRef.current.currentTime = 0
-                  }
-                  setShowVideoModal(false)
-                }}
-                className="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-              <div className="relative aspect-video">
-                <video
-                  ref={videoRef}
-                  className="w-full h-full"
-                  controls
-                  src="/WhatsApp Video 2026-02-17 at 3.25.00 PM.mp4"
-                >
-                  Your browser does not support the video tag.
-                </video>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <ConceptVideoModal open={showVideoModal} onClose={() => setShowVideoModal(false)} />
 
       {showEmailTemplateBuilder && (
         <Suspense fallback={null}>
