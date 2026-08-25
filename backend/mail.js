@@ -13,8 +13,42 @@ function getSmtpPass() {
   return env('SMTP_PASS') || env('EMAIL_PASSWORD');
 }
 
-function getMailFrom() {
-  return env('EMAIL_FROM') || getSmtpUser() || 'noreply@grow24.ai';
+function getSalesSmtpUser() {
+  return env('SALES_EMAIL_USER') || env('EMAIL_SALES_USER');
+}
+
+function getSalesSmtpPass() {
+  return env('SALES_EMAIL_PASSWORD') || env('EMAIL_SALES_PASSWORD') || env('SALES_EMAIL_PASS');
+}
+
+/** @param {'support'|'sales'} [role] */
+function getMailFrom(role = 'support') {
+  if (role === 'sales') {
+    return (
+      env('EMAIL_FROM_SALES') ||
+      env('SALES_EMAIL_FROM') ||
+      (getSalesSmtpUser() ? `Grow24 Sales <${getSalesSmtpUser()}>` : 'Grow24 Sales <sales@grow24.ai>')
+    );
+  }
+  return (
+    env('EMAIL_FROM_SUPPORT') ||
+    env('EMAIL_FROM') ||
+    getSmtpUser() ||
+    'Grow24 Support <support@grow24.ai>'
+  );
+}
+
+/**
+ * Contact Us / Create email → support
+ * Harness CTA subscribe (cta-bar / cta-section) → sales
+ * @param {string} [source]
+ */
+function resolveMailRole(source) {
+  const s = String(source || '').toLowerCase().trim();
+  if (s === 'cta-bar' || s === 'cta-section' || s === 'subscribe' || s === 'newsletter') {
+    return 'sales';
+  }
+  return 'support';
 }
 
 function getEmailService() {
@@ -49,7 +83,6 @@ function useZohoSmtpPro(user) {
   const explicit = env('ZOHO_SMTP_PRO').toLowerCase();
   if (explicit === 'true') return true;
   if (explicit === 'false') return false;
-  // Custom domains (you@grow24.ai) must use smtppro, not smtp.
   return Boolean(user) && !isPersonalZohoAddress(user);
 }
 
@@ -111,9 +144,7 @@ function createGenericSmtpTransporter(user, pass) {
   return null;
 }
 
-function createMailTransporter() {
-  const user = getSmtpUser();
-  const pass = getSmtpPass();
+function createTransporterForCredentials(user, pass) {
   const service = getEmailService();
 
   if (user && pass && (service === 'zoho' || service === '')) {
@@ -151,8 +182,30 @@ function createMailTransporter() {
   return { name: null, transporter: null };
 }
 
+function createMailTransporter() {
+  return createTransporterForCredentials(getSmtpUser(), getSmtpPass());
+}
+
+/**
+ * Prefer dedicated sales mailbox credentials when set.
+ * Otherwise fall back to support SMTP (sales@ must be a Zoho alias / Send Mail As of support).
+ * @param {'support'|'sales'} [role]
+ */
+function getMailTransport(role = 'support') {
+  if (role === 'sales') {
+    const salesUser = getSalesSmtpUser();
+    const salesPass = getSalesSmtpPass();
+    if (salesUser && salesPass) {
+      return createTransporterForCredentials(salesUser, salesPass);
+    }
+  }
+  return createMailTransporter();
+}
+
 module.exports = {
   createMailTransporter,
+  getMailTransport,
   getMailFrom,
+  resolveMailRole,
   isEmailConfigured,
 };

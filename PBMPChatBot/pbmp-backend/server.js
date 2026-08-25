@@ -7,7 +7,7 @@ const { GoogleGenerativeAIEmbeddings } = require('@langchain/google-genai');
 const whatsappService = require('./whatsapp-service');
 const voiceService = require('./voice-service');
 const mediaService = require('./media-service');
-const { createMailTransporter, getMailFrom, isEmailConfigured } = require('./mail');
+const { createMailTransporter, getMailTransport, getMailFrom, resolveMailRole, isEmailConfigured } = require('./mail');
 
 dotenv.config();
 
@@ -202,8 +202,17 @@ app.post('/api/send-email', async (req, res) => {
         }))
       : [];
 
+    // Contact Us / Create email always sends as support@
+    const supportTransport = getMailTransport('support');
+    if (!supportTransport.transporter) {
+      return res.status(500).json({
+        success: false,
+        message: 'Support email is not configured on the backend.',
+      });
+    }
+
     const mailOptions = {
-      from: getMailFrom(),
+      from: getMailFrom('support'),
       to: toList,
       subject: subject.trim(),
       html: typeof html === 'string' ? html : undefined,
@@ -233,7 +242,7 @@ app.post('/api/send-email', async (req, res) => {
       }),
     };
 
-    await transporter.sendMail(mailOptions);
+    await supportTransport.transporter.sendMail(mailOptions);
 
     return res.json({
       success: true,
@@ -664,7 +673,10 @@ app.post('/api/leads', async (req, res) => {
     }
 
     // Send welcome email to subscriber
-    if (isEmailConfigured() && transporter) {
+    // Create email / contact → support@; Harness CTA subscribe → sales@
+    const mailRole = resolveMailRole(source);
+    const roleTransport = getMailTransport(mailRole);
+    if (isEmailConfigured() && roleTransport.transporter) {
       try {
         // Determine email subject and content based on source
         let emailSubject = 'Welcome to Grow24.ai - Thank You for Your Interest!';
@@ -828,7 +840,7 @@ app.post('/api/leads', async (req, res) => {
         const emailText = `${emailHeading}\n\nHi${name ? ` ${name}` : ''},\n\n${emailMainContent.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ')}\n\nBest regards,\nThe Grow24.ai Team\n\nVisit us at: ${emailCTA.url}`;
 
         const mailOptions = {
-          from: getMailFrom(),
+          from: getMailFrom(mailRole),
           to: normalizedEmail,
           subject: emailSubject,
           html: emailHtml,
@@ -847,8 +859,8 @@ app.post('/api/leads', async (req, res) => {
           }
         };
 
-        await transporter.sendMail(mailOptions);
-        console.log(`✅ ${emailSubject} sent via SendGrid to:`, normalizedEmail);
+        await roleTransport.transporter.sendMail(mailOptions);
+        console.log(`✅ ${emailSubject} sent as ${mailRole} to:`, normalizedEmail);
 
         res.json({
           success: true,

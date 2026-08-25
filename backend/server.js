@@ -13,7 +13,7 @@ const { GoogleGenerativeAIEmbeddings } = require('@langchain/google-genai');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const whatsappService = require('./whatsapp-service');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { createMailTransporter, getMailFrom, isEmailConfigured } = require('./mail');
+const { createMailTransporter, getMailTransport, getMailFrom, resolveMailRole, isEmailConfigured } = require('./mail');
 
 dotenv.config();
 
@@ -243,8 +243,16 @@ app.post('/api/send-email', async (req, res) => {
         }))
       : [];
 
+    const supportTransport = getMailTransport('support');
+    if (!supportTransport.transporter) {
+      return res.status(500).json({
+        success: false,
+        message: 'Support email is not configured on the backend.',
+      });
+    }
+
     const mailOptions = {
-      from: getMailFrom(),
+      from: getMailFrom('support'),
       to: toList,
       subject: subject.trim(),
       html: typeof html === 'string' ? html : undefined,
@@ -275,7 +283,7 @@ app.post('/api/send-email', async (req, res) => {
       }),
     };
 
-    await transporter.sendMail(mailOptions);
+    await supportTransport.transporter.sendMail(mailOptions);
 
     return res.json({
       success: true,
@@ -622,7 +630,10 @@ app.post('/api/leads', async (req, res) => {
     }
 
     // Send welcome email to subscriber
-    if (isEmailConfigured() && transporter) {
+    // Create email / contact → support@; Harness CTA subscribe → sales@
+    const mailRole = resolveMailRole(source);
+    const roleTransport = getMailTransport(mailRole);
+    if (isEmailConfigured() && roleTransport.transporter) {
       try {
         const emailHtml = `
 <!DOCTYPE html>
@@ -671,7 +682,7 @@ app.post('/api/leads', async (req, res) => {
 </html>`;
 
         const mailOptions = {
-          from: getMailFrom(),
+          from: getMailFrom(mailRole),
           to: normalizedEmail,
           subject: 'Welcome to Grow24.ai - Thank You for Your Interest!',
           html: emailHtml,
@@ -690,8 +701,8 @@ app.post('/api/leads', async (req, res) => {
           }
         };
 
-        await transporter.sendMail(mailOptions);
-        console.log('✅ Welcome email sent via SendGrid to:', normalizedEmail);
+        await roleTransport.transporter.sendMail(mailOptions);
+        console.log('✅ Welcome email sent as', mailRole, 'to:', normalizedEmail);
 
         res.json({
           success: true,
