@@ -17,6 +17,21 @@ function getMailFrom() {
   return env('EMAIL_FROM') || getSmtpUser() || 'noreply@grow24.ai';
 }
 
+function getEmailService() {
+  return (env('EMAIL_SERVICE') || env('SMTP_SERVICE') || 'zoho').toLowerCase();
+}
+
+function isPersonalZohoAddress(user) {
+  const domain = String(user || '').toLowerCase().split('@')[1] || '';
+  return (
+    domain === 'zoho.com' ||
+    domain === 'zoho.in' ||
+    domain === 'zoho.eu' ||
+    domain.startsWith('zohomail.') ||
+    domain.startsWith('zoho.')
+  );
+}
+
 function inferZohoRegion(user) {
   const explicit = (env('ZOHO_REGION') || '').toLowerCase();
   if (explicit) return explicit;
@@ -30,12 +45,20 @@ function inferZohoRegion(user) {
   return 'com';
 }
 
+function useZohoSmtpPro(user) {
+  const explicit = env('ZOHO_SMTP_PRO').toLowerCase();
+  if (explicit === 'true') return true;
+  if (explicit === 'false') return false;
+  // Custom domains (you@grow24.ai) must use smtppro, not smtp.
+  return Boolean(user) && !isPersonalZohoAddress(user);
+}
+
 function getZohoHost(user) {
   const explicit = env('SMTP_HOST') || env('EMAIL_HOST');
   if (explicit) return explicit;
 
   const region = inferZohoRegion(user);
-  const prefix = env('ZOHO_SMTP_PRO').toLowerCase() === 'true' ? 'smtppro' : 'smtp';
+  const prefix = useZohoSmtpPro(user) ? 'smtppro' : 'smtp';
   if (region === 'in') return `${prefix}.zoho.in`;
   if (region === 'eu') return `${prefix}.zoho.eu`;
   if (region === 'au') return `${prefix}.zoho.com.au`;
@@ -65,15 +88,49 @@ function createZohoTransporter(user, pass) {
   });
 }
 
+function createGenericSmtpTransporter(user, pass) {
+  const host = env('SMTP_HOST') || env('EMAIL_HOST');
+  const service = getEmailService();
+
+  if (service === 'gmail' && user && pass) {
+    return nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user, pass },
+    });
+  }
+
+  if (host && user && pass) {
+    return nodemailer.createTransport({
+      host,
+      port: Number(env('SMTP_PORT') || env('EMAIL_PORT') || 587),
+      secure: env('SMTP_SECURE').toLowerCase() === 'true',
+      auth: { user, pass },
+    });
+  }
+
+  return null;
+}
+
 function createMailTransporter() {
   const user = getSmtpUser();
   const pass = getSmtpPass();
+  const service = getEmailService();
 
-  if (user && pass) {
+  if (user && pass && (service === 'zoho' || service === '')) {
     return {
-      name: 'Zoho',
+      name: `Zoho (${getZohoHost(user)})`,
       transporter: createZohoTransporter(user, pass),
     };
+  }
+
+  if (user && pass) {
+    const transporter = createGenericSmtpTransporter(user, pass);
+    if (transporter) {
+      return {
+        name: service === 'gmail' ? 'Gmail' : (env('SMTP_HOST') || env('EMAIL_HOST') || service),
+        transporter,
+      };
+    }
   }
 
   if (env('SENDGRID_API_KEY')) {
