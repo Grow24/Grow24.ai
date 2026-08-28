@@ -1,6 +1,10 @@
 #!/bin/sh
 set -eu
 
+# Keep build tooling (vite, autoprefixer, postcss) even if Zeabur sets NODE_ENV=production.
+export NODE_ENV=development
+export NPM_CONFIG_PRODUCTION=false
+
 PROFILE="${1:-full}"
 
 run_step() {

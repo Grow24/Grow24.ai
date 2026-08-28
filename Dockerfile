@@ -18,7 +18,9 @@ ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1 \
     NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT=120000
 
 COPY package*.json ./
-RUN sh -c 'for i in 1 2 3; do npm ci --no-audit --no-fund && exit 0; echo "npm ci failed (attempt $i), retrying..."; sleep 8; done; exit 1'
+# Zeabur injects NODE_ENV=production, which makes npm ci skip vite/autoprefixer (devDependencies).
+ENV NPM_CONFIG_PRODUCTION=false
+RUN sh -c 'for i in 1 2 3; do NODE_ENV=development npm ci --no-audit --no-fund --include=dev && exit 0; echo "npm ci failed (attempt $i), retrying..."; sleep 8; done; exit 1'
 
 COPY . .
 RUN test -f /src/Caddyfile || (echo "Missing required file: /src/Caddyfile" && exit 1)
