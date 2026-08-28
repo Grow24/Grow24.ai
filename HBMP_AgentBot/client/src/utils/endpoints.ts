@@ -217,9 +217,14 @@ export function getDefaultModelSpec(startupConfig?: t.TStartupConfig):
   } else if (defaultSpec) {
     return { default: defaultSpec };
   }
-  const lastConversationSetup = JSON.parse(
-    localStorage.getItem(LocalStorageKeys.LAST_CONVO_SETUP + '_0') ?? '{}',
-  );
+  let lastConversationSetup: { spec?: string } = {};
+  try {
+    lastConversationSetup = JSON.parse(
+      localStorage.getItem(LocalStorageKeys.LAST_CONVO_SETUP + '_0') ?? '{}',
+    );
+  } catch {
+    lastConversationSetup = {};
+  }
   if (!lastConversationSetup.spec) {
     return;
   }

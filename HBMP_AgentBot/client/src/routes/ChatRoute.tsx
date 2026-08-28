@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Spinner } from '@librechat/client';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Constants, EModelEndpoint } from 'librechat-data-provider';
 import { useGetModelsQuery } from 'librechat-data-provider/react-query';
 import type { TPreset } from 'librechat-data-provider';
@@ -123,7 +123,7 @@ export default function ChatRoute() {
 
   const loading = (
     <div className="flex h-screen items-center justify-center" aria-live="polite" role="status">
-      <Spinner className="text-text-primary" />
+      <Spinner className="text-gray-700" />
     </div>
   );
 
@@ -132,7 +132,14 @@ export default function ChatRoute() {
   }
 
   if (!isAuthenticated) {
-    return loading;
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-3 bg-white text-gray-800">
+        <p className="text-lg font-medium">Sign in to start a chat</p>
+        <Link className="text-green-600 underline" to="/login">
+          Go to login
+        </Link>
+      </div>
+    );
   }
 
   if (!conversation) {

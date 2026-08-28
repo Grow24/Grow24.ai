@@ -174,6 +174,14 @@ function userFromReq(req) {
   return readUsers().find((user) => user.id === payload.id) || upsertUserFromPayload(payload);
 }
 
+function ensureGuestUser() {
+  return upsertUserFromPayload({ id: 'local-web', email: 'agentbot@local' });
+}
+
+function sessionUser(req) {
+  return userFromReq(req) || (sameSiteRequest(req) ? ensureGuestUser() : null);
+}
+
 function sameSiteRequest(req) {
   const host = String(req.headers.host || '');
   const origin = String(req.headers.origin || '');
@@ -459,7 +467,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (method === 'POST' && url.startsWith('/api/auth/refresh')) {
-    const user = userFromReq(req);
+    const user = sessionUser(req);
     if (!user) {
       send(res, 401, { token: null, user: null, message: 'Refresh token not provided' });
       return;
@@ -470,7 +478,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (method === 'GET' && url === '/api/user') {
-    const user = userFromReq(req);
+    const user = sessionUser(req);
     if (!user) {
       send(res, 401, { message: 'Unauthorized' });
       return;
