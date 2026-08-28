@@ -137,7 +137,8 @@ if (typeof window !== 'undefined') {
               `Refresh token failed from shared link, attempting request to ${originalRequest.url}`,
             );
           } else {
-            window.location.href = '/login';
+            const base = endpoints.apiBaseUrl() || '';
+            window.location.href = `${base}/login`;
           }
         } catch (err) {
           processQueue(err as AxiosError, null);
