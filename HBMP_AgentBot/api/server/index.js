@@ -32,9 +32,13 @@ const routes = require('./routes');
 
 const { PORT, HOST, ALLOW_SOCIAL_LOGIN, DISABLE_COMPRESSION, TRUST_PROXY } = process.env ?? {};
 
-// Allow PORT=0 to be used for automatic free port assignment
-const port = isNaN(Number(PORT)) ? 3080 : Number(PORT);
-const host = HOST || 'localhost';
+const onZeabur = Boolean(
+  process.env.ZEABUR_WEB_URL || process.env.ZEABUR_PROJECT_ID || process.env.ZEABUR_SERVICE_ID,
+);
+// Zeabur gateway + health check are 8080. Ignore leftover PORT=3080 Variables.
+const port = onZeabur ? 8080 : isNaN(Number(PORT)) ? 3080 : Number(PORT);
+// Containers / Zeabur must bind all interfaces or the gateway returns 502.
+const host = HOST || (process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost');
 const trusted_proxy = Number(TRUST_PROXY) || 1; /* trust first proxy by default */
 
 const app = express();
@@ -43,9 +47,38 @@ const startServer = async () => {
   if (typeof Bun !== 'undefined') {
     axios.defaults.headers.common['Accept-Encoding'] = 'gzip';
   }
-  await connectDb();
 
-  logger.info('Connected to MongoDB');
+  // Bind before Mongo so Zeabur TCP health checks on 8080 do not stay 0/1.
+  app.get('/health', (_req, res) => res.status(200).send('OK'));
+  await new Promise((resolve, reject) => {
+    const server = app.listen(port, host, (err) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      if (host === '0.0.0.0') {
+        logger.info(
+          `Server listening on all interfaces at port ${port}. Use http://localhost:${port} to access it`,
+        );
+      } else {
+        logger.info(`Server listening at http://${host === '0.0.0.0' ? 'localhost' : host}:${port}`);
+      }
+      resolve(server);
+    });
+    server.on('error', reject);
+  });
+
+  // Keep 8080 open for Zeabur probes. Auth/password mistakes must not kill the listener.
+  for (;;) {
+    try {
+      await connectDb();
+      logger.info('Connected to MongoDB');
+      break;
+    } catch (err) {
+      logger.error(`MongoDB not ready (${err.message}). Retrying in 5s so health checks stay up.`);
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+    }
+  }
   indexSync().catch((err) => {
     logger.error('[indexSync] Background sync failed:', err);
   });
@@ -74,8 +107,6 @@ const startServer = async () => {
       indexHTML = indexHTML.replace(/base href="\/"/, `base href="${baseHref}"`);
     }
   }
-
-  app.get('/health', (_req, res) => res.status(200).send('OK'));
 
   /* Middleware */
   app.use(noIndex);
@@ -203,22 +234,15 @@ const startServer = async () => {
     res.send(updatedIndexHtml);
   });
 
-  app.listen(port, host, async () => {
-    if (host === '0.0.0.0') {
-      logger.info(
-        `Server listening on all interfaces at port ${port}. Use http://localhost:${port} to access it`,
-      );
-    } else {
-      logger.info(`Server listening at http://${host == '0.0.0.0' ? 'localhost' : host}:${port}`);
-    }
-
-    await initializeMCPs();
-    await initializeOAuthReconnectManager();
-    await checkMigrations();
-  });
+  await initializeMCPs();
+  await initializeOAuthReconnectManager();
+  await checkMigrations();
 };
 
-startServer();
+startServer().catch((err) => {
+  logger.error('Failed to start server:', err);
+  process.exit(1);
+});
 
 let messageCount = 0;
 process.on('uncaughtException', (err) => {

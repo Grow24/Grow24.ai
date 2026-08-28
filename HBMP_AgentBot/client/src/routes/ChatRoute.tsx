@@ -135,6 +135,10 @@ export default function ChatRoute() {
     return loading;
   }
 
+  if (!conversation) {
+    return loading;
+  }
+
   if (conversation?.conversationId === Constants.SEARCH || !conversationId) {
     return loading;
   }

@@ -1,174 +1,78 @@
-# Zeabur Deployment Guide
+# Zeabur — one-time fix
 
-Quick reference for deploying HBMP AgentBot to Zeabur.
+GitHub pushes **tab tab nahi** chalte jab tak Settings → Dockerfile box me **purani file** padi hai.
 
-## Quick Deploy Steps
+Aapke screenshot me abhi bhi ye line hai:
 
-### 1. Connect Repository
+```dockerfile
+ENV PATH="/app/node_modules/.bin:${PATH}"
+```
 
-1. Go to [Zeabur Dashboard](https://dash.zeabur.com)
-2. Click **"New Project"** → **"Import from Git"**
-3. Select your GitHub/GitLab repository
-4. Select the branch (usually `main` or `master`)
+Yahi **exit 127** karti hai (`npm` / `rollup` PATH toot jata hai). GitHub wali file me ye line **nahi** hai.
 
-### 2. Configure Environment Variables
+## 1) Dockerfile box replace karo (sabse zaroori)
 
-Go to your service → **"Environment Variables"** and add:
+`hbmp-agentbot` → **Settings** → **Dockerfile**
 
-#### Required Variables
+1. **Load from GitHub** dabao  
+   **YA** poori box select karke delete karo aur [Dockerfile.hbmp-agentbot](https://github.com/Grow24/HBMP-AgentBot/blob/main/Dockerfile.hbmp-agentbot) paste karo
+2. Pehli line ye honi chahiye: `# HBMP_ZEABUR_REV=final-8080`
+3. `ENV PATH=...node_modules/.bin` **nahi** hona chahiye
+4. Purple **Save** dabao (Load ke baad Save ke bina purani file hi build hoti hai)
+
+## 2) Settings
+
+- Startup Command: **khali**
+- CMD: **khali**
+- Health Check: **8080** TCP
+- Crash restarts: **-1**
+- Memory: **2048** (1024 se build/runtime tight)
+
+`mongodb` → Settings → Startup Command **`sh` hatao** (khali rakho). `sh` Mongo ke real entrypoint ko override karta hai.
+
+## 3) Variables — `PORT` 8080 karo
+
+Networking 8080 hai, `PORT=3080` 502 deta hai.
 
 ```bash
-# Server Configuration
-NODE_ENV=production
+AGENTBOT_BASE=/
+ALLOW_REGISTRATION=true
+ALLOW_UNVERIFIED_EMAIL_LOGIN=true
+CREDS_IV=1c5b0cc6e66da3e62fe5ce5b0c60a1fa
+CREDS_KEY=b04e6efa967bb144bf56e95a147806b35f3536b1909fc4fa3b4f9dcde59c75c8
+DOMAIN_CLIENT=https://hbmpagentbot.zeabur.app
+DOMAIN_SERVER=https://hbmpagentbot.zeabur.app
+EMAIL_FROM=grow24.ai.collaboration@gmail.com
+EMAIL_PASSWORD=fcetsifsklnikmch
+EMAIL_SERVICE=gmail
+EMAIL_USERNAME=grow24.ai.collaboration@gmail.com
+ENDPOINTS=google,agents
+GOOGLE_KEY=PASTE_NEW_GEMINI_KEY_FROM_AISTUDIO
+GOOGLE_MODELS=gemini-2.5-flash,gemini-2.5-flash-lite
 HOST=0.0.0.0
-PORT=3080
-
-# Memory Limit (CRITICAL - prevents build failures)
-NODE_OPTIONS=--max-old-space-size=6144
-
-# Database (use Zeabur MongoDB service or external)
-MONGO_URI=mongodb://your-mongodb-uri/LibreChat
-
-# Search (optional - use Zeabur Meilisearch service)
-MEILI_HOST=http://your-meilisearch-service:7700
-MEILI_MASTER_KEY=your-master-key
-```
-
-#### AI Provider Keys (at least one required)
-
-```bash
-OPENAI_API_KEY=sk-your-openai-key
-ANTHROPIC_API_KEY=sk-ant-your-anthropic-key
-GOOGLE_KEY=your-google-key
-```
-
-### 3. Deploy
-
-1. Click **"Deploy"** or push to your main branch
-2. Monitor build logs
-3. Wait 10-15 minutes for first build
-4. Access your app via Zeabur-provided URL
-
-## Build Configuration
-
-Zeabur automatically detects `nixpacks.toml` which includes:
-
-- ✅ Node.js 20
-- ✅ 6GB memory limit for builds
-- ✅ Optimized build commands
-- ✅ Production-ready configuration
-
-## Common Issues & Solutions
-
-### Build Fails with "JavaScript heap out of memory"
-
-**Solution**: 
-1. Add `NODE_OPTIONS=--max-old-space-size=6144` to environment variables
-2. Clear build cache: Service → Settings → Clear Build Cache
-3. Redeploy
-
-### Build Still Shows 2048MB
-
-**Solution**:
-1. Verify `nixpacks.toml` has correct memory setting
-2. Ensure environment variable is set in Zeabur dashboard
-3. Clear cache and redeploy
-
-### Database Connection Errors
-
-**Solution**:
-1. Verify `MONGO_URI` is correct
-2. Check MongoDB service is running (if using Zeabur MongoDB)
-3. Ensure network connectivity between services
-
-### Slow Build Times
-
-**Normal**: 10-15 minutes for first build, 5-10 minutes for subsequent builds
-
-**If slower**:
-- Check Zeabur status page
-- Verify network connection
-- Consider upgrading plan for faster builds
-
-## Monitoring
-
-### View Logs
-
-1. Go to Zeabur Dashboard
-2. Select your service
-3. Click **"Logs"** tab
-4. Filter by "build" or "runtime"
-
-### Health Check
-
-```bash
-curl https://your-app.zeabur.app/api/health
-```
-
-## Scaling
-
-### Horizontal Scaling
-
-1. Go to Service → Settings
-2. Adjust **"Instances"** slider
-3. Zeabur will auto-scale based on traffic
-
-### Resource Limits
-
-- **Free Tier**: Limited resources
-- **Paid Plans**: More CPU/RAM available
-- Adjust in Service → Settings → Resources
-
-## Custom Domain
-
-1. Go to Service → Settings → Domains
-2. Add your custom domain
-3. Configure DNS records as shown
-4. Wait for SSL certificate (automatic)
-
-## Environment-Specific Configs
-
-### Development
-
-```bash
-NODE_ENV=development
-```
-
-### Production
-
-```bash
+JWT_REFRESH_SECRET=804cda0b893aa9ad954af847bfbb831b35ae91fd724bdcf5c796af8556d8e3ce
+JWT_SECRET=d681e891b7da71441479019896248723f1dda304ed4fe2544e44cdf9f0ccfd1d
+MONGO_URI=mongodb://mongo:7S8v915ZTngDN0fc3Ux4HaqciQhAWJ62@mongodb.zeabur.internal:27017/LibreChat
 NODE_ENV=production
-HOST=0.0.0.0
+PORT=8080
+SEARCH=false
+SESSION_SECRET=0be245bce9e8a5dc94f3934da027988f104fe9d0bb71861293a7410017ce0bbd
+TRUST_PROXY=1
+ZBPACK_DOCKERFILE_PATH=Dockerfile.hbmp-agentbot
 ```
 
-## Support
+## 4) Redeploy
 
-- **Zeabur Docs**: https://zeabur.com/docs
-- **Zeabur Discord**: https://discord.gg/zeabur
-- **GitHub Issues**: Check repository issues
+Overview → **Redeploy** (Restart nahi). Suspended ho to pehle unsuspend.
 
-## Checklist
+Logs me ye aana chahiye:
 
-Before deploying:
+```text
+HBMP_ZEABUR_REV=final-8080 starting HOST=0.0.0.0 PORT=8080
+Connected to MongoDB
+Server listening on all interfaces at port 8080
+```
 
-- [ ] Repository connected to Zeabur
-- [ ] All environment variables set
-- [ ] `NODE_OPTIONS` set to 6144MB
-- [ ] MongoDB URI configured
-- [ ] AI provider keys added
-- [ ] Build cache cleared (if redeploying)
-- [ ] Monitoring/logging configured
+Agar log me phir `npm run build:data-provider && test -f` dikhe, Dockerfile **Save nahi** hua.
 
-After deployment:
-
-- [ ] Build completed successfully
-- [ ] App accessible via URL
-- [ ] Health check passes
-- [ ] Can create user account
-- [ ] Can create agents
-- [ ] API endpoints working
-
-
-
-
-
+https://hbmpagentbot.zeabur.app/health → `OK`

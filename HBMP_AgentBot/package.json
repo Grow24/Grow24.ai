@@ -35,6 +35,12 @@
     "reset-meili-sync": "node config/reset-meili-sync.js",
     "update-banner": "node config/update-banner.js",
     "delete-banner": "node config/delete-banner.js",
+    "setup": "node scripts/standalone-setup.js",
+    "start": "npm run backend",
+    "standalone": "node scripts/run-standalone.js --dev",
+    "standalone:dev": "node scripts/run-standalone.js --dev",
+    "standalone:prod": "node scripts/run-standalone.js --prod",
+    "standalone:docker": "node scripts/standalone-setup.js && docker compose up -d --build",
     "backend": "cross-env NODE_ENV=production node api/server/index.js",
     "backend:dev": "cross-env NODE_ENV=development npx nodemon api/server/index.js",
     "backend:stop": "node config/stop-backend.js",
@@ -170,6 +176,18 @@
     ]
   },
   "dependencies": {
-    "@opentelemetry/exporter-trace-otlp-http": "^0.208.0"
+    "@opentelemetry/exporter-trace-otlp-http": "^0.208.0",
+    "@rollup/plugin-alias": "^5.1.0",
+    "@rollup/plugin-commonjs": "^25.0.2",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.1.0",
+    "@rollup/plugin-replace": "^5.0.5",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.2",
+    "rollup": "^4.22.4",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-typescript2": "^0.35.0",
+    "typescript": "^5.0.4"
   }
 }
