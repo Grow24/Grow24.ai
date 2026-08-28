@@ -10,7 +10,7 @@ RUN apk add --no-cache python3 make g++ cairo-dev jpeg-dev pango-dev giflib-dev 
 
 # Improve npm reliability on intermittent networks and sharp install behavior.
 ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1 \
-    NODE_OPTIONS=--max-old-space-size=8192 \
+    NODE_OPTIONS=--max-old-space-size=3072 \
     NPM_CONFIG_FETCH_RETRIES=5 \
     NPM_CONFIG_FETCH_RETRY_FACTOR=2 \
     NPM_CONFIG_FETCH_TIMEOUT=120000 \

@@ -11,8 +11,12 @@ run_step() {
   step="$1"
   shift
   echo "========== START: ${step} =========="
-  "$@"
-  echo "========== DONE:  ${step} =========="
+  if "$@"; then
+    echo "========== DONE:  ${step} =========="
+    return 0
+  fi
+  echo "========== FAILED: ${step} =========="
+  return 1
 }
 
 if [ "${PROFILE}" = "core" ]; then
