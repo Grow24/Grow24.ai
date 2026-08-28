@@ -229,12 +229,11 @@
 		file_server
 	}
 
-	# --- HBMP_AgentBot (if built as static at /HBMP_AgentBot/) ---
+	# --- HBMP_AgentBot (UI + API all inside this web image; no external AgentBot host) ---
 	@agentBotExact path /HBMP_AgentBot
 	redir @agentBotExact /HBMP_AgentBot/ 308
 
-	# AgentBot backend API and OAuth endpoints.
-	# Strip /HBMP_AgentBot so the local stub (or real API on 5188) receives /api/* and /oauth/*.
+	# Same-origin API: Caddy → local stub on 5188 (scripts/agentbot-stub.cjs).
 	handle /HBMP_AgentBot/api* {
 		uri strip_prefix /HBMP_AgentBot
 		reverse_proxy 127.0.0.1:5188 {
@@ -245,6 +244,7 @@
 			header_up Referer {http.request.header.Referer}
 			header_up X-Forwarded-Proto {scheme}
 			header_up X-Forwarded-For {remote_host}
+			flush_interval -1
 		}
 	}
 	handle /HBMP_AgentBot/oauth* {
@@ -257,6 +257,14 @@
 			header_up Referer {http.request.header.Referer}
 			header_up X-Forwarded-Proto {scheme}
 			header_up X-Forwarded-For {remote_host}
+			flush_interval -1
+		}
+	}
+	handle /HBMP_AgentBot/health {
+		uri strip_prefix /HBMP_AgentBot
+		reverse_proxy 127.0.0.1:5188 {
+			header_up Host {host}
+			header_up X-Forwarded-Proto {scheme}
 		}
 	}
 

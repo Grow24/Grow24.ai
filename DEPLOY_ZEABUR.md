@@ -16,7 +16,7 @@ This project should run as **multiple Zeabur services**:
 
 The root **`Dockerfile`** builds via `scripts/build-zeabur-profile.sh` and serves **`dist/`** with the repo **`Caddyfile`**.
 
-**Default build profile is `core`** (skips Univer / Mxgraph / ivvychain — avoids OOM on Zeabur Dev 2vCPU/4GB). Core still builds **HBMP_DOCS_PLATFORM** (UI + API in this container) and **HBMP_AgentBot** (static UI). AgentBot login needs a separate API service (`AGENTBOT_API_UPSTREAM`).
+**Default build profile is `core`** (skips Univer / Mxgraph / ivvychain — avoids OOM on Zeabur Dev 2vCPU/4GB). Core still builds **HBMP_DOCS_PLATFORM** (UI + API in this container) and **HBMP_AgentBot** (static UI + local API stub in this same container). Set `GOOGLE_KEY` on this frontend service for AgentBot chat.
 
 Set Zeabur Variable `BUILD_PROFILE=full` only if you need `/univer/` and those heavy apps (use a larger build machine).
 
@@ -35,7 +35,7 @@ If you edited the platform Caddyfile manually, add the same **`/HBMPONE/`** hand
 2. Ensure port is `8080`.
 3. Add environment variables (build-time where noted):
    - `BUILD_PROFILE=core` (recommended on Zeabur Dev; skips Univer so build does not fail)
-   - **AgentBot API (runtime):** `AGENTBOT_API_UPSTREAM=https://<agentbot-api-host>` (LibreChat/AgentBot backend). Without this, `/HBMP_AgentBot/login` loads but `/api` returns 503.
+   - **AgentBot at `/HBMP_AgentBot/` (runtime, same container):** `GOOGLE_KEY=<Gemini API key>` — UI and API both run in this image (`scripts/agentbot-stub.cjs`). Do not point AgentBot at any other host.
    - Optional persistent volume for Docs SQLite: mount at `/app/data`
    - `VITE_CLERK_PUBLISHABLE_KEY=<your_key>`
    - `VITE_API_ENDPOINT=https://pbmpchatbotbackend.zeabur.app/api/chat`

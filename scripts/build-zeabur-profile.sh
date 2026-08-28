@@ -26,6 +26,7 @@ if [ "${PROFILE}" = "core" ]; then
   run_step "copy:imageprocessing" npm run copy:imageprocessing
   run_step "copy:mcp-server" npm run copy:mcp-server
   run_step "copy:testing-responsiveness" npm run copy:testing-responsiveness
+  run_step "verify-agentbot-dist" node scripts/verify-agentbot-dist.mjs
   echo "Core build profile completed."
   exit 0
 fi

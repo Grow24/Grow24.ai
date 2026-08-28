@@ -80,8 +80,10 @@ run('agentbot-stub', 'node', ['/app/agentbot-stub.cjs'], {
   env: {
     ...process.env,
     PORT: process.env.AGENTBOT_STUB_PORT || '5188',
+    DOMAIN_CLIENT: process.env.DOMAIN_CLIENT || 'https://www.grow24.ai/HBMP_AgentBot',
   },
 });
+console.log('[start-all] AgentBot API: local stub on :5188');
 
 const caddy = run('caddy', 'caddy', [
   'run',

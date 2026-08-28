@@ -11,7 +11,7 @@ const crypto = require('crypto');
 
 const PORT = Number(process.env.PORT || 5188);
 const HOST = process.env.HOST || '0.0.0.0';
-const serverDomain = process.env.DOMAIN_CLIENT || 'https://www.grow24.ai';
+const serverDomain = process.env.DOMAIN_CLIENT || 'https://www.grow24.ai/HBMP_AgentBot';
 const dataDir = process.env.AGENTBOT_DATA_DIR || '/app/data';
 const usersFile = path.join(dataDir, 'agentbot-users.json');
 const secretFile = path.join(dataDir, 'agentbot-secret.txt');
@@ -277,7 +277,7 @@ const emptyList = { object: 'list', data: [], first_id: '', last_id: '', has_mor
 function authHeaders(token, req) {
   const proto = String(req?.headers['x-forwarded-proto'] || '');
   const secure = proto === 'https' ? '; Secure' : '';
-  const cookie = `HttpOnly; Path=/; SameSite=Lax; Max-Age=604800${secure}`;
+  const cookie = `HttpOnly; Path=/HBMP_AgentBot; SameSite=Lax; Max-Age=604800${secure}`;
   return {
     'Set-Cookie': [
       `refreshToken=${token}; ${cookie}`,
@@ -451,8 +451,8 @@ const server = http.createServer(async (req, res) => {
   if (method === 'POST' && url === '/api/auth/logout') {
     send(res, 200, { message: 'Logout successful', redirect: '/login' }, {
       'Set-Cookie': [
-        'refreshToken=; HttpOnly; Path=/; Max-Age=0',
-        'agentbotRefreshToken=; HttpOnly; Path=/; Max-Age=0',
+        'refreshToken=; HttpOnly; Path=/HBMP_AgentBot; Max-Age=0',
+        'agentbotRefreshToken=; HttpOnly; Path=/HBMP_AgentBot; Max-Age=0',
       ],
     });
     return;
