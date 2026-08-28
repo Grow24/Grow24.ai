@@ -170,7 +170,11 @@ const AuthContextProvider = ({
       doSetError(undefined);
     }
     if (token == null || !token || !isAuthenticated) {
-      silentRefresh();
+      const path = window.location.pathname || '';
+      const onAuthPage = /\/(login|register|forgot-password|reset-password)(\/|$)/.test(path);
+      if (!onAuthPage) {
+        silentRefresh();
+      }
     }
   }, [
     token,

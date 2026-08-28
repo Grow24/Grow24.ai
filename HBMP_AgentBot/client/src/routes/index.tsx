@@ -30,7 +30,7 @@ const AuthLayout = () => (
 );
 
 const baseEl = document.querySelector('base');
-const baseHref = baseEl?.getAttribute('href') || '/';
+const baseHref = (baseEl?.getAttribute('href') || '/').replace(/\/+$/, '') || '/';
 
 export const router = createBrowserRouter(
   [
