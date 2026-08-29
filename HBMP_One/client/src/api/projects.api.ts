@@ -23,7 +23,13 @@ export interface Docket {
 export const projectsApi = {
   getAll: async (): Promise<{ projects: Project[] }> => {
     const response = await httpClient.get('/projects');
-    return response.data;
+    const payload = response.data;
+    if (!payload || !Array.isArray(payload.projects)) {
+      throw new Error(
+        'HBMP One API is not available. Projects could not be loaded from this host.',
+      );
+    }
+    return payload;
   },
 
   getById: async (projectId: string): Promise<Project> => {

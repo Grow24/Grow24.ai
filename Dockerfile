@@ -36,9 +36,8 @@ RUN corepack enable && corepack prepare pnpm@9 --activate
 # Zeabur should always build mxgraph output from current source.
 RUN rm -rf /src/mxgraph_standalone /src/Mxgraph_ReactFlow/apps/web/.next
 
-# Baked into HBMPONE client build (see npm run build → build:hbmpone).
-# On Zeabur: set to your HBMP API public URL, e.g. https://your-hbmp-service.zeabur.app/api
-ARG VITE_API_URL=/api
+# Baked into HBMP_One client. Same-origin API via Caddy → 127.0.0.1:4010.
+ARG VITE_API_URL=/HBMP_One/api
 ENV VITE_API_URL=${VITE_API_URL}
 
 # Main site chatbot / leads / contact email (build-time — Vite bakes these in).
@@ -64,6 +63,14 @@ RUN npx prisma generate
 RUN ./node_modules/.bin/tsc -p tsconfig.json || echo "docs-api tsc failed; runtime will use tsx"
 WORKDIR /src
 
+# HBMP_One API (Express + Prisma/SQLite) — same container as the static UI.
+WORKDIR /src/HBMP_One/server
+ENV DATABASE_URL="file:./dev.db"
+RUN sh -c 'for i in 1 2 3; do npm ci --no-audit --no-fund && exit 0; echo "hbmp-one-api npm ci failed (attempt $i), retrying..."; sleep 8; done; exit 1'
+RUN npx prisma generate
+RUN ./node_modules/.bin/tsc -p tsconfig.json || echo "hbmp-one-api tsc failed; runtime will use tsx"
+WORKDIR /src
+
 # Ensure optional mxgraph folder exists so COPY does not fail
 # when Mxgraph_ReactFlow is absent in this checkout.
 RUN mkdir -p /src/mxgraph_standalone/apps/web
@@ -78,6 +85,7 @@ COPY --from=builder /src/dist /usr/share/caddy
 COPY --from=builder /src/Caddyfile /etc/caddy/Caddyfile
 COPY --from=builder /src/mxgraph_standalone /app/mxgraph
 COPY --from=builder /src/HBMP_DOCS_PLATFORM/server /app/docs-api
+COPY --from=builder /src/HBMP_One/server /app/hbmp-one-api
 COPY --from=builder /src/scripts/start-all.cjs /app/start-all.cjs
 COPY --from=builder /src/scripts/agentbot-stub.cjs /app/agentbot-stub.cjs
 COPY --from=builder /src/docker-entrypoint.sh /entrypoint.sh

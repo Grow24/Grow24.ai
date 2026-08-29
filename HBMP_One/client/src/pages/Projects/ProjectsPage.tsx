@@ -70,7 +70,7 @@ export default function ProjectsPage() {
       <div className="p-6">
         <div className="text-red-500">Error loading projects: {error instanceof Error ? error.message : 'Unknown error'}</div>
         <div className="mt-2 text-sm text-muted-foreground">
-          Make sure the backend server is running on http://localhost:4000
+          The HBMP One API did not return project data. After deploy, this app talks to /HBMP_One/api on the same host.
         </div>
       </div>
     );
@@ -131,7 +131,10 @@ export default function ProjectsPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {data?.projects.map((project) => {
+        {(data?.projects ?? []).length === 0 && (
+          <p className="text-muted-foreground col-span-full">No projects yet. Create one to get started.</p>
+        )}
+        {(data?.projects ?? []).map((project) => {
           const progress = getProgress(project);
           return (
             <Card key={project.id} className="hover:shadow-lg transition-shadow">
