@@ -258,26 +258,56 @@ const endpoints = {
   google: { userProvide: false, order: 5 },
 };
 
+const DEFAULT_GEMINI = 'gemini-2.5-flash';
+const GEMINI_FALLBACKS = [
+  'gemini-2.5-flash',
+  'gemini-3.5-flash',
+  'gemini-3.6-flash',
+  'gemini-3.1-flash-lite',
+];
+
 const models = {
-  google: [
-    'gemini-2.5-flash',
-    'gemini-2.5-flash-lite',
-    'gemini-2.0-flash',
-    'gemini-1.5-flash-lite',
-    'gemini-1.5-flash',
-    'gemini-1.5-pro',
-  ],
-  agents: ['gemini-2.5-flash'],
+  google: ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-3.5-flash'],
+  agents: ['gemini-2.5-flash', 'gemini-3.5-flash'],
 };
 
 function resolveGeminiModel(model) {
+  const requested = String(model || '').replace(/^google\//, '').trim();
   const aliases = {
-    'gemini-1.5-flash-lite': 'gemini-2.0-flash',
-    'gemini-1.5-flash': 'gemini-2.0-flash',
-    'gemini-1.5-pro': 'gemini-2.5-flash',
-    'gemini-2.0-flash-lite': 'gemini-2.0-flash',
+    'gemini-1.5-flash-lite': DEFAULT_GEMINI,
+    'gemini-1.5-flash': DEFAULT_GEMINI,
+    'gemini-1.5-pro': DEFAULT_GEMINI,
+    'gemini-2.0-flash': DEFAULT_GEMINI,
+    'gemini-2.0-flash-001': DEFAULT_GEMINI,
+    'gemini-2.0-flash-lite': DEFAULT_GEMINI,
+    'gemini-2.0-flash-lite-001': DEFAULT_GEMINI,
   };
-  return aliases[model] || model;
+  if (!requested) return DEFAULT_GEMINI;
+  return aliases[requested] || requested;
+}
+
+async function generateGemini(key, model, contents) {
+  const tried = [];
+  const queue = [model, ...GEMINI_FALLBACKS.filter((item) => item !== model)];
+  let last = { status: 500, json: null, raw: 'No Gemini model attempted.' };
+  for (const candidate of queue) {
+    if (tried.includes(candidate)) continue;
+    tried.push(candidate);
+    last = await httpsJson(
+      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(candidate)}:generateContent?key=${encodeURIComponent(key)}`,
+      { contents },
+    );
+    const message = String(last.json?.error?.message || last.raw || '');
+    const unavailable =
+      last.status >= 400 && /no longer available|not found|not supported/i.test(message);
+    if (!unavailable && last.status < 400) {
+      return { ...last, model: candidate };
+    }
+    if (!unavailable) {
+      return { ...last, model: candidate };
+    }
+  }
+  return { ...last, model: tried[tried.length - 1] };
 }
 
 const emptyList = { object: 'list', data: [], first_id: '', last_id: '', has_more: false };
@@ -559,7 +589,7 @@ const server = http.createServer(async (req, res) => {
       conversationId: id,
       title: 'New Chat',
       endpoint: 'google',
-      model: 'gemini-2.0-flash',
+      model: DEFAULT_GEMINI,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -592,9 +622,7 @@ const server = http.createServer(async (req, res) => {
 
     const key = geminiKey();
     const text = String(body.text || '').trim();
-    const model = resolveGeminiModel(
-      String(body.model || body.modelOptions?.model || 'gemini-2.0-flash').replace(/^google\//, ''),
-    );
+    let model = resolveGeminiModel(body.model || body.modelOptions?.model || DEFAULT_GEMINI);
     const endpoint = String(body.endpoint || url.split('/').pop() || 'google');
     let conversationId = body.conversationId;
     if (!conversationId || conversationId === 'new') {
@@ -677,10 +705,8 @@ const server = http.createServer(async (req, res) => {
     try {
       const store = readConvos();
       const history = store.messages[conversationId] || [];
-      const result = await httpsJson(
-        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`,
-        { contents: toGeminiContents(history, text) },
-      );
+      const result = await generateGemini(key, model, toGeminiContents(history, text));
+      if (result.model) model = result.model;
       const reply = (result.json?.candidates?.[0]?.content?.parts || [])
         .map((part) => part.text || '')
         .join('')
