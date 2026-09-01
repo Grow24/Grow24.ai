@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useGlobalCTABar } from '../contexts/GlobalCTABarContext'
 import { useChatbotContext } from '../contexts/ChatbotContext'
@@ -7,6 +7,7 @@ import PromptSuggestionsRow from './pbmp/PromptSuggestionsRow'
 import LoadingBubbles from './pbmp/LoadingBubbles'
 import AudioRecorder from './pbmp/AudioRecorder'
 import { sendMessage } from '../services/chatService'
+import { useChatbotVoice } from './pbmp/voice/useChatbotVoice'
 
 interface Message {
   id: string
@@ -31,8 +32,10 @@ export default function PBMPChatbot({ position = 'right', hideFab = false }: PBM
   const [error, setError] = useState<string | null>(null)
   const [isInBookingFlow, setIsInBookingFlow] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const messagesRef = useRef<Message[]>([])
   const { isVisible: isCTABarVisible } = useGlobalCTABar()
   const { registerOpener, setChatOpen } = useChatbotContext()
+  messagesRef.current = messages
 
   useEffect(() => {
     return registerOpener(() => {
@@ -97,21 +100,16 @@ export default function PBMPChatbot({ position = 'right', hideFab = false }: PBM
     return null
   }
 
-  const handlePrompt = async (promptText: string) => {
-    if (promptText && promptText.trim() && !isLoading) {
-      await handleSendMessage(promptText.trim())
-    }
-  }
-
-  const handleSendMessage = async (text: string) => {
+  const handleSendMessage = useCallback(async (text: string): Promise<string | void> => {
     if (!text.trim() || isLoading || isInBookingFlow) return
 
+    const currentMessages = messagesRef.current
     const diagramRequest = detectDiagramRequest(text)
     if (diagramRequest) {
-      const lastAssistantMsg = [...messages].reverse().find(m => m.role === 'assistant' && m.diagramType)
+      const lastAssistantMsg = [...currentMessages].reverse().find(m => m.role === 'assistant' && m.diagramType)
       if (lastAssistantMsg) {
-        setMessages(prev => prev.map(msg => 
-          msg.id === lastAssistantMsg.id 
+        setMessages(prev => prev.map(msg =>
+          msg.id === lastAssistantMsg.id
             ? { ...msg, showDiagramPrompt: false, showDiagram: true }
             : msg
         ))
@@ -120,6 +118,7 @@ export default function PBMPChatbot({ position = 'right', hideFab = false }: PBM
     }
 
     if (detectBookingIntent(text)) {
+      const bookingText = "I'd be happy to help you schedule a meeting! Let me collect a few details."
       const userMsg: Message = {
         id: `user-${Date.now()}`,
         role: 'user',
@@ -128,12 +127,12 @@ export default function PBMPChatbot({ position = 'right', hideFab = false }: PBM
       const bookingMsg: Message = {
         id: `booking-${Date.now()}`,
         role: 'assistant',
-        content: "I'd be happy to help you schedule a meeting! Let me collect a few details.",
+        content: bookingText,
         bookingFlow: true
       }
       setMessages(prev => [...prev, userMsg, bookingMsg])
       setIsInBookingFlow(true)
-      return
+      return bookingText
     }
 
     const userMsg: Message = {
@@ -146,7 +145,7 @@ export default function PBMPChatbot({ position = 'right', hideFab = false }: PBM
     setError(null)
 
     try {
-      const response = await sendMessage([...messages, userMsg])
+      const response = await sendMessage([...currentMessages, userMsg])
 
       const diagramPromptMatch = response.match(/\[DIAGRAM_PROMPT:(\w+)\]/)
       let cleanResponse = response
@@ -170,12 +169,25 @@ export default function PBMPChatbot({ position = 'right', hideFab = false }: PBM
         diagramType
       }
       setMessages(prev => [...prev, assistantMsg])
+      return cleanResponse
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setIsLoading(false)
     }
+  }, [isLoading, isInBookingFlow, messages])
+
+  const handlePrompt = async (promptText: string) => {
+    if (promptText && promptText.trim() && !isLoading) {
+      await handleSendMessage(promptText.trim())
+    }
   }
+
+  const voice = useChatbotVoice({
+    active: isOpen,
+    paused: isLoading || isInBookingFlow,
+    onCommand: handleSendMessage,
+  })
 
   const handleNewChat = () => {
     setMessages([])
@@ -292,6 +304,50 @@ export default function PBMPChatbot({ position = 'right', hideFab = false }: PBM
               </button>
             </div>
 
+            <div className="px-3 py-2 bg-purple-50 dark:bg-slate-900/80 border-b border-purple-100 dark:border-slate-700 flex items-center gap-2">
+              <span
+                className={`h-2 w-2 shrink-0 rounded-full ${
+                  voice.state === 'listen' || voice.state === 'wake'
+                    ? 'bg-amber-400 animate-pulse'
+                    : voice.state === 'idle'
+                      ? 'bg-emerald-400 animate-pulse'
+                      : voice.state === 'send'
+                        ? 'bg-purple-500 animate-pulse'
+                        : 'bg-gray-300 dark:bg-slate-600'
+                }`}
+              />
+              <p className="flex-1 min-w-0 text-[11px] text-slate-600 dark:text-slate-300 truncate">
+                {voice.interimCommand ? `Heard: ${voice.interimCommand}` : voice.statusText}
+              </p>
+              {voice.state === 'need_permission' || voice.state === 'error' ? (
+                <button
+                  type="button"
+                  onClick={() => void voice.enableVoice()}
+                  className="shrink-0 text-[11px] font-semibold px-2 py-1 rounded-lg bg-purple-600 text-white hover:bg-purple-700"
+                >
+                  Enable Voice
+                </button>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => void voice.askNow()}
+                    disabled={isLoading || isInBookingFlow}
+                    className="shrink-0 text-[11px] font-medium px-2 py-1 rounded-lg bg-white dark:bg-slate-700 text-purple-700 dark:text-purple-200 border border-purple-200 dark:border-slate-600 disabled:opacity-50"
+                  >
+                    Ask now
+                  </button>
+                  <button
+                    type="button"
+                    onClick={voice.disableVoice}
+                    className="shrink-0 text-[11px] font-medium px-2 py-1 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-purple-100 dark:hover:bg-slate-700"
+                  >
+                    Stop
+                  </button>
+                </>
+              )}
+            </div>
+
             {/* Messages Area */}
             <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-gray-50 to-white dark:from-slate-900 dark:to-slate-800">
               {noMessages ? (
@@ -306,7 +362,7 @@ export default function PBMPChatbot({ position = 'right', hideFab = false }: PBM
                       Welcome to PBMP ChatBot
                     </h4>
                     <p className="text-sm text-slate-200">
-                      Your Personal & Business Management Platform assistant. Ask me anything about PBMP and Grow24.ai.
+                      Your Personal & Business Management Platform assistant. Type a question, or tap Enable Voice and say “Hey PBMP”.
                     </p>
                   </motion.div>
                   <PromptSuggestionsRow onPromptClick={handlePrompt} />
@@ -347,7 +403,7 @@ export default function PBMPChatbot({ position = 'right', hideFab = false }: PBM
                   <div className="absolute right-2 top-1/2 -translate-y-1/2">
                     <AudioRecorder
                       onAudioRecorded={handleAudioRecorded}
-                      disabled={isLoading || isInBookingFlow}
+                      disabled={isLoading || isInBookingFlow || voice.state === 'idle' || voice.state === 'wake' || voice.state === 'listen' || voice.state === 'send'}
                     />
                   </div>
                 </div>
@@ -368,9 +424,9 @@ export default function PBMPChatbot({ position = 'right', hideFab = false }: PBM
               </form>
             </div>
 
-            {error && (
+            {(error || voice.error) && (
               <div className="px-4 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-xs border-t border-red-100 dark:border-red-900/50">
-                ⚠️ {error}
+                ⚠️ {error || voice.error}
               </div>
             )}
           </motion.div>
