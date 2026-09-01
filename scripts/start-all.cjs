@@ -82,8 +82,9 @@ const hbmpOneEnv = {
   PORT: process.env.HBMP_ONE_API_PORT || '4010',
   HOST: '0.0.0.0',
   DATABASE_URL: process.env.HBMP_ONE_DATABASE_URL || 'file:/app/data/hbmp-one.db',
-  CORS_ORIGIN: process.env.CORS_ORIGIN || 'https://grow24.ai',
+  CORS_ORIGIN: process.env.CORS_ORIGIN || 'https://www.grow24.ai',
 };
+const hbmpTsx = path.join(hbmpOneDir, 'node_modules/tsx/dist/cli.mjs');
 
 function runHbmpOneQuiet(command) {
   execSync(command, { cwd: hbmpOneDir, env: hbmpOneEnv, stdio: 'inherit' });
@@ -99,7 +100,17 @@ if (fs.existsSync(hbmpOneDir)) {
       console.error('[start-all] hbmp-one prisma migrate failed', error.message);
     }
   }
-  const hbmpTsx = path.join(hbmpOneDir, 'node_modules/tsx/dist/cli.mjs');
+  if (fs.existsSync(path.join(hbmpOneDir, 'prisma/seed.ts')) && fs.existsSync(hbmpTsx)) {
+    try {
+      execSync(`node "${hbmpTsx}" prisma/seed.ts`, {
+        cwd: hbmpOneDir,
+        env: hbmpOneEnv,
+        stdio: 'inherit',
+      });
+    } catch (error) {
+      console.error('[start-all] hbmp-one seed failed', error.message);
+    }
+  }
   const distEntry = path.join(hbmpOneDir, 'dist/index.js');
   const srcEntry = path.join(hbmpOneDir, 'src/index.ts');
   if (fs.existsSync(distEntry)) {
@@ -109,7 +120,7 @@ if (fs.existsSync(hbmpOneDir)) {
   } else {
     console.error('[start-all] hbmp-one API entry missing');
   }
-  console.log('[start-all] HBMP One API: local on :4010');
+  console.log('[start-all] HBMP One API: local on :4010 → /HBMP_One/api');
 } else {
   console.error('[start-all] /app/hbmp-one-api missing');
 }

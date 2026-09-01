@@ -44,8 +44,10 @@
 	redir @hbmpLegacyExact /HBMP_One/ 308
 
 	# HBMP_One API (Express on 4010). Client is built with VITE_API_URL=/HBMP_One/api
-	handle /HBMP_One/api* {
+	@hbmpOneApi path /HBMP_One/api /HBMP_One/api/* /HBMPONE/api /HBMPONE/api/*
+	handle @hbmpOneApi {
 		uri strip_prefix /HBMP_One
+		uri strip_prefix /HBMPONE
 		reverse_proxy 127.0.0.1:4010 {
 			header_up Host {host}
 			header_up X-Forwarded-Proto {scheme}
