@@ -131,9 +131,6 @@ export default function ProjectsPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {(data?.projects ?? []).length === 0 && (
-          <p className="text-muted-foreground col-span-full">No projects yet. Create one to get started.</p>
-        )}
         {(data?.projects ?? []).map((project) => {
           const progress = getProgress(project);
           return (
@@ -163,7 +160,7 @@ export default function ProjectsPage() {
             </Card>
           );
         })}
-        {data?.projects.length === 0 && (
+        {(data?.projects ?? []).length === 0 && (
           <div className="col-span-full text-center py-12 text-muted-foreground">
             No projects found. Create your first project to get started.
           </div>
