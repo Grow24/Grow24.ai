@@ -134,6 +134,29 @@ run('agentbot-stub', 'node', ['/app/agentbot-stub.cjs'], {
 });
 console.log('[start-all] AgentBot API: local stub on :5188');
 
+const pbmpLibreDir = '/app/pbmp-librechat-api';
+const pbmpLibreEnv = {
+  ...process.env,
+  PORT: process.env.PBMP_LIBRECHAT_API_PORT || '5201',
+  HOST: '0.0.0.0',
+  CORS_ORIGIN: process.env.CORS_ORIGIN || 'https://www.grow24.ai',
+};
+const pbmpTsx = path.join(pbmpLibreDir, 'node_modules/tsx/dist/cli.mjs');
+if (fs.existsSync(pbmpLibreDir)) {
+  const distEntry = path.join(pbmpLibreDir, 'dist/index.js');
+  const srcEntry = path.join(pbmpLibreDir, 'src/index.ts');
+  if (fs.existsSync(distEntry)) {
+    run('pbmp-librechat-api', 'node', [distEntry], { cwd: pbmpLibreDir, env: pbmpLibreEnv });
+  } else if (fs.existsSync(srcEntry) && fs.existsSync(pbmpTsx)) {
+    run('pbmp-librechat-api', 'node', [pbmpTsx, srcEntry], { cwd: pbmpLibreDir, env: pbmpLibreEnv });
+  } else {
+    console.error('[start-all] pbmp-librechat API entry missing');
+  }
+  console.log('[start-all] PBMP_LibreChat API: local on :5201 → /PBMP_LibreChat/api');
+} else {
+  console.error('[start-all] /app/pbmp-librechat-api missing');
+}
+
 const caddy = run('caddy', 'caddy', [
   'run',
   '--config',

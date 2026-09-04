@@ -1,0 +1,11 @@
+{
+  "name": "pbmp-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node index.js --http",
+    "mcp": "node index.js",
+    "verify": "node verify-stdio.js"
+  }
+}

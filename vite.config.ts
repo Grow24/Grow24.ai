@@ -21,6 +21,7 @@ export default defineConfig({
         '**/ivvychainv2/**',
         '**/mcp_server/**',
         '**/HBMP_AgentBot/**',
+        '**/PBMP_LibreChat/**',
         '**/Microsoft/**',
         '**/OpenStreetMaps/**',
         '**/ImageProcessing/**',
@@ -189,6 +190,18 @@ export default defineConfig({
         changeOrigin: true,
         ws: true,
       },
+      // PBMP_LibreChat API (must be before the Vite catch-all)
+      '/PBMP_LibreChat/api': {
+        target: `http://localhost:${process.env.PBMP_LIBRECHAT_API_PORT || '5201'}`,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/PBMP_LibreChat/, '') || '/',
+      },
+      // PBMP_LibreChat frontend
+      '/PBMP_LibreChat': {
+        target: `http://localhost:${process.env.PBMP_LIBRECHAT_PORT || '5200'}`,
+        changeOrigin: true,
+        ws: true,
+      },
       // Mxgraph_ReactFlow Express API (must be before the Next.js catch-all)
       '/Mxgraph_ReactFlow/api/projects': {
         target: `http://localhost:${process.env.MXGRAPH_SERVER_PORT || '3001'}`,
@@ -347,6 +360,12 @@ export default defineConfig({
           if (url === '/HBMP_AgentBot') {
             res.statusCode = 302
             res.setHeader('Location', '/HBMP_AgentBot/')
+            res.end()
+            return
+          }
+          if (url === '/PBMP_LibreChat') {
+            res.statusCode = 302
+            res.setHeader('Location', '/PBMP_LibreChat/')
             res.end()
             return
           }

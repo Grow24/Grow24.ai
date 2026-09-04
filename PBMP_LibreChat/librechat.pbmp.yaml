@@ -1,0 +1,24 @@
+# Overlay notes for HBMP_AgentBot/librechat.yaml (already applied there).
+# This file is the copy to re-apply if AgentBot config is regenerated.
+#
+# This AgentBot stays Gemini-first. Do not enable OpenAI/Anthropic here
+# unless API keys are intentionally added.
+
+mcpServers:
+  pbmp:
+    type: stdio
+    command: node
+    args:
+      - ../PBMP_LibreChat/mcp/index.js
+    timeout: 60000
+    chatMenu: true
+    serverInstructions: true
+
+# Under endpoints.agents.capabilities, include tools + context:
+# capabilities: ['execute_code', 'file_search', 'web_search', 'actions', 'artifacts', 'tools', 'context']
+#
+# HTTP sample API (TrueForge / curl, not LibreChat transport):
+#   npm run dev:pbmp-mcp
+#   GET  http://127.0.0.1:5202/health
+#   POST http://127.0.0.1:5202/tools/get_sales
+#   {"product":"Product X","geography":"Mumbai","period":"last_12_months"}

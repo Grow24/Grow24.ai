@@ -71,13 +71,19 @@ RUN npx prisma generate
 RUN ./node_modules/.bin/tsc -p tsconfig.json || echo "hbmp-one-api tsc failed; runtime will use tsx"
 WORKDIR /src
 
+# PBMP_LibreChat API (Express orchestration runtime)
+WORKDIR /src/PBMP_LibreChat/server
+RUN sh -c 'for i in 1 2 3; do npm ci --no-audit --no-fund && exit 0; echo "pbmp-librechat-api npm ci failed (attempt $i), retrying..."; sleep 8; done; exit 1'
+RUN ./node_modules/.bin/tsc -p tsconfig.json || echo "pbmp-librechat-api tsc failed; runtime will use tsx"
+WORKDIR /src
+
 # Ensure optional mxgraph folder exists so COPY does not fail
 # when Mxgraph_ReactFlow is absent in this checkout.
 RUN mkdir -p /src/mxgraph_standalone/apps/web
 
 FROM node:22-alpine
 
-RUN apk add --no-cache caddy ca-certificates openssl
+RUN apk add --no-cache caddy ca-certificates openssl python3
 
 WORKDIR /app
 
@@ -86,6 +92,7 @@ COPY --from=builder /src/Caddyfile /etc/caddy/Caddyfile
 COPY --from=builder /src/mxgraph_standalone /app/mxgraph
 COPY --from=builder /src/HBMP_DOCS_PLATFORM/server /app/docs-api
 COPY --from=builder /src/HBMP_One/server /app/hbmp-one-api
+COPY --from=builder /src/PBMP_LibreChat/server /app/pbmp-librechat-api
 COPY --from=builder /src/scripts/start-all.cjs /app/start-all.cjs
 COPY --from=builder /src/scripts/agentbot-stub.cjs /app/agentbot-stub.cjs
 COPY --from=builder /src/docker-entrypoint.sh /entrypoint.sh

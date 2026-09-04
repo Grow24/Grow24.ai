@@ -1,7 +1,7 @@
 :8080 {
 	root * /usr/share/caddy
 	@unsafePath {
-		path /.git/* /univer/.git/* /HBMP_One/.git/* /HBMP_DOCS_PLATFORM/.git/* /HBMP_AgentBot/.git/* /Mxgraph_ReactFlow/.git/* /ivvychainv2/.git/* /testing-responsiveness/.git/* /OpenStreetMaps/.git/* /Microsoft/.git/* /ImageProcessing/.git/* /Google/.git/* /app_manager/.git/* /hbmp_form_manager/.git/* /mcp_server/.git/* /node_modules/* /vendor/* /.venv/*
+		path /.git/* /univer/.git/* /HBMP_One/.git/* /HBMP_DOCS_PLATFORM/.git/* /HBMP_AgentBot/.git/* /PBMP_LibreChat/.git/* /Mxgraph_ReactFlow/.git/* /ivvychainv2/.git/* /testing-responsiveness/.git/* /OpenStreetMaps/.git/* /Microsoft/.git/* /ImageProcessing/.git/* /Google/.git/* /app_manager/.git/* /hbmp_form_manager/.git/* /mcp_server/.git/* /node_modules/* /vendor/* /.venv/*
 	}
 	respond @unsafePath 404
 
@@ -289,6 +289,32 @@
 
 	handle_path /HBMP_AgentBot/* {
 		root * /usr/share/caddy/HBMP_AgentBot
+		try_files {path} {path}/ /index.html
+		file_server
+	}
+
+	# --- PBMP_LibreChat (Vite base: /PBMP_LibreChat/) ---
+	@pbmpLibreChatExact path /PBMP_LibreChat
+	redir @pbmpLibreChatExact /PBMP_LibreChat/ 308
+
+	handle /PBMP_LibreChat/api* {
+		uri strip_prefix /PBMP_LibreChat
+		reverse_proxy 127.0.0.1:5201 {
+			header_up Host {host}
+			header_up X-Forwarded-Proto {scheme}
+			header_up X-Forwarded-For {remote_host}
+		}
+	}
+
+	@pbmpLibreChatAssets path_regexp pbmp_librechat_assets ^/PBMP_LibreChat/.*\.(js|mjs|css|map|json|wasm|ttf|woff|woff2|svg|png|jpg|jpeg|gif|webp|ico)$
+	handle @pbmpLibreChatAssets {
+		root * /usr/share/caddy
+		try_files {path} =404
+		file_server
+	}
+
+	handle_path /PBMP_LibreChat/* {
+		root * /usr/share/caddy/PBMP_LibreChat
 		try_files {path} {path}/ /index.html
 		file_server
 	}

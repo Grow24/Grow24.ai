@@ -25,6 +25,7 @@ if [ "${PROFILE}" = "core" ]; then
   run_step "build:hbmp-one" npm run build:hbmp-one
   run_step "build:hbmp-docs-platform" npm run build:hbmp-docs-platform
   run_step "build:hbmp-agentbot" npm run build:hbmp-agentbot
+  run_step "build:pbmp-librechat" npm run build:pbmp-librechat
   run_step "build:google" npm run build:google
   run_step "build:app-manager" npm run build:app-manager
   run_step "build:hbmp-form-manager" npm run build:hbmp-form-manager
@@ -35,6 +36,7 @@ if [ "${PROFILE}" = "core" ]; then
   run_step "copy:mcp-server" npm run copy:mcp-server
   run_step "copy:testing-responsiveness" npm run copy:testing-responsiveness
   run_step "verify-agentbot-dist" node scripts/verify-agentbot-dist.mjs
+  run_step "verify-pbmp-librechat-dist" node scripts/verify-pbmp-librechat-dist.mjs
   echo "Core build profile completed."
   exit 0
 fi
@@ -48,6 +50,7 @@ run_step "build:app-manager" npm run build:app-manager
 run_step "build:hbmp-form-manager" npm run build:hbmp-form-manager
 run_step "build:testing-responsiveness" npm run build:testing-responsiveness
 run_step "build:hbmp-agentbot" npm run build:hbmp-agentbot
+run_step "build:pbmp-librechat" npm run build:pbmp-librechat
 run_step "build:mxgraph-reactflow" npm run build:mxgraph-reactflow
 run_step "build:ivvychainv2" npm run build:ivvychainv2
 run_step "build:univer:static" npm run build:univer:static
@@ -61,4 +64,5 @@ run_step "patch-univer-dist-paths" node scripts/patch-univer-dist-paths.mjs
 run_step "verify-univer-dist" node scripts/verify-univer-dist.mjs
 run_step "verify-hbmp-dist" node scripts/verify-hbmp-dist.mjs
 run_step "verify-agentbot-dist" node scripts/verify-agentbot-dist.mjs
+run_step "verify-pbmp-librechat-dist" node scripts/verify-pbmp-librechat-dist.mjs
 run_step "verify-mxgraph-standalone" node scripts/verify-mxgraph-standalone.mjs

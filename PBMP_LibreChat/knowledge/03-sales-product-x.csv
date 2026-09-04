@@ -1,0 +1,4 @@
+product,geography,period,revenue_cr,roi_pct,risk,units
+Product X,Mumbai,last_12_months,18.2,24,Medium,410
+Product X,Delhi,last_12_months,15.7,19,Low,355
+Product X,Bangalore,last_12_months,13.6,16,Medium,298

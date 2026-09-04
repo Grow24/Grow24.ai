@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  @apply bg-ink text-slate-100 antialiased;
+}
+
+.markdown-body h1 { @apply text-2xl font-semibold text-white mb-3; }
+.markdown-body h2 { @apply text-xl font-semibold text-cyan-100 mb-2 mt-4; }
+.markdown-body p { @apply text-slate-300 leading-relaxed mb-2; }
+.markdown-body ul { @apply list-disc pl-5 text-slate-300 space-y-1 mb-2; }
+.markdown-body ol { @apply list-decimal pl-5 text-slate-300 space-y-1 mb-2; }
+.markdown-body table { @apply w-full text-sm border-collapse mb-3; }
+.markdown-body th, .markdown-body td { @apply border border-line px-2 py-1; }
+.markdown-body a { @apply text-accent underline; }
+.markdown-body code { @apply font-mono text-mint text-xs; }
+
+.rdp { --rdp-cell-size: 36px; --rdp-accent-color: #22d3ee; --rdp-background-color: #0c1a2e; }

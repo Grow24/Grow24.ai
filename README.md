@@ -106,6 +106,7 @@ Then open:
 | http://localhost:5173/app_manager/ | app_manager |
 | http://localhost:5173/Google/ | Google |
 | http://localhost:5173/HBMP_AgentBot/ | HBMP_AgentBot |
+| http://localhost:5173/PBMP_LibreChat/ | PBMP_LibreChat |
 | http://localhost:5173/HBMP_DOCS_PLATFORM/ | HBMP_DOCS_PLATFORM |
 | http://localhost:5173/hbmp_form_manager/ | hbmp_form_manager |
 | http://localhost:5173/HBMP_One/ | HBMP_One |

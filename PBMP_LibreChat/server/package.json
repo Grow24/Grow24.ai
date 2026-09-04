@@ -1,0 +1,25 @@
+{
+  "name": "pbmp-librechat-server",
+  "version": "1.0.0",
+  "description": "PBMP LibreChat AI orchestration runtime — agents, subagents, MCP, code interpreter, artifacts",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "npx tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.5",
+    "@types/uuid": "^9.0.7",
+    "tsx": "^4.21.0",
+    "typescript": "^5.3.3"
+  }
+}

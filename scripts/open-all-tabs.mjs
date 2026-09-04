@@ -9,6 +9,7 @@ const appPaths = [
   '/docs/',
   '/Google/',
   '/HBMP_AgentBot/',
+  '/PBMP_LibreChat/',
   '/HBMP_DOCS_PLATFORM/',
   '/hbmp_form_manager/',
   '/HBMP_One/',
