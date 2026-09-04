@@ -246,16 +246,31 @@ const startupConfig = {
   openidReuseTokens: false,
   conversationImportMaxFileSize: 0,
   ldap: { enabled: false },
+  modelSpecs: {
+    list: [
+      {
+        name: 'gemini-2.5-flash',
+        label: 'Gemini 2.5 Flash',
+        default: true,
+        description: 'Default chat model',
+        group: 'google',
+        preset: {
+          endpoint: 'google',
+          model: 'gemini-2.5-flash',
+        },
+      },
+    ],
+  },
 };
 
 const endpoints = {
+  google: { userProvide: false, order: 1 },
   agents: {
     userProvide: false,
     capabilities: ['execute_code', 'file_search', 'web_search', 'actions', 'artifacts'],
-    order: 1,
+    order: 2,
     disableBuilder: false,
   },
-  google: { userProvide: false, order: 5 },
 };
 
 const DEFAULT_GEMINI = 'gemini-2.5-flash';
