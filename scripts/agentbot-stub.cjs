@@ -16,6 +16,7 @@ const dataDir = process.env.AGENTBOT_DATA_DIR || '/app/data';
 const usersFile = path.join(dataDir, 'agentbot-users.json');
 const secretFile = path.join(dataDir, 'agentbot-secret.txt');
 const convosFile = path.join(dataDir, 'agentbot-convos.json');
+const presetsFile = path.join(dataDir, 'agentbot-presets.json');
 const filesMetaFile = path.join(dataDir, 'agentbot-files.json');
 const filesDir = path.join(dataDir, 'files');
 const NO_PARENT = '00000000-0000-0000-0000-000000000000';
@@ -394,11 +395,15 @@ async function generateGemini(key, model, contents, extra = {}) {
   return { ...last, model: tried[tried.length - 1] };
 }
 
-async function generateGeminiWithPbmp(key, model, userContents) {
+async function generateGeminiWithPbmp(key, model, userContents, extras = {}) {
+  const systemText = [PBMP_SYSTEM, extras.promptPrefix].filter(Boolean).join('\n\n');
   const extra = {
-    systemInstruction: { parts: [{ text: PBMP_SYSTEM }] },
+    systemInstruction: { parts: [{ text: systemText }] },
     tools: [{ functionDeclarations: PBMP_TOOL_DEFS }],
   };
+  if (extras.generationConfig && Object.keys(extras.generationConfig).length) {
+    extra.generationConfig = extras.generationConfig;
+  }
   let contents = userContents;
   let last = { status: 500, json: null, raw: 'No Gemini model attempted.' };
   for (let step = 0; step < 5; step += 1) {
@@ -452,6 +457,18 @@ function readConvos() {
 
 function writeConvos(store) {
   fs.writeFileSync(convosFile, JSON.stringify(store));
+}
+
+function readPresets() {
+  try {
+    return JSON.parse(fs.readFileSync(presetsFile, 'utf8'));
+  } catch {
+    return [];
+  }
+}
+
+function writePresets(list) {
+  fs.writeFileSync(presetsFile, JSON.stringify(list));
 }
 
 function readFiles() {
@@ -931,7 +948,55 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (method === 'GET' && url === '/api/presets') {
-    send(res, 200, []);
+    const user = userFromReq(req);
+    const list = readPresets().filter((item) => !user || item.user === user.id);
+    send(res, 200, list);
+    return;
+  }
+
+  if (method === 'POST' && url === '/api/presets') {
+    const user = userFromReq(req) || (sameSiteRequest(req) ? guestUser() : null);
+    if (!user) {
+      send(res, 401, { message: 'Unauthorized' });
+      return;
+    }
+    const body = await readBody(req);
+    const now = new Date().toISOString();
+    const presetId = String(body.presetId || crypto.randomUUID());
+    const preset = {
+      ...body,
+      presetId,
+      user: user.id,
+      title: String(body.title || body.modelLabel || 'My Preset').trim() || 'My Preset',
+      endpoint: body.endpoint || 'google',
+      createdAt: body.createdAt || now,
+      updatedAt: now,
+    };
+    const list = readPresets();
+    const index = list.findIndex((item) => item.presetId === presetId && item.user === user.id);
+    if (index >= 0) {
+      list[index] = { ...list[index], ...preset };
+    } else {
+      list.push(preset);
+    }
+    writePresets(list);
+    send(res, 201, preset);
+    return;
+  }
+
+  if (method === 'POST' && url === '/api/presets/delete') {
+    const user = userFromReq(req) || (sameSiteRequest(req) ? guestUser() : null);
+    const body = await readBody(req);
+    const presetId = body.presetId;
+    let deletedCount = 0;
+    const next = readPresets().filter((item) => {
+      if (user && item.user && item.user !== user.id) return true;
+      if (presetId && item.presetId !== presetId) return true;
+      deletedCount += 1;
+      return false;
+    });
+    writePresets(next);
+    send(res, 201, { acknowledged: true, deletedCount });
     return;
   }
 
@@ -1185,7 +1250,29 @@ const server = http.createServer(async (req, res) => {
     try {
       const store = readConvos();
       const history = store.messages[conversationId] || [];
-      const result = await generateGeminiWithPbmp(key, model, toGeminiContents(history, text, attachedFiles));
+      const options = body.endpointOption || body.modelOptions || body;
+      const promptPrefix = String(options.promptPrefix || body.promptPrefix || '').trim();
+      const generationConfig = {};
+      const temperature = options.temperature ?? body.temperature;
+      const topP = options.topP ?? body.topP;
+      const topK = options.topK ?? body.topK;
+      const maxOutputTokens = options.maxOutputTokens ?? body.maxOutputTokens;
+      if (temperature != null && temperature !== '' && Number.isFinite(Number(temperature))) {
+        generationConfig.temperature = Number(temperature);
+      }
+      if (topP != null && topP !== '' && Number.isFinite(Number(topP))) {
+        generationConfig.topP = Number(topP);
+      }
+      if (topK != null && topK !== '' && Number.isFinite(Number(topK))) {
+        generationConfig.topK = Number(topK);
+      }
+      if (maxOutputTokens != null && maxOutputTokens !== '' && Number.isFinite(Number(maxOutputTokens))) {
+        generationConfig.maxOutputTokens = Number(maxOutputTokens);
+      }
+      const result = await generateGeminiWithPbmp(key, model, toGeminiContents(history, text, attachedFiles), {
+        promptPrefix,
+        generationConfig,
+      });
       if (result.model) model = result.model;
       const reply = (result.json?.candidates?.[0]?.content?.parts || [])
         .map((part) => part.text || '')
