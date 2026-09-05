@@ -94,6 +94,7 @@ COPY --from=builder /src/HBMP_DOCS_PLATFORM/server /app/docs-api
 COPY --from=builder /src/HBMP_One/server /app/hbmp-one-api
 COPY --from=builder /src/PBMP_LibreChat/server /app/pbmp-librechat-api
 COPY --from=builder /src/PBMP_LibreChat/mcp /app/pbmp-mcp
+COPY --from=builder /src/PBMP_LibreChat/knowledge /app/pbmp-knowledge
 COPY --from=builder /src/scripts/start-all.cjs /app/start-all.cjs
 COPY --from=builder /src/scripts/agentbot-stub.cjs /app/agentbot-stub.cjs
 COPY --from=builder /src/docker-entrypoint.sh /entrypoint.sh

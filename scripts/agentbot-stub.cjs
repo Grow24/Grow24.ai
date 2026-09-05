@@ -667,6 +667,49 @@ const fileConfig = {
   },
 };
 
+function knowledgeDir() {
+  const fromEnv = process.env.PBMP_KNOWLEDGE_DIR;
+  if (fromEnv && fs.existsSync(fromEnv)) return fromEnv;
+  if (fs.existsSync('/app/pbmp-knowledge')) return '/app/pbmp-knowledge';
+  const local = path.join(__dirname, '..', 'PBMP_LibreChat', 'knowledge');
+  return fs.existsSync(local) ? local : '';
+}
+
+function seedKnowledgeFiles() {
+  const dir = knowledgeDir();
+  if (!dir) return;
+  const store = readFiles();
+  let added = 0;
+  for (const name of fs.readdirSync(dir)) {
+    const src = path.join(dir, name);
+    if (!fs.statSync(src).isFile() || name.startsWith('.')) continue;
+    const fileId = `sample-${name.replace(/[^\w.\-]+/g, '_')}`;
+    const diskPath = path.join(filesDir, fileId);
+    fs.copyFileSync(src, diskPath);
+    const stat = fs.statSync(diskPath);
+    const now = stat.mtime.toISOString();
+    store[fileId] = {
+      file_id: fileId,
+      temp_file_id: fileId,
+      user: 'sample',
+      sample: true,
+      filename: name,
+      filepath: `/HBMP_AgentBot/api/files/download/sample/${encodeURIComponent(fileId)}`,
+      diskPath,
+      type: guessMime(name),
+      bytes: stat.size,
+      context: 'message_attachment',
+      createdAt: now,
+      updatedAt: now,
+    };
+    added += 1;
+  }
+  writeFiles(store);
+  if (added) console.log(`[agentbot-stub] seeded ${added} PBMP sample files from ${dir}`);
+}
+
+seedKnowledgeFiles();
+
 function httpsJson(url, body) {
   return new Promise((resolve, reject) => {
     const data = JSON.stringify(body);
@@ -883,7 +926,8 @@ const server = http.createServer(async (req, res) => {
     const user = userFromReq(req);
     const store = readFiles();
     const list = Object.values(store)
-      .filter((item) => !user || item.user === user.id)
+      .filter((item) => item.sample || !user || item.user === user.id)
+      .sort((a, b) => String(a.filename).localeCompare(String(b.filename)))
       .map(publicFile);
     send(res, 200, list);
     return;

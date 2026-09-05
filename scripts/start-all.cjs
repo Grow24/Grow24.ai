@@ -142,6 +142,7 @@ run('agentbot-stub', 'node', ['/app/agentbot-stub.cjs'], {
     ...process.env,
     PORT: process.env.AGENTBOT_STUB_PORT || '5188',
     DOMAIN_CLIENT: process.env.DOMAIN_CLIENT || 'https://www.grow24.ai/HBMP_AgentBot',
+    PBMP_KNOWLEDGE_DIR: process.env.PBMP_KNOWLEDGE_DIR || '/app/pbmp-knowledge',
   },
 });
 console.log('[start-all] AgentBot API: local stub on :5188');
