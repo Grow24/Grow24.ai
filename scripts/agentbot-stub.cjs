@@ -16,9 +16,13 @@ const dataDir = process.env.AGENTBOT_DATA_DIR || '/app/data';
 const usersFile = path.join(dataDir, 'agentbot-users.json');
 const secretFile = path.join(dataDir, 'agentbot-secret.txt');
 const convosFile = path.join(dataDir, 'agentbot-convos.json');
+const filesMetaFile = path.join(dataDir, 'agentbot-files.json');
+const filesDir = path.join(dataDir, 'files');
 const NO_PARENT = '00000000-0000-0000-0000-000000000000';
+const MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
 
 fs.mkdirSync(dataDir, { recursive: true });
+fs.mkdirSync(filesDir, { recursive: true });
 
 function loadSecret() {
   if (process.env.JWT_SECRET) return process.env.JWT_SECRET;
@@ -450,6 +454,202 @@ function writeConvos(store) {
   fs.writeFileSync(convosFile, JSON.stringify(store));
 }
 
+function readFiles() {
+  try {
+    return JSON.parse(fs.readFileSync(filesMetaFile, 'utf8'));
+  } catch {
+    return {};
+  }
+}
+
+function writeFiles(store) {
+  fs.writeFileSync(filesMetaFile, JSON.stringify(store));
+}
+
+function publicFile(rec) {
+  if (!rec) return null;
+  return {
+    file_id: rec.file_id,
+    temp_file_id: rec.temp_file_id || rec.file_id,
+    user: rec.user,
+    conversationId: rec.conversationId,
+    filename: rec.filename,
+    filepath: rec.filepath,
+    type: rec.type,
+    bytes: rec.bytes,
+    width: rec.width,
+    height: rec.height,
+    embedded: false,
+    object: 'file',
+    usage: 0,
+    context: rec.context || 'message_attachment',
+    source: 'local',
+    createdAt: rec.createdAt,
+    updatedAt: rec.updatedAt,
+  };
+}
+
+function parseMultipart(req) {
+  return new Promise((resolve) => {
+    const chunks = [];
+    let size = 0;
+    let tooLarge = false;
+    req.on('data', (chunk) => {
+      size += chunk.length;
+      if (size > MAX_UPLOAD_BYTES) {
+        tooLarge = true;
+        req.destroy();
+        resolve({ fields: {}, file: null, error: 'File is larger than 20 MB.' });
+        return;
+      }
+      chunks.push(chunk);
+    });
+    req.on('error', () => resolve({ fields: {}, file: null, error: tooLarge ? 'File is larger than 20 MB.' : 'Upload failed.' }));
+    req.on('end', () => {
+      if (tooLarge) return;
+      const buffer = Buffer.concat(chunks);
+      const ct = String(req.headers['content-type'] || '');
+      const match = ct.match(/boundary=(?:"([^"]+)"|([^;]+))/i);
+      if (!match) {
+        resolve({ fields: {}, file: null, error: 'Missing multipart boundary.' });
+        return;
+      }
+      const delim = Buffer.from(`--${(match[1] || match[2]).trim()}`);
+      const fields = {};
+      let file = null;
+      let pos = 0;
+      while (pos < buffer.length) {
+        const start = buffer.indexOf(delim, pos);
+        if (start === -1) break;
+        let partStart = start + delim.length;
+        if (buffer[partStart] === 0x2d && buffer[partStart + 1] === 0x2d) break;
+        if (buffer[partStart] === 0x0d) partStart += 1;
+        if (buffer[partStart] === 0x0a) partStart += 1;
+        const headerEnd = buffer.indexOf('\r\n\r\n', partStart);
+        if (headerEnd === -1) break;
+        const headers = buffer.slice(partStart, headerEnd).toString('utf8');
+        const next = buffer.indexOf(delim, headerEnd + 4);
+        let contentEnd = next === -1 ? buffer.length : next;
+        if (contentEnd >= 2 && buffer[contentEnd - 2] === 0x0d && buffer[contentEnd - 1] === 0x0a) {
+          contentEnd -= 2;
+        }
+        const content = buffer.slice(headerEnd + 4, contentEnd);
+        const nameMatch = headers.match(/name="([^"]+)"/i);
+        const filenameMatch = headers.match(/filename\*?=(?:UTF-8'')?"?([^";\r\n]+)"?/i);
+        const typeMatch = headers.match(/Content-Type:\s*([^\r\n]+)/i);
+        const rawName = filenameMatch ? filenameMatch[1].replace(/"/g, '').trim() : '';
+        if (rawName) {
+          let originalname = rawName;
+          try {
+            originalname = decodeURIComponent(rawName);
+          } catch {
+            originalname = rawName;
+          }
+          file = {
+            originalname,
+            mimetype: (typeMatch ? typeMatch[1] : 'application/octet-stream').trim(),
+            buffer: Buffer.from(content),
+          };
+        } else if (nameMatch) {
+          fields[nameMatch[1]] = content.toString('utf8');
+        }
+        pos = next === -1 ? buffer.length : next;
+      }
+      resolve({ fields, file, error: null });
+    });
+  });
+}
+
+function guessMime(filename, fallback) {
+  const ext = path.extname(String(filename || '')).toLowerCase();
+  const map = {
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.gif': 'image/gif',
+    '.webp': 'image/webp',
+    '.pdf': 'application/pdf',
+    '.txt': 'text/plain',
+    '.csv': 'text/csv',
+    '.md': 'text/markdown',
+    '.json': 'application/json',
+  };
+  return map[ext] || fallback || 'application/octet-stream';
+}
+
+function saveUploadedFile({ user, fields, file }) {
+  const fileId = fields.file_id && String(fields.file_id).trim() ? String(fields.file_id).trim() : crypto.randomUUID();
+  const filename = path.basename(file.originalname || 'upload.bin').replace(/[^\w.\- ()[\]]+/g, '_') || 'upload.bin';
+  const ext = path.extname(filename) || '';
+  const diskName = `${fileId}${ext}`;
+  const diskPath = path.join(filesDir, diskName);
+  fs.writeFileSync(diskPath, file.buffer);
+  const now = new Date().toISOString();
+  const rec = {
+    file_id: fileId,
+    temp_file_id: fields.file_id || fileId,
+    user: user.id,
+    conversationId: fields.conversationId || '',
+    filename,
+    filepath: `/HBMP_AgentBot/api/files/download/${encodeURIComponent(user.id)}/${encodeURIComponent(fileId)}`,
+    diskPath,
+    type: file.mimetype || guessMime(filename),
+    bytes: file.buffer.length,
+    width: fields.width ? Number(fields.width) : undefined,
+    height: fields.height ? Number(fields.height) : undefined,
+    context: 'message_attachment',
+    createdAt: now,
+    updatedAt: now,
+  };
+  const store = readFiles();
+  store[fileId] = rec;
+  writeFiles(store);
+  return rec;
+}
+
+function filesToGeminiParts(files) {
+  const parts = [];
+  const store = readFiles();
+  for (const item of files || []) {
+    const rec = store[item.file_id] || Object.values(store).find((entry) => entry.filepath === item.filepath);
+    if (!rec || !rec.diskPath || !fs.existsSync(rec.diskPath)) continue;
+    const mime = rec.type || item.type || 'application/octet-stream';
+    const buf = fs.readFileSync(rec.diskPath);
+    if (mime.startsWith('text/') || mime === 'application/json' || mime === 'text/csv') {
+      parts.push({ text: `\n\n--- File: ${rec.filename} ---\n${buf.toString('utf8').slice(0, 80000)}` });
+      continue;
+    }
+    if (mime.startsWith('image/') || mime === 'application/pdf') {
+      parts.push({ inlineData: { mimeType: mime, data: buf.toString('base64') } });
+      continue;
+    }
+    parts.push({ text: `\n\n[Attached file: ${rec.filename} (${mime}, ${rec.bytes} bytes)]` });
+  }
+  return parts;
+}
+
+const fileConfig = {
+  serverFileSizeLimit: 20,
+  avatarSizeLimit: 2,
+  endpoints: {
+    default: {
+      fileLimit: 5,
+      fileSizeLimit: 20,
+      totalSizeLimit: 25,
+    },
+    google: {
+      fileLimit: 5,
+      fileSizeLimit: 20,
+      totalSizeLimit: 25,
+    },
+    agents: {
+      fileLimit: 5,
+      fileSizeLimit: 20,
+      totalSizeLimit: 25,
+    },
+  },
+};
+
 function httpsJson(url, body) {
   return new Promise((resolve, reject) => {
     const data = JSON.stringify(body);
@@ -490,24 +690,34 @@ function sseWrite(res, event) {
   res.write(`event: message\ndata: ${JSON.stringify(event)}\n\n`);
 }
 
-function toGeminiContents(history, latestText) {
+function toGeminiContents(history, latestText, latestFiles = []) {
   const contents = [];
   for (const item of history) {
     const part = String(item.text || '').trim();
-    if (!part) continue;
+    const fileParts = filesToGeminiParts(item.files);
+    if (!part && !fileParts.length) continue;
+    const parts = [];
+    if (part) parts.push({ text: part });
+    parts.push(...fileParts);
     contents.push({
       role: item.isCreatedByUser ? 'user' : 'model',
-      parts: [{ text: part }],
+      parts,
     });
   }
+  const latestParts = [];
+  if (latestText) latestParts.push({ text: latestText });
+  latestParts.push(...filesToGeminiParts(latestFiles));
+  if (!latestParts.length) latestParts.push({ text: latestText || 'Please review the attached file.' });
   if (!contents.length || contents[contents.length - 1].role !== 'user') {
-    contents.push({ role: 'user', parts: [{ text: latestText || 'Hello' }] });
+    contents.push({ role: 'user', parts: latestParts });
   }
   return contents;
 }
 
 const server = http.createServer(async (req, res) => {
-  const url = (req.url || '/').split('?')[0];
+  const rawUrl = req.url || '/';
+  const url = rawUrl.split('?')[0];
+  const qs = new URLSearchParams(rawUrl.split('?')[1] || '');
   const method = req.method || 'GET';
 
   if (method === 'OPTIONS') {
@@ -647,13 +857,76 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  if (method === 'GET' && url === '/api/files') {
-    send(res, 200, []);
+  if (method === 'GET' && url === '/api/files/config') {
+    send(res, 200, fileConfig);
     return;
   }
 
-  if (method === 'GET' && url === '/api/files/config') {
-    send(res, 200, { endpoints: {} });
+  if (method === 'GET' && url === '/api/files') {
+    const user = userFromReq(req);
+    const store = readFiles();
+    const list = Object.values(store)
+      .filter((item) => !user || item.user === user.id)
+      .map(publicFile);
+    send(res, 200, list);
+    return;
+  }
+
+  if (method === 'GET' && url.startsWith('/api/files/download/')) {
+    const parts = url.slice('/api/files/download/'.length).split('/');
+    const fileId = decodeURIComponent(parts[1] || parts[0] || '');
+    const rec = readFiles()[fileId];
+    if (!rec || !rec.diskPath || !fs.existsSync(rec.diskPath)) {
+      send(res, 404, { message: 'File not found' });
+      return;
+    }
+    const data = fs.readFileSync(rec.diskPath);
+    res.writeHead(200, {
+      'Content-Type': rec.type || 'application/octet-stream',
+      'Content-Length': data.length,
+      'Cache-Control': 'private, max-age=3600',
+      'Content-Disposition': `inline; filename="${encodeURIComponent(rec.filename)}"`,
+    });
+    res.end(data);
+    return;
+  }
+
+  if (method === 'POST' && (url === '/api/files' || url === '/api/files/images' || url === '/api/files/images/avatar')) {
+    const user = userFromReq(req) || (sameSiteRequest(req) ? guestUser() : null);
+    if (!user) {
+      send(res, 401, { message: 'Unauthorized' });
+      return;
+    }
+    const parsed = await parseMultipart(req);
+    if (parsed.error || !parsed.file) {
+      send(res, 400, { message: parsed.error || 'No file uploaded' });
+      return;
+    }
+    const rec = saveUploadedFile({ user, fields: parsed.fields, file: parsed.file });
+    if (url === '/api/files/images/avatar') {
+      send(res, 200, { url: rec.filepath });
+      return;
+    }
+    send(res, 200, { message: 'File uploaded and processed successfully', ...publicFile(rec) });
+    return;
+  }
+
+  if (method === 'DELETE' && url === '/api/files') {
+    const body = await readBody(req);
+    const files = Array.isArray(body.files) ? body.files : [];
+    const store = readFiles();
+    for (const item of files) {
+      const rec = store[item.file_id];
+      if (!rec) continue;
+      try {
+        if (rec.diskPath && fs.existsSync(rec.diskPath)) fs.unlinkSync(rec.diskPath);
+      } catch {
+        /* ignore */
+      }
+      delete store[item.file_id];
+    }
+    writeFiles(store);
+    send(res, 200, { message: 'Files deleted successfully', result: {} });
     return;
   }
 
@@ -684,9 +957,11 @@ const server = http.createServer(async (req, res) => {
 
   if (method === 'GET' && url === '/api/convos') {
     const user = userFromReq(req);
+    const archived = qs.get('isArchived') === 'true';
     const store = readConvos();
     const conversations = Object.values(store.conversations)
       .filter((item) => !user || item.user === user.id)
+      .filter((item) => !!item.isArchived === archived)
       .sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)));
     send(res, 200, { conversations, nextCursor: null });
     return;
@@ -712,6 +987,99 @@ const server = http.createServer(async (req, res) => {
     const store = readConvos();
     const conversation = store.conversations[body.conversationId];
     send(res, 200, { title: conversation?.title || 'New Chat' });
+    return;
+  }
+
+  if (method === 'POST' && url === '/api/convos/update') {
+    const body = await readBody(req);
+    const update = body.arg || body;
+    const store = readConvos();
+    const current = store.conversations[update.conversationId];
+    if (!current) {
+      send(res, 404, { error: 'Conversation not found' });
+      return;
+    }
+    const next = {
+      ...current,
+      ...update,
+      updatedAt: new Date().toISOString(),
+    };
+    store.conversations[update.conversationId] = next;
+    writeConvos(store);
+    send(res, 201, next);
+    return;
+  }
+
+  if (method === 'POST' && url === '/api/convos/duplicate') {
+    const body = await readBody(req);
+    const sourceId = body.conversationId;
+    const store = readConvos();
+    const source = store.conversations[sourceId];
+    if (!source) {
+      send(res, 404, { error: 'Conversation not found' });
+      return;
+    }
+    const conversationId = crypto.randomUUID();
+    const now = new Date().toISOString();
+    const conversation = {
+      ...source,
+      conversationId,
+      title: `${source.title || 'Chat'} (copy)`,
+      createdAt: now,
+      updatedAt: now,
+    };
+    const messages = (store.messages[sourceId] || []).map((item) => ({
+      ...item,
+      messageId: crypto.randomUUID(),
+      conversationId,
+    }));
+    store.conversations[conversationId] = conversation;
+    store.messages[conversationId] = messages;
+    writeConvos(store);
+    send(res, 200, { conversation, messages });
+    return;
+  }
+
+  if (method === 'DELETE' && url === '/api/convos/all') {
+    const user = userFromReq(req);
+    const store = readConvos();
+    let deletedCount = 0;
+    let deletedMessages = 0;
+    for (const [id, item] of Object.entries(store.conversations)) {
+      if (user && item.user && item.user !== user.id) continue;
+      deletedMessages += (store.messages[id] || []).length;
+      delete store.conversations[id];
+      delete store.messages[id];
+      deletedCount += 1;
+    }
+    writeConvos(store);
+    send(res, 201, {
+      acknowledged: true,
+      deletedCount,
+      messages: { acknowledged: true, deletedCount: deletedMessages },
+    });
+    return;
+  }
+
+  if (method === 'DELETE' && url === '/api/convos') {
+    const body = await readBody(req);
+    const arg = body.arg || body;
+    const conversationId = arg.conversationId;
+    if (!conversationId) {
+      send(res, 400, { error: 'no parameters provided' });
+      return;
+    }
+    const store = readConvos();
+    const existing = store.conversations[conversationId];
+    const deletedMessages = (store.messages[conversationId] || []).length;
+    delete store.conversations[conversationId];
+    delete store.messages[conversationId];
+    writeConvos(store);
+    send(res, 201, {
+      acknowledged: true,
+      deletedCount: existing ? 1 : 0,
+      messages: { acknowledged: true, deletedCount: deletedMessages },
+    });
     return;
   }
 
@@ -742,6 +1110,7 @@ const server = http.createServer(async (req, res) => {
     const userMessageId = body.messageId || crypto.randomUUID();
     const responseMessageId = crypto.randomUUID();
     const now = new Date().toISOString();
+    const attachedFiles = Array.isArray(body.files) ? body.files : [];
     const userMessage = {
       messageId: userMessageId,
       conversationId,
@@ -751,6 +1120,7 @@ const server = http.createServer(async (req, res) => {
       isCreatedByUser: true,
       endpoint,
       model,
+      files: attachedFiles,
       createdAt: now,
       updatedAt: now,
     };
@@ -815,7 +1185,7 @@ const server = http.createServer(async (req, res) => {
     try {
       const store = readConvos();
       const history = store.messages[conversationId] || [];
-      const result = await generateGeminiWithPbmp(key, model, toGeminiContents(history, text));
+      const result = await generateGeminiWithPbmp(key, model, toGeminiContents(history, text, attachedFiles));
       if (result.model) model = result.model;
       const reply = (result.json?.candidates?.[0]?.content?.parts || [])
         .map((part) => part.text || '')
@@ -872,6 +1242,69 @@ const server = http.createServer(async (req, res) => {
 
   if (method === 'GET' && url === '/api/mcp/connection/status/pbmp') {
     send(res, 200, { success: true, connectionState: 'connected', requiresOAuth: false });
+    return;
+  }
+
+  if (method === 'GET' && url === '/api/tags') {
+    send(res, 200, []);
+    return;
+  }
+
+  if (method === 'GET' && url.startsWith('/api/prompts')) {
+    send(res, 200, {
+      promptGroups: [],
+      prompts: [],
+      pageNumber: '1',
+      pageSize: 10,
+      pages: 0,
+      has_more: false,
+      after: null,
+    });
+    return;
+  }
+
+  if (method === 'GET' && url === '/api/categories') {
+    send(res, 200, []);
+    return;
+  }
+
+  if (method === 'GET' && url === '/api/plugins') {
+    send(res, 200, []);
+    return;
+  }
+
+  if (method === 'GET' && url === '/api/memories') {
+    send(res, 200, { memories: [], totalTokens: 0, tokenLimit: null, usagePercentage: null });
+    return;
+  }
+
+  if (method === 'GET' && url.startsWith('/api/share')) {
+    send(res, 200, { share: false, shared: false });
+    return;
+  }
+
+  if (method === 'GET' && url.startsWith('/api/keys')) {
+    send(res, 200, { expiresAt: null });
+    return;
+  }
+
+  if (method === 'GET' && url.startsWith('/api/files/speech')) {
+    send(res, 200, url.includes('voices') ? [] : {});
+    return;
+  }
+
+  if (method === 'POST' && /\/api\/messages\/.+\/feedback$/.test(url)) {
+    send(res, 200, { updated: true });
+    return;
+  }
+
+  if (method === 'POST' && url === '/api/tokenizer') {
+    send(res, 200, { count: 0 });
+    return;
+  }
+
+  if (method === 'GET' && url.startsWith('/api/')) {
+    send(res, 200, []);
     return;
   }
 

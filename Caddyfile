@@ -248,6 +248,9 @@
 	# Same-origin API: Caddy → local stub on 5188 (scripts/agentbot-stub.cjs).
 	handle /HBMP_AgentBot/api* {
 		uri strip_prefix /HBMP_AgentBot
+		request_body {
+			max_size 25MB
+		}
 		reverse_proxy 127.0.0.1:5188 {
 			header_up Host {host}
 			header_up Authorization {http.request.header.Authorization}
