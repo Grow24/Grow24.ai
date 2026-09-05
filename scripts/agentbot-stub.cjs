@@ -236,6 +236,10 @@ const startupConfig = {
     fileSearch: true,
     fileCitations: true,
     peoplePicker: { users: true, groups: true, roles: true },
+    mcpServers: { placeholder: 'MCP Servers' },
+  },
+  mcpServers: {
+    pbmp: { startup: true, chatMenu: true, isOAuth: false },
   },
   turnstile: {},
   balance: { enabled: false },
@@ -273,6 +277,25 @@ const endpoints = {
   },
 };
 
+const MCP_URL = process.env.PBMP_MCP_URL || 'http://127.0.0.1:5202';
+const PBMP_SYSTEM =
+  'You are the PBMP assistant for Grow24 / HBMP. PBMP means Personal & Business Management Platform, not pharmacy benefit management. ' +
+  'Use PBMP tools for sales, projects, customers, requirements and risks. ' +
+  'Product X last-12-month sample: Mumbai ₹18.2 Cr ROI 24% Medium; Delhi ₹15.7 Cr ROI 19% Low; Bangalore ₹13.6 Cr ROI 16% Medium. ' +
+  'Never invent rupee figures when a tool can return them.';
+
+const PBMP_TOOL_DEFS = [
+  { name: 'get_project', description: 'Get a PBMP project by name.', parameters: { type: 'object', properties: { project_name: { type: 'string' } }, required: ['project_name'] } },
+  { name: 'get_customer', description: 'Get a PBMP customer by name.', parameters: { type: 'object', properties: { customer_name: { type: 'string' } }, required: ['customer_name'] } },
+  { name: 'get_sales', description: 'Get sales for a product, geography and period (use last_12_months).', parameters: { type: 'object', properties: { product: { type: 'string' }, geography: { type: 'string' }, period: { type: 'string' } }, required: ['product'] } },
+  { name: 'create_requirement', description: 'Create a requirement in PBMP.', parameters: { type: 'object', properties: { description: { type: 'string' } }, required: ['description'] } },
+  { name: 'update_project_status', description: 'Update a PBMP project status.', parameters: { type: 'object', properties: { project: { type: 'string' }, status: { type: 'string' } }, required: ['project', 'status'] } },
+  { name: 'get_project_actuals', description: 'Get actual vs plan figures for a project.', parameters: { type: 'object', properties: { project_name: { type: 'string' } }, required: ['project_name'] } },
+  { name: 'get_project_risks', description: 'List risks on a PBMP project.', parameters: { type: 'object', properties: { project_name: { type: 'string' } }, required: ['project_name'] } },
+  { name: 'create_risk', description: 'Add a risk to a PBMP project.', parameters: { type: 'object', properties: { project: { type: 'string' }, title: { type: 'string' }, severity: { type: 'string' } }, required: ['project', 'title'] } },
+  { name: 'update_risk', description: 'Update a PBMP risk.', parameters: { type: 'object', properties: { id: { type: 'string' }, status: { type: 'string' } }, required: ['id'] } },
+];
+
 const DEFAULT_GEMINI = 'gemini-2.5-flash';
 const GEMINI_FALLBACKS = [
   'gemini-2.5-flash',
@@ -301,7 +324,49 @@ function resolveGeminiModel(model) {
   return aliases[requested] || requested;
 }
 
-async function generateGemini(key, model, contents) {
+function localJson(pathname, body, method = 'GET') {
+  return new Promise((resolve) => {
+    const payload = body == null ? '' : JSON.stringify(body);
+    const target = new URL(pathname, MCP_URL);
+    const req = http.request(
+      {
+        hostname: target.hostname,
+        port: target.port,
+        path: target.pathname,
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(payload),
+        },
+        timeout: 8000,
+      },
+      (incoming) => {
+        const chunks = [];
+        incoming.on('data', (chunk) => chunks.push(chunk));
+        incoming.on('end', () => {
+          const raw = Buffer.concat(chunks).toString('utf8');
+          try {
+            resolve(JSON.parse(raw));
+          } catch {
+            resolve({ ok: false, error: raw.slice(0, 300) });
+          }
+        });
+      },
+    );
+    req.on('error', (err) => resolve({ ok: false, error: err.message }));
+    req.on('timeout', () => {
+      req.destroy();
+      resolve({ ok: false, error: 'MCP timeout' });
+    });
+    req.end(payload);
+  });
+}
+
+async function callPbmpTool(name, args) {
+  return localJson(`/tools/${name}`, args || {}, 'POST');
+}
+
+async function generateGemini(key, model, contents, extra = {}) {
   const tried = [];
   const queue = [model, ...GEMINI_FALLBACKS.filter((item) => item !== model)];
   let last = { status: 500, json: null, raw: 'No Gemini model attempted.' };
@@ -310,7 +375,7 @@ async function generateGemini(key, model, contents) {
     tried.push(candidate);
     last = await httpsJson(
       `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(candidate)}:generateContent?key=${encodeURIComponent(key)}`,
-      { contents },
+      { contents, ...extra },
     );
     const message = String(last.json?.error?.message || last.raw || '');
     const unavailable =
@@ -323,6 +388,36 @@ async function generateGemini(key, model, contents) {
     }
   }
   return { ...last, model: tried[tried.length - 1] };
+}
+
+async function generateGeminiWithPbmp(key, model, userContents) {
+  const extra = {
+    systemInstruction: { parts: [{ text: PBMP_SYSTEM }] },
+    tools: [{ functionDeclarations: PBMP_TOOL_DEFS }],
+  };
+  let contents = userContents;
+  let last = { status: 500, json: null, raw: 'No Gemini model attempted.' };
+  for (let step = 0; step < 5; step += 1) {
+    last = await generateGemini(key, model, contents, extra);
+    if (last.model) model = last.model;
+    const parts = last.json?.candidates?.[0]?.content?.parts || [];
+    const calls = parts.filter((part) => part.functionCall && part.functionCall.name);
+    if (!calls.length || last.status >= 400) {
+      return { ...last, model };
+    }
+    const responses = [];
+    for (const part of calls) {
+      const data = await callPbmpTool(part.functionCall.name, part.functionCall.args || {});
+      responses.push({
+        functionResponse: {
+          name: part.functionCall.name,
+          response: data && typeof data === 'object' ? data : { result: String(data) },
+        },
+      });
+    }
+    contents = [...contents, { role: 'model', parts }, { role: 'user', parts: responses }];
+  }
+  return { ...last, model };
 }
 
 const emptyList = { object: 'list', data: [], first_id: '', last_id: '', has_more: false };
@@ -720,7 +815,7 @@ const server = http.createServer(async (req, res) => {
     try {
       const store = readConvos();
       const history = store.messages[conversationId] || [];
-      const result = await generateGemini(key, model, toGeminiContents(history, text));
+      const result = await generateGeminiWithPbmp(key, model, toGeminiContents(history, text));
       if (result.model) model = result.model;
       const reply = (result.json?.candidates?.[0]?.content?.parts || [])
         .map((part) => part.text || '')
@@ -745,6 +840,38 @@ const server = http.createServer(async (req, res) => {
 
   if (method === 'GET' && url === '/api/search/enable') {
     send(res, 200, false);
+    return;
+  }
+
+  if (method === 'GET' && url === '/api/mcp/tools') {
+    send(res, 200, {
+      servers: {
+        pbmp: {
+          name: 'pbmp',
+          icon: '',
+          authenticated: true,
+          authConfig: [],
+          tools: PBMP_TOOL_DEFS.map((tool) => ({
+            name: tool.name,
+            pluginKey: `${tool.name}_mcp_pbmp`,
+            description: tool.description,
+          })),
+        },
+      },
+    });
+    return;
+  }
+
+  if (method === 'GET' && url === '/api/mcp/connection/status') {
+    send(res, 200, {
+      success: true,
+      connectionStatus: { pbmp: { connectionState: 'connected', requiresOAuth: false } },
+    });
+    return;
+  }
+
+  if (method === 'GET' && url === '/api/mcp/connection/status/pbmp') {
+    send(res, 200, { success: true, connectionState: 'connected', requiresOAuth: false });
     return;
   }
 

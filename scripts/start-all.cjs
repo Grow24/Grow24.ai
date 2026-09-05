@@ -125,6 +125,18 @@ if (fs.existsSync(hbmpOneDir)) {
   console.error('[start-all] /app/hbmp-one-api missing');
 }
 
+if (fs.existsSync('/app/pbmp-mcp/index.js')) {
+  run('pbmp-mcp', 'node', ['/app/pbmp-mcp/index.js', '--http'], {
+    env: {
+      ...process.env,
+      PBMP_MCP_PORT: process.env.PBMP_MCP_PORT || '5202',
+    },
+  });
+  console.log('[start-all] PBMP MCP HTTP: local on :5202');
+} else {
+  console.error('[start-all] /app/pbmp-mcp missing');
+}
+
 run('agentbot-stub', 'node', ['/app/agentbot-stub.cjs'], {
   env: {
     ...process.env,
