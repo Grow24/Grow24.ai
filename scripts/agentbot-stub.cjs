@@ -484,6 +484,33 @@ async function generateGemini(key, model, contents, extra = {}) {
   return { ...last, model: tried[tried.length - 1] };
 }
 
+function geminiCandidateParts(json) {
+  return json?.candidates?.[0]?.content?.parts || [];
+}
+
+function geminiText(json) {
+  return geminiCandidateParts(json)
+    .map((part) => part.text || '')
+    .join('')
+    .trim();
+}
+
+function formatCodeResult(data) {
+  if (!data) return '';
+  if (data.ok && data.stdout) return data.stdout;
+  return data.stderr || data.error || '';
+}
+
+async function fallbackCodeReply(text) {
+  if (!/\b(add|sum|total|using code|calculate|plus)\b/i.test(text)) return '';
+  const nums = (String(text).match(/-?\d+(?:\.\d+)?/g) || [])
+    .map(Number)
+    .filter((n) => Number.isFinite(n));
+  if (nums.length < 2) return '';
+  const data = await executePython(`print(${nums.join(' + ')})`);
+  return formatCodeResult(data);
+}
+
 async function generateGeminiWithPbmp(key, model, userContents, extras = {}) {
   const tools = [...PBMP_TOOL_DEFS, FILE_SEARCH_TOOL, EXECUTE_CODE_TOOL];
   const systemText = [
@@ -495,19 +522,43 @@ async function generateGeminiWithPbmp(key, model, userContents, extras = {}) {
   const extra = {
     systemInstruction: { parts: [{ text: systemText }] },
     tools: [{ functionDeclarations: tools }],
+    toolConfig: { functionCallingConfig: { mode: 'AUTO' } },
   };
   if (extras.generationConfig && Object.keys(extras.generationConfig).length) {
-    extra.generationConfig = extras.generationConfig;
+    extra.generationConfig = { ...extras.generationConfig };
   }
   let contents = userContents;
   let last = { status: 500, json: null, raw: 'No Gemini model attempted.' };
+  const toolNotes = [];
   for (let step = 0; step < 5; step += 1) {
     last = await generateGemini(key, model, contents, extra);
     if (last.model) model = last.model;
-    const parts = last.json?.candidates?.[0]?.content?.parts || [];
+    const parts = geminiCandidateParts(last.json);
     const calls = parts.filter((part) => part.functionCall && part.functionCall.name);
-    if (!calls.length || last.status >= 400) {
-      return { ...last, model };
+    const text = geminiText(last.json);
+    if (last.status >= 400) {
+      return { ...last, model, toolNotes };
+    }
+    if (!calls.length) {
+      if (text) return { ...last, model, toolNotes };
+      if (toolNotes.length) {
+        return {
+          ...last,
+          model,
+          toolNotes,
+          json: {
+            candidates: [{ content: { role: 'model', parts: [{ text: toolNotes.join('\n\n') }] } }],
+          },
+        };
+      }
+      if (step === 0) {
+        contents = [
+          ...contents,
+          { role: 'user', parts: [{ text: 'Answer now. If this is arithmetic, call execute_code and print the result.' }] },
+        ];
+        continue;
+      }
+      return { ...last, model, toolNotes };
     }
     const responses = [];
     for (const part of calls) {
@@ -518,6 +569,8 @@ async function generateGeminiWithPbmp(key, model, userContents, extras = {}) {
         data = searchFiles(String(args.query || extras.userQuery || ''), extras.user, { limit: 5, minScore: 2 });
       } else if (name === 'execute_code') {
         data = await executePython(String(args.code || args.python || ''));
+        const printed = formatCodeResult(data);
+        if (printed) toolNotes.push(printed);
       } else {
         data = await callPbmpTool(name, args);
       }
@@ -530,7 +583,17 @@ async function generateGeminiWithPbmp(key, model, userContents, extras = {}) {
     }
     contents = [...contents, { role: 'model', parts }, { role: 'user', parts: responses }];
   }
-  return { ...last, model };
+  if (toolNotes.length) {
+    return {
+      ...last,
+      model,
+      toolNotes,
+      json: {
+        candidates: [{ content: { role: 'model', parts: [{ text: toolNotes.join('\n\n') }] } }],
+      },
+    };
+  }
+  return { ...last, model, toolNotes };
 }
 
 const emptyList = { object: 'list', data: [], first_id: '', last_id: '', has_more: false };
@@ -821,7 +884,8 @@ function saveUploadedFile({ user, fields, file }) {
   return rec;
 }
 
-function filesToGeminiParts(files) {
+function filesToGeminiParts(files, options = {}) {
+  const allowBinary = options.allowBinary !== false;
   const parts = [];
   const store = readFiles();
   for (const item of files || []) {
@@ -829,11 +893,11 @@ function filesToGeminiParts(files) {
     if (!rec || !rec.diskPath || !fs.existsSync(rec.diskPath)) continue;
     const mime = rec.type || item.type || 'application/octet-stream';
     const buf = fs.readFileSync(rec.diskPath);
-    if (mime.startsWith('text/') || mime === 'application/json' || mime === 'text/csv') {
+    if (mime.startsWith('text/') || mime === 'application/json' || mime === 'text/csv' || mime === 'text/markdown') {
       parts.push({ text: `\n\n--- File: ${rec.filename} ---\n${buf.toString('utf8').slice(0, 80000)}` });
       continue;
     }
-    if (mime.startsWith('image/') || mime === 'application/pdf') {
+    if (allowBinary && (mime.startsWith('image/') || mime === 'application/pdf')) {
       parts.push({ inlineData: { mimeType: mime, data: buf.toString('base64') } });
       continue;
     }
@@ -1180,11 +1244,21 @@ function sseWrite(res, event) {
   res.write(`event: message\ndata: ${JSON.stringify(event)}\n\n`);
 }
 
+function isPoisonHistory(item) {
+  if (!item) return true;
+  if (item.error) return true;
+  const text = String(item.text || '');
+  if (!text && !(item.files && item.files.length)) return true;
+  if (/Something went wrong|finishReason|"candidates"\s*:/i.test(text)) return true;
+  return false;
+}
+
 function toGeminiContents(history, latestText, latestFiles = []) {
   const contents = [];
   for (const item of history) {
+    if (isPoisonHistory(item)) continue;
     const part = String(item.text || '').trim();
-    const fileParts = filesToGeminiParts(item.files);
+    const fileParts = filesToGeminiParts(item.files, { allowBinary: false });
     if (!part && !fileParts.length) continue;
     const parts = [];
     if (part) parts.push({ text: part });
@@ -1196,7 +1270,7 @@ function toGeminiContents(history, latestText, latestFiles = []) {
   }
   const latestParts = [];
   if (latestText) latestParts.push({ text: latestText });
-  latestParts.push(...filesToGeminiParts(latestFiles));
+  latestParts.push(...filesToGeminiParts(latestFiles, { allowBinary: true }));
   if (!latestParts.length) latestParts.push({ text: latestText || 'Please review the attached file.' });
   if (!contents.length || contents[contents.length - 1].role !== 'user') {
     contents.push({ role: 'user', parts: latestParts });
@@ -1997,13 +2071,22 @@ const server = http.createServer(async (req, res) => {
         userQuery: text,
       });
       if (result.model) model = result.model;
-      const reply = (result.json?.candidates?.[0]?.content?.parts || [])
-        .map((part) => part.text || '')
-        .join('')
-        .trim();
-      if (result.status >= 400 || !reply) {
-        const apiMessage = result.json?.error?.message || result.raw.slice(0, 400) || 'Gemini returned an empty response.';
-        finish(apiMessage, true);
+      let reply = geminiText(result.json) || (result.toolNotes || []).join('\n\n').trim();
+      if (!reply && codeOn) {
+        reply = await fallbackCodeReply(text);
+      }
+      if (result.status >= 400 && !reply) {
+        finish(
+          result.json?.error?.message || 'Gemini request failed. Open New Chat and send the message again.',
+          true,
+        );
+        return;
+      }
+      if (!reply) {
+        finish(
+          'No answer came back. Click New Chat (pencil icon) and send the same message in a fresh chat — do not reuse a thread that has a large PDF attached.',
+          true,
+        );
         return;
       }
       finish(reply, false);
