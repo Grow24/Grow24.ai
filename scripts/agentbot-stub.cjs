@@ -285,6 +285,21 @@ const endpoints = {
   },
 };
 
+const ROLE_PERMISSIONS = {
+  PROMPTS: { SHARED_GLOBAL: true, USE: true, CREATE: true },
+  BOOKMARKS: { USE: true },
+  MEMORIES: { USE: true, CREATE: true, UPDATE: true, READ: true, OPT_OUT: true },
+  AGENTS: { SHARED_GLOBAL: true, USE: true, CREATE: true },
+  MULTI_CONVO: { USE: true },
+  TEMPORARY_CHAT: { USE: true },
+  RUN_CODE: { USE: true },
+  WEB_SEARCH: { USE: true },
+  PEOPLE_PICKER: { VIEW_USERS: true, VIEW_GROUPS: true, VIEW_ROLES: true },
+  MARKETPLACE: { USE: true },
+  FILE_SEARCH: { USE: true },
+  FILE_CITATIONS: { USE: true },
+};
+
 const MCP_URL = process.env.PBMP_MCP_URL || 'http://127.0.0.1:5202';
 const PBMP_SYSTEM =
   'You are the PBMP assistant for Grow24 / HBMP. PBMP means Personal & Business Management Platform, not pharmacy benefit management. ' +
@@ -1618,7 +1633,7 @@ const server = http.createServer(async (req, res) => {
       }
       const ephemeral = body.ephemeralAgent || options.ephemeralAgent || {};
       const fileSearchOn = ephemeral.file_search === true;
-      const codeOn = ephemeral.execute_code === true;
+      const codeOn = ephemeral.execute_code !== false;
       const retrieved = searchFiles(text, user, {
         limit: fileSearchOn ? 5 : 3,
         minScore: fileSearchOn ? 2 : 6,
@@ -1653,7 +1668,9 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (method === 'GET' && url.startsWith('/api/roles/')) {
-    send(res, 200, { name: url.split('/').pop(), permissions: {} });
+    const raw = decodeURIComponent((url.split('/').pop() || '').split('?')[0]);
+    const name = raw.toUpperCase() === 'ADMIN' ? 'ADMIN' : 'USER';
+    send(res, 200, { name, permissions: ROLE_PERMISSIONS });
     return;
   }
 
