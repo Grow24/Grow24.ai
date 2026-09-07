@@ -19,6 +19,7 @@ const secretFile = path.join(dataDir, 'agentbot-secret.txt');
 const convosFile = path.join(dataDir, 'agentbot-convos.json');
 const presetsFile = path.join(dataDir, 'agentbot-presets.json');
 const agentsFile = path.join(dataDir, 'agentbot-agents.json');
+const promptsFile = path.join(dataDir, 'agentbot-prompts.json');
 const filesMetaFile = path.join(dataDir, 'agentbot-files.json');
 const filesDir = path.join(dataDir, 'files');
 const NO_PARENT = '00000000-0000-0000-0000-000000000000';
@@ -742,6 +743,86 @@ function agentToolPlugins() {
   }
   return plugins;
 }
+
+const PROMPT_CATEGORIES = [
+  { label: 'com_ui_idea', value: 'idea' },
+  { label: 'com_ui_travel', value: 'travel' },
+  { label: 'com_ui_teach_or_explain', value: 'teach_or_explain' },
+  { label: 'com_ui_write', value: 'write' },
+  { label: 'com_ui_shop', value: 'shop' },
+  { label: 'com_ui_code', value: 'code' },
+  { label: 'com_ui_misc', value: 'misc' },
+  { label: 'com_ui_roleplay', value: 'roleplay' },
+  { label: 'com_ui_finance', value: 'finance' },
+];
+
+const DEFAULT_PROMPT_TEXT =
+  'You are the PBMP Executive Analyst. Answer {{market_question}} using internal Product X facts only.\n\n' +
+  'Last 12 months:\n' +
+  '- Mumbai: ₹18.2 Cr, ROI 24%, risk Medium\n' +
+  '- Delhi: ₹15.7 Cr, ROI 19%, risk Low\n' +
+  '- Bangalore: ₹13.6 Cr, ROI 16%, risk Medium\n\n' +
+  'Recommend a launch sequence. First launch needs ROI at least 18% or risk Low.';
+
+function readPromptStore() {
+  try {
+    const store = JSON.parse(fs.readFileSync(promptsFile, 'utf8'));
+    return {
+      groups: Array.isArray(store.groups) ? store.groups : [],
+      prompts: Array.isArray(store.prompts) ? store.prompts : [],
+    };
+  } catch {
+    return { groups: [], prompts: [] };
+  }
+}
+
+function writePromptStore(store) {
+  fs.writeFileSync(promptsFile, JSON.stringify(store, null, 2));
+}
+
+function listPromptGroupsPayload(groups) {
+  const data = groups || [];
+  return {
+    promptGroups: data,
+    pageNumber: '1',
+    pageSize: Math.max(data.length, 10),
+    pages: 1,
+    has_more: false,
+    after: null,
+  };
+}
+
+function seedDefaultPrompt() {
+  const store = readPromptStore();
+  if (store.groups.some((item) => item._id === 'prompt_pbmp_launch')) return;
+  const now = new Date().toISOString();
+  store.groups.unshift({
+    _id: 'prompt_pbmp_launch',
+    name: 'PBMP Product X launch',
+    category: 'finance',
+    oneliner: 'Recommend Mumbai, Delhi or Bangalore using sample sales.',
+    command: 'pbmp-launch',
+    author: 'system',
+    authorName: 'HBMP AgentBot',
+    productionId: 'promptver_pbmp_launch',
+    productionPrompt: { prompt: DEFAULT_PROMPT_TEXT },
+    createdAt: now,
+    updatedAt: now,
+  });
+  store.prompts.push({
+    _id: 'promptver_pbmp_launch',
+    groupId: 'prompt_pbmp_launch',
+    author: 'system',
+    prompt: DEFAULT_PROMPT_TEXT,
+    type: 'text',
+    createdAt: now,
+    updatedAt: now,
+  });
+  writePromptStore(store);
+  console.log('[agentbot-stub] seeded PBMP Product X launch prompt');
+}
+
+seedDefaultPrompt();
 
 function publicFile(rec) {
   if (!rec) return null;
@@ -2145,21 +2226,161 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  if (method === 'GET' && url.startsWith('/api/prompts')) {
-    send(res, 200, {
-      promptGroups: [],
-      prompts: [],
-      pageNumber: '1',
-      pageSize: 10,
-      pages: 0,
-      has_more: false,
-      after: null,
-    });
+  if (method === 'GET' && url === '/api/categories') {
+    send(res, 200, PROMPT_CATEGORIES);
     return;
   }
 
-  if (method === 'GET' && url === '/api/categories') {
-    send(res, 200, []);
+  if (method === 'GET' && url === '/api/prompts/all') {
+    send(res, 200, readPromptStore().groups);
+    return;
+  }
+
+  if (method === 'GET' && /^\/api\/prompts\/groups\/[^/]+$/.test(url)) {
+    const id = decodeURIComponent(url.slice('/api/prompts/groups/'.length));
+    const group = readPromptStore().groups.find((item) => item._id === id);
+    if (!group) {
+      send(res, 404, { message: 'Prompt group not found' });
+      return;
+    }
+    send(res, 200, group);
+    return;
+  }
+
+  if (method === 'GET' && url === '/api/prompts/groups') {
+    let groups = readPromptStore().groups;
+    const category = String(qs.get('category') || '').trim();
+    const name = String(qs.get('name') || '').trim().toLowerCase();
+    if (category) groups = groups.filter((item) => (item.category || '') === category);
+    if (name) groups = groups.filter((item) => String(item.name || '').toLowerCase().includes(name));
+    send(res, 200, listPromptGroupsPayload(groups));
+    return;
+  }
+
+  if (method === 'GET' && url === '/api/prompts') {
+    const groupId = String(qs.get('groupId') || '').trim();
+    const prompts = readPromptStore().prompts.filter((item) => !groupId || item.groupId === groupId);
+    send(res, 200, prompts);
+    return;
+  }
+
+  if (method === 'GET' && /^\/api\/prompts\/[^/]+$/.test(url)) {
+    const id = decodeURIComponent(url.slice('/api/prompts/'.length));
+    const reserved = new Set(['groups', 'all', 'random']);
+    if (reserved.has(id)) {
+      send(res, 200, []);
+      return;
+    }
+    const prompt = readPromptStore().prompts.find((item) => item._id === id);
+    if (!prompt) {
+      send(res, 404, { message: 'Prompt not found' });
+      return;
+    }
+    send(res, 200, { prompt });
+    return;
+  }
+
+  if (method === 'POST' && /^\/api\/prompts\/groups\/[^/]+\/prompts$/.test(url)) {
+    const user = userFromReq(req) || (sameSiteRequest(req) ? guestUser() : null);
+    const groupId = decodeURIComponent(url.split('/')[4]);
+    const body = await readBody(req);
+    const store = readPromptStore();
+    const group = store.groups.find((item) => item._id === groupId);
+    if (!group) {
+      send(res, 404, { error: 'Prompt group not found' });
+      return;
+    }
+    const now = new Date().toISOString();
+    const prompt = {
+      _id: `promptver_${crypto.randomBytes(6).toString('hex')}`,
+      groupId,
+      author: (user && user.id) || 'system',
+      prompt: String((body.prompt && body.prompt.prompt) || body.prompt || ''),
+      type: (body.prompt && body.prompt.type) || 'text',
+      createdAt: now,
+      updatedAt: now,
+    };
+    store.prompts.push(prompt);
+    group.productionId = prompt._id;
+    group.productionPrompt = { prompt: prompt.prompt };
+    group.updatedAt = now;
+    writePromptStore(store);
+    send(res, 200, { prompt, group });
+    return;
+  }
+
+  if (method === 'POST' && url === '/api/prompts') {
+    const user = userFromReq(req) || (sameSiteRequest(req) ? guestUser() : null);
+    const body = await readBody(req);
+    if (!body.prompt || !body.group || !body.group.name) {
+      send(res, 400, { error: 'Prompt and group name are required' });
+      return;
+    }
+    const now = new Date().toISOString();
+    const groupId = `prompt_${crypto.randomBytes(6).toString('hex')}`;
+    const promptId = `promptver_${crypto.randomBytes(6).toString('hex')}`;
+    const text = String(body.prompt.prompt || '');
+    const group = {
+      _id: groupId,
+      name: body.group.name,
+      category: body.group.category || '',
+      oneliner: body.group.oneliner || '',
+      command: body.group.command || '',
+      author: (user && user.id) || 'system',
+      authorName: (user && user.name) || 'agentbot',
+      productionId: promptId,
+      productionPrompt: { prompt: text },
+      createdAt: now,
+      updatedAt: now,
+    };
+    const prompt = {
+      _id: promptId,
+      groupId,
+      author: group.author,
+      prompt: text,
+      type: body.prompt.type || 'text',
+      createdAt: now,
+      updatedAt: now,
+    };
+    const store = readPromptStore();
+    store.groups.unshift(group);
+    store.prompts.push(prompt);
+    writePromptStore(store);
+    send(res, 200, { prompt, group });
+    return;
+  }
+
+  if (method === 'PATCH' && /^\/api\/prompts\/groups\/[^/]+$/.test(url)) {
+    const id = decodeURIComponent(url.slice('/api/prompts/groups/'.length));
+    const body = await readBody(req);
+    const store = readPromptStore();
+    const group = store.groups.find((item) => item._id === id);
+    if (!group) {
+      send(res, 404, { message: 'Prompt group not found' });
+      return;
+    }
+    Object.assign(group, body, { _id: group._id, updatedAt: new Date().toISOString() });
+    writePromptStore(store);
+    send(res, 200, group);
+    return;
+  }
+
+  if (method === 'DELETE' && /^\/api\/prompts\/groups\/[^/]+$/.test(url)) {
+    const id = decodeURIComponent(url.slice('/api/prompts/groups/'.length));
+    const store = readPromptStore();
+    store.groups = store.groups.filter((item) => item._id !== id);
+    store.prompts = store.prompts.filter((item) => item.groupId !== id);
+    writePromptStore(store);
+    send(res, 200, { acknowledged: true });
+    return;
+  }
+
+  if (method === 'DELETE' && /^\/api\/prompts\/[^/]+$/.test(url)) {
+    const id = decodeURIComponent(url.slice('/api/prompts/'.length));
+    const store = readPromptStore();
+    store.prompts = store.prompts.filter((item) => item._id !== id);
+    writePromptStore(store);
+    send(res, 200, { acknowledged: true });
     return;
   }
 
