@@ -263,6 +263,7 @@ const startupConfig = {
         default: true,
         description: 'Default chat model',
         group: 'google',
+        fileSearch: true,
         preset: {
           endpoint: 'google',
           model: 'gemini-2.5-flash',
@@ -287,7 +288,8 @@ const PBMP_SYSTEM =
   'You are the PBMP assistant for Grow24 / HBMP. PBMP means Personal & Business Management Platform, not pharmacy benefit management. ' +
   'Use PBMP tools for sales, projects, customers, requirements and risks. ' +
   'Product X last-12-month sample: Mumbai ₹18.2 Cr ROI 24% Medium; Delhi ₹15.7 Cr ROI 19% Low; Bangalore ₹13.6 Cr ROI 16% Medium. ' +
-  'Never invent rupee figures when a tool can return them.';
+  'Never invent rupee figures when a tool can return them. ' +
+  'Use file_search for company documents (policy, catalogue, customers, marketing, contract, business case, sales CSV). Cite the filename.';
 
 const PBMP_TOOL_DEFS = [
   { name: 'get_project', description: 'Get a PBMP project by name.', parameters: { type: 'object', properties: { project_name: { type: 'string' } }, required: ['project_name'] } },
@@ -300,6 +302,19 @@ const PBMP_TOOL_DEFS = [
   { name: 'create_risk', description: 'Add a risk to a PBMP project.', parameters: { type: 'object', properties: { project: { type: 'string' }, title: { type: 'string' }, severity: { type: 'string' } }, required: ['project', 'title'] } },
   { name: 'update_risk', description: 'Update a PBMP risk.', parameters: { type: 'object', properties: { id: { type: 'string' }, status: { type: 'string' } }, required: ['id'] } },
 ];
+
+const FILE_SEARCH_TOOL = {
+  name: 'file_search',
+  description:
+    'Search company knowledge documents and uploaded files. Use for policy, catalogue, customers, marketing, contract, business case, and sales CSV. Do not invent figures found in documents.',
+  parameters: {
+    type: 'object',
+    properties: {
+      query: { type: 'string', description: 'What to look up in the documents.' },
+    },
+    required: ['query'],
+  },
+};
 
 const DEFAULT_GEMINI = 'gemini-2.5-flash';
 const GEMINI_FALLBACKS = [
@@ -396,10 +411,15 @@ async function generateGemini(key, model, contents, extra = {}) {
 }
 
 async function generateGeminiWithPbmp(key, model, userContents, extras = {}) {
-  const systemText = [PBMP_SYSTEM, extras.promptPrefix].filter(Boolean).join('\n\n');
+  const tools = [...PBMP_TOOL_DEFS, FILE_SEARCH_TOOL];
+  const systemText = [
+    PBMP_SYSTEM,
+    extras.promptPrefix,
+    extras.fileSearchNote,
+  ].filter(Boolean).join('\n\n');
   const extra = {
     systemInstruction: { parts: [{ text: systemText }] },
-    tools: [{ functionDeclarations: PBMP_TOOL_DEFS }],
+    tools: [{ functionDeclarations: tools }],
   };
   if (extras.generationConfig && Object.keys(extras.generationConfig).length) {
     extra.generationConfig = extras.generationConfig;
@@ -416,10 +436,17 @@ async function generateGeminiWithPbmp(key, model, userContents, extras = {}) {
     }
     const responses = [];
     for (const part of calls) {
-      const data = await callPbmpTool(part.functionCall.name, part.functionCall.args || {});
+      const name = part.functionCall.name;
+      const args = part.functionCall.args || {};
+      let data;
+      if (name === 'file_search') {
+        data = searchFiles(String(args.query || extras.userQuery || ''), extras.user, { limit: 5, minScore: 2 });
+      } else {
+        data = await callPbmpTool(name, args);
+      }
       responses.push({
         functionResponse: {
-          name: part.functionCall.name,
+          name,
           response: data && typeof data === 'object' ? data : { result: String(data) },
         },
       });
@@ -710,6 +737,129 @@ function seedKnowledgeFiles() {
 
 seedKnowledgeFiles();
 
+const SEARCH_STOP = new Set(
+  'a an the and or of for to in on is it we our you your what does say please from with this this that than then how why who whom which are was were be been being not no do did can will would should about into over under'.split(
+    ' ',
+  ),
+);
+
+function isTextSearchable(rec) {
+  const type = String(rec.type || '').toLowerCase();
+  const name = String(rec.filename || '').toLowerCase();
+  if (type.startsWith('text/') || type.includes('json') || type.includes('csv') || type.includes('markdown') || type.includes('xml')) {
+    return true;
+  }
+  return /\.(md|txt|csv|json|xml|html|htm)$/i.test(name);
+}
+
+function readFileText(rec) {
+  if (!rec?.diskPath || !fs.existsSync(rec.diskPath)) return '';
+  const buf = fs.readFileSync(rec.diskPath);
+  if (!buf.length) return '';
+  const sample = buf.subarray(0, Math.min(buf.length, 800));
+  let nul = 0;
+  for (const byte of sample) {
+    if (byte === 0) nul += 1;
+  }
+  if (nul > 8) return '';
+  return buf.toString('utf8').slice(0, 80000);
+}
+
+function tokenizeSearch(text) {
+  return String(text || '')
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
+    .split(/\s+/)
+    .filter((word) => word.length > 1 && !SEARCH_STOP.has(word));
+}
+
+function chunkText(text, size = 900) {
+  const clean = String(text || '').replace(/\r\n/g, '\n').trim();
+  if (!clean) return [];
+  const parts = [];
+  const paras = clean.split(/\n{2,}/);
+  let buf = '';
+  for (const para of paras) {
+    const next = buf ? `${buf}\n\n${para}` : para;
+    if (next.length > size && buf) {
+      parts.push(buf.trim());
+      buf = para;
+    } else {
+      buf = next;
+    }
+  }
+  if (buf.trim()) parts.push(buf.trim());
+  return parts.length ? parts : [clean.slice(0, size)];
+}
+
+function scoreSnippet(tokens, phrase, filename, snippet) {
+  const hay = `${filename}\n${snippet}`.toLowerCase();
+  let score = 0;
+  for (const token of tokens) {
+    if (hay.includes(token)) score += 2;
+    if (String(filename).toLowerCase().includes(token)) score += 4;
+  }
+  if (phrase && hay.includes(phrase)) score += 10;
+  return score;
+}
+
+function searchableFiles(user) {
+  return Object.values(readFiles()).filter((item) => {
+    if (!isTextSearchable(item)) return false;
+    if (item.sample) return true;
+    if (!user) return true;
+    return item.user === user.id;
+  });
+}
+
+function searchFiles(query, user, options = {}) {
+  const limit = options.limit || 5;
+  const minScore = options.minScore || 2;
+  const tokens = tokenizeSearch(query);
+  const phrase = tokens.join(' ');
+  if (!tokens.length) {
+    return { ok: true, query, count: 0, hits: [] };
+  }
+  const ranked = [];
+  for (const rec of searchableFiles(user)) {
+    const text = readFileText(rec);
+    if (!text) continue;
+    for (const snippet of chunkText(text)) {
+      const score = scoreSnippet(tokens, phrase, rec.filename, snippet);
+      if (score < minScore) continue;
+      ranked.push({
+        file_id: rec.file_id,
+        filename: rec.filename,
+        snippet: snippet.slice(0, 1200),
+        score,
+      });
+    }
+  }
+  ranked.sort((a, b) => b.score - a.score || a.filename.localeCompare(b.filename));
+  const perFile = new Map();
+  const hits = [];
+  for (const item of ranked) {
+    const already = perFile.get(item.filename) || 0;
+    if (already >= 2) continue;
+    perFile.set(item.filename, already + 1);
+    hits.push(item);
+    if (hits.length >= limit) break;
+  }
+  return { ok: true, query, count: hits.length, hits };
+}
+
+function formatSearchHits(result) {
+  if (!result?.hits?.length) return '';
+  const blocks = result.hits.map(
+    (hit, index) =>
+      `### ${index + 1}. ${hit.filename}\n${hit.snippet}`,
+  );
+  return (
+    'Retrieved from File Search. Cite the filename. Do not invent figures missing from these snippets.\n\n' +
+    blocks.join('\n\n')
+  );
+}
+
 function httpsJson(url, body) {
   return new Promise((resolve, reject) => {
     const data = JSON.stringify(body);
@@ -930,6 +1080,13 @@ const server = http.createServer(async (req, res) => {
       .sort((a, b) => String(a.filename).localeCompare(String(b.filename)))
       .map(publicFile);
     send(res, 200, list);
+    return;
+  }
+
+  if (method === 'GET' && url === '/api/files/search') {
+    const user = userFromReq(req) || (sameSiteRequest(req) ? guestUser() : null);
+    const query = String(qs.get('q') || qs.get('query') || '').trim();
+    send(res, 200, searchFiles(query, user, { limit: 8, minScore: 2 }));
     return;
   }
 
@@ -1313,9 +1470,19 @@ const server = http.createServer(async (req, res) => {
       if (maxOutputTokens != null && maxOutputTokens !== '' && Number.isFinite(Number(maxOutputTokens))) {
         generationConfig.maxOutputTokens = Number(maxOutputTokens);
       }
+      const ephemeral = body.ephemeralAgent || options.ephemeralAgent || {};
+      const fileSearchOn = ephemeral.file_search === true;
+      const retrieved = searchFiles(text, user, {
+        limit: fileSearchOn ? 5 : 3,
+        minScore: fileSearchOn ? 2 : 6,
+      });
+      const fileSearchNote = formatSearchHits(retrieved);
       const result = await generateGeminiWithPbmp(key, model, toGeminiContents(history, text, attachedFiles), {
         promptPrefix,
         generationConfig,
+        fileSearchNote,
+        user,
+        userQuery: text,
       });
       if (result.model) model = result.model;
       const reply = (result.json?.candidates?.[0]?.content?.parts || [])
