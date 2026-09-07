@@ -20,6 +20,7 @@ const convosFile = path.join(dataDir, 'agentbot-convos.json');
 const presetsFile = path.join(dataDir, 'agentbot-presets.json');
 const agentsFile = path.join(dataDir, 'agentbot-agents.json');
 const promptsFile = path.join(dataDir, 'agentbot-prompts.json');
+const tagsFile = path.join(dataDir, 'agentbot-tags.json');
 const filesMetaFile = path.join(dataDir, 'agentbot-files.json');
 const filesDir = path.join(dataDir, 'files');
 const NO_PARENT = '00000000-0000-0000-0000-000000000000';
@@ -278,7 +279,7 @@ const startupConfig = {
 };
 
 const endpoints = {
-  google: { userProvide: false, order: 1 },
+  google: { userProvide: false, order: 1, type: 'google' },
   agents: {
     userProvide: false,
     capabilities: ['execute_code', 'file_search', 'web_search', 'actions', 'artifacts'],
@@ -778,6 +779,32 @@ function readPromptStore() {
 
 function writePromptStore(store) {
   fs.writeFileSync(promptsFile, JSON.stringify(store, null, 2));
+}
+
+function readTags() {
+  try {
+    const list = JSON.parse(fs.readFileSync(tagsFile, 'utf8'));
+    return Array.isArray(list) ? list : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeTags(list) {
+  fs.writeFileSync(tagsFile, JSON.stringify(list, null, 2));
+}
+
+function publicTag(item) {
+  return {
+    _id: item._id,
+    user: item.user,
+    tag: item.tag,
+    description: item.description || '',
+    createdAt: item.createdAt,
+    updatedAt: item.updatedAt,
+    count: item.count || 0,
+    position: item.position || 0,
+  };
 }
 
 function listPromptGroupsPayload(groups) {
@@ -1366,7 +1393,12 @@ const server = http.createServer(async (req, res) => {
   const method = req.method || 'GET';
 
   if (method === 'OPTIONS') {
-    res.writeHead(204);
+    res.writeHead(204, {
+      'Access-Control-Allow-Origin': req.headers.origin || '*',
+      'Access-Control-Allow-Headers': 'Authorization, Content-Type',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+      'Access-Control-Allow-Credentials': 'true',
+    });
     res.end();
     return;
   }
@@ -1504,6 +1536,11 @@ const server = http.createServer(async (req, res) => {
 
   if (method === 'GET' && url === '/api/files/config') {
     send(res, 200, fileConfig);
+    return;
+  }
+
+  if (method === 'GET' && /^\/api\/files\/agent\/[^/]+$/.test(url)) {
+    send(res, 200, []);
     return;
   }
 
@@ -1648,8 +1685,15 @@ const server = http.createServer(async (req, res) => {
 
   if (method === 'POST' && /\/api\/agents\/tools\/execute_code\/call$/.test(url)) {
     const body = await readBody(req);
-    const result = await executePython(String(body.code || ''));
-    send(res, 200, { result: result.ok ? (result.stdout || 'Code ran with no output.') : (result.stderr || result.error || 'Code failed.') });
+    const code = String(
+      body.code || body.python || (body.args && (body.args.code || body.args.python)) || '',
+    );
+    const result = await executePython(code);
+    send(res, 200, {
+      result: result.ok
+        ? result.stdout || 'Code ran with no output.'
+        : result.stderr || result.error || 'Code failed.',
+    });
     return;
   }
 
@@ -1858,6 +1902,16 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (method === 'POST' && url === '/api/user/plugins') {
+    const user = userFromReq(req) || (sameSiteRequest(req) ? guestUser() : null);
+    if (!user) {
+      send(res, 401, { message: 'Unauthorized' });
+      return;
+    }
+    send(res, 200, publicUser(user));
+    return;
+  }
+
   if (method === 'GET' && url === '/api/models') {
     send(res, 200, models);
     return;
@@ -1902,11 +1956,13 @@ const server = http.createServer(async (req, res) => {
     const body = await readBody(req);
     const update = body.arg || body;
     const store = readConvos();
-    const current = store.conversations[update.conversationId];
-    if (!current) {
-      send(res, 404, { error: 'Conversation not found' });
-      return;
-    }
+    const current = store.conversations[update.conversationId] || {
+      conversationId: update.conversationId,
+      title: 'New Chat',
+      endpoint: update.endpoint || 'google',
+      model: update.model || DEFAULT_GEMINI,
+      createdAt: new Date().toISOString(),
+    };
     const next = {
       ...current,
       ...update,
@@ -1995,6 +2051,11 @@ const server = http.createServer(async (req, res) => {
     const conversationId = decodeURIComponent(url.slice('/api/messages/'.length).split('/')[0]);
     const store = readConvos();
     send(res, 200, store.messages[conversationId] || []);
+    return;
+  }
+
+  if (method === 'POST' && /\/api\/agents\/chat\/(?:[^/]+\/)?abort$/.test(url)) {
+    send(res, 200, { success: true, final: true });
     return;
   }
 
@@ -2177,8 +2238,8 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  if (method === 'GET' && url.startsWith('/api/roles/')) {
-    const raw = decodeURIComponent((url.split('/').pop() || '').split('?')[0]);
+  if (method === 'GET' && (url === '/api/roles' || url.startsWith('/api/roles/'))) {
+    const raw = decodeURIComponent((url.split('/')[3] || 'USER').split('?')[0] || 'USER');
     const name = raw.toUpperCase() === 'ADMIN' ? 'ADMIN' : 'USER';
     send(res, 200, { name, permissions: ROLE_PERMISSIONS });
     return;
@@ -2216,13 +2277,113 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  if (method === 'GET' && url === '/api/mcp/connection/status/pbmp') {
-    send(res, 200, { success: true, connectionState: 'connected', requiresOAuth: false });
+  if (method === 'GET' && /^\/api\/mcp\/connection\/status\/[^/]+$/.test(url)) {
+    const serverName = decodeURIComponent(url.split('/').pop());
+    send(res, 200, {
+      success: true,
+      serverName,
+      connectionStatus: 'connected',
+      requiresOAuth: false,
+    });
+    return;
+  }
+
+  if (method === 'POST' && /^\/api\/mcp\/[^/]+\/reinitialize$/.test(url)) {
+    const serverName = decodeURIComponent(url.split('/')[3]);
+    send(res, 200, {
+      success: true,
+      message: `${serverName} is ready`,
+      oauthUrl: null,
+      serverName,
+      oauthRequired: false,
+    });
+    return;
+  }
+
+  if (method === 'GET' && /^\/api\/mcp\/[^/]+\/auth-values$/.test(url)) {
+    const serverName = decodeURIComponent(url.split('/')[3]);
+    send(res, 200, { success: true, serverName, authValueFlags: {} });
+    return;
+  }
+
+  if (method === 'POST' && /^\/api\/mcp\/oauth\/cancel\/[^/]+$/.test(url)) {
+    send(res, 200, { success: true });
     return;
   }
 
   if (method === 'GET' && url === '/api/tags') {
-    send(res, 200, []);
+    const user = userFromReq(req);
+    const list = readTags().filter((item) => !user || item.user === user.id);
+    send(res, 200, list.map(publicTag));
+    return;
+  }
+
+  if (method === 'POST' && url === '/api/tags') {
+    const user = userFromReq(req) || (sameSiteRequest(req) ? guestUser() : null);
+    const body = await readBody(req);
+    const tagName = String(body.tag || '').trim();
+    if (!tagName) {
+      send(res, 400, { error: 'Tag name is required' });
+      return;
+    }
+    const list = readTags();
+    const existing = list.find(
+      (item) => item.tag === tagName && (!user || item.user === user.id),
+    );
+    if (existing) {
+      send(res, 200, publicTag(existing));
+      return;
+    }
+    const now = new Date().toISOString();
+    const tag = {
+      _id: `tag_${crypto.randomBytes(6).toString('hex')}`,
+      user: (user && user.id) || 'local-web',
+      tag: tagName,
+      description: String(body.description || ''),
+      createdAt: now,
+      updatedAt: now,
+      count: body.addToConversation ? 1 : 0,
+      position: list.filter((item) => !user || item.user === user.id).length + 1,
+    };
+    list.push(tag);
+    writeTags(list);
+    send(res, 200, publicTag(tag));
+    return;
+  }
+
+  if (method === 'PUT' && /^\/api\/tags\/convo\/[^/]+$/.test(url)) {
+    const body = await readBody(req);
+    send(res, 200, Array.isArray(body.tags) ? body.tags : []);
+    return;
+  }
+
+  if ((method === 'PUT' || method === 'DELETE') && /^\/api\/tags\/[^/]+$/.test(url)) {
+    const tagName = decodeURIComponent(url.slice('/api/tags/'.length));
+    const user = userFromReq(req);
+    const list = readTags();
+    const index = list.findIndex(
+      (item) => item.tag === tagName && (!user || item.user === user.id),
+    );
+    if (index < 0) {
+      send(res, 404, { error: 'Tag not found' });
+      return;
+    }
+    if (method === 'DELETE') {
+      const removed = list.splice(index, 1)[0];
+      writeTags(list);
+      send(res, 200, publicTag(removed));
+      return;
+    }
+    const body = await readBody(req);
+    list[index] = {
+      ...list[index],
+      ...body,
+      tag: body.tag || list[index].tag,
+      _id: list[index]._id,
+      updatedAt: new Date().toISOString(),
+    };
+    writeTags(list);
+    send(res, 200, publicTag(list[index]));
     return;
   }
 
@@ -2347,6 +2508,25 @@ const server = http.createServer(async (req, res) => {
     store.prompts.push(prompt);
     writePromptStore(store);
     send(res, 200, { prompt, group });
+    return;
+  }
+
+  if (method === 'PATCH' && /^\/api\/prompts\/[^/]+\/tags\/production$/.test(url)) {
+    const id = decodeURIComponent(url.split('/')[3]);
+    const store = readPromptStore();
+    const prompt = store.prompts.find((item) => item._id === id);
+    if (!prompt) {
+      send(res, 404, { message: 'Prompt not found' });
+      return;
+    }
+    const group = store.groups.find((item) => item._id === prompt.groupId);
+    if (group) {
+      group.productionId = prompt._id;
+      group.productionPrompt = { prompt: prompt.prompt };
+      group.updatedAt = new Date().toISOString();
+    }
+    writePromptStore(store);
+    send(res, 200, prompt);
     return;
   }
 
