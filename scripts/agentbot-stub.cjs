@@ -8,6 +8,7 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { spawn } = require('child_process');
 
 const PORT = Number(process.env.PORT || 5188);
 const HOST = process.env.HOST || '0.0.0.0';
@@ -264,6 +265,7 @@ const startupConfig = {
         description: 'Default chat model',
         group: 'google',
         fileSearch: true,
+        executeCode: true,
         preset: {
           endpoint: 'google',
           model: 'gemini-2.5-flash',
@@ -289,7 +291,8 @@ const PBMP_SYSTEM =
   'Use PBMP tools for sales, projects, customers, requirements and risks. ' +
   'Product X last-12-month sample: Mumbai ₹18.2 Cr ROI 24% Medium; Delhi ₹15.7 Cr ROI 19% Low; Bangalore ₹13.6 Cr ROI 16% Medium. ' +
   'Never invent rupee figures when a tool can return them. ' +
-  'Use file_search for company documents (policy, catalogue, customers, marketing, contract, business case, sales CSV). Cite the filename.';
+  'Use file_search for company documents (policy, catalogue, customers, marketing, contract, business case, sales CSV). Cite the filename. ' +
+  'Use execute_code for arithmetic, totals, ROI, percentages and tables. Print the result. Never invent a calculated figure.';
 
 const PBMP_TOOL_DEFS = [
   { name: 'get_project', description: 'Get a PBMP project by name.', parameters: { type: 'object', properties: { project_name: { type: 'string' } }, required: ['project_name'] } },
@@ -313,6 +316,19 @@ const FILE_SEARCH_TOOL = {
       query: { type: 'string', description: 'What to look up in the documents.' },
     },
     required: ['query'],
+  },
+};
+
+const EXECUTE_CODE_TOOL = {
+  name: 'execute_code',
+  description:
+    'Run Python for calculations, totals, ROI, percentages and tables. Print the answer. Sales CSV path is SALES_CSV; use read_csv(SALES_CSV). Allowed: math, csv, json, statistics, datetime. No files, network or shell.',
+  parameters: {
+    type: 'object',
+    properties: {
+      code: { type: 'string', description: 'Python code. Must print() the result.' },
+    },
+    required: ['code'],
   },
 };
 
@@ -411,11 +427,12 @@ async function generateGemini(key, model, contents, extra = {}) {
 }
 
 async function generateGeminiWithPbmp(key, model, userContents, extras = {}) {
-  const tools = [...PBMP_TOOL_DEFS, FILE_SEARCH_TOOL];
+  const tools = [...PBMP_TOOL_DEFS, FILE_SEARCH_TOOL, EXECUTE_CODE_TOOL];
   const systemText = [
     PBMP_SYSTEM,
     extras.promptPrefix,
     extras.fileSearchNote,
+    extras.codeNote,
   ].filter(Boolean).join('\n\n');
   const extra = {
     systemInstruction: { parts: [{ text: systemText }] },
@@ -441,6 +458,8 @@ async function generateGeminiWithPbmp(key, model, userContents, extras = {}) {
       let data;
       if (name === 'file_search') {
         data = searchFiles(String(args.query || extras.userQuery || ''), extras.user, { limit: 5, minScore: 2 });
+      } else if (name === 'execute_code') {
+        data = await executePython(String(args.code || args.python || ''));
       } else {
         data = await callPbmpTool(name, args);
       }
@@ -860,6 +879,116 @@ function formatSearchHits(result) {
   );
 }
 
+function salesCsvPath() {
+  const dir = knowledgeDir();
+  const candidate = dir ? path.join(dir, '03-sales-product-x.csv') : '';
+  return candidate && fs.existsSync(candidate) ? candidate : '';
+}
+
+function executePython(code) {
+  return new Promise((resolve) => {
+    const raw = String(code || '');
+    if (!raw.trim()) {
+      resolve({ ok: false, error: 'No code provided.' });
+      return;
+    }
+    if (raw.length > 20000) {
+      resolve({ ok: false, error: 'Code is too long (20k character limit).' });
+      return;
+    }
+    const allowedDirs = [filesDir, knowledgeDir(), dataDir].filter(Boolean);
+    const wrapper = `
+import ast, csv, json, math, statistics, datetime, decimal, collections, itertools, os, sys
+SALES_CSV = ${JSON.stringify(salesCsvPath())}
+ALLOWED_DIRS = ${JSON.stringify(allowedDirs)}
+
+def _safe_path(p):
+    ap = os.path.realpath(p)
+    for d in ALLOWED_DIRS:
+        rd = os.path.realpath(d)
+        if ap == rd or ap.startswith(rd + os.sep):
+            return ap
+    raise SystemExit('Path not allowed')
+
+def read_csv(p=None):
+    path = _safe_path(p or SALES_CSV)
+    with open(path, newline='', encoding='utf-8') as f:
+        return list(csv.DictReader(f))
+
+USER_CODE = ${JSON.stringify(raw)}
+ALLOWED = {'math','csv','json','statistics','datetime','decimal','collections','itertools'}
+
+class Guard(ast.NodeVisitor):
+    def visit_Import(self, node):
+        for alias in node.names:
+            if alias.name.split('.')[0] not in ALLOWED:
+                raise SystemExit('Import not allowed: ' + alias.name)
+    def visit_ImportFrom(self, node):
+        root = (node.module or '').split('.')[0]
+        if root and root not in ALLOWED:
+            raise SystemExit('Import not allowed: ' + root)
+    def visit_Call(self, node):
+        if isinstance(node.func, ast.Name) and node.func.id in ('eval','exec','compile','__import__','open','input'):
+            raise SystemExit(node.func.id + ' is not allowed. Use read_csv(SALES_CSV) for sales data.')
+        self.generic_visit(node)
+
+tree = ast.parse(USER_CODE, mode='exec')
+Guard().visit(tree)
+exec(compile(tree, '<user>', 'exec'), {
+    '__builtins__': {
+        'abs': abs, 'min': min, 'max': max, 'sum': sum, 'round': round, 'len': len,
+        'range': range, 'enumerate': enumerate, 'zip': zip, 'list': list, 'dict': dict,
+        'tuple': tuple, 'set': set, 'print': print, 'sorted': sorted, 'map': map,
+        'filter': filter, 'float': float, 'int': int, 'str': str, 'bool': bool,
+        'True': True, 'False': False, 'None': None, 'pow': pow, 'divmod': divmod,
+        'isinstance': isinstance, 'type': type, 'repr': repr, 'format': format,
+        'all': all, 'any': any, 'reversed': reversed,
+    },
+    'math': math, 'csv': csv, 'json': json, 'statistics': statistics,
+    'datetime': datetime, 'decimal': decimal, 'collections': collections,
+    'itertools': itertools, 'SALES_CSV': SALES_CSV, 'read_csv': read_csv,
+})
+`;
+    const tmp = path.join(dataDir, `code-${crypto.randomUUID()}.py`);
+    try {
+      fs.writeFileSync(tmp, wrapper);
+    } catch (error) {
+      resolve({ ok: false, error: error.message });
+      return;
+    }
+    const child = spawn('python3', ['-I', tmp], {
+      cwd: dataDir,
+      env: { PATH: process.env.PATH || '/usr/bin:/bin', LANG: 'C.UTF-8' },
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    let stdout = '';
+    let stderr = '';
+    child.stdout.on('data', (chunk) => {
+      stdout += chunk;
+      if (stdout.length > 16000) child.kill('SIGKILL');
+    });
+    child.stderr.on('data', (chunk) => {
+      stderr += chunk;
+    });
+    const timer = setTimeout(() => child.kill('SIGKILL'), 8000);
+    child.on('error', (error) => {
+      clearTimeout(timer);
+      try { fs.unlinkSync(tmp); } catch { /* ignore */ }
+      resolve({ ok: false, error: error.message || 'python3 is not available.' });
+    });
+    child.on('close', (exitCode) => {
+      clearTimeout(timer);
+      try { fs.unlinkSync(tmp); } catch { /* ignore */ }
+      resolve({
+        ok: exitCode === 0,
+        stdout: stdout.slice(0, 12000).trim(),
+        stderr: stderr.slice(0, 2500).trim(),
+        exitCode,
+      });
+    });
+  });
+}
+
 function httpsJson(url, body) {
   return new Promise((resolve, reject) => {
     const data = JSON.stringify(body);
@@ -1201,6 +1330,23 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (method === 'GET' && /\/api\/agents\/tools\/[^/]+\/auth$/.test(url)) {
+    send(res, 200, { authenticated: true, message: 'system_defined' });
+    return;
+  }
+
+  if (method === 'GET' && url === '/api/agents/tools/calls') {
+    send(res, 200, []);
+    return;
+  }
+
+  if (method === 'POST' && /\/api\/agents\/tools\/execute_code\/call$/.test(url)) {
+    const body = await readBody(req);
+    const result = await executePython(String(body.code || ''));
+    send(res, 200, { result: result.ok ? (result.stdout || 'Code ran with no output.') : (result.stderr || result.error || 'Code failed.') });
+    return;
+  }
+
   if (method === 'GET' && url === '/api/agents') {
     send(res, 200, emptyList);
     return;
@@ -1472,15 +1618,20 @@ const server = http.createServer(async (req, res) => {
       }
       const ephemeral = body.ephemeralAgent || options.ephemeralAgent || {};
       const fileSearchOn = ephemeral.file_search === true;
+      const codeOn = ephemeral.execute_code === true;
       const retrieved = searchFiles(text, user, {
         limit: fileSearchOn ? 5 : 3,
         minScore: fileSearchOn ? 2 : 6,
       });
       const fileSearchNote = formatSearchHits(retrieved);
+      const codeNote = codeOn
+        ? 'Code Interpreter is ON. For any arithmetic, total, ROI, percentage or table of numbers, call execute_code and print the result. Do not guess the calculated figure.'
+        : '';
       const result = await generateGeminiWithPbmp(key, model, toGeminiContents(history, text, attachedFiles), {
         promptPrefix,
         generationConfig,
         fileSearchNote,
+        codeNote,
         user,
         userQuery: text,
       });
