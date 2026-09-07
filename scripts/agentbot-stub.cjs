@@ -2309,7 +2309,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  if (method === 'POST' && url === '/api/prompts') {
+  if (method === 'POST' && (url === '/api/prompts' || url === '/api/prompts/')) {
     const user = userFromReq(req) || (sameSiteRequest(req) ? guestUser() : null);
     const body = await readBody(req);
     if (!body.prompt || !body.group || !body.group.name) {

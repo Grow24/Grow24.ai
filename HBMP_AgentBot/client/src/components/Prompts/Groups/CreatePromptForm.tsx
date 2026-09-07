@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, TextareaAutosize, Input } from '@librechat/client';
+import { Button, TextareaAutosize, Input, useToastContext } from '@librechat/client';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import { LocalStorageKeys, PermissionTypes, Permissions } from 'librechat-data-provider';
 import CategorySelector from '~/components/Prompts/Groups/CategorySelector';
@@ -26,7 +26,7 @@ const defaultPrompt: CreateFormValues = {
   name: '',
   prompt: '',
   type: 'text',
-  category: '',
+  category: 'finance',
   oneliner: undefined,
   command: undefined,
 };
@@ -38,6 +38,7 @@ const CreatePromptForm = ({
 }) => {
   const localize = useLocalize();
   const navigate = useNavigate();
+  const { showToast } = useToastContext();
   const { hasAccess: hasUseAccess } = usePromptGroupsContext();
   const hasCreateAccess = useHasAccess({
     permissionType: PermissionTypes.PROMPTS,
@@ -60,7 +61,7 @@ const CreatePromptForm = ({
   const methods = useForm({
     defaultValues: {
       ...defaultValues,
-      category: localStorage.getItem(LocalStorageKeys.LAST_PROMPT_CATEGORY) ?? '',
+      category: localStorage.getItem(LocalStorageKeys.LAST_PROMPT_CATEGORY) ?? 'finance',
     },
   });
 
@@ -73,7 +74,23 @@ const CreatePromptForm = ({
 
   const createPromptMutation = useCreatePrompt({
     onSuccess: (response) => {
-      navigate(`/d/prompts/${response.prompt.groupId}`, { replace: true });
+      const id = response.prompt?.groupId || response.group?._id;
+      if (id) {
+        navigate(`/d/prompts/${id}`, { replace: true });
+        return;
+      }
+      navigate('/d/prompts', { replace: true });
+    },
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { error?: string; message?: string } }; message?: string };
+      showToast({
+        message:
+          err.response?.data?.error ||
+          err.response?.data?.message ||
+          err.message ||
+          localize('com_ui_error'),
+        status: 'error',
+      });
     },
   });
 
