@@ -18,6 +18,7 @@ const usersFile = path.join(dataDir, 'agentbot-users.json');
 const secretFile = path.join(dataDir, 'agentbot-secret.txt');
 const convosFile = path.join(dataDir, 'agentbot-convos.json');
 const presetsFile = path.join(dataDir, 'agentbot-presets.json');
+const agentsFile = path.join(dataDir, 'agentbot-agents.json');
 const filesMetaFile = path.join(dataDir, 'agentbot-files.json');
 const filesDir = path.join(dataDir, 'files');
 const NO_PARENT = '00000000-0000-0000-0000-000000000000';
@@ -348,6 +349,48 @@ const EXECUTE_CODE_TOOL = {
 };
 
 const DEFAULT_GEMINI = 'gemini-2.5-flash';
+const DEFAULT_AGENT_ID = 'agent_pbmp_executive_analyst';
+const DEFAULT_AGENT_INSTRUCTIONS =
+  'You are the PBMP Executive Analyst for Grow24 / HBMP. PBMP means Personal & Business Management Platform, not pharmacy.\n' +
+  'On every management question:\n' +
+  '1. Restate the decision in one sentence.\n' +
+  '2. Fetch internal facts first: file_search on company documents, then PBMP tools (get_project, get_customer, get_sales, get_project_actuals, get_project_risks).\n' +
+  '3. Use execute_code for arithmetic from retrieved figures. Never invent rupee amounts.\n' +
+  '4. Structure with MECE. Close with one recommendation and a sequence (who / where / next).\n' +
+  '5. Prefer a table when comparing markets or KPIs.\n' +
+  '6. Before any write (create_requirement, update_project_status, create_risk, update_risk), state the payload and wait for human approval.\n' +
+  'Product X last-12-month sample: Mumbai ₹18.2 Cr ROI 24% Medium; Delhi ₹15.7 Cr ROI 19% Low; Bangalore ₹13.6 Cr ROI 16% Medium.\n' +
+  'Default recommendation unless retrieved data contradicts it: launch Mumbai → Delhi → Bangalore.';
+
+function seedDefaultAgent() {
+  const list = readAgents();
+  if (list.some((item) => item.id === DEFAULT_AGENT_ID)) return;
+  const tools = ['file_search', 'execute_code', ...PBMP_TOOL_DEFS.map((tool) => `${tool.name}_mcp_pbmp`)];
+  list.unshift(
+    normalizeAgent({
+      id: DEFAULT_AGENT_ID,
+      _id: DEFAULT_AGENT_ID,
+      name: 'PBMP Executive Analyst',
+      description: 'Internal facts, then recommendation for Product X markets.',
+      instructions: DEFAULT_AGENT_INSTRUCTIONS,
+      provider: 'google',
+      model: DEFAULT_GEMINI,
+      tools,
+      category: 'general',
+      isPublic: true,
+      is_promoted: true,
+      conversation_starters: [
+        'We are considering launching Product X in three Indian markets. Use our internal sales and cost information, analyse the economics and risks, recommend where we should launch, and give me a management table.',
+      ],
+      author: 'system',
+      authorName: 'HBMP AgentBot',
+    }),
+  );
+  writeAgents(list);
+  console.log('[agentbot-stub] seeded PBMP Executive Analyst agent');
+}
+
+seedDefaultAgent();
 const GEMINI_FALLBACKS = [
   'gemini-2.5-flash',
   'gemini-3.5-flash',
@@ -542,6 +585,99 @@ function readFiles() {
 
 function writeFiles(store) {
   fs.writeFileSync(filesMetaFile, JSON.stringify(store));
+}
+
+function readAgents() {
+  try {
+    const list = JSON.parse(fs.readFileSync(agentsFile, 'utf8'));
+    return Array.isArray(list) ? list : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeAgents(list) {
+  fs.writeFileSync(agentsFile, JSON.stringify(list, null, 2));
+}
+
+function normalizeAgent(raw, user) {
+  const now = Date.now();
+  const id = raw.id || `agent_${crypto.randomBytes(6).toString('hex')}`;
+  const tools = Array.isArray(raw.tools)
+    ? raw.tools
+        .map((item) => {
+          if (typeof item === 'string') return item;
+          return item && (item.name || item.pluginKey);
+        })
+        .filter(Boolean)
+    : [];
+  const provider =
+    typeof raw.provider === 'string'
+      ? raw.provider
+      : (raw.provider && (raw.provider.value || raw.provider.label)) || 'google';
+  return {
+    _id: raw._id || id,
+    id,
+    name: raw.name || 'Untitled Agent',
+    description: raw.description || '',
+    instructions: raw.instructions || '',
+    author: raw.author || (user && user.id) || 'system',
+    authorName: raw.authorName || (user && user.name) || 'agentbot',
+    created_at: raw.created_at || now,
+    updated_at: now,
+    avatar: raw.avatar === undefined ? null : raw.avatar,
+    tools,
+    provider,
+    model: raw.model || DEFAULT_GEMINI,
+    model_parameters: raw.model_parameters || {},
+    conversation_starters: raw.conversation_starters || [],
+    tool_resources: raw.tool_resources || {},
+    artifacts: raw.artifacts || '',
+    category: raw.category || 'general',
+    end_after_tools: !!raw.end_after_tools,
+    hide_sequential_outputs: !!raw.hide_sequential_outputs,
+    recursion_limit: raw.recursion_limit,
+    agent_ids: raw.agent_ids || [],
+    edges: raw.edges || [],
+    support_contact: raw.support_contact,
+    isPublic: raw.isPublic !== false,
+    is_promoted: !!raw.is_promoted,
+    version: raw.version || 1,
+    versions: raw.versions || [],
+  };
+}
+
+function findAgent(id) {
+  if (!id) return null;
+  return readAgents().find((item) => item.id === id || item._id === id) || null;
+}
+
+function listAgentsPayload(list) {
+  const data = list || [];
+  return {
+    object: 'list',
+    data,
+    first_id: data[0] ? data[0].id : '',
+    last_id: data.length ? data[data.length - 1].id : '',
+    has_more: false,
+  };
+}
+
+function agentToolPlugins() {
+  const plugins = [
+    { name: 'File Search', pluginKey: 'file_search', description: 'Search company documents and uploads.', authenticated: true },
+    { name: 'Code Interpreter', pluginKey: 'execute_code', description: 'Run Python for calculations.', authenticated: true },
+    { name: 'Web Search', pluginKey: 'web_search', description: 'Search the public web when enabled.', authenticated: true },
+  ];
+  for (const tool of PBMP_TOOL_DEFS) {
+    plugins.push({
+      name: tool.name,
+      pluginKey: `${tool.name}_mcp_pbmp`,
+      description: tool.description,
+      authenticated: true,
+    });
+  }
+  return plugins;
 }
 
 function publicFile(rec) {
@@ -1362,8 +1498,198 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (method === 'GET' && url === '/api/agents/tools') {
+    send(res, 200, agentToolPlugins());
+    return;
+  }
+
+  if (method === 'GET' && url === '/api/agents/categories') {
+    const list = readAgents();
+    const counts = {};
+    for (const agent of list) {
+      const key = agent.category || 'general';
+      counts[key] = (counts[key] || 0) + 1;
+    }
+    const categories = Object.keys(counts).map((value) => ({
+      value,
+      label: value.charAt(0).toUpperCase() + value.slice(1),
+      count: counts[value],
+      description: '',
+    }));
+    if (list.some((item) => item.is_promoted)) {
+      categories.unshift({
+        value: 'promoted',
+        label: 'Promoted',
+        count: list.filter((item) => item.is_promoted).length,
+        description: 'Recommended agents',
+      });
+    }
+    categories.push({ value: 'all', label: 'All', count: list.length, description: 'All available agents' });
+    send(res, 200, categories);
+    return;
+  }
+
+  if (method === 'GET' && url === '/api/agents/actions') {
+    send(res, 200, []);
+    return;
+  }
+
   if (method === 'GET' && url === '/api/agents') {
-    send(res, 200, emptyList);
+    let list = readAgents();
+    const search = String(qs.get('search') || '').trim().toLowerCase();
+    const category = String(qs.get('category') || '').trim();
+    const promoted = qs.get('promoted');
+    if (category && category !== 'all') {
+      if (category === 'promoted') list = list.filter((item) => item.is_promoted);
+      else list = list.filter((item) => (item.category || 'general') === category);
+    }
+    if (promoted === '1') list = list.filter((item) => item.is_promoted);
+    if (promoted === '0') list = list.filter((item) => !item.is_promoted);
+    if (search) {
+      list = list.filter((item) =>
+        `${item.name || ''} ${item.description || ''}`.toLowerCase().includes(search),
+      );
+    }
+    const limit = Math.max(1, Number(qs.get('limit') || 50) || 50);
+    send(res, 200, listAgentsPayload(list.slice(0, limit)));
+    return;
+  }
+
+  if (method === 'POST' && url === '/api/agents') {
+    const user = userFromReq(req) || (sameSiteRequest(req) ? guestUser() : null);
+    if (!user) {
+      send(res, 401, { error: 'Unauthorized. Please sign in again.' });
+      return;
+    }
+    const body = await readBody(req);
+    const agent = normalizeAgent(body, user);
+    const list = readAgents();
+    list.unshift(agent);
+    writeAgents(list);
+    send(res, 201, agent);
+    return;
+  }
+
+  const agentExpanded = url.match(/^\/api\/agents\/([^/]+)\/expanded$/);
+  if (method === 'GET' && agentExpanded) {
+    const agent = findAgent(decodeURIComponent(agentExpanded[1]));
+    if (!agent) {
+      send(res, 404, { error: 'Agent not found' });
+      return;
+    }
+    send(res, 200, agent);
+    return;
+  }
+
+  if (method === 'POST' && /^\/api\/agents\/[^/]+\/duplicate$/.test(url)) {
+    const user = userFromReq(req) || (sameSiteRequest(req) ? guestUser() : null);
+    const id = decodeURIComponent(url.split('/')[3]);
+    const source = findAgent(id);
+    if (!source) {
+      send(res, 404, { error: 'Agent not found' });
+      return;
+    }
+    const copy = normalizeAgent(
+      {
+        ...source,
+        id: undefined,
+        _id: undefined,
+        name: `${source.name || 'Agent'} (copy)`,
+        is_promoted: false,
+      },
+      user,
+    );
+    const list = readAgents();
+    list.unshift(copy);
+    writeAgents(list);
+    send(res, 201, { agent: copy, actions: [] });
+    return;
+  }
+
+  if (method === 'POST' && /^\/api\/agents\/[^/]+\/revert$/.test(url)) {
+    const id = decodeURIComponent(url.split('/')[3]);
+    const agent = findAgent(id);
+    if (!agent) {
+      send(res, 404, { error: 'Agent not found' });
+      return;
+    }
+    send(res, 200, agent);
+    return;
+  }
+
+  if (method === 'POST' && /\/api\/files\/images\/agents\/[^/]+\/avatar/.test(url)) {
+    const id = decodeURIComponent(url.split('/')[5]);
+    const agent = findAgent(id);
+    if (!agent) {
+      send(res, 404, { error: 'Agent not found' });
+      return;
+    }
+    send(res, 200, agent);
+    return;
+  }
+
+  if (method === 'GET' && /^\/api\/agents\/[^/]+$/.test(url) && !url.startsWith('/api/agents/chat')) {
+    const id = decodeURIComponent(url.slice('/api/agents/'.length));
+    const reserved = new Set(['tools', 'categories', 'actions', 'chat', 'marketplace']);
+    if (reserved.has(id)) {
+      send(res, 200, id === 'actions' || id === 'tools' ? [] : emptyList);
+      return;
+    }
+    const agent = findAgent(id);
+    if (!agent) {
+      send(res, 404, { error: 'Agent not found' });
+      return;
+    }
+    send(res, 200, agent);
+    return;
+  }
+
+  if (method === 'PATCH' && /^\/api\/agents\/[^/]+$/.test(url)) {
+    const user = userFromReq(req) || (sameSiteRequest(req) ? guestUser() : null);
+    const id = decodeURIComponent(url.slice('/api/agents/'.length));
+    const body = await readBody(req);
+    const list = readAgents();
+    const index = list.findIndex((item) => item.id === id || item._id === id);
+    if (index < 0) {
+      send(res, 404, { error: 'Agent not found' });
+      return;
+    }
+    const merged = normalizeAgent({ ...list[index], ...body, id: list[index].id, _id: list[index]._id }, user);
+    merged.created_at = list[index].created_at;
+    merged.author = list[index].author;
+    merged.version = (list[index].version || 1) + 1;
+    list[index] = merged;
+    writeAgents(list);
+    send(res, 200, merged);
+    return;
+  }
+
+  if (method === 'DELETE' && /^\/api\/agents\/[^/]+$/.test(url)) {
+    const id = decodeURIComponent(url.slice('/api/agents/'.length));
+    const previous = readAgents();
+    const next = previous.filter((item) => item.id !== id && item._id !== id);
+    writeAgents(next);
+    send(res, 200, { acknowledged: true, deletedCount: previous.length - next.length });
+    return;
+  }
+
+  if (method === 'GET' && /\/api\/permissions\/[^/]+\/[^/]+\/effective$/.test(url)) {
+    send(res, 200, { permissionBits: 15 });
+    return;
+  }
+
+  if (method === 'GET' && /\/api\/permissions\/[^/]+\/roles$/.test(url)) {
+    send(res, 200, [
+      { accessRoleId: 'agent_viewer', name: 'Viewer', resourceType: 'agent', permBits: 1 },
+      { accessRoleId: 'agent_editor', name: 'Editor', resourceType: 'agent', permBits: 3 },
+      { accessRoleId: 'agent_owner', name: 'Owner', resourceType: 'agent', permBits: 15 },
+    ]);
+    return;
+  }
+
+  if (method === 'GET' && /\/api\/permissions\/[^/]+\/[^/]+$/.test(url)) {
+    const parts = url.split('/');
+    send(res, 200, { resourceType: parts[3], resourceId: parts[4], principals: [] });
     return;
   }
 
@@ -1527,8 +1853,18 @@ const server = http.createServer(async (req, res) => {
 
     const key = geminiKey();
     const text = String(body.text || '').trim();
-    let model = resolveGeminiModel(body.model || body.modelOptions?.model || DEFAULT_GEMINI);
     const endpoint = String(body.endpoint || url.split('/').pop() || 'google');
+    const earlyOptions = body.endpointOption || body.modelOptions || body;
+    const chatAgentId = String(
+      body.agent_id || earlyOptions.agent_id || (earlyOptions.agent && earlyOptions.agent.id) || '',
+    ).trim();
+    const chatAgent = findAgent(chatAgentId);
+    let model = resolveGeminiModel(
+      (chatAgent && chatAgent.model) || body.model || body.modelOptions?.model || DEFAULT_GEMINI,
+    );
+    if (/^agent_/i.test(String(body.model || ''))) {
+      model = resolveGeminiModel((chatAgent && chatAgent.model) || DEFAULT_GEMINI);
+    }
     let conversationId = body.conversationId;
     if (!conversationId || conversationId === 'new') {
       conversationId = crypto.randomUUID();
@@ -1576,6 +1912,7 @@ const server = http.createServer(async (req, res) => {
         title,
         endpoint,
         model,
+        agent_id: chatAgentId || undefined,
         createdAt: now,
         updatedAt: new Date().toISOString(),
         user: user.id,
@@ -1613,7 +1950,15 @@ const server = http.createServer(async (req, res) => {
       const store = readConvos();
       const history = store.messages[conversationId] || [];
       const options = body.endpointOption || body.modelOptions || body;
-      const promptPrefix = String(options.promptPrefix || body.promptPrefix || '').trim();
+      const savedAgent = chatAgent || findAgent(String(body.agent_id || options.agent_id || (options.agent && options.agent.id) || '').trim());
+      const agentInstructions = String(
+        (savedAgent && savedAgent.instructions) ||
+          (options.agent && options.agent.instructions) ||
+          '',
+      ).trim();
+      const promptPrefix = [agentInstructions, String(options.promptPrefix || body.promptPrefix || '').trim()]
+        .filter(Boolean)
+        .join('\n\n');
       const generationConfig = {};
       const temperature = options.temperature ?? body.temperature;
       const topP = options.topP ?? body.topP;
@@ -1632,8 +1977,9 @@ const server = http.createServer(async (req, res) => {
         generationConfig.maxOutputTokens = Number(maxOutputTokens);
       }
       const ephemeral = body.ephemeralAgent || options.ephemeralAgent || {};
-      const fileSearchOn = ephemeral.file_search === true;
-      const codeOn = ephemeral.execute_code !== false;
+      const agentTools = (savedAgent && savedAgent.tools) || [];
+      const fileSearchOn = ephemeral.file_search === true || agentTools.includes('file_search');
+      const codeOn = ephemeral.execute_code !== false || agentTools.includes('execute_code');
       const retrieved = searchFiles(text, user, {
         limit: fileSearchOn ? 5 : 3,
         minScore: fileSearchOn ? 2 : 6,
