@@ -337,6 +337,7 @@ const PBMP_SYSTEM =
   'If PBMP INTERNAL facts are in this prompt, copy those rupee figures exactly. Do not invent different numbers. ' +
   'Product X last-12-month sample: Mumbai ₹18.2 Cr ROI 24% Medium; Delhi ₹15.7 Cr ROI 19% Low; Bangalore ₹13.6 Cr ROI 16% Medium. ' +
   'Use file_search for company documents (policy, catalogue, customers, marketing, contract, business case, sales CSV). Cite the filename. ' +
+  'If File Search snippets are in this prompt, use those document facts and cite the filename (for example 08-business-policy.md, 04-customers.md). ' +
   'Use execute_code for arithmetic, totals, ROI, percentages and tables. Print the result. Never invent a calculated figure.';
 
 const PBMP_TOOL_DEFS = [
@@ -785,7 +786,7 @@ async function fallbackCodeReply(text) {
 async function generateGeminiWithPbmp(key, model, userContents, extras = {}) {
   const tools = [
     ...(extras.pbmpOn === false ? [] : PBMP_TOOL_DEFS),
-    FILE_SEARCH_TOOL,
+    ...(extras.fileSearchOn === false ? [] : [FILE_SEARCH_TOOL]),
     EXECUTE_CODE_TOOL,
   ];
   const systemText = [
@@ -1471,9 +1472,59 @@ function formatSearchHits(result) {
       `### ${index + 1}. ${hit.filename}\n${hit.snippet}`,
   );
   return (
-    'Retrieved from File Search. Cite the filename. Do not invent figures missing from these snippets.\n\n' +
+    'File Search INTERNAL documents. Copy facts from these snippets. Cite the filename. Do not invent policy numbers or customer names.\n\n' +
     blocks.join('\n\n')
   );
+}
+
+function hitsFromSampleFile(filename) {
+  const rec = Object.values(readFiles()).find(
+    (item) => item.sample && String(item.filename).toLowerCase() === String(filename).toLowerCase(),
+  );
+  if (!rec) return [];
+  const text = readFileText(rec);
+  if (!text) return [];
+  return [{ file_id: rec.file_id, filename: rec.filename, snippet: text.slice(0, 1200), score: 100 }];
+}
+
+function prefetchFileSearch(text, user) {
+  const q = String(text || '');
+  const forced = [];
+  if (/policy|sop|first launch|roi|18\s*%|which market|may launch/i.test(q)) {
+    forced.push(...hitsFromSampleFile('08-business-policy.md'));
+  }
+  if (/tata|customer|delhi metro|bengaluru tech/i.test(q)) {
+    forced.push(...hitsFromSampleFile('04-customers.md'));
+  }
+  if (/contract/i.test(q)) {
+    forced.push(...hitsFromSampleFile('09-sample-contract.md'));
+  }
+  if (/catalogue|catalog|product x/i.test(q)) {
+    forced.push(...hitsFromSampleFile('02-product-catalogue.md'));
+  }
+  if (/business case|project alpha|market entry/i.test(q)) {
+    forced.push(...hitsFromSampleFile('10-product-x-business-case.md'));
+  }
+  if (/\.csv|sales csv|last 12/i.test(q)) {
+    forced.push(...hitsFromSampleFile('03-sales-product-x.csv'));
+  }
+  const searched = searchFiles(q, user, { limit: 5, minScore: 2 });
+  const seen = new Set();
+  const hits = [];
+  for (const hit of [...forced, ...(searched.hits || [])]) {
+    const key = String(hit.filename || '').toLowerCase();
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    hits.push(hit);
+    if (hits.length >= 5) break;
+  }
+  return formatSearchHits({ hits });
+}
+
+function fileSearchEnabledFlag(ephemeral, agentTools = []) {
+  if (ephemeral && ephemeral.file_search === false) return false;
+  if (ephemeral && ephemeral.file_search === true) return true;
+  return (agentTools || []).includes('file_search') || true;
 }
 
 function salesCsvPath() {
@@ -2504,15 +2555,11 @@ const server = http.createServer(async (req, res) => {
       }
       const ephemeral = body.ephemeralAgent || options.ephemeralAgent || {};
       const agentTools = (savedAgent && savedAgent.tools) || [];
-      const fileSearchOn = ephemeral.file_search === true || agentTools.includes('file_search');
-      const codeOn = ephemeral.execute_code !== false || agentTools.includes('execute_code');
-      const retrieved = searchFiles(text, user, {
-        limit: fileSearchOn ? 5 : 3,
-        minScore: fileSearchOn ? 2 : 6,
-      });
-      const fileSearchNote = formatSearchHits(retrieved);
+      const fileSearchOn = fileSearchEnabledFlag(ephemeral, agentTools);
+      const fileSearchNote = fileSearchOn ? prefetchFileSearch(text, user) : '';
       const pbmpOn = pbmpEnabled(ephemeral, agentTools);
       const pbmpNote = pbmpOn ? prefetchPbmp(text) : '';
+      const codeOn = ephemeral.execute_code !== false || agentTools.includes('execute_code');
       const codeNote = codeOn
         ? 'Code Interpreter is ON. For any arithmetic, total, ROI, percentage or table of numbers, call execute_code and print the result. Do not guess the calculated figure.'
         : '';
@@ -2520,6 +2567,7 @@ const server = http.createServer(async (req, res) => {
         promptPrefix,
         generationConfig,
         fileSearchNote,
+        fileSearchOn,
         pbmpNote,
         pbmpOn,
         codeNote,
@@ -2928,6 +2976,18 @@ if (process.argv.includes('--selftest-pbmp')) {
   const risks = runPbmpToolLocal('get_project_risks', { project_name: 'Project Alpha actuals' });
   const actuals = runPbmpToolLocal('get_project_actuals', { project_name: 'alpha' });
   const note = prefetchPbmp('Product X last 12 months sales Mumbai Delhi Bangalore');
+  const policyNote = prefetchFileSearch(
+    'What does our business policy say about which market we may launch first?',
+    { id: 'sample' },
+  );
+  const tataNote = prefetchFileSearch('Tata Motors customer', { id: 'sample' });
+  const fileOk =
+    policyNote.includes('08-business-policy.md') &&
+    policyNote.includes('18%') &&
+    tataNote.includes('04-customers.md') &&
+    tataNote.includes('Tata Motors') &&
+    fileSearchEnabledFlag({}) === true &&
+    fileSearchEnabledFlag({ file_search: false }) === false;
   const toggleOn = pbmpEnabled({ mcp: ['pbmp'] }) === true;
   const toggleOff = pbmpEnabled({ mcp: [] }) === false;
   const toggleClear = pbmpEnabled({ mcp: [MCP_CLEAR] }) === false;
@@ -2940,12 +3000,21 @@ if (process.argv.includes('--selftest-pbmp')) {
     note.includes('18.2') &&
     note.includes('15.7') &&
     note.includes('13.6') &&
+    fileOk &&
     toggleOn &&
     toggleOff &&
     toggleClear &&
     toggleDefault;
   console.log(ok ? 'pbmp selftest ok' : 'pbmp selftest FAIL');
-  console.log({ cities, tata: tata.data?.name, risks: (risks.data || []).map((r) => r.title), actuals: actuals.data, note: note.slice(0, 200) });
+  console.log({
+    cities,
+    tata: tata.data?.name,
+    risks: (risks.data || []).map((r) => r.title),
+    actuals: actuals.data,
+    fileOk,
+    policy: policyNote.includes('18%'),
+    tataFile: tataNote.includes('Tata Motors'),
+  });
   process.exit(ok ? 0 : 1);
 }
 
