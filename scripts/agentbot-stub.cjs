@@ -333,9 +333,9 @@ const ROLE_PERMISSIONS = {
 const MCP_URL = process.env.PBMP_MCP_URL || 'http://127.0.0.1:5202';
 const PBMP_SYSTEM =
   'You are the PBMP assistant for Grow24 / HBMP. PBMP means Personal & Business Management Platform, not pharmacy benefit management. ' +
-  'Use PBMP tools for sales, projects, customers, requirements and risks. ' +
+  'Use PBMP tools for sales, projects, customers, requirements and risks. Call get_sales, get_project, get_customer, get_project_actuals, get_project_risks before quoting rupees. ' +
+  'If PBMP INTERNAL facts are in this prompt, copy those rupee figures exactly. Do not invent different numbers. ' +
   'Product X last-12-month sample: Mumbai ₹18.2 Cr ROI 24% Medium; Delhi ₹15.7 Cr ROI 19% Low; Bangalore ₹13.6 Cr ROI 16% Medium. ' +
-  'Never invent rupee figures when a tool can return them. ' +
   'Use file_search for company documents (policy, catalogue, customers, marketing, contract, business case, sales CSV). Cite the filename. ' +
   'Use execute_code for arithmetic, totals, ROI, percentages and tables. Print the result. Never invent a calculated figure.';
 
@@ -350,6 +350,230 @@ const PBMP_TOOL_DEFS = [
   { name: 'create_risk', description: 'Add a risk to a PBMP project.', parameters: { type: 'object', properties: { project: { type: 'string' }, title: { type: 'string' }, severity: { type: 'string' } }, required: ['project', 'title'] } },
   { name: 'update_risk', description: 'Update a PBMP risk.', parameters: { type: 'object', properties: { id: { type: 'string' }, status: { type: 'string' } }, required: ['id'] } },
 ];
+
+const PBMP_STORE = {
+  projects: [
+    {
+      name: 'Product X Market Entry',
+      status: 'planning',
+      geography: ['Mumbai', 'Delhi', 'Bangalore'],
+      summary: 'Proposed launch of Product X in three Indian metro markets.',
+      planRevenueCr: 50,
+      planRoiPct: 22,
+    },
+    {
+      name: 'Project Alpha',
+      status: 'in_progress',
+      geography: ['India'],
+      summary: 'Existing delivery programme used for actuals-vs-plan review.',
+      planRevenueCr: 12,
+      planRoiPct: 18,
+      scheduleVariancePct: -18,
+      costVariancePct: 9,
+      benefits: 'on_plan',
+    },
+  ],
+  customers: [
+    { name: 'Tata Motors', segment: 'Enterprise', region: 'Mumbai', status: 'active' },
+    { name: 'Delhi Metro Corp', segment: 'Public', region: 'Delhi', status: 'active' },
+    { name: 'Bengaluru Tech Parks', segment: 'Enterprise', region: 'Bangalore', status: 'prospect' },
+  ],
+  sales: [
+    { product: 'Product X', geography: 'Mumbai', period: 'last_12_months', revenueCr: 18.2, roiPct: 24, risk: 'Medium', units: 410 },
+    { product: 'Product X', geography: 'Delhi', period: 'last_12_months', revenueCr: 15.7, roiPct: 19, risk: 'Low', units: 355 },
+    { product: 'Product X', geography: 'Bangalore', period: 'last_12_months', revenueCr: 13.6, roiPct: 16, risk: 'Medium', units: 298 },
+  ],
+  actuals: {
+    'Project Alpha': {
+      planCostCr: 8.4,
+      actualCostCr: 9.16,
+      planScheduleMonths: 14,
+      elapsedMonths: 16.5,
+      revenueRecognizedCr: 6.1,
+    },
+    'Product X Market Entry': {
+      planCostCr: 22,
+      actualCostCr: 4.1,
+      planScheduleMonths: 18,
+      elapsedMonths: 3,
+      revenueRecognizedCr: 0,
+    },
+  },
+  requirements: [],
+  risks: [
+    { id: 'R-1', project: 'Project Alpha', title: 'Vendor delay', severity: 'High', status: 'open' },
+    { id: 'R-2', project: 'Project Alpha', title: 'Cost escalation', severity: 'Medium', status: 'open' },
+    { id: 'R-3', project: 'Project Alpha', title: 'Resource shortage', severity: 'Medium', status: 'open' },
+  ],
+};
+let pbmpReqSeq = 1;
+let pbmpRiskSeq = 4;
+
+function normPbmp(value) {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function pbmpToolName(name) {
+  return String(name || '')
+    .replace(/_mcp_pbmp$/i, '')
+    .replace(/^mcp_pbmp_/i, '')
+    .trim();
+}
+
+function toolArgs(raw) {
+  if (!raw) return {};
+  if (typeof raw === 'string') {
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return {};
+    }
+  }
+  return raw;
+}
+
+function findPbmpProject(name) {
+  const q = normPbmp(name);
+  if (!q) return PBMP_STORE.projects[0];
+  return (
+    PBMP_STORE.projects.find((item) => normPbmp(item.name).includes(q) || q.includes(normPbmp(item.name))) ||
+    (/product x|market entry|launch/i.test(name || '') ? PBMP_STORE.projects[0] : null) ||
+    (/alpha/i.test(name || '') ? PBMP_STORE.projects[1] : null)
+  );
+}
+
+function findPbmpCustomer(name) {
+  const q = normPbmp(name);
+  if (!q) return null;
+  return PBMP_STORE.customers.find(
+    (item) => normPbmp(item.name).includes(q) || q.includes(normPbmp(item.name).split(' ')[0]),
+  );
+}
+
+function findPbmpSales(args) {
+  const product = normPbmp(args.product || args.name || args.query || 'product x');
+  const geography = normPbmp(args.geography || args.city || args.market || '');
+  const rows = PBMP_STORE.sales.filter((row) => {
+    const rowProduct = normPbmp(row.product);
+    const rowGeo = normPbmp(row.geography);
+    const productMatch =
+      !product || product.includes(rowProduct) || rowProduct.includes(product) || product.includes('product x');
+    const geoMatch = !geography || rowGeo.includes(geography) || geography.includes(rowGeo);
+    return productMatch && geoMatch;
+  });
+  if (rows.length) return rows;
+  return PBMP_STORE.sales.filter((row) => row.product === 'Product X');
+}
+
+function runPbmpToolLocal(name, args = {}) {
+  const tool = pbmpToolName(name);
+  const a = toolArgs(args);
+  switch (tool) {
+    case 'get_project': {
+      const project = findPbmpProject(a.project_name || a.project || a.name);
+      return project ? { ok: true, data: project } : { ok: false, error: `Project not found: ${a.project_name || a.project}` };
+    }
+    case 'get_customer': {
+      const customer = findPbmpCustomer(a.customer_name || a.customer || a.name);
+      return customer ? { ok: true, data: customer } : { ok: false, error: `Customer not found: ${a.customer_name || a.customer}` };
+    }
+    case 'get_sales':
+      return { ok: true, data: findPbmpSales(a) };
+    case 'create_requirement': {
+      const item = {
+        id: `REQ-${String(pbmpReqSeq++).padStart(3, '0')}`,
+        description: a.description || '',
+        status: 'open',
+        createdAt: new Date().toISOString(),
+      };
+      PBMP_STORE.requirements.push(item);
+      return { ok: true, data: item };
+    }
+    case 'update_project_status': {
+      const project = findPbmpProject(a.project || a.project_name);
+      if (!project) return { ok: false, error: `Project not found: ${a.project}` };
+      project.status = a.status;
+      project.updatedAt = new Date().toISOString();
+      return { ok: true, data: project };
+    }
+    case 'get_project_actuals': {
+      const project = findPbmpProject(a.project_name || a.project);
+      if (!project) return { ok: false, error: `Project not found: ${a.project_name}` };
+      return { ok: true, data: { project: project.name, ...(PBMP_STORE.actuals[project.name] || {}) } };
+    }
+    case 'get_project_risks': {
+      const project = findPbmpProject(a.project_name || a.project);
+      if (!project) return { ok: true, data: [] };
+      return { ok: true, data: PBMP_STORE.risks.filter((item) => item.project === project.name) };
+    }
+    case 'create_risk': {
+      const project = findPbmpProject(a.project || a.project_name);
+      if (!project) return { ok: false, error: `Project not found: ${a.project}` };
+      const item = {
+        id: `R-${pbmpRiskSeq++}`,
+        project: project.name,
+        title: a.title,
+        severity: a.severity || 'Medium',
+        status: 'open',
+        createdAt: new Date().toISOString(),
+      };
+      PBMP_STORE.risks.push(item);
+      return { ok: true, data: item };
+    }
+    case 'update_risk': {
+      const item = PBMP_STORE.risks.find((risk) => risk.id === a.id);
+      if (!item) return { ok: false, error: `Risk not found: ${a.id}` };
+      if (a.status) item.status = a.status;
+      if (a.title) item.title = a.title;
+      if (a.severity) item.severity = a.severity;
+      item.updatedAt = new Date().toISOString();
+      return { ok: true, data: item };
+    }
+    default:
+      return { ok: false, error: `Unknown tool: ${tool}` };
+  }
+}
+
+function formatPbmpHits(name, result) {
+  if (!result || result.ok === false) return '';
+  const data = result.data;
+  if (name === 'get_sales' && Array.isArray(data) && data.length) {
+    const lines = data.map(
+      (row) =>
+        `- ${row.geography}: ₹${row.revenueCr} Cr, ROI ${row.roiPct}%, risk ${row.risk}, units ${row.units} (${row.period})`,
+    );
+    return (
+      'PBMP get_sales INTERNAL facts. Use these rupee figures. Do not invent different numbers.\n' +
+      lines.join('\n')
+    );
+  }
+  return `PBMP ${name} INTERNAL facts: ${JSON.stringify(data)}`;
+}
+
+function prefetchPbmp(text) {
+  const q = String(text || '');
+  const notes = [];
+  if (/product\s*x|sales|mumbai|delhi|bangalore|launch|roi|market|last 12|last twelve/i.test(q)) {
+    notes.push(formatPbmpHits('get_sales', runPbmpToolLocal('get_sales', { product: 'Product X', period: 'last_12_months' })));
+  }
+  if (/tata|customer/i.test(q)) {
+    notes.push(formatPbmpHits('get_customer', runPbmpToolLocal('get_customer', { customer_name: 'Tata Motors' })));
+  }
+  if (/delhi metro/i.test(q)) {
+    notes.push(formatPbmpHits('get_customer', runPbmpToolLocal('get_customer', { customer_name: 'Delhi Metro' })));
+  }
+  if (/project alpha|actuals|variance|vendor delay/i.test(q)) {
+    notes.push(formatPbmpHits('get_project_actuals', runPbmpToolLocal('get_project_actuals', { project_name: 'Project Alpha' })));
+    notes.push(formatPbmpHits('get_project_risks', runPbmpToolLocal('get_project_risks', { project_name: 'Project Alpha' })));
+  }
+  if (/market entry|product x.*project|get_project/i.test(q)) {
+    notes.push(formatPbmpHits('get_project', runPbmpToolLocal('get_project', { project_name: 'Product X Market Entry' })));
+  }
+  return notes.filter(Boolean).join('\n\n');
+}
 
 const FILE_SEARCH_TOOL = {
   name: 'file_search',
@@ -485,8 +709,21 @@ function localJson(pathname, body, method = 'GET') {
   });
 }
 
+function pbmpEnabled(ephemeral) {
+  const mcp = ephemeral && ephemeral.mcp;
+  if (Array.isArray(mcp)) return mcp.includes('pbmp');
+  if (mcp === false) return false;
+  return true;
+}
+
 async function callPbmpTool(name, args) {
-  return localJson(`/tools/${name}`, args || {}, 'POST');
+  const tool = pbmpToolName(name);
+  const payload = toolArgs(args);
+  const remote = await localJson(`/tools/${tool}`, payload, 'POST');
+  if (remote && remote.ok === true) return remote;
+  const local = runPbmpToolLocal(tool, payload);
+  if (local && local.ok) return local;
+  return remote && typeof remote === 'object' ? remote : local;
 }
 
 async function generateGemini(key, model, contents, extra = {}) {
@@ -541,10 +778,15 @@ async function fallbackCodeReply(text) {
 }
 
 async function generateGeminiWithPbmp(key, model, userContents, extras = {}) {
-  const tools = [...PBMP_TOOL_DEFS, FILE_SEARCH_TOOL, EXECUTE_CODE_TOOL];
+  const tools = [
+    ...(extras.pbmpOn === false ? [] : PBMP_TOOL_DEFS),
+    FILE_SEARCH_TOOL,
+    EXECUTE_CODE_TOOL,
+  ];
   const systemText = [
     PBMP_SYSTEM,
     extras.promptPrefix,
+    extras.pbmpNote,
     extras.fileSearchNote,
     extras.codeNote,
   ].filter(Boolean).join('\n\n');
@@ -2264,6 +2506,8 @@ const server = http.createServer(async (req, res) => {
         minScore: fileSearchOn ? 2 : 6,
       });
       const fileSearchNote = formatSearchHits(retrieved);
+      const pbmpOn = pbmpEnabled(ephemeral);
+      const pbmpNote = pbmpOn ? prefetchPbmp(text) : '';
       const codeNote = codeOn
         ? 'Code Interpreter is ON. For any arithmetic, total, ROI, percentage or table of numbers, call execute_code and print the result. Do not guess the calculated figure.'
         : '';
@@ -2271,6 +2515,8 @@ const server = http.createServer(async (req, res) => {
         promptPrefix,
         generationConfig,
         fileSearchNote,
+        pbmpNote,
+        pbmpOn,
         codeNote,
         user,
         userQuery: text,
@@ -2669,6 +2915,26 @@ const server = http.createServer(async (req, res) => {
 
   send(res, 404, { text: `Route ${method} ${url} not found`, message: `Route ${method} ${url} not found` });
 });
+
+if (process.argv.includes('--selftest-pbmp')) {
+  const sales = runPbmpToolLocal('get_sales_mcp_pbmp', { product: 'Product X last 12 months' });
+  const cities = (sales.data || []).map((row) => `${row.geography}:${row.revenueCr}`).join(',');
+  const tata = runPbmpToolLocal('get_customer', { customer_name: 'Tata Motors' });
+  const risks = runPbmpToolLocal('get_project_risks', { project_name: 'Project Alpha actuals' });
+  const actuals = runPbmpToolLocal('get_project_actuals', { project_name: 'alpha' });
+  const note = prefetchPbmp('Product X last 12 months sales Mumbai Delhi Bangalore');
+  const ok =
+    cities === 'Mumbai:18.2,Delhi:15.7,Bangalore:13.6' &&
+    tata.data?.name === 'Tata Motors' &&
+    (risks.data || []).some((item) => item.title === 'Vendor delay') &&
+    actuals.data?.actualCostCr === 9.16 &&
+    note.includes('18.2') &&
+    note.includes('15.7') &&
+    note.includes('13.6');
+  console.log(ok ? 'pbmp selftest ok' : 'pbmp selftest FAIL');
+  console.log({ cities, tata: tata.data?.name, risks: (risks.data || []).map((r) => r.title), actuals: actuals.data, note: note.slice(0, 200) });
+  process.exit(ok ? 0 : 1);
+}
 
 server.listen(PORT, HOST, () => {
   console.log(`[agentbot-stub] listening on ${HOST}:${PORT}`);
