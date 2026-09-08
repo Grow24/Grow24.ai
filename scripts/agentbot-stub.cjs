@@ -275,7 +275,7 @@ const startupConfig = {
     mcpServers: { placeholder: 'MCP Servers' },
   },
   mcpServers: {
-    pbmp: { startup: true, chatMenu: true, isOAuth: false },
+    pbmp: { startup: true, chatMenu: true, isOAuth: false, customUserVars: {} },
   },
   turnstile: {},
   balance: { enabled: false },
@@ -709,11 +709,16 @@ function localJson(pathname, body, method = 'GET') {
   });
 }
 
-function pbmpEnabled(ephemeral) {
+const MCP_CLEAR = 'sys__clear__sys';
+
+function pbmpEnabled(ephemeral, agentTools = []) {
   const mcp = ephemeral && ephemeral.mcp;
-  if (Array.isArray(mcp)) return mcp.includes('pbmp');
+  if (Array.isArray(mcp)) {
+    if (mcp.length === 1 && mcp[0] === MCP_CLEAR) return false;
+    return mcp.includes('pbmp');
+  }
   if (mcp === false) return false;
-  return true;
+  return (agentTools || []).some((tool) => String(tool).includes('mcp_pbmp')) || mcp == null;
 }
 
 async function callPbmpTool(name, args) {
@@ -2506,7 +2511,7 @@ const server = http.createServer(async (req, res) => {
         minScore: fileSearchOn ? 2 : 6,
       });
       const fileSearchNote = formatSearchHits(retrieved);
-      const pbmpOn = pbmpEnabled(ephemeral);
+      const pbmpOn = pbmpEnabled(ephemeral, agentTools);
       const pbmpNote = pbmpOn ? prefetchPbmp(text) : '';
       const codeNote = codeOn
         ? 'Code Interpreter is ON. For any arithmetic, total, ROI, percentage or table of numbers, call execute_code and print the result. Do not guess the calculated figure.'
@@ -2923,6 +2928,10 @@ if (process.argv.includes('--selftest-pbmp')) {
   const risks = runPbmpToolLocal('get_project_risks', { project_name: 'Project Alpha actuals' });
   const actuals = runPbmpToolLocal('get_project_actuals', { project_name: 'alpha' });
   const note = prefetchPbmp('Product X last 12 months sales Mumbai Delhi Bangalore');
+  const toggleOn = pbmpEnabled({ mcp: ['pbmp'] }) === true;
+  const toggleOff = pbmpEnabled({ mcp: [] }) === false;
+  const toggleClear = pbmpEnabled({ mcp: [MCP_CLEAR] }) === false;
+  const toggleDefault = pbmpEnabled({}) === true;
   const ok =
     cities === 'Mumbai:18.2,Delhi:15.7,Bangalore:13.6' &&
     tata.data?.name === 'Tata Motors' &&
@@ -2930,7 +2939,11 @@ if (process.argv.includes('--selftest-pbmp')) {
     actuals.data?.actualCostCr === 9.16 &&
     note.includes('18.2') &&
     note.includes('15.7') &&
-    note.includes('13.6');
+    note.includes('13.6') &&
+    toggleOn &&
+    toggleOff &&
+    toggleClear &&
+    toggleDefault;
   console.log(ok ? 'pbmp selftest ok' : 'pbmp selftest FAIL');
   console.log({ cities, tata: tata.data?.name, risks: (risks.data || []).map((r) => r.title), actuals: actuals.data, note: note.slice(0, 200) });
   process.exit(ok ? 0 : 1);

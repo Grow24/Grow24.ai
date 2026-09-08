@@ -50,7 +50,7 @@ describe('useMCPSelect', () => {
         wrapper: createWrapper(),
       });
 
-      expect(result.current.mcpValues).toEqual([]);
+      expect(result.current.mcpValues).toEqual(['pbmp']);
       expect(result.current.isPinned).toBe(true); // Default value from mcpPinnedAtom is true
       expect(typeof result.current.setMCPValues).toBe('function');
       expect(typeof result.current.setIsPinned).toBe('function');
@@ -62,7 +62,7 @@ describe('useMCPSelect', () => {
         wrapper: createWrapper(),
       });
 
-      expect(result.current.mcpValues).toEqual([]);
+      expect(result.current.mcpValues).toEqual(['pbmp']);
     });
 
     it('should use NEW_CONVO constant when conversationId is null', () => {
@@ -70,7 +70,7 @@ describe('useMCPSelect', () => {
         wrapper: createWrapper(),
       });
 
-      expect(result.current.mcpValues).toEqual([]);
+      expect(result.current.mcpValues).toEqual(['pbmp']);
     });
   });
 
@@ -101,7 +101,7 @@ describe('useMCPSelect', () => {
         result.current.setMCPValues('not-an-array');
       });
 
-      expect(result.current.mcpValues).toEqual([]);
+      expect(result.current.mcpValues).toEqual(['pbmp']);
     });
 
     it('should update isPinned state', () => {
@@ -258,8 +258,8 @@ describe('useMCPSelect', () => {
       // Switch to different conversation
       rerender({ conversationId: 'convo2' });
 
-      // Should have different state for new conversation
-      expect(result.current.mcpValues).toEqual([]);
+      // Should have different state for new conversation (demo default is pbmp)
+      expect(result.current.mcpValues).toEqual(['pbmp']);
 
       // Set values for second conversation
       act(() => {
@@ -517,7 +517,7 @@ describe('useMCPSelect', () => {
         wrapper: createWrapper(['test']),
       });
 
-      expect(result.current.mcpValues).toEqual([]);
+      expect(result.current.mcpValues).toEqual(['pbmp']);
 
       act(() => {
         result.current.setMCPValues(['test']);
@@ -531,7 +531,7 @@ describe('useMCPSelect', () => {
         wrapper: createWrapper(),
       });
 
-      expect(result.current.mcpValues).toEqual([]);
+      expect(result.current.mcpValues).toEqual(['pbmp']);
     });
 
     it('should handle very large arrays without performance issues', async () => {

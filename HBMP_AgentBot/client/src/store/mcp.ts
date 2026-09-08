@@ -9,7 +9,9 @@ export const mcpValuesAtomFamily = atomFamily((conversationId: string | null) =>
   const key = conversationId ?? Constants.NEW_CONVO;
   const storageKey = `${LocalStorageKeys.LAST_MCP_}${key}`;
 
-  return atomWithStorage<string[]>(storageKey, [], undefined, { getOnInit: true });
+  // AgentBot demo: keep pbmp selected on new chats and after the first
+  // message creates a real conversation id (empty default used to uncheck it).
+  return atomWithStorage<string[]>(storageKey, ['pbmp'], undefined, { getOnInit: true });
 });
 
 /**
