@@ -8,7 +8,8 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { spawn } = require('child_process');
+const zlib = require('zlib');
+const { spawn, execFileSync } = require('child_process');
 
 const PORT = Number(process.env.PORT || 5188);
 const HOST = process.env.HOST || '0.0.0.0';
@@ -367,8 +368,9 @@ const PBMP_SYSTEM =
   'Use PBMP tools for sales, projects, customers, requirements and risks. Call get_sales, get_project, get_customer, get_project_actuals, get_project_risks before quoting rupees. ' +
   'If PBMP INTERNAL facts are in this prompt, copy those rupee figures exactly. Do not invent different numbers. ' +
   'Product X last-12-month sample: Mumbai ₹18.2 Cr ROI 24% Medium; Delhi ₹15.7 Cr ROI 19% Low; Bangalore ₹13.6 Cr ROI 16% Medium. ' +
-  'Use file_search for company documents (policy, catalogue, customers, marketing, contract, business case, sales CSV). Cite the filename. ' +
+  'Use file_search for company documents (policy, catalogue, customers, marketing, contract, business case, sales CSV) and for files the user just uploaded. Cite the filename. ' +
   'If File Search snippets are in this prompt, use those document facts and cite the filename (for example 08-business-policy.md, 04-customers.md). ' +
+  'If the user attached a file, its content is in the message. Read it and answer. Never say you cannot access, open, or interpret attached files. ' +
   'Use execute_code for arithmetic, totals, ROI, percentages and tables. Print the result. Never invent a calculated figure.';
 
 const PBMP_TOOL_DEFS = [
@@ -610,7 +612,7 @@ function prefetchPbmp(text) {
 const FILE_SEARCH_TOOL = {
   name: 'file_search',
   description:
-    'Search company knowledge documents and uploaded files. Use for policy, catalogue, customers, marketing, contract, business case, and sales CSV. Do not invent figures found in documents.',
+    'Search company knowledge documents and uploaded files (PDF, CSV, notes). Use for policy, catalogue, customers, marketing, contract, business case, sales CSV, and the user\'s attached invoice or document. Do not invent figures found in documents.',
   parameters: {
     type: 'object',
     properties: {
@@ -843,8 +845,9 @@ async function generateGeminiWithPbmp(key, model, userContents, extras = {}) {
     PBMP_SYSTEM,
     extras.promptPrefix,
     extras.pbmpNote,
-    extras.fileSearchNote,
-    extras.codeNote,
+      extras.fileSearchNote,
+      extras.attachmentNote,
+      extras.codeNote,
   ].filter(Boolean).join('\n\n');
   const extra = {
     systemInstruction: { parts: [{ text: systemText }] },
@@ -864,6 +867,15 @@ async function generateGeminiWithPbmp(key, model, userContents, extras = {}) {
     const calls = parts.filter((part) => part.functionCall && part.functionCall.name);
     const text = geminiText(last.json);
     if (last.status >= 400) {
+      const errMsg = String(last.json?.error?.message || last.raw || '');
+      const hasInline = contents.some((item) => (item.parts || []).some((part) => part.inlineData));
+      if (hasInline && /inline|pdf|image|invalid argument|unsupported|too large|payload/i.test(errMsg)) {
+        contents = contents.map((item) => ({
+          ...item,
+          parts: (item.parts || []).filter((part) => !part.inlineData),
+        }));
+        continue;
+      }
       return { ...last, model, toolNotes };
     }
     if (!calls.length) {
@@ -1325,24 +1337,151 @@ function saveUploadedFile({ user, fields, file }) {
   return rec;
 }
 
+const MAX_INLINE_FILE_BYTES = 8 * 1024 * 1024;
+
+function findFileRecord(item, store = readFiles()) {
+  if (!item) return null;
+  if (item.file_id && store[item.file_id]) return store[item.file_id];
+  const ids = [item.file_id, item.temp_file_id].filter(Boolean);
+  return (
+    Object.values(store).find((entry) => {
+      if (ids.includes(entry.file_id) || ids.includes(entry.temp_file_id)) return true;
+      if (item.filepath && entry.filepath === item.filepath) return true;
+      return false;
+    }) || null
+  );
+}
+
+function sniffMime(buf, mime, filename) {
+  if (buf && buf.length >= 5 && buf.subarray(0, 5).toString('latin1') === '%PDF-') {
+    return 'application/pdf';
+  }
+  if (buf && buf.length >= 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) {
+    return 'image/jpeg';
+  }
+  if (buf && buf.length >= 8 && buf[0] === 0x89 && buf[1] === 0x50) {
+    return 'image/png';
+  }
+  return guessMime(filename, mime) || mime || 'application/octet-stream';
+}
+
+function decodePdfLiteral(inner) {
+  return String(inner || '')
+    .replace(/\\n/g, '\n')
+    .replace(/\\r/g, '\r')
+    .replace(/\\t/g, '\t')
+    .replace(/\\([0-7]{1,3})/g, (_, oct) => String.fromCharCode(parseInt(oct, 8)))
+    .replace(/\\([()\\])/g, '$1');
+}
+
+function textFromPdfContent(content) {
+  const out = [];
+  const re = /\(((?:\\.|[^\\)])*)\)/g;
+  let match;
+  while ((match = re.exec(String(content || '')))) {
+    const value = decodePdfLiteral(match[1]).replace(/\0/g, '').trim();
+    if (value.length < 2 || value.length > 400) continue;
+    let printable = 0;
+    for (let i = 0; i < value.length; i += 1) {
+      const code = value.charCodeAt(i);
+      if ((code >= 32 && code <= 126) || code === 10 || code === 9) printable += 1;
+    }
+    if (printable / value.length < 0.8 || !/[A-Za-z0-9]/.test(value)) continue;
+    out.push(value);
+  }
+  return out.join(' ');
+}
+
+function inflatePdfStream(raw) {
+  const attempts = [raw];
+  if (raw.length > 1) attempts.push(raw.subarray(1), raw.subarray(2));
+  for (const slice of attempts) {
+    try {
+      return zlib.inflateSync(slice);
+    } catch {
+      /* try raw deflate */
+    }
+    try {
+      return zlib.inflateRawSync(slice);
+    } catch {
+      /* next */
+    }
+  }
+  return null;
+}
+
+function extractPdfWithPdftotext(diskPath) {
+  try {
+    const text = execFileSync('pdftotext', ['-layout', '-q', diskPath, '-'], {
+      encoding: 'utf8',
+      timeout: 4000,
+      maxBuffer: 2 * 1024 * 1024,
+    });
+    return String(text || '').trim();
+  } catch {
+    return '';
+  }
+}
+
+function extractPdfText(buf) {
+  if (!buf || !buf.length) return '';
+  const max = Math.min(buf.length, MAX_INLINE_FILE_BYTES);
+  const latin = buf.toString('latin1', 0, max);
+  const chunks = [];
+  const push = (content) => {
+    const text = textFromPdfContent(content);
+    if (text) chunks.push(text);
+  };
+  push(latin);
+  let idx = 0;
+  let inflated = 0;
+  while (inflated < 40) {
+    const startTok = latin.indexOf('stream', idx);
+    if (startTok < 0) break;
+    let i = startTok + 6;
+    if (latin[i] === '\r') i += 1;
+    if (latin[i] === '\n') i += 1;
+    const endTok = latin.indexOf('endstream', i);
+    if (endTok < 0) break;
+    idx = endTok + 9;
+    const raw = Buffer.from(latin.slice(i, endTok), 'latin1');
+    const out = inflatePdfStream(raw);
+    if (!out) continue;
+    inflated += 1;
+    push(out.toString('utf8'));
+  }
+  return chunks
+    .join(' ')
+    .replace(/[^\S\n]+/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 function filesToGeminiParts(files, options = {}) {
   const allowBinary = options.allowBinary !== false;
+  const textLimit = options.textLimit || (allowBinary ? 80000 : 4000);
   const parts = [];
   const store = readFiles();
   for (const item of files || []) {
-    const rec = store[item.file_id] || Object.values(store).find((entry) => entry.filepath === item.filepath);
+    const rec = findFileRecord(item, store);
     if (!rec || !rec.diskPath || !fs.existsSync(rec.diskPath)) continue;
-    const mime = rec.type || item.type || 'application/octet-stream';
     const buf = fs.readFileSync(rec.diskPath);
-    if (mime.startsWith('text/') || mime === 'application/json' || mime === 'text/csv' || mime === 'text/markdown') {
-      parts.push({ text: `\n\n--- File: ${rec.filename} ---\n${buf.toString('utf8').slice(0, 80000)}` });
-      continue;
+    const mime = sniffMime(buf, rec.type || item.type, rec.filename);
+    const extracted = readFileText(rec).slice(0, textLimit);
+    if (extracted) {
+      parts.push({ text: `\n\n--- File: ${rec.filename} ---\n${extracted}` });
     }
-    if (allowBinary && (mime.startsWith('image/') || mime === 'application/pdf')) {
+    if (
+      allowBinary &&
+      (mime.startsWith('image/') || mime === 'application/pdf') &&
+      buf.length <= MAX_INLINE_FILE_BYTES
+    ) {
       parts.push({ inlineData: { mimeType: mime, data: buf.toString('base64') } });
       continue;
     }
-    parts.push({ text: `\n\n[Attached file: ${rec.filename} (${mime}, ${rec.bytes} bytes)]` });
+    if (!extracted) {
+      parts.push({ text: `\n\n[Attached file: ${rec.filename} (${mime}, ${rec.bytes} bytes)]` });
+    }
   }
   return parts;
 }
@@ -1423,16 +1562,22 @@ const SEARCH_STOP = new Set(
 function isTextSearchable(rec) {
   const type = String(rec.type || '').toLowerCase();
   const name = String(rec.filename || '').toLowerCase();
-  if (type.startsWith('text/') || type.includes('json') || type.includes('csv') || type.includes('markdown') || type.includes('xml')) {
+  if (type.startsWith('text/') || type.includes('json') || type.includes('csv') || type.includes('markdown') || type.includes('xml') || type.includes('pdf')) {
     return true;
   }
-  return /\.(md|txt|csv|json|xml|html|htm)$/i.test(name);
+  return /\.(md|txt|csv|json|xml|html|htm|pdf)$/i.test(name);
 }
 
 function readFileText(rec) {
   if (!rec?.diskPath || !fs.existsSync(rec.diskPath)) return '';
   const buf = fs.readFileSync(rec.diskPath);
   if (!buf.length) return '';
+  const mime = sniffMime(buf, rec.type, rec.filename);
+  if (mime === 'application/pdf') {
+    const fromCli = extractPdfWithPdftotext(rec.diskPath);
+    if (fromCli) return fromCli.slice(0, 80000);
+    return extractPdfText(buf).slice(0, 80000);
+  }
   const sample = buf.subarray(0, Math.min(buf.length, 800));
   let nul = 0;
   for (const byte of sample) {
@@ -1746,12 +1891,38 @@ function isPoisonHistory(item) {
   return false;
 }
 
+function collectRequestFiles(body) {
+  const out = [];
+  const seen = new Set();
+  const add = (list) => {
+    if (!Array.isArray(list)) return;
+    for (const item of list) {
+      if (!item || typeof item !== 'object') continue;
+      const id = item.file_id || item.temp_file_id || item.filepath;
+      if (!id || seen.has(id)) continue;
+      seen.add(id);
+      out.push(item);
+    }
+  };
+  add(body && body.files);
+  add(body && body.endpointOption && body.endpointOption.files);
+  add(body && body.endpointOption && body.endpointOption.attachments);
+  add(body && body.modelOptions && body.modelOptions.files);
+  return out;
+}
+
 function toGeminiContents(history, latestText, latestFiles = []) {
   const contents = [];
-  for (const item of history) {
+  const prior = Array.isArray(history) ? [...history] : [];
+  // Chat persists the current user turn before calling Gemini. Drop it here so
+  // this turn's PDF/image is sent as binary instead of a history placeholder.
+  if (prior.length && prior[prior.length - 1].isCreatedByUser) {
+    prior.pop();
+  }
+  for (const item of prior) {
     if (isPoisonHistory(item)) continue;
     const part = String(item.text || '').trim();
-    const fileParts = filesToGeminiParts(item.files, { allowBinary: false });
+    const fileParts = filesToGeminiParts(item.files, { allowBinary: false, textLimit: 4000 });
     if (!part && !fileParts.length) continue;
     const parts = [];
     if (part) parts.push({ text: part });
@@ -1765,9 +1936,7 @@ function toGeminiContents(history, latestText, latestFiles = []) {
   if (latestText) latestParts.push({ text: latestText });
   latestParts.push(...filesToGeminiParts(latestFiles, { allowBinary: true }));
   if (!latestParts.length) latestParts.push({ text: latestText || 'Please review the attached file.' });
-  if (!contents.length || contents[contents.length - 1].role !== 'user') {
-    contents.push({ role: 'user', parts: latestParts });
-  }
+  contents.push({ role: 'user', parts: latestParts });
   return contents;
 }
 
@@ -2510,7 +2679,7 @@ const server = http.createServer(async (req, res) => {
     const userMessageId = body.messageId || crypto.randomUUID();
     const responseMessageId = crypto.randomUUID();
     const now = new Date().toISOString();
-    const attachedFiles = Array.isArray(body.files) ? body.files : [];
+    const attachedFiles = collectRequestFiles(body);
     const userMessage = {
       messageId: userMessageId,
       conversationId,
@@ -2634,6 +2803,9 @@ const server = http.createServer(async (req, res) => {
       const agentTools = (savedAgent && savedAgent.tools) || [];
       const fileSearchOn = fileSearchEnabledFlag(ephemeral, agentTools);
       const fileSearchNote = fileSearchOn ? prefetchFileSearch(text, user) : '';
+      const attachmentNote = attachedFiles.length
+        ? 'The user attached file(s) in this message. File content is included in the user message (text extract and/or the original PDF/image). Read those files and answer. Never say you cannot access, open, or interpret attached files.'
+        : '';
       const pbmpOn = pbmpEnabled(ephemeral, agentTools);
       const pbmpNote = pbmpOn ? prefetchPbmp(text) : '';
       const codeOn = ephemeral.execute_code !== false || agentTools.includes('execute_code');
@@ -2645,6 +2817,7 @@ const server = http.createServer(async (req, res) => {
         generationConfig,
         fileSearchNote,
         fileSearchOn,
+        attachmentNote,
         pbmpNote,
         pbmpOn,
         codeNote,
@@ -3075,6 +3248,42 @@ if (process.argv.includes('--selftest-pbmp')) {
     { id: 'sample' },
   );
   const tataNote = prefetchFileSearch('Tata Motors customer', { id: 'sample' });
+  const invoicePdf = Buffer.from(
+    '%PDF-1.1\n1 0 obj<<>>endobj\nstream\nBT (Invoice S4ZRTSPC Amount 12500 INR) Tj ET\nendstream\n%%EOF\n',
+    'binary',
+  );
+  const invoiceId = 'selftest-invoice-pdf';
+  const invoicePath = path.join(filesDir, invoiceId);
+  fs.writeFileSync(invoicePath, invoicePdf);
+  const filesStore = readFiles();
+  filesStore[invoiceId] = {
+    file_id: invoiceId,
+    temp_file_id: invoiceId,
+    user: 'sample',
+    filename: 'Invoice-S4ZRTSPC-0001.pdf',
+    filepath: `/HBMP_AgentBot/api/files/download/sample/${invoiceId}`,
+    diskPath: invoicePath,
+    type: 'application/octet-stream',
+    bytes: invoicePdf.length,
+  };
+  writeFiles(filesStore);
+  const invoiceText = readFileText(filesStore[invoiceId]);
+  const persistedUser = {
+    isCreatedByUser: true,
+    text: 'Please explain what is mentioned in this invoice to me.',
+    files: [{ file_id: invoiceId, filepath: filesStore[invoiceId].filepath, type: 'application/pdf' }],
+  };
+  const geminiTurn = toGeminiContents([persistedUser], persistedUser.text, persistedUser.files);
+  const lastUser = geminiTurn[geminiTurn.length - 1];
+  const lastBlob = JSON.stringify(lastUser || {});
+  const attachOk =
+    invoiceText.includes('S4ZRTSPC') &&
+    invoiceText.includes('12500') &&
+    lastUser &&
+    lastUser.role === 'user' &&
+    lastBlob.includes('S4ZRTSPC') &&
+    lastBlob.includes('inlineData') &&
+    geminiTurn.filter((item) => item.role === 'user').length === 1;
   const fileOk =
     policyNote.includes('08-business-policy.md') &&
     policyNote.includes('18%') &&
@@ -3111,7 +3320,8 @@ if (process.argv.includes('--selftest-pbmp')) {
     toggleOn &&
     toggleOff &&
     toggleClear &&
-    toggleDefault;
+    toggleDefault &&
+    attachOk;
   console.log(ok ? 'pbmp selftest ok' : 'pbmp selftest FAIL');
   console.log({
     cities,
@@ -3123,6 +3333,8 @@ if (process.argv.includes('--selftest-pbmp')) {
     knowledgeCount,
     policy: policyNote.includes('18%'),
     tataFile: tataNote.includes('Tata Motors'),
+    attachOk,
+    invoiceText: invoiceText.slice(0, 120),
   });
   process.exit(ok ? 0 : 1);
 }
