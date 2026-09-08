@@ -48,7 +48,7 @@ function readUsers() {
 }
 
 function writeUsers(users) {
-  fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
+  writeJsonAtomic(usersFile, users);
 }
 
 function hashPassword(password, salt = crypto.randomBytes(16).toString('hex')) {
@@ -199,16 +199,43 @@ function sameSiteRequest(req) {
 }
 
 function guestUser() {
-  return {
-    id: 'local-web',
-    email: 'agentbot@local',
-    username: 'user',
-    name: 'User',
-    role: 'USER',
-    avatar: '',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
+  return ensureGuestUser();
+}
+
+function writeJsonAtomic(file, value) {
+  const tmp = `${file}.${process.pid}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(value, null, 2));
+  fs.renameSync(tmp, file);
+}
+
+function knownUserIds() {
+  return new Set(readUsers().map((item) => item.id));
+}
+
+function conversationBelongsTo(item, user) {
+  if (!item || !user) return false;
+  if (item.user === user.id) return true;
+  if (item.email && user.email && item.email === user.email) return true;
+  if (!item.user || item.user === 'local-web') return true;
+  return false;
+}
+
+function claimConversations(user) {
+  if (!user) return;
+  const store = readConvos();
+  const known = knownUserIds();
+  let changed = false;
+  for (const item of Object.values(store.conversations)) {
+    const orphan = item.user && item.user !== 'local-web' && !known.has(item.user);
+    if (conversationBelongsTo(item, user) || orphan) {
+      if (item.user !== user.id || item.email !== user.email) {
+        item.user = user.id;
+        item.email = user.email;
+        changed = true;
+      }
+    }
+  }
+  if (changed) writeConvos(store);
 }
 
 const startupConfig = {
@@ -625,7 +652,7 @@ function readConvos() {
 }
 
 function writeConvos(store) {
-  fs.writeFileSync(convosFile, JSON.stringify(store));
+  writeJsonAtomic(convosFile, store);
 }
 
 function readPresets() {
@@ -1445,6 +1472,8 @@ const server = http.createServer(async (req, res) => {
       });
     }
     writeUsers(users);
+    const saved = users.find((user) => user.email === email) || users[users.length - 1];
+    if (saved) claimConversations(saved);
     send(res, 200, { message: 'Registration successful. You can now sign in.' });
     return;
   }
@@ -1479,6 +1508,7 @@ const server = http.createServer(async (req, res) => {
       return;
     }
     const token = signJwt({ id: user.id, email: user.email }, 60 * 60 * 24 * 7);
+    claimConversations(user);
     send(res, 200, { token, user: publicUser(user) }, authHeaders(token, req));
     return;
   }
@@ -1500,6 +1530,7 @@ const server = http.createServer(async (req, res) => {
       return;
     }
     const token = signJwt({ id: user.id, email: user.email }, 60 * 60 * 24 * 7);
+    claimConversations(user);
     send(res, 200, { token, user: publicUser(user) }, authHeaders(token, req));
     return;
   }
@@ -1917,14 +1948,24 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  if (method === 'GET' && url === '/api/convos') {
-    const user = userFromReq(req);
+  if (method === 'GET' && (url === '/api/convos' || url === '/api/convos/')) {
+    const user = sessionUser(req);
+    if (user) claimConversations(user);
     const archived = qs.get('isArchived') === 'true';
     const store = readConvos();
     const conversations = Object.values(store.conversations)
-      .filter((item) => !user || item.user === user.id)
+      .filter((item) => (user ? conversationBelongsTo(item, user) : false))
       .filter((item) => !!item.isArchived === archived)
-      .sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)));
+      .sort((a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')))
+      .map((item) => ({
+        ...item,
+        conversationId: item.conversationId,
+        title: item.title || 'New Chat',
+        endpoint: item.endpoint || 'google',
+        model: item.model || DEFAULT_GEMINI,
+        createdAt: item.createdAt || item.updatedAt || new Date().toISOString(),
+        updatedAt: item.updatedAt || item.createdAt || new Date().toISOString(),
+      }));
     send(res, 200, { conversations, nextCursor: null });
     return;
   }
@@ -1955,6 +1996,7 @@ const server = http.createServer(async (req, res) => {
   if (method === 'POST' && url === '/api/convos/update') {
     const body = await readBody(req);
     const update = body.arg || body;
+    const user = sessionUser(req);
     const store = readConvos();
     const current = store.conversations[update.conversationId] || {
       conversationId: update.conversationId,
@@ -1966,6 +2008,9 @@ const server = http.createServer(async (req, res) => {
     const next = {
       ...current,
       ...update,
+      conversationId: update.conversationId || current.conversationId,
+      user: (user && user.id) || current.user,
+      email: (user && user.email) || current.email,
       updatedAt: new Date().toISOString(),
     };
     store.conversations[update.conversationId] = next;
@@ -2061,11 +2106,12 @@ const server = http.createServer(async (req, res) => {
 
   if (method === 'POST' && url.startsWith('/api/agents/chat/')) {
     const body = await readBody(req);
-    const user = userFromReq(req) || (sameSiteRequest(req) ? guestUser() : null);
+    const user = sessionUser(req);
     if (!user) {
       send(res, 401, { text: 'Unauthorized. Please sign in again.', error: true });
       return;
     }
+    claimConversations(user);
 
     const key = geminiKey();
     const text = String(body.text || '').trim();
@@ -2104,8 +2150,36 @@ const server = http.createServer(async (req, res) => {
       updatedAt: now,
     };
 
+    const persistConversation = (extra = {}, extraMessages = []) => {
+      const store = readConvos();
+      const previous = store.conversations[conversationId] || {};
+      store.conversations[conversationId] = {
+        ...previous,
+        conversationId,
+        title: extra.title || previous.title || (text || 'New Chat').slice(0, 48),
+        endpoint,
+        model,
+        agent_id: chatAgentId || previous.agent_id,
+        createdAt: previous.createdAt || now,
+        updatedAt: extra.updatedAt || new Date().toISOString(),
+        user: user.id,
+        email: user.email,
+      };
+      if (extraMessages.length) {
+        const existing = store.messages[conversationId] || [];
+        const seen = new Set(existing.map((item) => item.messageId));
+        store.messages[conversationId] = [
+          ...existing,
+          ...extraMessages.filter((item) => item && item.messageId && !seen.has(item.messageId)),
+        ];
+      }
+      writeConvos(store);
+      return store.conversations[conversationId];
+    };
+
     sseStart(res);
     sseWrite(res, { created: true, message: userMessage });
+    persistConversation({}, [userMessage]);
 
     const finish = (reply, isError) => {
       const responseMessage = {
@@ -2123,20 +2197,9 @@ const server = http.createServer(async (req, res) => {
         updatedAt: new Date().toISOString(),
       };
       const title = (text || 'New Chat').slice(0, 48);
-      const conversation = {
-        conversationId,
-        title,
-        endpoint,
-        model,
-        agent_id: chatAgentId || undefined,
-        createdAt: now,
-        updatedAt: new Date().toISOString(),
-        user: user.id,
-      };
-      const store = readConvos();
-      store.conversations[conversationId] = conversation;
-      store.messages[conversationId] = [...(store.messages[conversationId] || []), userMessage, responseMessage];
-      writeConvos(store);
+      const conversation = persistConversation({ title, updatedAt: responseMessage.updatedAt }, [
+        responseMessage,
+      ]);
       sseWrite(res, {
         message: true,
         text: reply,
