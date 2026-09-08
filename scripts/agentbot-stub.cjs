@@ -212,6 +212,37 @@ function knownUserIds() {
   return new Set(readUsers().map((item) => item.id));
 }
 
+function claimOwnedRecords(user, readFn, writeFn) {
+  if (!user) return;
+  const list = readFn();
+  let changed = false;
+  for (const item of list) {
+    if (!item.user || item.user === 'local-web') {
+      item.user = user.id;
+      changed = true;
+    }
+  }
+  if (changed) writeFn(list);
+}
+
+function recountTags(user) {
+  const store = readConvos();
+  const list = readTags();
+  let changed = false;
+  for (const item of list) {
+    if (user && item.user && item.user !== user.id && item.user !== 'local-web') continue;
+    const count = Object.values(store.conversations).filter((convo) => {
+      if (user && !conversationBelongsTo(convo, user)) return false;
+      return Array.isArray(convo.tags) && convo.tags.includes(item.tag);
+    }).length;
+    if (item.count !== count) {
+      item.count = count;
+      changed = true;
+    }
+  }
+  if (changed) writeTags(list);
+}
+
 function conversationBelongsTo(item, user) {
   if (!item || !user) return false;
   if (item.user === user.id) return true;
@@ -323,7 +354,7 @@ const ROLE_PERMISSIONS = {
   MULTI_CONVO: { USE: true },
   TEMPORARY_CHAT: { USE: true },
   RUN_CODE: { USE: true },
-  WEB_SEARCH: { USE: true },
+  WEB_SEARCH: { USE: false },
   PEOPLE_PICKER: { VIEW_USERS: true, VIEW_GROUPS: true, VIEW_ROLES: true },
   MARKETPLACE: { USE: true },
   FILE_SEARCH: { USE: true },
@@ -616,35 +647,54 @@ const DEFAULT_AGENT_INSTRUCTIONS =
   'Product X last-12-month sample: Mumbai ₹18.2 Cr ROI 24% Medium; Delhi ₹15.7 Cr ROI 19% Low; Bangalore ₹13.6 Cr ROI 16% Medium.\n' +
   'Default recommendation unless retrieved data contradicts it: launch Mumbai → Delhi → Bangalore.';
 
-function seedDefaultAgent() {
-  const list = readAgents();
-  if (list.some((item) => item.id === DEFAULT_AGENT_ID)) return;
-  const tools = ['file_search', 'execute_code', ...PBMP_TOOL_DEFS.map((tool) => `${tool.name}_mcp_pbmp`)];
-  list.unshift(
-    normalizeAgent({
-      id: DEFAULT_AGENT_ID,
-      _id: DEFAULT_AGENT_ID,
-      name: 'PBMP Executive Analyst',
-      description: 'Internal facts, then recommendation for Product X markets.',
-      instructions: DEFAULT_AGENT_INSTRUCTIONS,
-      provider: 'google',
-      model: DEFAULT_GEMINI,
-      tools,
-      category: 'general',
-      isPublic: true,
-      is_promoted: true,
-      conversation_starters: [
-        'We are considering launching Product X in three Indian markets. Use our internal sales and cost information, analyse the economics and risks, recommend where we should launch, and give me a management table.',
-      ],
-      author: 'system',
-      authorName: 'HBMP AgentBot',
-    }),
-  );
-  writeAgents(list);
-  console.log('[agentbot-stub] seeded PBMP Executive Analyst agent');
+function sampleFileIds() {
+  return Object.values(readFiles())
+    .filter((item) => item.sample)
+    .sort((a, b) => String(a.filename).localeCompare(String(b.filename)))
+    .map((item) => item.file_id);
 }
 
-seedDefaultAgent();
+function seedDefaultAgent() {
+  const tools = ['file_search', 'execute_code', ...PBMP_TOOL_DEFS.map((tool) => `${tool.name}_mcp_pbmp`)];
+  const fileIds = sampleFileIds();
+  const seeded = normalizeAgent({
+    id: DEFAULT_AGENT_ID,
+    _id: DEFAULT_AGENT_ID,
+    name: 'PBMP Executive Analyst',
+    description: 'Internal facts, then recommendation for Product X markets.',
+    instructions: DEFAULT_AGENT_INSTRUCTIONS,
+    provider: 'google',
+    model: DEFAULT_GEMINI,
+    tools,
+    tool_resources: {
+      file_search: { file_ids: fileIds },
+    },
+    category: 'general',
+    isPublic: true,
+    is_promoted: true,
+    conversation_starters: [
+      'We are considering launching Product X in three Indian markets. Use our internal sales and cost information, analyse the economics and risks, recommend where we should launch, and give me a management table.',
+    ],
+    author: 'system',
+    authorName: 'HBMP AgentBot',
+  });
+  const list = readAgents();
+  const index = list.findIndex((item) => item.id === DEFAULT_AGENT_ID || item._id === DEFAULT_AGENT_ID);
+  if (index >= 0) {
+    list[index] = {
+      ...list[index],
+      ...seeded,
+      id: DEFAULT_AGENT_ID,
+      _id: DEFAULT_AGENT_ID,
+      author: list[index].author || 'system',
+      created_at: list[index].created_at || seeded.created_at,
+    };
+  } else {
+    list.unshift(seeded);
+    console.log('[agentbot-stub] seeded PBMP Executive Analyst agent');
+  }
+  writeAgents(list);
+}
 const GEMINI_FALLBACKS = [
   'gemini-2.5-flash',
   'gemini-3.5-flash',
@@ -787,7 +837,7 @@ async function generateGeminiWithPbmp(key, model, userContents, extras = {}) {
   const tools = [
     ...(extras.pbmpOn === false ? [] : PBMP_TOOL_DEFS),
     ...(extras.fileSearchOn === false ? [] : [FILE_SEARCH_TOOL]),
-    EXECUTE_CODE_TOOL,
+    ...(extras.codeOn === false ? [] : [EXECUTE_CODE_TOOL]),
   ];
   const systemText = [
     PBMP_SYSTEM,
@@ -1096,9 +1146,8 @@ function listPromptGroupsPayload(groups) {
 
 function seedDefaultPrompt() {
   const store = readPromptStore();
-  if (store.groups.some((item) => item._id === 'prompt_pbmp_launch')) return;
   const now = new Date().toISOString();
-  store.groups.unshift({
+  const group = {
     _id: 'prompt_pbmp_launch',
     name: 'PBMP Product X launch',
     category: 'finance',
@@ -1110,8 +1159,8 @@ function seedDefaultPrompt() {
     productionPrompt: { prompt: DEFAULT_PROMPT_TEXT },
     createdAt: now,
     updatedAt: now,
-  });
-  store.prompts.push({
+  };
+  const prompt = {
     _id: 'promptver_pbmp_launch',
     groupId: 'prompt_pbmp_launch',
     author: 'system',
@@ -1119,9 +1168,18 @@ function seedDefaultPrompt() {
     type: 'text',
     createdAt: now,
     updatedAt: now,
-  });
+  };
+  const groupIndex = store.groups.findIndex((item) => item._id === 'prompt_pbmp_launch');
+  if (groupIndex >= 0) {
+    store.groups[groupIndex] = { ...store.groups[groupIndex], ...group, createdAt: store.groups[groupIndex].createdAt || now };
+  } else {
+    store.groups.unshift(group);
+    console.log('[agentbot-stub] seeded PBMP Product X launch prompt');
+  }
+  const promptIndex = store.prompts.findIndex((item) => item._id === 'promptver_pbmp_launch');
+  if (promptIndex >= 0) store.prompts[promptIndex] = { ...store.prompts[promptIndex], ...prompt };
+  else store.prompts.push(prompt);
   writePromptStore(store);
-  console.log('[agentbot-stub] seeded PBMP Product X launch prompt');
 }
 
 seedDefaultPrompt();
@@ -1350,9 +1408,11 @@ function seedKnowledgeFiles() {
   }
   writeFiles(store);
   if (added) console.log(`[agentbot-stub] seeded ${added} PBMP sample files from ${dir}`);
+  seedDefaultAgent();
 }
 
 seedKnowledgeFiles();
+seedDefaultAgent();
 
 const SEARCH_STOP = new Set(
   'a an the and or of for to in on is it we our you your what does say please from with this this that than then how why who whom which are was were be been being not no do did can will would should about into over under'.split(
@@ -1869,7 +1929,13 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (method === 'GET' && /^\/api\/files\/agent\/[^/]+$/.test(url)) {
-    send(res, 200, []);
+    const agentId = decodeURIComponent(url.slice('/api/files/agent/'.length));
+    const agent = findAgent(agentId);
+    const store = readFiles();
+    const ids = (agent && agent.tool_resources && agent.tool_resources.file_search && agent.tool_resources.file_search.file_ids) || [];
+    const fromAgent = ids.map((id) => store[id]).filter(Boolean);
+    const list = (fromAgent.length ? fromAgent : Object.values(store).filter((item) => item.sample)).map(publicFile);
+    send(res, 200, list);
     return;
   }
 
@@ -1950,8 +2016,9 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (method === 'GET' && url === '/api/presets') {
-    const user = userFromReq(req);
-    const list = readPresets().filter((item) => !user || item.user === user.id);
+    const user = sessionUser(req);
+    if (user) claimOwnedRecords(user, readPresets, writePresets);
+    const list = readPresets().filter((item) => !user || item.user === user.id || !item.user);
     send(res, 200, list);
     return;
   }
@@ -2251,9 +2318,18 @@ const server = http.createServer(async (req, res) => {
     if (user) claimConversations(user);
     const archived = qs.get('isArchived') === 'true';
     const store = readConvos();
+    const tagFilter = [...qs.getAll('tags'), ...(String(qs.get('tags') || '').split(','))]
+      .map((item) => String(item || '').trim())
+      .filter(Boolean);
+    const uniqueTags = [...new Set(tagFilter)];
     const conversations = Object.values(store.conversations)
       .filter((item) => (user ? conversationBelongsTo(item, user) : false))
       .filter((item) => !!item.isArchived === archived)
+      .filter((item) => {
+        if (!uniqueTags.length) return true;
+        const itemTags = Array.isArray(item.tags) ? item.tags : [];
+        return uniqueTags.some((tag) => itemTags.includes(tag));
+      })
       .sort((a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')))
       .map((item) => ({
         ...item,
@@ -2261,6 +2337,7 @@ const server = http.createServer(async (req, res) => {
         title: item.title || 'New Chat',
         endpoint: item.endpoint || 'google',
         model: item.model || DEFAULT_GEMINI,
+        tags: Array.isArray(item.tags) ? item.tags : [],
         createdAt: item.createdAt || item.updatedAt || new Date().toISOString(),
         updatedAt: item.updatedAt || item.createdAt || new Date().toISOString(),
       }));
@@ -2571,6 +2648,7 @@ const server = http.createServer(async (req, res) => {
         pbmpNote,
         pbmpOn,
         codeNote,
+        codeOn,
         user,
         userQuery: text,
       });
@@ -2674,8 +2752,9 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (method === 'GET' && url === '/api/tags') {
-    const user = userFromReq(req);
-    const list = readTags().filter((item) => !user || item.user === user.id);
+    const user = sessionUser(req);
+    if (user) claimOwnedRecords(user, readTags, writeTags);
+    const list = readTags().filter((item) => !user || item.user === user.id || !item.user);
     send(res, 200, list.map(publicTag));
     return;
   }
@@ -2714,8 +2793,23 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (method === 'PUT' && /^\/api\/tags\/convo\/[^/]+$/.test(url)) {
+    const conversationId = decodeURIComponent(url.split('/').pop());
     const body = await readBody(req);
-    send(res, 200, Array.isArray(body.tags) ? body.tags : []);
+    const tags = (Array.isArray(body.tags) ? body.tags : []).map((item) => String(item || '').trim()).filter(Boolean);
+    const user = sessionUser(req);
+    const store = readConvos();
+    const current = store.conversations[conversationId];
+    if (current) {
+      current.tags = tags;
+      current.updatedAt = new Date().toISOString();
+      if (user) {
+        current.user = user.id;
+        current.email = user.email;
+      }
+      writeConvos(store);
+    }
+    recountTags(user);
+    send(res, 200, tags);
     return;
   }
 
@@ -2992,6 +3086,18 @@ if (process.argv.includes('--selftest-pbmp')) {
   const toggleOff = pbmpEnabled({ mcp: [] }) === false;
   const toggleClear = pbmpEnabled({ mcp: [MCP_CLEAR] }) === false;
   const toggleDefault = pbmpEnabled({}) === true;
+  const knowledgeCount = Object.values(readFiles()).filter((item) => item.sample).length;
+  const analyst = findAgent(DEFAULT_AGENT_ID);
+  const promptGroup = readPromptStore().groups.find((item) => item._id === 'prompt_pbmp_launch');
+  const agentOk =
+    knowledgeCount === 10 &&
+    analyst &&
+    (analyst.tool_resources.file_search.file_ids || []).length === 10 &&
+    analyst.tools.includes('file_search') &&
+    analyst.tools.includes('execute_code') &&
+    promptGroup &&
+    promptGroup.command === 'pbmp-launch' &&
+    String(promptGroup.productionPrompt && promptGroup.productionPrompt.prompt).includes('18.2');
   const ok =
     cities === 'Mumbai:18.2,Delhi:15.7,Bangalore:13.6' &&
     tata.data?.name === 'Tata Motors' &&
@@ -3001,6 +3107,7 @@ if (process.argv.includes('--selftest-pbmp')) {
     note.includes('15.7') &&
     note.includes('13.6') &&
     fileOk &&
+    agentOk &&
     toggleOn &&
     toggleOff &&
     toggleClear &&
@@ -3012,6 +3119,8 @@ if (process.argv.includes('--selftest-pbmp')) {
     risks: (risks.data || []).map((r) => r.title),
     actuals: actuals.data,
     fileOk,
+    agentOk,
+    knowledgeCount,
     policy: policyNote.includes('18%'),
     tataFile: tataNote.includes('Tata Motors'),
   });

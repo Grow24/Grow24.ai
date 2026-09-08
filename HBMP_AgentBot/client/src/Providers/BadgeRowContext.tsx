@@ -110,7 +110,7 @@ export default function BadgeRowProvider({
        * If `ephemeralAgent` is `null`, create a new object with just our tool values
        */
       const finalValues = {
-        [Tools.execute_code]: initialValues[Tools.execute_code] ?? false,
+        [Tools.execute_code]: initialValues[Tools.execute_code] ?? true,
         [Tools.web_search]: initialValues[Tools.web_search] ?? false,
         [Tools.file_search]: initialValues[Tools.file_search] ?? true,
         [AgentCapabilities.artifacts]: initialValues[AgentCapabilities.artifacts] ?? false,
