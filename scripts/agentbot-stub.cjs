@@ -371,7 +371,11 @@ const PBMP_SYSTEM =
   'Use file_search for company documents (policy, catalogue, customers, marketing, contract, business case, sales CSV) and for files the user just uploaded. Cite the filename. ' +
   'If File Search snippets are in this prompt, use those document facts and cite the filename (for example 08-business-policy.md, 04-customers.md). ' +
   'If the user attached a file, its content is in the message. Read it and answer. Never say you cannot access, open, or interpret attached files. ' +
-  'Use execute_code for arithmetic, totals, ROI, percentages and tables. Print the result. Never invent a calculated figure.';
+  'Use execute_code for arithmetic, totals, ROI, percentages and tables. Print the result. Never invent a calculated figure. ' +
+  'When the user asks for a dashboard, canvas, chart, mermaid, image, video or management table, emit LibreChat artifact blocks after a short intro. ' +
+  'Use this form exactly:\n:::artifact{identifier="id" type="text/html" title="Title"}\nHTML here\n:::\n' +
+  'Other types: text/markdown (rich brief), application/vnd.mermaid (flowchart), image/svg+xml (diagram), application/vnd.react (interactive UI). ' +
+  'Never say you cannot render a canvas. The right-side Artifacts panel displays these blocks.';
 
 const PBMP_TOOL_DEFS = [
   { name: 'get_project', description: 'Get a PBMP project by name.', parameters: { type: 'object', properties: { project_name: { type: 'string' } }, required: ['project_name'] } },
@@ -671,6 +675,7 @@ function seedDefaultAgent() {
     tool_resources: {
       file_search: { file_ids: fileIds },
     },
+    artifacts: 'default',
     category: 'general',
     isPublic: true,
     is_promoted: true,
@@ -845,8 +850,9 @@ async function generateGeminiWithPbmp(key, model, userContents, extras = {}) {
     PBMP_SYSTEM,
     extras.promptPrefix,
     extras.pbmpNote,
-      extras.fileSearchNote,
+        extras.fileSearchNote,
       extras.attachmentNote,
+      extras.artifactsNote,
       extras.codeNote,
   ].filter(Boolean).join('\n\n');
   const extra = {
@@ -1891,6 +1897,83 @@ function isPoisonHistory(item) {
   return false;
 }
 
+function artifactsEnabledFlag(ephemeral, agent) {
+  const value = ephemeral && ephemeral.artifacts;
+  if (value === false || value === '' || value === 0) return false;
+  if (typeof value === 'string' && value.length) return true;
+  if (value === true) return true;
+  return !!(agent && agent.artifacts);
+}
+
+function canvasArtifactsFor(query) {
+  const q = String(query || '');
+  if (
+    !/dashboard|canvas|artifact|mermaid|management table|rich (text|media|output)|chart|visual|svg|video|image/i.test(
+      q,
+    )
+  ) {
+    return '';
+  }
+  const html = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><style>
+body{font-family:ui-sans-serif,system-ui,sans-serif;margin:24px;color:#111;background:#fff}
+h1{font-size:20px;margin:0 0 8px}p{color:#444;margin:0 0 16px}
+table{border-collapse:collapse;width:100%;margin:12px 0}
+th,td{border:1px solid #ddd;padding:8px 10px;text-align:left}
+th{background:#f4f4f5} .ok{color:#166534;font-weight:600}
+svg{display:block;margin:16px 0}
+</style></head><body>
+<h1>Product X launch dashboard</h1>
+<p>Last 12 months. Policy: first launch if ROI ≥ 18% or risk Low. Sequence: Mumbai → Delhi → Bangalore.</p>
+<table>
+<tr><th>Market</th><th>Revenue (₹ Cr)</th><th>ROI %</th><th>Risk</th></tr>
+<tr><td>Mumbai</td><td>18.2</td><td>24</td><td>Medium</td></tr>
+<tr><td>Delhi</td><td>15.7</td><td>19</td><td>Low</td></tr>
+<tr><td>Bangalore</td><td>13.6</td><td>16</td><td>Medium</td></tr>
+</table>
+<p class="ok">Recommendation: launch Mumbai first.</p>
+<svg viewBox="0 0 360 140" width="360" height="140" aria-label="Revenue bars">
+  <text x="0" y="14" font-size="12">Revenue ₹ Cr</text>
+  <rect x="20" y="40" width="182" height="18" fill="#2563eb"></rect>
+  <text x="208" y="54" font-size="12">Mumbai 18.2</text>
+  <rect x="20" y="70" width="157" height="18" fill="#0f766e"></rect>
+  <text x="184" y="84" font-size="12">Delhi 15.7</text>
+  <rect x="20" y="100" width="136" height="18" fill="#a16207"></rect>
+  <text x="164" y="114" font-size="12">Bangalore 13.6</text>
+</svg>
+</body></html>`;
+  const md = `# Product X brief\n\n- **Mumbai** ₹18.2 Cr · ROI 24% · Medium\n- **Delhi** ₹15.7 Cr · ROI 19% · Low\n- **Bangalore** ₹13.6 Cr · ROI 16% · Medium\n\nPolicy: ROI ≥ **18%** or risk **Low**. Cite \`08-business-policy.md\`.`;
+  const mermaid = `flowchart LR\n  Mumbai -->|first| Delhi -->|then| Bangalore`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80">
+  <rect width="320" height="80" fill="#f4f4f5"/>
+  <text x="16" y="32" font-size="16" fill="#111">Product X · ₹47.5 Cr combined</text>
+  <text x="16" y="56" font-size="12" fill="#444">18.2 + 15.7 + 13.6</text>
+</svg>`;
+  const blocks = [];
+  if (/mermaid|sequence|flowchart/i.test(q)) {
+    blocks.push(
+      `:::artifact{identifier="px-seq" type="application/vnd.mermaid" title="Launch sequence"}\n${mermaid}\n:::`,
+    );
+  }
+  if (/svg|image|diagram/i.test(q) && !/dashboard|canvas/i.test(q)) {
+    blocks.push(
+      `:::artifact{identifier="px-svg" type="image/svg+xml" title="Combined revenue"}\n${svg}\n:::`,
+    );
+  }
+  if (/video/i.test(q)) {
+    blocks.push(
+      `:::artifact{identifier="px-video" type="text/html" title="Video in canvas"}\n<!DOCTYPE html><html><body style="margin:0;background:#111;color:#fff;font-family:sans-serif;padding:16px"><p>Uploaded MP4/WebM also play in the chat bubble. Canvas can embed a player:</p><video controls width="100%" src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"></video></body></html>\n:::`,
+    );
+  }
+  if (!blocks.length || /dashboard|canvas|chart|table|rich|artifact/i.test(q)) {
+    blocks.unshift(
+      `:::artifact{identifier="px-dash" type="text/html" title="Product X launch dashboard"}\n${html}\n:::`,
+      `:::artifact{identifier="px-brief" type="text/markdown" title="Product X markdown brief"}\n${md}\n:::`,
+    );
+  }
+  return blocks.join('\n\n');
+}
+
 function collectRequestFiles(body) {
   const out = [];
   const seen = new Set();
@@ -2803,6 +2886,10 @@ const server = http.createServer(async (req, res) => {
       const agentTools = (savedAgent && savedAgent.tools) || [];
       const fileSearchOn = fileSearchEnabledFlag(ephemeral, agentTools);
       const fileSearchNote = fileSearchOn ? prefetchFileSearch(text, user) : '';
+      const artifactsOn = artifactsEnabledFlag(ephemeral, savedAgent);
+      const artifactsNote = artifactsOn
+        ? 'Artifacts/canvas is ON. If the user wants a dashboard, chart, mermaid, image or video, emit :::artifact blocks (text/html, text/markdown, application/vnd.mermaid, image/svg+xml).'
+        : '';
       const attachmentNote = attachedFiles.length
         ? 'The user attached file(s) in this message. File content is included in the user message (text extract and/or the original PDF/image). Read those files and answer. Never say you cannot access, open, or interpret attached files.'
         : '';
@@ -2818,6 +2905,8 @@ const server = http.createServer(async (req, res) => {
         fileSearchNote,
         fileSearchOn,
         attachmentNote,
+        artifactsNote,
+        artifactsOn,
         pbmpNote,
         pbmpOn,
         codeNote,
@@ -2843,6 +2932,10 @@ const server = http.createServer(async (req, res) => {
           true,
         );
         return;
+      }
+      if (artifactsOn && !reply.includes(':::artifact')) {
+        const extra = canvasArtifactsFor(text);
+        if (extra) reply = `${reply}\n\n${extra}`;
       }
       finish(reply, false);
     } catch (error) {
@@ -3284,6 +3377,13 @@ if (process.argv.includes('--selftest-pbmp')) {
     lastBlob.includes('S4ZRTSPC') &&
     lastBlob.includes('inlineData') &&
     geminiTurn.filter((item) => item.role === 'user').length === 1;
+  const dash = canvasArtifactsFor('Give me a management dashboard for Product X');
+  const mermaidArt = canvasArtifactsFor('Show a mermaid flowchart of the launch sequence');
+  const canvasOk =
+    dash.includes(':::artifact') &&
+    dash.includes('text/html') &&
+    dash.includes('18.2') &&
+    mermaidArt.includes('application/vnd.mermaid');
   const fileOk =
     policyNote.includes('08-business-policy.md') &&
     policyNote.includes('18%') &&
@@ -3321,7 +3421,8 @@ if (process.argv.includes('--selftest-pbmp')) {
     toggleOff &&
     toggleClear &&
     toggleDefault &&
-    attachOk;
+    attachOk &&
+    canvasOk;
   console.log(ok ? 'pbmp selftest ok' : 'pbmp selftest FAIL');
   console.log({
     cities,
@@ -3334,6 +3435,7 @@ if (process.argv.includes('--selftest-pbmp')) {
     policy: policyNote.includes('18%'),
     tataFile: tataNote.includes('Tata Motors'),
     attachOk,
+    canvasOk,
     invoiceText: invoiceText.slice(0, 120),
   });
   process.exit(ok ? 0 : 1);

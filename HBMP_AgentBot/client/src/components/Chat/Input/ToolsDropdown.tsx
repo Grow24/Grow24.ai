@@ -7,10 +7,12 @@ import {
   AuthType,
   Permissions,
   PermissionTypes,
+  ArtifactModes,
   defaultAgentCapabilities,
 } from 'librechat-data-provider';
 import { useLocalize, useHasAccess, useAgentCapabilities } from '~/hooks';
 import MCPSubMenu from '~/components/Chat/Input/MCPSubMenu';
+import ArtifactsSubMenu from '~/components/Chat/Input/ArtifactsSubMenu';
 import { useGetStartupConfig } from '~/data-provider';
 import { useBadgeRowContext } from '~/Providers';
 import { cn } from '~/utils';
@@ -31,10 +33,11 @@ const ToolsDropdown = ({ disabled }: ToolsDropdownProps) => {
     codeApiKeyForm,
     codeInterpreter,
     searchApiKeyForm,
+    artifacts,
   } = useBadgeRowContext();
   const { data: startupConfig } = useGetStartupConfig();
 
-  const { codeEnabled, webSearchEnabled, fileSearchEnabled } =
+  const { codeEnabled, webSearchEnabled, fileSearchEnabled, artifactsEnabled } =
     useAgentCapabilities(agentsConfig?.capabilities ?? defaultAgentCapabilities);
 
   const { setIsDialogOpen: setIsCodeDialogOpen, menuTriggerRef: codeMenuTriggerRef } =
@@ -52,6 +55,14 @@ const ToolsDropdown = ({ disabled }: ToolsDropdownProps) => {
     authData: codeAuthData,
   } = codeInterpreter;
   const { isPinned: isFileSearchPinned, setIsPinned: setIsFileSearchPinned } = fileSearch;
+  const { isPinned: isArtifactsPinned, setIsPinned: setIsArtifactsPinned } = artifacts;
+
+  const artifactsMode =
+    typeof artifacts.toolValue === 'string' && artifacts.toolValue
+      ? artifacts.toolValue
+      : artifacts.isToolEnabled
+        ? ArtifactModes.DEFAULT
+        : '';
 
   const canUseWebSearch = useHasAccess({
     permissionType: PermissionTypes.WEB_SEARCH,
@@ -93,6 +104,30 @@ const ToolsDropdown = ({ disabled }: ToolsDropdownProps) => {
     const newValue = !fileSearch.toggleState;
     fileSearch.debouncedChange({ value: newValue });
   }, [fileSearch]);
+
+  const handleArtifactsToggle = useCallback(() => {
+    if (artifactsMode) {
+      artifacts.debouncedChange({ value: '' });
+    } else {
+      artifacts.debouncedChange({ value: ArtifactModes.DEFAULT });
+    }
+  }, [artifacts, artifactsMode]);
+
+  const handleShadcnToggle = useCallback(() => {
+    if (artifactsMode === ArtifactModes.SHADCNUI) {
+      artifacts.debouncedChange({ value: ArtifactModes.DEFAULT });
+    } else {
+      artifacts.debouncedChange({ value: ArtifactModes.SHADCNUI });
+    }
+  }, [artifacts, artifactsMode]);
+
+  const handleCustomToggle = useCallback(() => {
+    if (artifactsMode === ArtifactModes.CUSTOM) {
+      artifacts.debouncedChange({ value: ArtifactModes.DEFAULT });
+    } else {
+      artifacts.debouncedChange({ value: ArtifactModes.CUSTOM });
+    }
+  }, [artifacts, artifactsMode]);
 
   const mcpPlaceholder = startupConfig?.interface?.mcpServers?.placeholder;
 
@@ -239,6 +274,24 @@ const ToolsDropdown = ({ disabled }: ToolsDropdownProps) => {
   }
 
   const { configuredServers } = mcpServerManager;
+
+  if (artifactsEnabled) {
+    dropdownItems.push({
+      hideOnClick: false,
+      render: (props) => (
+        <ArtifactsSubMenu
+          {...props}
+          isArtifactsPinned={isArtifactsPinned}
+          setIsArtifactsPinned={setIsArtifactsPinned}
+          artifactsMode={artifactsMode}
+          handleArtifactsToggle={handleArtifactsToggle}
+          handleShadcnToggle={handleShadcnToggle}
+          handleCustomToggle={handleCustomToggle}
+        />
+      ),
+    });
+  }
+
   if (configuredServers && configuredServers.length > 0) {
     dropdownItems.push({
       hideOnClick: false,

@@ -1,6 +1,12 @@
 import React, { createContext, useContext, useEffect, useRef } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { Tools, Constants, LocalStorageKeys, AgentCapabilities } from 'librechat-data-provider';
+import {
+  Tools,
+  Constants,
+  LocalStorageKeys,
+  AgentCapabilities,
+  ArtifactModes,
+} from 'librechat-data-provider';
 import type { TAgentsEndpoint } from 'librechat-data-provider';
 import {
   useMCPServerManager,
@@ -21,6 +27,7 @@ interface BadgeRowContextType {
   codeApiKeyForm: ReturnType<typeof useCodeApiKeyForm>;
   searchApiKeyForm: ReturnType<typeof useSearchApiKeyForm>;
   mcpServerManager: ReturnType<typeof useMCPServerManager>;
+  artifacts: ReturnType<typeof useToolToggle>;
 }
 
 const BadgeRowContext = createContext<BadgeRowContextType | undefined>(undefined);
@@ -113,7 +120,8 @@ export default function BadgeRowProvider({
         [Tools.execute_code]: initialValues[Tools.execute_code] ?? true,
         [Tools.web_search]: initialValues[Tools.web_search] ?? false,
         [Tools.file_search]: initialValues[Tools.file_search] ?? true,
-        [AgentCapabilities.artifacts]: initialValues[AgentCapabilities.artifacts] ?? false,
+        [AgentCapabilities.artifacts]:
+          initialValues[AgentCapabilities.artifacts] ?? ArtifactModes.DEFAULT,
       };
 
       setEphemeralAgent((prev) => ({
@@ -179,6 +187,13 @@ export default function BadgeRowProvider({
 
   const mcpServerManager = useMCPServerManager({ conversationId });
 
+  const artifacts = useToolToggle({
+    conversationId,
+    toolKey: AgentCapabilities.artifacts,
+    localStorageKey: LocalStorageKeys.LAST_ARTIFACTS_TOGGLE_,
+    isAuthenticated: true,
+  });
+
   const value: BadgeRowContextType = {
     webSearch,
     fileSearch,
@@ -188,6 +203,7 @@ export default function BadgeRowProvider({
     codeInterpreter,
     searchApiKeyForm,
     mcpServerManager,
+    artifacts,
   };
 
   return <BadgeRowContext.Provider value={value}>{children}</BadgeRowContext.Provider>;
